@@ -1,0 +1,67 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="assets/logo.png" alt="OpticianCare" class="login-logo">
+    </div>
+    
+    <div class="login-title">Welcome back</div>
+    <div class="login-subtitle">Please enter your credentials to sign in</div>
+    
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          [(ngModel)]="user.email"
+          #email="ngModel"
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+          class="form-control"
+          [ngClass]="{'is-invalid': (email.invalid && (email.dirty || email.touched)) || (submitted && email.invalid)}"
+          placeholder="Enter your email"
+        >
+        <div *ngIf="(email.invalid && (email.dirty || email.touched)) || (submitted && email.invalid)" class="error-message">
+          <div *ngIf="email.errors?.['required']">Email is required</div>
+          <div *ngIf="email.errors?.['pattern']">Please enter a valid email address</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          [(ngModel)]="user.password"
+          #password="ngModel"
+          required
+          minlength="6"
+          class="form-control"
+          [ngClass]="{'is-invalid': (password.invalid && (password.dirty || password.touched)) || (submitted && password.invalid)}"
+          placeholder="Enter your password"
+        >
+        <div *ngIf="(password.invalid && (password.dirty || password.touched)) || (submitted && password.invalid)" class="error-message">
+          <div *ngIf="password.errors?.['required']">Password is required</div>
+          <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</div>
+        </div>
+        <div class="forgot-password">
+          <a href="#" class="auth-link">Forgot password?</a>
+        </div>
+      </div>
+      
+      <div *ngIf="loginError" class="alert alert-danger">
+        {{ loginError }}
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="login-button">Sign In</button>
+      </div>
+      
+      <div class="auth-links">
+        Don't have an account? <a routerLink="/register" class="auth-link">Register now</a>
+      </div>
+    </form>
+  </div>
+</div> 

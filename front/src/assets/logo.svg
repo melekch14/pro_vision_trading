@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <circle cx="250" cy="250" r="240" fill="white" stroke="#1B5E20" stroke-width="20"/>
+    <g transform="translate(60, 60) scale(0.76)">
+      <!-- Left lens with baobab tree -->
+      <circle cx="170" cy="250" r="120" fill="white" stroke="#1B5E20" stroke-width="20"/>
+      <path d="M120 300 Q170 150 220 300" stroke="#1B5E20" stroke-width="15" fill="none"/>
+      <path d="M170 150 L170 350" stroke="#1B5E20" stroke-width="15"/>
+      <path d="M140 200 Q170 150 200 200" stroke="#1B5E20" stroke-width="10" fill="none"/>
+      
+      <!-- Right lens with tree -->
+      <circle cx="330" cy="250" r="120" fill="white" stroke="#1B5E20" stroke-width="20"/>
+      <path d="M330 150 L330 350" stroke="#1B5E20" stroke-width="15"/>
+      <path d="M280 200 Q330 150 380 200" stroke="#1B5E20" stroke-width="15" fill="none"/>
+      <path d="M290 250 Q330 200 370 250" stroke="#1B5E20" stroke-width="12" fill="none"/>
+      <path d="M300 300 Q330 250 360 300" stroke="#1B5E20" stroke-width="10" fill="none"/>
+    </g>
+  </g>
+</svg> 

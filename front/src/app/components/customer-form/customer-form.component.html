@@ -1,0 +1,171 @@
+<div class="page-container">
+  <div class="header-row">
+    <h1 class="page-title">{{ formTitle }}</h1>
+  </div>
+  
+  <div class="form-container">
+    <form (ngSubmit)="onSubmit()" #customerForm="ngForm">
+      <div class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name*</label>
+            <input 
+              type="text" 
+              id="firstName" 
+              name="firstName" 
+              [(ngModel)]="customer.firstName" 
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="lastName">Last Name*</label>
+            <input 
+              type="text" 
+              id="lastName" 
+              name="lastName" 
+              [(ngModel)]="customer.lastName" 
+              required
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address*</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              [(ngModel)]="customer.email" 
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              name="phone" 
+              [(ngModel)]="customer.phone"
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select 
+              id="status" 
+              name="status" 
+              [(ngModel)]="customer.status"
+            >
+              <option *ngFor="let status of customerStatuses" [value]="status">
+                {{ status }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group" *ngIf="isEditMode">
+            <label>Join Date</label>
+            <input 
+              type="text" 
+              [value]="customer.joinDate | date:'MMM d, y'" 
+              disabled
+            >
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <h2 class="section-title">Address Information</h2>
+        
+        <div class="form-group full-width">
+          <label for="street">Street Address</label>
+          <input 
+            type="text" 
+            id="street" 
+            name="street" 
+            [(ngModel)]="customer.address.street"
+          >
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City</label>
+            <input 
+              type="text" 
+              id="city" 
+              name="city" 
+              [(ngModel)]="customer.address.city"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="state">State/Province</label>
+            <input 
+              type="text" 
+              id="state" 
+              name="state" 
+              [(ngModel)]="customer.address.state"
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="postalCode">Postal/Zip Code</label>
+            <input 
+              type="text" 
+              id="postalCode" 
+              name="postalCode" 
+              [(ngModel)]="customer.address.postalCode"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input 
+              type="text" 
+              id="country" 
+              name="country" 
+              [(ngModel)]="customer.address.country"
+            >
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section" *ngIf="isEditMode">
+        <h2 class="section-title">Order Information</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Total Orders</label>
+            <input 
+              type="text" 
+              [value]="customer.totalOrders" 
+              disabled
+            >
+          </div>
+          
+          <div class="form-group">
+            <label>Total Spent</label>
+            <input 
+              type="text" 
+              [value]="'$' + customer.totalSpent.toFixed(2)" 
+              disabled
+            >
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="cancel-button" (click)="cancel()">Cancel</button>
+        <button type="submit" class="save-button" [disabled]="!customerForm.form.valid">Save Customer</button>
+      </div>
+    </form>
+  </div>
+</div> 

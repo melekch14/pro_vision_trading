@@ -1,0 +1,376 @@
+<div class="page-container">
+  <div class="header-row">
+    <h1 class="page-title">Article Hierarchy Management</h1>
+  </div>
+  
+  <!-- Main layout: Three column grid -->
+  <div class="hierarchy-container">
+    <!-- Groups Column -->
+    <div class="hierarchy-column">
+      <div class="column-header">
+        <h2>Groups</h2>
+        <button class="add-button" (click)="openAddGroupPanel()">
+          <i class="material-icons">add</i>
+          New Group
+        </button>
+      </div>
+      
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search groups..." 
+          [(ngModel)]="groupFilter" 
+          (input)="applyFilters()"
+        >
+        <i class="material-icons">search</i>
+      </div>
+      
+      <div class="items-container">
+        <div 
+          *ngFor="let group of filteredGroups" 
+          class="item" 
+          [class.selected]="selectedGroup?.id === group.id"
+          (click)="selectGroup(group)"
+        >
+          <div class="item-content">
+            <div class="item-code">{{ group.code }}</div>
+            <div class="item-name">{{ group.name }}</div>
+          </div>
+          <div class="item-actions">
+            <button class="icon-button" (click)="openEditGroupPanel(group); $event.stopPropagation()">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="icon-button delete" (click)="deleteGroup(group); $event.stopPropagation()">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="filteredGroups.length === 0" class="empty-message">
+          No groups found
+        </div>
+      </div>
+    </div>
+    
+    <!-- Families Column -->
+    <div class="hierarchy-column">
+      <div class="column-header">
+        <h2>Families</h2>
+        <button class="add-button" [disabled]="!selectedGroup" (click)="openAddFamilyPanel()">
+          <i class="material-icons">add</i>
+          New Family
+        </button>
+      </div>
+      
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search families..." 
+          [(ngModel)]="familyFilter" 
+          (input)="applyFilters()"
+          [disabled]="!selectedGroup"
+        >
+        <i class="material-icons">search</i>
+      </div>
+      
+      <div class="items-container">
+        <div 
+          *ngFor="let family of filteredFamilies" 
+          class="item" 
+          [class.selected]="selectedFamily?.id === family.id"
+          (click)="selectFamily(family)"
+        >
+          <div class="item-content">
+            <div class="item-code">{{ family.code }}</div>
+            <div class="item-name">{{ family.name }}</div>
+          </div>
+          <div class="item-actions">
+            <button class="icon-button" (click)="openEditFamilyPanel(family); $event.stopPropagation()">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="icon-button delete" (click)="deleteFamily(family); $event.stopPropagation()">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="selectedGroup && filteredFamilies.length === 0" class="empty-message">
+          No families found for this group
+        </div>
+        
+        <div *ngIf="!selectedGroup" class="empty-message info">
+          Select a group to view families
+        </div>
+      </div>
+    </div>
+    
+    <!-- Subfamilies Column -->
+    <div class="hierarchy-column">
+      <div class="column-header">
+        <h2>Subfamilies</h2>
+        <button class="add-button" [disabled]="!selectedFamily" (click)="openAddSubfamilyPanel()">
+          <i class="material-icons">add</i>
+          New Subfamily
+        </button>
+      </div>
+      
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search subfamilies..." 
+          [(ngModel)]="subfamilyFilter" 
+          (input)="applyFilters()"
+          [disabled]="!selectedFamily"
+        >
+        <i class="material-icons">search</i>
+      </div>
+      
+      <div class="items-container">
+        <div 
+          *ngFor="let subfamily of filteredSubfamilies" 
+          class="item" 
+          [class.selected]="selectedSubfamily?.id === subfamily.id"
+          (click)="selectSubfamily(subfamily)"
+        >
+          <div class="item-content">
+            <div class="item-code">{{ subfamily.code }}</div>
+            <div class="item-name">{{ subfamily.name }}</div>
+          </div>
+          <div class="item-actions">
+            <button class="icon-button" (click)="openEditSubfamilyPanel(subfamily); $event.stopPropagation()">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="icon-button delete" (click)="deleteSubfamily(subfamily); $event.stopPropagation()">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="selectedFamily && filteredSubfamilies.length === 0" class="empty-message">
+          No subfamilies found for this family
+        </div>
+        
+        <div *ngIf="!selectedFamily" class="empty-message info">
+          Select a family to view subfamilies
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sliding panels for adding/editing items -->
+  <!-- Group Panel -->
+  <div class="side-panel" [class.active]="showGroupPanel">
+    <div class="panel-header">
+      <h2>{{ editingGroup ? 'Edit Group' : 'Add New Group' }}</h2>
+      <button class="close-button" (click)="closeAllPanels()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="panel-body">
+      <div class="form-group">
+        <label for="groupCode">Code *</label>
+        <ng-container *ngIf="editingGroup; else newGroupCode">
+          <input 
+            type="text" 
+            id="groupCode" 
+            [(ngModel)]="editingGroup.code" 
+            required
+            maxlength="10"
+          >
+        </ng-container>
+        <ng-template #newGroupCode>
+          <input 
+            type="text" 
+            id="groupCode" 
+            [(ngModel)]="newGroup.code" 
+            required
+            maxlength="10"
+          >
+        </ng-template>
+      </div>
+      
+      <div class="form-group">
+        <label for="groupName">Name *</label>
+        <ng-container *ngIf="editingGroup; else newGroupName">
+          <input 
+            type="text" 
+            id="groupName" 
+            [(ngModel)]="editingGroup.name" 
+            required
+          >
+        </ng-container>
+        <ng-template #newGroupName>
+          <input 
+            type="text" 
+            id="groupName" 
+            [(ngModel)]="newGroup.name" 
+            required
+          >
+        </ng-template>
+      </div>
+    </div>
+    
+    <div class="panel-footer">
+      <button class="secondary-button" (click)="closeAllPanels()">Cancel</button>
+      <button 
+        class="primary-button" 
+        [disabled]="!(editingGroup ? editingGroup.code && editingGroup.name : newGroup.code && newGroup.name)" 
+        (click)="saveGroup()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+  
+  <!-- Family Panel -->
+  <div class="side-panel" [class.active]="showFamilyPanel">
+    <div class="panel-header">
+      <h2>{{ editingFamily ? 'Edit Family' : 'Add New Family' }}</h2>
+      <button class="close-button" (click)="closeAllPanels()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="panel-body">
+      <div class="form-group">
+        <label>Group</label>
+        <input 
+          type="text" 
+          [value]="selectedGroup?.name" 
+          disabled
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="familyCode">Code *</label>
+        <ng-container *ngIf="editingFamily; else newFamilyCode">
+          <input 
+            type="text" 
+            id="familyCode" 
+            [(ngModel)]="editingFamily.code" 
+            required
+            maxlength="10"
+          >
+        </ng-container>
+        <ng-template #newFamilyCode>
+          <input 
+            type="text" 
+            id="familyCode" 
+            [(ngModel)]="newFamily.code" 
+            required
+            maxlength="10"
+          >
+        </ng-template>
+      </div>
+      
+      <div class="form-group">
+        <label for="familyName">Name *</label>
+        <ng-container *ngIf="editingFamily; else newFamilyName">
+          <input 
+            type="text" 
+            id="familyName" 
+            [(ngModel)]="editingFamily.name" 
+            required
+          >
+        </ng-container>
+        <ng-template #newFamilyName>
+          <input 
+            type="text" 
+            id="familyName" 
+            [(ngModel)]="newFamily.name" 
+            required
+          >
+        </ng-template>
+      </div>
+    </div>
+    
+    <div class="panel-footer">
+      <button class="secondary-button" (click)="closeAllPanels()">Cancel</button>
+      <button 
+        class="primary-button" 
+        [disabled]="!(editingFamily ? editingFamily.code && editingFamily.name : newFamily.code && newFamily.name)" 
+        (click)="saveFamily()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+  
+  <!-- Subfamily Panel -->
+  <div class="side-panel" [class.active]="showSubfamilyPanel">
+    <div class="panel-header">
+      <h2>{{ editingSubfamily ? 'Edit Subfamily' : 'Add New Subfamily' }}</h2>
+      <button class="close-button" (click)="closeAllPanels()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="panel-body">
+      <div class="form-group">
+        <label>Family</label>
+        <input 
+          type="text" 
+          [value]="selectedFamily?.name" 
+          disabled
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="subfamilyCode">Code *</label>
+        <ng-container *ngIf="editingSubfamily; else newSubfamilyCode">
+          <input 
+            type="text" 
+            id="subfamilyCode" 
+            [(ngModel)]="editingSubfamily.code" 
+            required
+            maxlength="10"
+          >
+        </ng-container>
+        <ng-template #newSubfamilyCode>
+          <input 
+            type="text" 
+            id="subfamilyCode" 
+            [(ngModel)]="newSubfamily.code" 
+            required
+            maxlength="10"
+          >
+        </ng-template>
+      </div>
+      
+      <div class="form-group">
+        <label for="subfamilyName">Name *</label>
+        <ng-container *ngIf="editingSubfamily; else newSubfamilyName">
+          <input 
+            type="text" 
+            id="subfamilyName" 
+            [(ngModel)]="editingSubfamily.name" 
+            required
+          >
+        </ng-container>
+        <ng-template #newSubfamilyName>
+          <input 
+            type="text" 
+            id="subfamilyName" 
+            [(ngModel)]="newSubfamily.name" 
+            required
+          >
+        </ng-template>
+      </div>
+    </div>
+    
+    <div class="panel-footer">
+      <button class="secondary-button" (click)="closeAllPanels()">Cancel</button>
+      <button 
+        class="primary-button" 
+        [disabled]="!(editingSubfamily ? editingSubfamily.code && editingSubfamily.name : newSubfamily.code && newSubfamily.name)" 
+        (click)="saveSubfamily()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+  
+  <!-- Backdrop for panels -->
+  <div class="panel-backdrop" [class.active]="showGroupPanel || showFamilyPanel || showSubfamilyPanel" (click)="closeAllPanels()"></div>
+</div> 

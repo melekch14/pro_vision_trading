@@ -1,0 +1,99 @@
+<div class="page-container">
+  <div class="header-row">
+    <h1 class="page-title">Customers</h1>
+    <div class="action-buttons">
+      <a routerLink="/app/customers/new" class="add-button">
+        <i class="material-icons">person_add</i>
+        Add Customer
+      </a>
+    </div>
+  </div>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <div class="filter-item search-container">
+        <input type="text" placeholder="Search by name, email or ID" [(ngModel)]="searchQuery" (input)="applyFilters()">
+        <i class="material-icons">search</i>
+      </div>
+      <div class="filter-item">
+        <label>Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+          <option value="All">All Statuses</option>
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <button class="reset-button" (click)="resetFilters()">
+        <i class="material-icons">refresh</i>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="customers-table">
+      <thead>
+        <tr>
+          <th class="sortable" (click)="setSortBy('id')">
+            ID
+            <i class="material-icons sort-icon">{{ getSortIcon('id') }}</i>
+          </th>
+          <th class="sortable" (click)="setSortBy('name')">
+            Name
+            <i class="material-icons sort-icon">{{ getSortIcon('name') }}</i>
+          </th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th class="sortable" (click)="setSortBy('joinDate')">
+            Join Date
+            <i class="material-icons sort-icon">{{ getSortIcon('joinDate') }}</i>
+          </th>
+          <th class="sortable" (click)="setSortBy('totalOrders')">
+            Orders
+            <i class="material-icons sort-icon">{{ getSortIcon('totalOrders') }}</i>
+          </th>
+          <th class="sortable" (click)="setSortBy('totalSpent')">
+            Total Spent
+            <i class="material-icons sort-icon">{{ getSortIcon('totalSpent') }}</i>
+          </th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of filteredCustomers">
+          <td>{{ customer.id }}</td>
+          <td>{{ customer.firstName }} {{ customer.lastName }}</td>
+          <td>
+            <a [href]="'mailto:' + customer.email" class="email-link">
+              {{ customer.email }}
+            </a>
+          </td>
+          <td>{{ customer.phone }}</td>
+          <td class="address-cell" [title]="getFullAddress(customer)">
+            {{ customer.address.city }}, {{ customer.address.state }}
+          </td>
+          <td>{{ customer.joinDate | date:'MMM d, y' }}</td>
+          <td>{{ customer.totalOrders }}</td>
+          <td class="amount">${{ customer.totalSpent.toFixed(2) }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(customer.status)">
+              {{ customer.status }}
+            </span>
+          </td>
+          <td class="actions">
+            <a [routerLink]="['/customers', customer.id]" class="action-btn view">
+              <i class="material-icons">visibility</i>
+            </a>
+            <a [routerLink]="['/customers', customer.id, 'edit']" class="action-btn edit">
+              <i class="material-icons">edit</i>
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="filteredCustomers.length === 0">
+          <td colspan="10" class="empty-message">No customers found matching your criteria</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

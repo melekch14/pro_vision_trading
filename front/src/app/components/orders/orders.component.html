@@ -1,0 +1,109 @@
+<div class="page-container">
+  <div class="header-row">
+    <h1 class="page-title">Orders</h1>
+    <div class="action-buttons">
+      <button class="export-button" (click)="exportOrders()">
+        <i class="material-icons">file_download</i>
+        Export to CSV
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <div class="filter-item search-container">
+        <input type="text" placeholder="Search by customer or order ID" [(ngModel)]="searchQuery" (input)="applyFilters()">
+        <i class="material-icons">search</i>
+      </div>
+      <div class="filter-item">
+        <label>Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+          <option value="All">All Statuses</option>
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Date:</label>
+        <input type="date" [(ngModel)]="dateFilter" (change)="applyFilters()">
+      </div>
+      <button class="reset-button" (click)="resetFilters()">
+        <i class="material-icons">refresh</i>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Order Date</th>
+          <th>Status</th>
+          <th>Total Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let order of filteredOrders">
+          <tr>
+            <td class="expand-cell">
+              <button class="expand-button" (click)="toggleOrderDetails(order.id)">
+                <i class="material-icons">{{ showOrderDetails[order.id] ? 'expand_less' : 'expand_more' }}</i>
+              </button>
+            </td>
+            <td>{{ order.id }}</td>
+            <td>{{ order.customerName }}</td>
+            <td>{{ order.orderDate | date:'MMM d, y' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                {{ order.status }}
+              </span>
+            </td>
+            <td class="amount">${{ order.totalAmount.toFixed(2) }}</td>
+            <td class="actions">
+              <button class="action-btn edit">
+                <i class="material-icons">edit</i>
+              </button>
+              <button class="action-btn view">
+                <i class="material-icons">visibility</i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="showOrderDetails[order.id]" class="details-row">
+            <td colspan="7">
+              <div class="order-details">
+                <h3>Order Items</h3>
+                <table class="items-table">
+                  <thead>
+                    <tr>
+                      <th>Product ID</th>
+                      <th>Product Name</th>
+                      <th>Quantity</th>
+                      <th>Unit Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of order.items">
+                      <td>{{ item.productId }}</td>
+                      <td>{{ item.productName }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td>${{ item.unitPrice.toFixed(2) }}</td>
+                      <td>${{ (item.quantity * item.unitPrice).toFixed(2) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <tr *ngIf="filteredOrders.length === 0">
+          <td colspan="7" class="empty-message">No orders found matching your criteria</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

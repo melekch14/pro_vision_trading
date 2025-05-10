@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-
+const cors = require('cors');
 const app = express();
 const authRoutes = require('./routes/authRoutes');
 const articleHierarchyRoutes = require('./routes/articleHierarchyRoutes');
@@ -8,6 +8,12 @@ const articleParamRoutes = require('./routes/articleParamRoutes');
 const fournisseurRoutes = require('./routes/fournisseurRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true
+}));
+
+app.use(cors());
 app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/article-hierarchy', articleHierarchyRoutes);

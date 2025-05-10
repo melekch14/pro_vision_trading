@@ -4,17 +4,17 @@ const db = require('../models/db');
 const createArticle = async (article) => {
     const [result] = await db.query(
         `INSERT INTO article (
-            code, libelle, foyer_id, indice_id, design_id, 
+            code, libelle, diametre, foyer_id, indice_id, design_id, 
             couleur_photo_id, traitement_id, axe, addition, 
             prix_achat, tva, prix_vente, code_a_barre, 
-            expiration, fournisseur_id, typeArticle_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            expiration, fournisseur_id, typeArticle_id, article_subfamily_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-            article.code, article.libelle, article.foyer_id, article.indice_id,
+            article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
             article.axe, article.addition, article.prix_achat, article.tva,
             article.prix_vente, article.code_a_barre, article.expiration,
-            article.fournisseur_id, article.typeArticle_id
+            article.fournisseur_id, article.typeArticle_id, article.article_subfamily_id
         ]
     );
     return result.insertId;
@@ -68,18 +68,19 @@ const getArticleById = async (id) => {
 const updateArticle = async (id, article) => {
     await db.query(
         `UPDATE article SET 
-            code = ?, libelle = ?, foyer_id = ?, indice_id = ?, 
+            code = ?, libelle = ?, diametre = ?, foyer_id = ?, indice_id = ?, 
             design_id = ?, couleur_photo_id = ?, traitement_id = ?, 
             axe = ?, addition = ?, prix_achat = ?, tva = ?, 
             prix_vente = ?, code_a_barre = ?, expiration = ?, 
-            fournisseur_id = ?, typeArticle_id = ?
+            fournisseur_id = ?, typeArticle_id = ?, article_subfamily_id = ?
         WHERE id = ?`,
         [
-            article.code, article.libelle, article.foyer_id, article.indice_id,
+
+            article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
             article.axe, article.addition, article.prix_achat, article.tva,
             article.prix_vente, article.code_a_barre, article.expiration,
-            article.fournisseur_id, article.typeArticle_id, id
+            article.fournisseur_id, article.typeArticle_id, article.article_subfamily_id, id
         ]
     );
 };

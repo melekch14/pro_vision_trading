@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleGroup, ArticleFamily, ArticleSubfamily } from '../../shared/models/article-hierarchy.model';
+import { ArticleHierarchyService } from '../../shared/services/article-hierarchy.service';
 
 @Component({
   selector: 'app-article-hierarchy',
@@ -40,47 +41,53 @@ export class ArticleHierarchyComponent implements OnInit {
   filteredGroups: ArticleGroup[] = [];
   filteredFamilies: ArticleFamily[] = [];
   filteredSubfamilies: ArticleSubfamily[] = [];
+
+  constructor(private articleHierarchyService: ArticleHierarchyService) {}
   
   ngOnInit(): void {
-    // Load sample data
-    this.loadSampleData();
-    this.applyFilters();
+    this.loadData();
   }
   
-  loadSampleData(): void {
-    // Sample groups
-    this.groups = [
-      { id: 1, code: 'GRP001', name: 'Electronics' },
-      { id: 2, code: 'GRP002', name: 'Clothing' },
-      { id: 3, code: 'GRP003', name: 'Furniture' },
-      { id: 4, code: 'GRP004', name: 'Food & Beverages' }
-    ];
-    
-    // Sample families
-    this.families = [
-      { id: 1, code: 'FAM001', name: 'Computers', group_id: 1 },
-      { id: 2, code: 'FAM002', name: 'Smartphones', group_id: 1 },
-      { id: 3, code: 'FAM003', name: 'Men\'s Clothing', group_id: 2 },
-      { id: 4, code: 'FAM004', name: 'Women\'s Clothing', group_id: 2 },
-      { id: 5, code: 'FAM005', name: 'Living Room', group_id: 3 },
-      { id: 6, code: 'FAM006', name: 'Beverages', group_id: 4 }
-    ];
-    
-    // Sample subfamilies
-    this.subfamilies = [
-      { id: 1, code: 'SUB001', name: 'Laptops', family_id: 1 },
-      { id: 2, code: 'SUB002', name: 'Desktops', family_id: 1 },
-      { id: 3, code: 'SUB003', name: 'Android Phones', family_id: 2 },
-      { id: 4, code: 'SUB004', name: 'iPhones', family_id: 2 },
-      { id: 5, code: 'SUB005', name: 'T-Shirts', family_id: 3 },
-      { id: 6, code: 'SUB006', name: 'Jeans', family_id: 3 },
-      { id: 7, code: 'SUB007', name: 'Dresses', family_id: 4 },
-      { id: 8, code: 'SUB008', name: 'Skirts', family_id: 4 },
-      { id: 9, code: 'SUB009', name: 'Sofas', family_id: 5 },
-      { id: 10, code: 'SUB010', name: 'Coffee Tables', family_id: 5 },
-      { id: 11, code: 'SUB011', name: 'Soft Drinks', family_id: 6 },
-      { id: 12, code: 'SUB012', name: 'Alcoholic Drinks', family_id: 6 }
-    ];
+  loadData(): void {
+    // Load groups
+    this.articleHierarchyService.getGroups().subscribe({
+      next: (groups) => {
+        this.groups = groups;
+        this.applyFilters();
+      },
+      error: (error) => {
+        console.error('Error loading groups:', error);
+        // Handle error appropriately
+      }
+    });
+
+    // Load families
+    this.articleHierarchyService.getFamilies().subscribe({
+      next: (families) => {
+        this.families = families;
+        if (this.selectedGroup) {
+          this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading families:', error);
+        // Handle error appropriately
+      }
+    });
+
+    // Load subfamilies
+    this.articleHierarchyService.getSubfamilies().subscribe({
+      next: (subfamilies) => {
+        this.subfamilies = subfamilies;
+        if (this.selectedFamily) {
+          this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading subfamilies:', error);
+        // Handle error appropriately
+      }
+    });
   }
   
   // Get empty objects for new items
@@ -179,161 +186,234 @@ export class ArticleHierarchyComponent implements OnInit {
   saveGroup(): void {
     if (this.editingGroup) {
       // Update existing group
-      const index = this.groups.findIndex(g => g.id === this.editingGroup!.id);
-      if (index !== -1) {
-        this.groups[index] = { ...this.editingGroup };
-      }
+      this.articleHierarchyService.updateGroup(this.editingGroup.id, this.editingGroup).subscribe({
+        next: () => {
+          const index = this.groups.findIndex(g => g.id === this.editingGroup!.id);
+          if (index !== -1) {
+            this.groups[index] = { ...this.editingGroup! };
+          }
+          this.closeAllPanels();
+          this.applyFilters();
+        },
+        error: (error) => {
+          console.error('Error updating group:', error);
+          // Handle error appropriately
+        }
+      });
     } else {
       // Add new group
-      const newId = Math.max(0, ...this.groups.map(g => g.id)) + 1;
-      this.groups.push({
-        ...this.newGroup,
-        id: newId
+      this.articleHierarchyService.createGroup(this.newGroup).subscribe({
+        next: (response) => {
+          this.groups.push({
+            ...this.newGroup,
+            id: response.id
+          });
+          this.closeAllPanels();
+          this.applyFilters();
+        },
+        error: (error) => {
+          console.error('Error creating group:', error);
+          // Handle error appropriately
+        }
       });
     }
-    
-    this.closeAllPanels();
-    this.applyFilters();
   }
   
   saveFamily(): void {
     if (this.editingFamily) {
       // Update existing family
-      const index = this.families.findIndex(f => f.id === this.editingFamily!.id);
-      if (index !== -1) {
-        this.families[index] = { ...this.editingFamily };
-      }
+      this.articleHierarchyService.updateFamily(this.editingFamily.id, this.editingFamily).subscribe({
+        next: () => {
+          const index = this.families.findIndex(f => f.id === this.editingFamily!.id);
+          if (index !== -1) {
+            this.families[index] = { ...this.editingFamily! };
+          }
+          this.closeAllPanels();
+          if (this.selectedGroup) {
+            this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error updating family:', error);
+          // Handle error appropriately
+        }
+      });
     } else if (this.selectedGroup) {
       // Add new family
-      const newId = Math.max(0, ...this.families.map(f => f.id)) + 1;
-      this.families.push({
-        ...this.newFamily,
-        id: newId,
-        group_id: this.selectedGroup.id
+      this.articleHierarchyService.createFamily(this.newFamily).subscribe({
+        next: (response) => {
+          this.families.push({
+            ...this.newFamily,
+            id: response.id,
+            group_id: this.selectedGroup!.id
+          });
+          this.closeAllPanels();
+          if (this.selectedGroup) {
+            this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error creating family:', error);
+          // Handle error appropriately
+        }
       });
-    }
-    
-    this.closeAllPanels();
-    if (this.selectedGroup) {
-      this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
     }
   }
   
   saveSubfamily(): void {
     if (this.editingSubfamily) {
       // Update existing subfamily
-      const index = this.subfamilies.findIndex(s => s.id === this.editingSubfamily!.id);
-      if (index !== -1) {
-        this.subfamilies[index] = { ...this.editingSubfamily };
-      }
+      this.articleHierarchyService.updateSubfamily(this.editingSubfamily.id, this.editingSubfamily).subscribe({
+        next: () => {
+          const index = this.subfamilies.findIndex(s => s.id === this.editingSubfamily!.id);
+          if (index !== -1) {
+            this.subfamilies[index] = { ...this.editingSubfamily! };
+          }
+          this.closeAllPanels();
+          if (this.selectedFamily) {
+            this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error updating subfamily:', error);
+          // Handle error appropriately
+        }
+      });
     } else if (this.selectedFamily) {
       // Add new subfamily
-      const newId = Math.max(0, ...this.subfamilies.map(s => s.id)) + 1;
-      this.subfamilies.push({
-        ...this.newSubfamily,
-        id: newId,
-        family_id: this.selectedFamily.id
+      this.articleHierarchyService.createSubfamily(this.newSubfamily).subscribe({
+        next: (response) => {
+          this.subfamilies.push({
+            ...this.newSubfamily,
+            id: response.id,
+            family_id: this.selectedFamily!.id
+          });
+          this.closeAllPanels();
+          if (this.selectedFamily) {
+            this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error creating subfamily:', error);
+          // Handle error appropriately
+        }
       });
-    }
-    
-    this.closeAllPanels();
-    if (this.selectedFamily) {
-      this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
     }
   }
   
   // Delete handlers
   deleteGroup(group: ArticleGroup): void {
     if (confirm(`Are you sure you want to delete the group '${group.name}'? This will also delete all associated families and subfamilies.`)) {
-      // Remove the group
-      this.groups = this.groups.filter(g => g.id !== group.id);
-      
-      // Get IDs of families to be removed
-      const familyIds = this.families
-        .filter(f => f.group_id === group.id)
-        .map(f => f.id);
-      
-      // Remove families
-      this.families = this.families.filter(f => f.group_id !== group.id);
-      
-      // Remove subfamilies
-      this.subfamilies = this.subfamilies.filter(s => !familyIds.includes(s.family_id));
-      
-      // Reset selections if needed
-      if (this.selectedGroup?.id === group.id) {
-        this.selectedGroup = null;
-        this.selectedFamily = null;
-        this.selectedSubfamily = null;
-        this.filteredFamilies = [];
-        this.filteredSubfamilies = [];
-      }
-      
-      this.applyFilters();
+      this.articleHierarchyService.deleteGroup(group.id).subscribe({
+        next: () => {
+          // Remove the group
+          this.groups = this.groups.filter(g => g.id !== group.id);
+          
+          // Get IDs of families to be removed
+          const familyIds = this.families
+            .filter(f => f.group_id === group.id)
+            .map(f => f.id);
+          
+          // Remove families
+          this.families = this.families.filter(f => f.group_id !== group.id);
+          
+          // Remove subfamilies
+          this.subfamilies = this.subfamilies.filter(s => !familyIds.includes(s.family_id));
+          
+          // Reset selections if needed
+          if (this.selectedGroup?.id === group.id) {
+            this.selectedGroup = null;
+            this.selectedFamily = null;
+            this.selectedSubfamily = null;
+            this.filteredFamilies = [];
+            this.filteredSubfamilies = [];
+          }
+          
+          this.applyFilters();
+        },
+        error: (error) => {
+          console.error('Error deleting group:', error);
+          // Handle error appropriately
+        }
+      });
     }
   }
   
   deleteFamily(family: ArticleFamily): void {
     if (confirm(`Are you sure you want to delete the family '${family.name}'? This will also delete all associated subfamilies.`)) {
-      // Remove the family
-      this.families = this.families.filter(f => f.id !== family.id);
-      
-      // Remove subfamilies
-      this.subfamilies = this.subfamilies.filter(s => s.family_id !== family.id);
-      
-      // Reset selections if needed
-      if (this.selectedFamily?.id === family.id) {
-        this.selectedFamily = null;
-        this.selectedSubfamily = null;
-        this.filteredSubfamilies = [];
-      }
-      
-      if (this.selectedGroup) {
-        this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
-      }
+      this.articleHierarchyService.deleteFamily(family.id).subscribe({
+        next: () => {
+          // Remove the family
+          this.families = this.families.filter(f => f.id !== family.id);
+          
+          // Remove associated subfamilies
+          this.subfamilies = this.subfamilies.filter(s => s.family_id !== family.id);
+          
+          // Reset selections if needed
+          if (this.selectedFamily?.id === family.id) {
+            this.selectedFamily = null;
+            this.selectedSubfamily = null;
+            this.filteredSubfamilies = [];
+          }
+          
+          if (this.selectedGroup) {
+            this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting family:', error);
+          // Handle error appropriately
+        }
+      });
     }
   }
   
   deleteSubfamily(subfamily: ArticleSubfamily): void {
     if (confirm(`Are you sure you want to delete the subfamily '${subfamily.name}'?`)) {
-      // Remove the subfamily
-      this.subfamilies = this.subfamilies.filter(s => s.id !== subfamily.id);
-      
-      // Reset selection if needed
-      if (this.selectedSubfamily?.id === subfamily.id) {
-        this.selectedSubfamily = null;
-      }
-      
-      if (this.selectedFamily) {
-        this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
-      }
+      this.articleHierarchyService.deleteSubfamily(subfamily.id).subscribe({
+        next: () => {
+          // Remove the subfamily
+          this.subfamilies = this.subfamilies.filter(s => s.id !== subfamily.id);
+          
+          // Reset selection if needed
+          if (this.selectedSubfamily?.id === subfamily.id) {
+            this.selectedSubfamily = null;
+          }
+          
+          if (this.selectedFamily) {
+            this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting subfamily:', error);
+          // Handle error appropriately
+        }
+      });
     }
   }
   
   // Filter handlers
   applyFilters(): void {
-    // Filter groups
-    this.filteredGroups = this.groups.filter(group => 
-      group.code.toLowerCase().includes(this.groupFilter.toLowerCase()) ||
-      group.name.toLowerCase().includes(this.groupFilter.toLowerCase())
+    this.filteredGroups = this.groups.filter(group =>
+      group.name.toLowerCase().includes(this.groupFilter.toLowerCase()) ||
+      group.code.toLowerCase().includes(this.groupFilter.toLowerCase())
     );
     
-    // Filter families if a group is selected
     if (this.selectedGroup) {
       this.filteredFamilies = this.families
-        .filter(family => family.group_id === this.selectedGroup!.id)
-        .filter(family => 
-          family.code.toLowerCase().includes(this.familyFilter.toLowerCase()) ||
-          family.name.toLowerCase().includes(this.familyFilter.toLowerCase())
+        .filter(f => f.group_id === this.selectedGroup!.id)
+        .filter(family =>
+          family.name.toLowerCase().includes(this.familyFilter.toLowerCase()) ||
+          family.code.toLowerCase().includes(this.familyFilter.toLowerCase())
         );
     }
     
-    // Filter subfamilies if a family is selected
     if (this.selectedFamily) {
       this.filteredSubfamilies = this.subfamilies
-        .filter(subfamily => subfamily.family_id === this.selectedFamily!.id)
-        .filter(subfamily => 
-          subfamily.code.toLowerCase().includes(this.subfamilyFilter.toLowerCase()) ||
-          subfamily.name.toLowerCase().includes(this.subfamilyFilter.toLowerCase())
+        .filter(s => s.family_id === this.selectedFamily!.id)
+        .filter(subfamily =>
+          subfamily.name.toLowerCase().includes(this.subfamilyFilter.toLowerCase()) ||
+          subfamily.code.toLowerCase().includes(this.subfamilyFilter.toLowerCase())
         );
     }
   }

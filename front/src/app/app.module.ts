@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +15,8 @@ import { CustomerFormComponent } from './components/customer-form/customer-form.
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
+import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
 
 @NgModule({
   declarations: [
@@ -25,14 +28,18 @@ import { HttpClientModule } from '@angular/common/http';
     ArticleHierarchyComponent,
     CustomerFormComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ArticleManagerComponent,
+    StockDialogComponent
   ],
   imports: [
     BrowserModule,
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

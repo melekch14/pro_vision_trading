@@ -1,0 +1,35 @@
+<div class="stock-dialog">
+  <h2>Manage Stock</h2>
+  
+  <div class="stock-grid">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th *ngFor="let sphere of sphereValues" class="sphere-header">
+            {{sphere}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cylindre of cylindreValues">
+          <td class="cylindre-header">{{cylindre}}</td>
+          <td *ngFor="let sphere of sphereValues" class="quantity-cell">
+            <input 
+              type="number" 
+              [value]="getQuantity(sphere, cylindre)"
+              (change)="onQuantityChange(sphere, cylindre, $event)"
+              min="0"
+              class="quantity-input"
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dialog-actions">
+    <button (click)="onCancel()" class="cancel-btn">Cancel</button>
+    <button (click)="onSubmit()" class="submit-btn">Save</button>
+  </div>
+</div>

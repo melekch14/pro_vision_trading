@@ -18,7 +18,13 @@ export class ArticleParamsComponent implements OnInit {
     'couleur-photos': [],
     'traitements': []
   };
-  
+  filteredParams: { [key: string]: ArticleParam[] } = {
+    'foyers': [],
+    'indices': [],
+    'designs': [],
+    'couleur-photos': [],
+    'traitements': []
+  };
   paramForms: { [key: string]: FormGroup } = {};
   filterForms: { [key: string]: FormGroup } = {};
   
@@ -29,21 +35,20 @@ export class ArticleParamsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Initialize forms for each parameter type
     const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements'];
-    
     paramTypes.forEach(type => {
       this.paramForms[type] = this.fb.group({
         name: ['', Validators.required],
         description: ['']
       });
-
       this.filterForms[type] = this.fb.group({
         search: ['']
       });
+      // Subscribe to filter changes for instant filtering
+      this.filterForms[type].get('search')!.valueChanges.subscribe(value => {
+        this.applyFilter(type, value);
+      });
     });
-
-    // Load initial data
     this.loadParams();
   }
 
@@ -53,11 +58,11 @@ export class ArticleParamsComponent implements OnInit {
 
   loadParams() {
     const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements'];
-    
     paramTypes.forEach(type => {
       this.articleParamsService.getParams(type).subscribe({
         next: (params) => {
           this.params[type] = params;
+          this.filteredParams[type] = params;
         },
         error: (error) => {
           this.snackBar.open('Error loading parameters', 'Close', {
@@ -71,15 +76,13 @@ export class ArticleParamsComponent implements OnInit {
 
   onSubmit(type: string) {
     if (this.paramForms[type].valid) {
-      console.log('paramForms[type]', this.paramForms[type].value);
       const newParam = {
         ...this.paramForms[type].value
       };
-
       this.articleParamsService.createParam(type, newParam).subscribe({
         next: (createdParam) => {
-          console.log('createdParam', createdParam);
           this.params[type].push(createdParam);
+          this.applyFilter(type); // Update filtered list
           this.paramForms[type].reset();
           this.snackBar.open('Parameter added successfully', 'Close', {
             duration: 3000
@@ -95,20 +98,23 @@ export class ArticleParamsComponent implements OnInit {
     }
   }
 
-  applyFilter(type: string) {
-    const searchTerm = this.filterForms[type].get('search')?.value.toLowerCase();
-    // TODO: Implement filtering logic
+  applyFilter(type: string, searchTerm?: string) {
+    const term = (searchTerm ?? this.filterForms[type].get('search')?.value ?? '').toLowerCase();
+    this.filteredParams[type] = this.params[type].filter(param =>
+      param.name.toLowerCase().includes(term)
+    );
   }
 
   resetFilter(type: string) {
     this.filterForms[type].reset();
-    this.applyFilter(type);
+    this.filteredParams[type] = this.params[type];
   }
 
   deleteParam(type: string, id: number) {
     this.articleParamsService.deleteParam(type, id).subscribe({
       next: () => {
         this.params[type] = this.params[type].filter(param => param.id !== id);
+        this.applyFilter(type); // Update filtered list
         this.snackBar.open('Parameter deleted successfully', 'Close', {
           duration: 3000
         });

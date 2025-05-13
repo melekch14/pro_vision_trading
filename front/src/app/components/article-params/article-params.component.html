@@ -14,7 +14,7 @@
 
   <ng-container *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements']">
     <div *ngIf="activePanel === type" class="panel-container">
-      <!-- Add Parameter Form -->
+      <!-- Add Parameter Form (left card) -->
       <div class="card form-card">
         <h2 class="section-title">Add New {{type | titlecase}}</h2>
         <form [formGroup]="paramForms[type]" (ngSubmit)="onSubmit(type)" class="param-form">
@@ -36,29 +36,21 @@
         </form>
       </div>
 
-      <!-- Filter Section -->
-      <div class="card filter-card">
-        <h2 class="section-title">Filter {{type | titlecase}}s</h2>
-        <form [formGroup]="filterForms[type]" class="filter-form">
-          <div class="form-group">
-            <label for="search">Search:</label>
+      <!-- Parameters List with Filter Above Table (right card) -->
+      <div class="card params-card">
+        <div class="params-header">
+          <h2 class="section-title">{{type | titlecase}}s</h2>
+          <span class="params-count">{{params[type].length}} items found</span>
+        </div>
+        <form [formGroup]="filterForms[type]" class="filter-form-table">
+          <div class="filter-row">
             <input type="text" id="search" formControlName="search" class="form-control" placeholder="Search by name...">
-          </div>
-          <div class="filter-actions">
             <button type="button" class="filter-btn" (click)="applyFilter(type)">
               <span class="icon-search"></span> Filter
             </button>
             <button type="button" class="reset-btn" (click)="resetFilter(type)">Reset</button>
           </div>
         </form>
-      </div>
-
-      <!-- Parameters List -->
-      <div class="card params-card">
-        <div class="params-header">
-          <h2 class="section-title">{{type | titlecase}}s</h2>
-          <span class="params-count">{{params[type].length}} items found</span>
-        </div>
         <table class="table">
           <thead>
             <tr>
@@ -68,7 +60,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let param of params[type]">
+            <tr *ngFor="let param of filteredParams[type]">
               <td><b>{{param.name}}</b></td>
               <td>{{param.description}}</td>
               <td>

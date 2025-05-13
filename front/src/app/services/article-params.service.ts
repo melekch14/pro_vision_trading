@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface ArticleParam {
@@ -8,6 +8,11 @@ export interface ArticleParam {
   name: string;
   description: string;
   createdAt: Date;
+}
+
+interface CreateResponse {
+  id: number;
+  message: string;
 }
 
 @Injectable({
@@ -42,7 +47,11 @@ export class ArticleParamsService {
     };
 
     const route = routeMap[type] || type;
-    return this.http.post<ArticleParam>(`${this.apiUrl}/${route}`, param);
+    return this.http.post<CreateResponse>(`${this.apiUrl}/${route}`, param).pipe(
+      switchMap(response => this.getParams(route).pipe(
+        map(params => params.find(p => p.id === response.id)!)
+      ))
+    );
   }
 
   deleteParam(type: string, id: number): Observable<void> {

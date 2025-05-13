@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-interface ArticleParam {
-  id: number;
-  name: string;
-  description: string;
-  createdAt: Date;
-}
+import { ArticleParamsService, ArticleParam } from '../../services/article-params.service';
 
 @Component({
   selector: 'app-article-params',
@@ -16,13 +10,13 @@ interface ArticleParam {
   standalone: false
 })
 export class ArticleParamsComponent implements OnInit {
-  activePanel: string = 'foyer';
+  activePanel: string = 'foyers';
   params: { [key: string]: ArticleParam[] } = {
-    foyer: [],
-    indice: [],
-    design: [],
-    couleurPhoto: [],
-    traitement: []
+    'foyers': [],
+    'indices': [],
+    'designs': [],
+    'couleur-photos': [],
+    'traitements': []
   };
   
   paramForms: { [key: string]: FormGroup } = {};
@@ -30,12 +24,13 @@ export class ArticleParamsComponent implements OnInit {
   
   constructor(
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private articleParamsService: ArticleParamsService
   ) {}
 
   ngOnInit() {
     // Initialize forms for each parameter type
-    const paramTypes = ['foyer', 'indice', 'design', 'couleurPhoto', 'traitement'];
+    const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements'];
     
     paramTypes.forEach(type => {
       this.paramForms[type] = this.fb.group({
@@ -57,35 +52,45 @@ export class ArticleParamsComponent implements OnInit {
   }
 
   loadParams() {
-    // TODO: Implement API calls to load parameters
-    // This is mock data for now
-    this.params = {
-      foyer: [
-        { id: 1, name: 'Foyer 1', description: 'Description 1', createdAt: new Date() },
-        { id: 2, name: 'Foyer 2', description: 'Description 2', createdAt: new Date() }
-      ],
-      indice: [
-        { id: 1, name: 'Indice 1', description: 'Description 1', createdAt: new Date() }
-      ],
-      design: [],
-      couleurPhoto: [],
-      traitement: []
-    };
+    const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements'];
+    
+    paramTypes.forEach(type => {
+      this.articleParamsService.getParams(type).subscribe({
+        next: (params) => {
+          this.params[type] = params;
+        },
+        error: (error) => {
+          this.snackBar.open('Error loading parameters', 'Close', {
+            duration: 3000
+          });
+          console.error('Error loading parameters:', error);
+        }
+      });
+    });
   }
 
   onSubmit(type: string) {
     if (this.paramForms[type].valid) {
+      console.log('paramForms[type]', this.paramForms[type].value);
       const newParam = {
-        id: Date.now(), // Temporary ID generation
-        ...this.paramForms[type].value,
-        createdAt: new Date()
+        ...this.paramForms[type].value
       };
 
-      this.params[type].push(newParam);
-      this.paramForms[type].reset();
-      
-      this.snackBar.open('Parameter added successfully', 'Close', {
-        duration: 3000
+      this.articleParamsService.createParam(type, newParam).subscribe({
+        next: (createdParam) => {
+          console.log('createdParam', createdParam);
+          this.params[type].push(createdParam);
+          this.paramForms[type].reset();
+          this.snackBar.open('Parameter added successfully', 'Close', {
+            duration: 3000
+          });
+        },
+        error: (error) => {
+          this.snackBar.open('Error adding parameter', 'Close', {
+            duration: 3000
+          });
+          console.error('Error adding parameter:', error);
+        }
       });
     }
   }
@@ -101,9 +106,19 @@ export class ArticleParamsComponent implements OnInit {
   }
 
   deleteParam(type: string, id: number) {
-    this.params[type] = this.params[type].filter(param => param.id !== id);
-    this.snackBar.open('Parameter deleted successfully', 'Close', {
-      duration: 3000
+    this.articleParamsService.deleteParam(type, id).subscribe({
+      next: () => {
+        this.params[type] = this.params[type].filter(param => param.id !== id);
+        this.snackBar.open('Parameter deleted successfully', 'Close', {
+          duration: 3000
+        });
+      },
+      error: (error) => {
+        this.snackBar.open('Error deleting parameter', 'Close', {
+          duration: 3000
+        });
+        console.error('Error deleting parameter:', error);
+      }
     });
   }
 } 

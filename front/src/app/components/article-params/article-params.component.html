@@ -4,7 +4,7 @@
   <!-- Tabs -->
   <div class="tabs">
     <button 
-      *ngFor="let type of ['foyer', 'indice', 'design', 'couleurPhoto', 'traitement']"
+      *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements']"
       [class.active]="activePanel === type" 
       class="tab-btn" 
       (click)="setPanel(type)">
@@ -12,7 +12,7 @@
     </button>
   </div>
 
-  <ng-container *ngFor="let type of ['foyer', 'indice', 'design', 'couleurPhoto', 'traitement']">
+  <ng-container *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements']">
     <div *ngIf="activePanel === type" class="panel-container">
       <!-- Add Parameter Form -->
       <div class="card form-card">
@@ -64,7 +64,6 @@
             <tr>
               <th>Name</th>
               <th>Description</th>
-              <th>Created At</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -72,7 +71,6 @@
             <tr *ngFor="let param of params[type]">
               <td><b>{{param.name}}</b></td>
               <td>{{param.description}}</td>
-              <td>{{param.createdAt | date:'medium'}}</td>
               <td>
                 <button (click)="deleteParam(type, param.id)" class="delete-btn">Delete</button>
               </td>

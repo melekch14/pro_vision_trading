@@ -3,8 +3,8 @@ const db = require('../models/db');
 // Foyer CRUD
 const createFoyer = async (foyer) => {
     const [result] = await db.query(
-        'INSERT INTO foyer (name) VALUES (?)',
-        [foyer.name]
+        'INSERT INTO foyer (name, description) VALUES (?, ?)',
+        [foyer.name, foyer.description]
     );
     return result.insertId;
 };
@@ -21,8 +21,8 @@ const getFoyerById = async (id) => {
 
 const updateFoyer = async (id, foyer) => {
     await db.query(
-        'UPDATE foyer SET name = ? WHERE id = ?',
-        [foyer.name, id]
+        'UPDATE foyer SET name = ?, description = ? WHERE id = ?',
+        [foyer.name, foyer.description, id]
     );
 };
 
@@ -33,8 +33,8 @@ const deleteFoyer = async (id) => {
 // Indice CRUD
 const createIndice = async (indice) => {
     const [result] = await db.query(
-        'INSERT INTO indice (name) VALUES (?)',
-        [indice.name]
+        'INSERT INTO indice (name, description) VALUES (?, ?)',
+        [indice.name, indice.description]
     );
     return result.insertId;
 };
@@ -51,8 +51,8 @@ const getIndiceById = async (id) => {
 
 const updateIndice = async (id, indice) => {
     await db.query(
-        'UPDATE indice SET name = ? WHERE id = ?',
-        [indice.name, id]
+        'UPDATE indice SET name = ?, description = ? WHERE id = ?',
+        [indice.name, indice.description, id]
     );
 };
 
@@ -63,8 +63,8 @@ const deleteIndice = async (id) => {
 // Design CRUD
 const createDesign = async (design) => {
     const [result] = await db.query(
-        'INSERT INTO design (name) VALUES (?)',
-        [design.name]
+        'INSERT INTO design (name, description) VALUES (?, ?)',
+        [design.name, design.description]
     );
     return result.insertId;
 };
@@ -81,8 +81,8 @@ const getDesignById = async (id) => {
 
 const updateDesign = async (id, design) => {
     await db.query(
-        'UPDATE design SET name = ? WHERE id = ?',
-        [design.name, id]
+        'UPDATE design SET name = ?, description = ? WHERE id = ?',
+        [design.name, design.description, id]
     );
 };
 
@@ -93,8 +93,8 @@ const deleteDesign = async (id) => {
 // Couleur Photo CRUD
 const createCouleurPhoto = async (couleurPhoto) => {
     const [result] = await db.query(
-        'INSERT INTO couleur_photo (name) VALUES (?)',
-        [couleurPhoto.name]
+        'INSERT INTO couleur_photo (name, description) VALUES (?, ?)',
+        [couleurPhoto.name, couleurPhoto.description]
     );
     return result.insertId;
 };
@@ -111,8 +111,8 @@ const getCouleurPhotoById = async (id) => {
 
 const updateCouleurPhoto = async (id, couleurPhoto) => {
     await db.query(
-        'UPDATE couleur_photo SET name = ? WHERE id = ?',
-        [couleurPhoto.name, id]
+        'UPDATE couleur_photo SET name = ?, description = ? WHERE id = ?',
+        [couleurPhoto.name, couleurPhoto.description, id]
     );
 };
 
@@ -123,8 +123,8 @@ const deleteCouleurPhoto = async (id) => {
 // Traitement CRUD
 const createTraitement = async (traitement) => {
     const [result] = await db.query(
-        'INSERT INTO traitement (name) VALUES (?)',
-        [traitement.name]
+        'INSERT INTO traitement (name, description) VALUES (?, ?)',
+        [traitement.name, traitement.description]
     );
     return result.insertId;
 };
@@ -141,8 +141,8 @@ const getTraitementById = async (id) => {
 
 const updateTraitement = async (id, traitement) => {
     await db.query(
-        'UPDATE traitement SET name = ? WHERE id = ?',
-        [traitement.name, id]
+        'UPDATE traitement SET name = ?, description = ? WHERE id = ?',
+        [traitement.name, traitement.description, id]
     );
 };
 
@@ -153,8 +153,8 @@ const deleteTraitement = async (id) => {
 // Type Article CRUD
 const createTypeArticle = async (typeArticle) => {
     const [result] = await db.query(
-        'INSERT INTO typeArticle (name) VALUES (?)',
-        [typeArticle.name]
+        'INSERT INTO typeArticle (name, description) VALUES (?, ?)',
+        [typeArticle.name, typeArticle.description]
     );
     return result.insertId;
 };
@@ -171,8 +171,8 @@ const getTypeArticleById = async (id) => {
 
 const updateTypeArticle = async (id, typeArticle) => {
     await db.query(
-        'UPDATE typeArticle SET name = ? WHERE id = ?',
-        [typeArticle.name, id]
+        'UPDATE typeArticle SET name = ?, description = ? WHERE id = ?',
+        [typeArticle.name, typeArticle.description, id]
     );
 };
 

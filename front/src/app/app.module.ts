@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +18,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
 import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
+import { ArticleParamsComponent } from './components/article-params/article-params.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { StockDialogComponent } from './components/article-manager/stock-dialog/
     LoginComponent,
     RegisterComponent,
     ArticleManagerComponent,
-    StockDialogComponent
+    StockDialogComponent,
+    ArticleParamsComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +42,8 @@ import { StockDialogComponent } from './components/article-manager/stock-dialog/
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

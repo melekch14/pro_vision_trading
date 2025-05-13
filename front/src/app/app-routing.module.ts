@@ -8,6 +8,7 @@ import { CustomerFormComponent } from './components/customer-form/customer-form.
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
+import { ArticleParamsComponent } from './components/article-params/article-params.component';
 
 const routes: Routes = [
   {
@@ -33,13 +34,7 @@ const routes: Routes = [
       { path: 'orders', component: OrdersComponent },
       { path: 'article-hierarchy', component: ArticleHierarchyComponent },
       { path: 'article-manager', component: ArticleManagerComponent },
-      { path: 'dashboard', redirectTo: 'customers', pathMatch: 'full' },
-      { path: 'projects', redirectTo: 'customers', pathMatch: 'full' },
-      { path: 'messages', redirectTo: 'customers', pathMatch: 'full' },
-      { path: 'analytics', redirectTo: 'customers', pathMatch: 'full' },
-      { path: 'settings', redirectTo: 'customers', pathMatch: 'full' },
-      { path: 'products', redirectTo: 'customers', pathMatch: 'full' },
-      { path: 'reports', redirectTo: 'customers', pathMatch: 'full' }
+      { path: 'article-params', component: ArticleParamsComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }

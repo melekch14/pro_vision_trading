@@ -17,21 +17,21 @@ export class SidebarComponent {
     },
     { 
       id: 2, 
-      title: 'Article Parameters', 
-      icon: 'settings',
-      route: '/app/article-params'
-    },
-    { 
-      id: 3, 
       title: 'Orders', 
       icon: 'shopping_cart',
       route: '/app/orders'
     },
     { 
-      id: 4, 
+      id: 3, 
       title: 'Customers', 
       icon: 'people',
       route: '/app/customers'
+    },
+    { 
+      id: 4, 
+      title: 'Suppliers', 
+      icon: 'local_shipping',
+      route: '/app/fournisseurs'
     },
     { 
       id: 5, 
@@ -41,8 +41,8 @@ export class SidebarComponent {
     },
     { 
       id: 6, 
-      title: 'Article Params', 
-      icon: 'account_tree',
+      title: 'Article Parameters', 
+      icon: 'settings',
       route: '/app/article-params'
     }
   ];

@@ -19,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
 import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
+import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ArticleParamsComponent } from './components/article-params/article-para
     RegisterComponent,
     ArticleManagerComponent,
     StockDialogComponent,
-    ArticleParamsComponent
+    ArticleParamsComponent,
+    FournisseurComponent
   ],
   imports: [
     BrowserModule,

@@ -9,6 +9,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
+import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
 
 const routes: Routes = [
   {
@@ -34,7 +35,8 @@ const routes: Routes = [
       { path: 'orders', component: OrdersComponent },
       { path: 'article-hierarchy', component: ArticleHierarchyComponent },
       { path: 'article-manager', component: ArticleManagerComponent },
-      { path: 'article-params', component: ArticleParamsComponent }
+      { path: 'article-params', component: ArticleParamsComponent },
+      { path: 'fournisseurs', component: FournisseurComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }

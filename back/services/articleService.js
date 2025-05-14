@@ -8,7 +8,7 @@ const createArticle = async (article) => {
             couleur_photo_id, traitement_id, axe, addition, 
             prix_achat, tva, prix_vente, code_a_barre, 
             expiration, fournisseur_id, typeArticle_id, article_subfamily_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,

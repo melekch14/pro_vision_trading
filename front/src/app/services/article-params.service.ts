@@ -10,6 +10,12 @@ export interface ArticleParam {
   createdAt: Date;
 }
 
+export interface Fournisseur {
+  code: string;
+  responsable: string;
+  // Add other fournisseur fields if needed
+}
+
 interface CreateResponse {
   id: number;
   message: string;
@@ -20,6 +26,7 @@ interface CreateResponse {
 })
 export class ArticleParamsService {
   private apiUrl = `${environment.apiUrl}/article-params`;
+  private fournisseurUrl = `${environment.apiUrl}/fournisseurs`;
 
   constructor(private http: HttpClient) {}
 
@@ -35,6 +42,10 @@ export class ArticleParamsService {
 
     const route = routeMap[type] || type;
     return this.http.get<ArticleParam[]>(`${this.apiUrl}/${route}`);
+  }
+
+  getFournisseurs(): Observable<Fournisseur[]> {
+    return this.http.get<Fournisseur[]>(this.fournisseurUrl);
   }
 
   createParam(type: string, param: Omit<ArticleParam, 'id' | 'createdAt'>): Observable<ArticleParam> {

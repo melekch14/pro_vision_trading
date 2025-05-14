@@ -1,185 +1,212 @@
 <div class="article-manager-bg">
-  <h1 class="main-title">Inventory Management</h1>
+  <div class="container">
+    <h1 class="main-title">Article Management</h1>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button [class.active]="activeTab === 'browse'" class="tab-btn" (click)="setTab('browse')">Browse Articles</button>
-    <button [class.active]="activeTab === 'add'" class="tab-btn" (click)="setTab('add')">Add New Article</button>
-  </div>
-
-  <ng-container *ngIf="activeTab === 'browse'">
-    <!-- Card: Filter Section -->
-    <div class="card filter-card">
-      <h2 class="section-title">Filter Articles</h2>
-      <form [formGroup]="filterForm" class="filter-form">
-        <div class="form-group">
-          <label for="libelle">Libelle:</label>
-          <input type="text" id="libelle" formControlName="libelle" class="form-control" placeholder="Search by label...">
-        </div>
-        <div class="form-group">
-          <label for="fournisseur">Fournisseur:</label>
-          <select id="fournisseur" formControlName="fournisseur_id" class="form-control">
-            <option value="">All</option>
-            <option *ngFor="let option of fournisseurOptions" [value]="option">{{option}}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="typeArticle">Type Article:</label>
-          <select id="typeArticle" formControlName="typeArticle_id" class="form-control">
-            <option value="">All</option>
-            <option *ngFor="let option of typeArticleOptions" [value]="option">{{option}}</option>
-          </select>
-        </div>
-        <div class="filter-actions">
-          <button type="button" class="filter-btn" (click)="applyFilters()">
-            <span class="icon-search"></span> Filter
-          </button>
-          <button type="button" class="reset-btn" (click)="filterForm.reset(); applyFilters();">Reset</button>
-        </div>
-      </form>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn" [class.active]="activeTab === 'browse'" (click)="setTab('browse')">
+        Browse Articles
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'add'" (click)="setTab('add')">
+        {{ editingArticle ? 'Edit Article' : 'Add Article' }}
+      </button>
     </div>
 
-    <!-- Card: Articles List -->
-    <div class="card articles-card">
-      <div class="articles-header">
-        <h2 class="section-title">Articles</h2>
-        <span class="articles-count">{{filteredArticles.length}} articles found</span>
+    <!-- Browse Tab -->
+    <ng-container *ngIf="activeTab === 'browse'">
+      <!-- Filter Section -->
+      <div class="card">
+        <h2 class="section-title">Filter Articles</h2>
+        <form [formGroup]="filterForm" class="filter-form">
+          <div class="form-group">
+            <label for="filterCode">Code</label>
+            <input type="text" id="filterCode" formControlName="code" class="form-control" placeholder="Search by code">
+          </div>
+          <div class="form-group">
+            <label for="filterLibelle">Libelle</label>
+            <input type="text" id="filterLibelle" formControlName="libelle" class="form-control" placeholder="Search by libelle">
+          </div>
+          <div class="form-group">
+            <label for="filterFournisseur">Fournisseur</label>
+            <select id="filterFournisseur" formControlName="fournisseur" class="form-control">
+              <option value="">All Fournisseurs</option>
+              <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
+            </select>
+          </div>
+        </form>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Libelle</th>
-            <th>Fournisseur</th>
-            <th>Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let article of filteredArticles">
-            <td><b>{{article.code}}</b></td>
-            <td>{{article.libelle}}</td>
-            <td><span class="badge">{{article.fournisseur_id}}</span></td>
-            <td>{{article.typeArticle_id}}</td>
-            <td>
-              <button (click)="openStockDialog(article)" class="manage-btn">Manage Stock</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </ng-container>
 
-  <ng-container *ngIf="activeTab === 'add'">
-    <!-- Card: Article Form -->
-    <div class="card article-form-card">
-      <h2 class="section-title">Add New Article</h2>
-      <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="code">Code:</label>
-            <input type="text" id="code" formControlName="code" class="form-control">
-          </div>
-          <div class="form-group">
-            <label for="libelle">Libelle:</label>
-            <input type="text" id="libelle" formControlName="libelle" class="form-control">
-          </div>
-          <div class="form-group">
-            <label for="diametre">Diametre:</label>
-            <input type="number" id="diametre" formControlName="diametre" class="form-control">
-          </div>
+      <!-- Articles List -->
+      <div class="card articles-card">
+        <div class="articles-header">
+          <h2 class="section-title">Articles List</h2>
+          <span class="articles-count">{{filteredArticles.length}} articles</span>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="foyer">Foyer:</label>
-            <select id="foyer" formControlName="foyer_id" class="form-control">
-              <option value="">Select Foyer</option>
-              <option *ngFor="let option of foyerOptions" [value]="option">{{option}}</option>
-            </select>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libelle</th>
+              <th>Diametre</th>
+              <th>Foyer</th>
+              <th>Indice</th>
+              <th>Design</th>
+              <th>Prix Achat</th>
+              <th>Prix Vente</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticles">
+              <td>{{article.code}}</td>
+              <td>{{article.libelle}}</td>
+              <td>{{article.diametre}}</td>
+              <td>{{article.foyer_name}}</td>
+              <td>{{article.indice_name}}</td>
+              <td>{{article.design_name}}</td>
+              <td>{{article.prix_achat}}</td>
+              <td>{{article.prix_vente}}</td>
+              <td>
+                <button class="manage-btn" (click)="editArticle(article)">Edit</button>
+                <button class="manage-btn" (click)="deleteArticle(article.id!)">Delete</button>
+                <button class="manage-btn" (click)="openStockDialog(article)">Stock</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+
+    <!-- Add/Edit Tab -->
+    <ng-container *ngIf="activeTab === 'add'">
+      <div class="card article-form-card">
+        <h2 class="section-title">{{ editingArticle ? 'Edit Article' : 'Add New Article' }}</h2>
+        <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="article-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="code">Code</label>
+              <input type="text" id="code" formControlName="code" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="libelle">Libelle</label>
+              <input type="text" id="libelle" formControlName="libelle" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="diametre">Diametre</label>
+              <input type="number" id="diametre" formControlName="diametre" class="form-control">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="indice">Indice:</label>
-            <select id="indice" formControlName="indice_id" class="form-control">
-              <option value="">Select Indice</option>
-              <option *ngFor="let option of indiceOptions" [value]="option">{{option}}</option>
-            </select>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="foyer">Foyer</label>
+              <select id="foyer" formControlName="foyer_id" class="form-control">
+                <option value="">Select Foyer</option>
+                <option *ngFor="let option of foyerOptions" [value]="option.id">{{option.name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="indice">Indice</label>
+              <select id="indice" formControlName="indice_id" class="form-control">
+                <option value="">Select Indice</option>
+                <option *ngFor="let option of indiceOptions" [value]="option.id">{{option.name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="design">Design</label>
+              <select id="design" formControlName="design_id" class="form-control">
+                <option value="">Select Design</option>
+                <option *ngFor="let option of designOptions" [value]="option.id">{{option.name}}</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="design">Design:</label>
-            <select id="design" formControlName="design_id" class="form-control">
-              <option value="">Select Design</option>
-              <option *ngFor="let option of designOptions" [value]="option">{{option}}</option>
-            </select>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="couleurPhoto">Couleur Photo</label>
+              <select id="couleurPhoto" formControlName="couleur_photo_id" class="form-control">
+                <option value="">Select Couleur Photo</option>
+                <option *ngFor="let option of couleurPhotoOptions" [value]="option.id">{{option.name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="traitement">Traitement</label>
+              <select id="traitement" formControlName="traitement_id" class="form-control">
+                <option value="">Select Traitement</option>
+                <option *ngFor="let option of traitementOptions" [value]="option.id">{{option.name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fournisseur">Fournisseur</label>
+              <select id="fournisseur" formControlName="fournisseur_id" class="form-control">
+                <option value="">Select Fournisseur</option>
+                <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="couleurPhoto">Couleur Photo:</label>
-            <select id="couleurPhoto" formControlName="couleur_photo_id" class="form-control">
-              <option value="">Select Couleur Photo</option>
-              <option *ngFor="let option of couleurPhotoOptions" [value]="option">{{option}}</option>
-            </select>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="axe">Axe</label>
+              <input type="text" id="axe" formControlName="axe" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="addition">Addition</label>
+              <input type="number" id="addition" formControlName="addition" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="typeArticle">Type Article</label>
+              <select id="typeArticle" formControlName="typeArticle_id" class="form-control">
+                <option value="">Select Type Article</option>
+                <option *ngFor="let option of typeArticleOptions" [value]="option">{{option}}</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="traitement">Traitement:</label>
-            <select id="traitement" formControlName="traitement_id" class="form-control">
-              <option value="">Select Traitement</option>
-              <option *ngFor="let option of traitementOptions" [value]="option">{{option}}</option>
-            </select>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prixAchat">Prix Achat</label>
+              <input type="number" id="prixAchat" formControlName="prix_achat" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="tva">TVA</label>
+              <input type="number" id="tva" formControlName="tva" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="prixVente">Prix Vente</label>
+              <input type="number" id="prixVente" formControlName="prix_vente" class="form-control">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="axe">Axe:</label>
-            <input type="text" id="axe" formControlName="axe" class="form-control">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="codeBarre">Code à Barre</label>
+              <input type="text" id="codeBarre" formControlName="code_a_barre" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="expiration">Expiration</label>
+              <input type="date" id="expiration" formControlName="expiration" class="form-control">
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="addition">Addition:</label>
-            <input type="number" id="addition" formControlName="addition" class="form-control">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="subfamily">Sous-famille</label>
+              <select id="subfamily" formControlName="article_subfamily_id" class="form-control">
+                <option value="">Select Sous-famille</option>
+                <option *ngFor="let option of subfamilyOptions" [value]="option.id">{{option.name}}</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="prixAchat">Prix Achat:</label>
-            <input type="number" id="prixAchat" formControlName="prix_achat" class="form-control">
+
+          <div class="form-actions">
+            <button type="button" class="manage-btn" (click)="setTab('browse')">Cancel</button>
+            <button type="submit" class="manage-btn" [disabled]="!articleForm.valid">
+              {{ editingArticle ? 'Update' : 'Create' }}
+            </button>
           </div>
-          <div class="form-group">
-            <label for="tva">TVA:</label>
-            <input type="number" id="tva" formControlName="tva" class="form-control">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="prixVente">Prix Vente:</label>
-            <input type="number" id="prixVente" formControlName="prix_vente" class="form-control">
-          </div>
-          <div class="form-group">
-            <label for="codeBarre">Code à Barre:</label>
-            <input type="text" id="codeBarre" formControlName="code_a_barre" class="form-control">
-          </div>
-          <div class="form-group">
-            <label for="expiration">Expiration:</label>
-            <input type="date" id="expiration" formControlName="expiration" class="form-control">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fournisseur">Fournisseur:</label>
-            <select id="fournisseur" formControlName="fournisseur_id" class="form-control">
-              <option value="">Select Fournisseur</option>
-              <option *ngFor="let option of fournisseurOptions" [value]="option">{{option}}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="typeArticle">Type Article:</label>
-            <select id="typeArticle" formControlName="typeArticle_id" class="form-control">
-              <option value="">Select Type Article</option>
-              <option *ngFor="let option of typeArticleOptions" [value]="option">{{option}}</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" [disabled]="!articleForm.valid" class="save-btn">Save Article</button>
-        </div>
-      </form>
-    </div>
-  </ng-container>
+        </form>
+      </div>
+    </ng-container>
+  </div>
 </div>

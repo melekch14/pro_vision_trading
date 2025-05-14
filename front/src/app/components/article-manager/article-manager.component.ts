@@ -1,27 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ArticleService, Article } from '../../services/article.service';
+import { ArticleParamsService } from '../../services/article-params.service';
+import { ArticleHierarchyService } from '../../shared/services/article-hierarchy.service';
+import { ArticleSubfamily } from '../../shared/models/article-hierarchy.model';
 import { StockDialogComponent } from './stock-dialog/stock-dialog.component';
-
-interface Article {
-  code: string;
-  libelle: string;
-  diametre: number;
-  foyer_id: number;
-  indice_id: number;
-  design_id: number;
-  couleur_photo_id: number;
-  traitement_id: number;
-  axe: string;
-  addition: number;
-  prix_achat: number;
-  tva: number;
-  prix_vente: number;
-  code_a_barre: string;
-  expiration: string;
-  fournisseur_id: string;
-  typeArticle_id: number;
-}
 
 interface StockEntry {
   sphere: number;
@@ -41,51 +26,58 @@ export class ArticleManagerComponent implements OnInit {
   articles: Article[] = [];
   filteredArticles: Article[] = [];
   
-  // Static options
-  foyerOptions = [1, 2, 3];
-  indiceOptions = [1, 2, 3];
-  designOptions = [1, 2, 3];
-  couleurPhotoOptions = [1, 2, 3];
-  traitementOptions = [1, 2, 3];
-  fournisseurOptions = ['F1', 'F2', 'F3'];
-  typeArticleOptions = [1, 2, 3];
+  // Options from services
+  foyerOptions: any[] = [];
+  indiceOptions: any[] = [];
+  designOptions: any[] = [];
+  couleurPhotoOptions: any[] = [];
+  traitementOptions: any[] = [];
+  fournisseurOptions: any[] = [];
+  typeArticleOptions = [1, 2, 3]; // Static for now
+  subfamilyOptions: ArticleSubfamily[] = [];
   
+  // Tab state
+  activeTab: 'browse' | 'add' = 'browse';
+  editingArticle: Article | null = null;
+
   // Stock management
   sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
   cylindreValues: number[] = Array.from({length: 9}, (_, i) => -2 + (i * 0.25));
   stockEntries: StockEntry[] = [];
 
-  // Tab state
-  activeTab: 'browse' | 'add' = 'browse';
-
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private articleService: ArticleService,
+    private articleParamsService: ArticleParamsService,
+    private articleHierarchyService: ArticleHierarchyService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.articleForm = this.fb.group({
       code: ['', Validators.required],
       libelle: ['', Validators.required],
-      diametre: [null, [Validators.required, Validators.min(0)]],
-      foyer_id: [null, Validators.required],
-      indice_id: [null, Validators.required],
-      design_id: [null, Validators.required],
-      couleur_photo_id: [null, Validators.required],
-      traitement_id: [null, Validators.required],
+      diametre: ['', [Validators.required, Validators.min(0)]],
+      foyer_id: ['', Validators.required],
+      indice_id: ['', Validators.required],
+      design_id: ['', Validators.required],
+      couleur_photo_id: ['', Validators.required],
+      traitement_id: ['', Validators.required],
       axe: ['', Validators.required],
-      addition: [null, [Validators.required, Validators.min(0)]],
-      prix_achat: [null, [Validators.required, Validators.min(0)]],
-      tva: [null, [Validators.required, Validators.min(0)]],
-      prix_vente: [null, [Validators.required, Validators.min(0)]],
+      addition: ['', [Validators.required, Validators.min(0)]],
+      prix_achat: ['', [Validators.required, Validators.min(0)]],
+      tva: ['', [Validators.required, Validators.min(0)]],
+      prix_vente: ['', [Validators.required, Validators.min(0)]],
       code_a_barre: ['', Validators.required],
       expiration: ['', Validators.required],
-      fournisseur_id: [null, Validators.required],
-      typeArticle_id: [null, Validators.required]
+      fournisseur_id: ['', Validators.required],
+      typeArticle_id: ['', Validators.required],
+      article_subfamily_id: ['', Validators.required]
     });
 
     this.filterForm = this.fb.group({
+      code: [''],
       libelle: [''],
-      fournisseur_id: [''],
-      typeArticle_id: ['']
+      fournisseur: ['']
     });
 
     // Initialize stock entries
@@ -93,10 +85,9 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load mock data
-    this.loadMockData();
+    this.loadArticles();
+    this.loadOptions();
     
-    // Subscribe to filter changes
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
     });
@@ -115,69 +106,128 @@ export class ArticleManagerComponent implements OnInit {
     });
   }
 
-  private loadMockData(): void {
-    // Mock data
-    this.articles = [
-      {
-        code: 'ART001',
-        libelle: 'Article Test 1',
-        diametre: 14.5,
-        foyer_id: 1,
-        indice_id: 1,
-        design_id: 1,
-        couleur_photo_id: 1,
-        traitement_id: 1,
-        axe: '90',
-        addition: 2.5,
-        prix_achat: 100,
-        tva: 20,
-        prix_vente: 150,
-        code_a_barre: '123456789',
-        expiration: '2024-12-31',
-        fournisseur_id: 'F1',
-        typeArticle_id: 1
+  loadArticles(): void {
+    this.articleService.getArticles().subscribe({
+      next: (articles) => {
+        this.articles = articles;
+        this.filteredArticles = [...articles];
       },
-      {
-        code: 'ART002',
-        libelle: 'Article Test 1',
-        diametre: 14.5,
-        foyer_id: 1,
-        indice_id: 1,
-        design_id: 1,
-        couleur_photo_id: 1,
-        traitement_id: 1,
-        axe: '90',
-        addition: 2.5,
-        prix_achat: 100,
-        tva: 20,
-        prix_vente: 150,
-        code_a_barre: '123456789',
-        expiration: '2024-12-31',
-        fournisseur_id: 'F2',
-        typeArticle_id: 2
-      },
-    ];
-    this.filteredArticles = [...this.articles];
+      error: (error) => {
+        this.snackBar.open('Error loading articles', 'Close', { duration: 3000 });
+        console.error('Error loading articles:', error);
+      }
+    });
+  }
+
+  loadOptions(): void {
+    // Load foyers
+    this.articleParamsService.getParams('foyers').subscribe({
+      next: (params) => this.foyerOptions = params,
+      error: (error) => console.error('Error loading foyers:', error)
+    });
+
+    // Load indices
+    this.articleParamsService.getParams('indices').subscribe({
+      next: (params) => this.indiceOptions = params,
+      error: (error) => console.error('Error loading indices:', error)
+    });
+
+    // Load designs
+    this.articleParamsService.getParams('designs').subscribe({
+      next: (params) => this.designOptions = params,
+      error: (error) => console.error('Error loading designs:', error)
+    });
+
+    // Load couleur photos
+    this.articleParamsService.getParams('couleur-photos').subscribe({
+      next: (params) => this.couleurPhotoOptions = params,
+      error: (error) => console.error('Error loading couleur photos:', error)
+    });
+
+    // Load traitements
+    this.articleParamsService.getParams('traitements').subscribe({
+      next: (params) => this.traitementOptions = params,
+      error: (error) => console.error('Error loading traitements:', error)
+    });
+
+    // Load fournisseurs
+    this.articleParamsService.getFournisseurs().subscribe({
+      next: (fournisseurs) => this.fournisseurOptions = fournisseurs,
+      error: (error) => console.error('Error loading fournisseurs:', error)
+    });
+
+    // Load subfamilies
+    this.articleHierarchyService.getSubfamilies().subscribe({
+      next: (subfamilies) => this.subfamilyOptions = subfamilies,
+      error: (error) => console.error('Error loading subfamilies:', error)
+    });
   }
 
   onSubmit(): void {
     if (this.articleForm.valid) {
-      const newArticle = this.articleForm.value;
-      this.articles.push(newArticle);
-      this.filteredArticles = [...this.articles];
-      this.articleForm.reset();
-      // In a real application, you would call a service to save the article
-      console.log('Article saved:', newArticle);
+      const article = this.articleForm.value;
+      
+      if (this.editingArticle) {
+        this.articleService.updateArticle(this.editingArticle.id!, article).subscribe({
+          next: () => {
+            this.snackBar.open('Article updated successfully', 'Close', { duration: 3000 });
+            this.loadArticles();
+            this.resetForm();
+          },
+          error: (error) => {
+            this.snackBar.open('Error updating article', 'Close', { duration: 3000 });
+            console.error('Error updating article:', error);
+          }
+        });
+      } else {
+        this.articleService.createArticle(article).subscribe({
+          next: () => {
+            this.snackBar.open('Article created successfully', 'Close', { duration: 3000 });
+            this.loadArticles();
+            this.resetForm();
+          },
+          error: (error) => {
+            this.snackBar.open('Error creating article', 'Close', { duration: 3000 });
+            console.error('Error creating article:', error);
+          }
+        });
+      }
     }
+  }
+
+  editArticle(article: Article): void {
+    this.editingArticle = article;
+    this.articleForm.patchValue(article);
+    this.setTab('add');
+  }
+
+  deleteArticle(id: number): void {
+    if (confirm('Are you sure you want to delete this article?')) {
+      this.articleService.deleteArticle(id).subscribe({
+        next: () => {
+          this.snackBar.open('Article deleted successfully', 'Close', { duration: 3000 });
+          this.loadArticles();
+        },
+        error: (error) => {
+          this.snackBar.open('Error deleting article', 'Close', { duration: 3000 });
+          console.error('Error deleting article:', error);
+        }
+      });
+    }
+  }
+
+  resetForm(): void {
+    this.articleForm.reset();
+    this.editingArticle = null;
   }
 
   applyFilters(): void {
     const filters = this.filterForm.value;
     this.filteredArticles = this.articles.filter(article => {
       return (
+        (!filters.code || article.code.toLowerCase().includes(filters.code.toLowerCase())) &&
         (!filters.libelle || article.libelle.toLowerCase().includes(filters.libelle.toLowerCase())) &&
-        (!filters.fournisseur_id || article.fournisseur_id === filters.fournisseur_id) &&
-        (!filters.typeArticle_id || article.typeArticle_id === filters.typeArticle_id)
+        (!filters.fournisseur || article.fournisseur_id === filters.fournisseur)
       );
     });
   }
@@ -201,7 +251,10 @@ export class ArticleManagerComponent implements OnInit {
     console.log('Stock entries:', this.stockEntries);
   }
 
-  setTab(tab: 'browse' | 'add') {
+  setTab(tab: 'browse' | 'add'): void {
     this.activeTab = tab;
+    if (tab === 'add' && !this.editingArticle) {
+      this.resetForm();
+    }
   }
 }

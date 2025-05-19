@@ -4,7 +4,7 @@
   <!-- Tabs -->
   <div class="tabs">
     <button 
-      *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements']"
+      *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles']"
       [class.active]="activePanel === type" 
       class="tab-btn" 
       (click)="setPanel(type)">
@@ -12,7 +12,7 @@
     </button>
   </div>
 
-  <ng-container *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements']">
+  <ng-container *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles']">
     <div *ngIf="activePanel === type" class="panel-container">
       <!-- Add Parameter Form (left card) -->
       <div class="card form-card">

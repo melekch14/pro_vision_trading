@@ -9,7 +9,7 @@ const fournisseurRoutes = require('./routes/fournisseurRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: true,
   credentials: true
 }));
 

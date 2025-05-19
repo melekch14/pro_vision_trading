@@ -14,7 +14,7 @@ export class ArticleHierarchyService {
 
   // Group operations
   createGroup(group: ArticleGroup): Observable<{ id: number, message: string }> {
-    return this.http.post<{ id: number, message: string }>(`${this.apiUrl}/group`, group);
+    return this.http.post<{ id: number, message: string }>(`${this.apiUrl}/groups`, group);
   }
 
   getGroups(): Observable<ArticleGroup[]> {
@@ -22,15 +22,15 @@ export class ArticleHierarchyService {
   }
 
   getGroupById(id: number): Observable<ArticleGroup> {
-    return this.http.get<ArticleGroup>(`${this.apiUrl}/group/${id}`);
+    return this.http.get<ArticleGroup>(`${this.apiUrl}/groups/${id}`);
   }
 
   updateGroup(id: number, group: ArticleGroup): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.apiUrl}/group/${id}`, group);
+    return this.http.put<{ message: string }>(`${this.apiUrl}/groups/${id}`, group);
   }
 
   deleteGroup(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/group/${id}`);
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/groups/${id}`);
   }
 
   // Family operations

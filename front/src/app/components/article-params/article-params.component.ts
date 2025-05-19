@@ -16,14 +16,16 @@ export class ArticleParamsComponent implements OnInit {
     'indices': [],
     'designs': [],
     'couleur-photos': [],
-    'traitements': []
+    'traitements': [],
+    'type-articles': []
   };
   filteredParams: { [key: string]: ArticleParam[] } = {
     'foyers': [],
     'indices': [],
     'designs': [],
     'couleur-photos': [],
-    'traitements': []
+    'traitements': [],
+    'type-articles': []
   };
   paramForms: { [key: string]: FormGroup } = {};
   filterForms: { [key: string]: FormGroup } = {};
@@ -35,7 +37,7 @@ export class ArticleParamsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements'];
+    const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles'];
     paramTypes.forEach(type => {
       this.paramForms[type] = this.fb.group({
         name: ['', Validators.required],
@@ -57,7 +59,7 @@ export class ArticleParamsComponent implements OnInit {
   }
 
   loadParams() {
-    const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements'];
+    const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles'];
     paramTypes.forEach(type => {
       this.articleParamsService.getParams(type).subscribe({
         next: (params) => {

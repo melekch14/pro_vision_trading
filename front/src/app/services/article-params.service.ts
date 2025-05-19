@@ -37,7 +37,8 @@ export class ArticleParamsService {
       'indices': 'indices',
       'designs': 'designs',
       'couleur-photos': 'couleur-photos',
-      'traitements': 'traitements'
+      'traitements': 'traitements',
+      'type-articles': 'type-articles'
     };
 
     const route = routeMap[type] || type;
@@ -54,7 +55,8 @@ export class ArticleParamsService {
       'indices': 'indices',
       'designs': 'designs',
       'couleur-photos': 'couleur-photos',
-      'traitements': 'traitements'
+      'traitements': 'traitements',
+      'type-articles': 'type-articles'
     };
 
     const route = routeMap[type] || type;
@@ -71,7 +73,8 @@ export class ArticleParamsService {
       'indices': 'indices',
       'designs': 'designs',
       'couleur-photos': 'couleur-photos',
-      'traitements': 'traitements'
+      'traitements': 'traitements',
+      'type-articles': 'type-articles'
     };
 
     const route = routeMap[type] || type;

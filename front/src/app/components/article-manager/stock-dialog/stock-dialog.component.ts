@@ -16,8 +16,8 @@ interface StockEntry {
 })
 export class StockDialogComponent implements OnInit {
   stockForm: FormGroup;
-  sphereValues: number[] = Array.from({length: 20}, (_, i) => -2 + (i * 0.25));
-  cylindreValues: number[] = Array.from({length: 10}, (_, i) => -2 + (i * 0.25));
+  sphereValues: number[] = Array.from({length: 6}, (_, i) => -1 + (i * 0.25));
+  cylindreValues: number[] = Array.from({length: 6}, (_, i) => -1 + (i * 0.25));
   stockEntries: { [key: string]: number } = {};
 
   constructor(

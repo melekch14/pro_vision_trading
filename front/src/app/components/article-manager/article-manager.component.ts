@@ -7,11 +7,12 @@ import { ArticleParamsService } from '../../services/article-params.service';
 import { ArticleHierarchyService } from '../../shared/services/article-hierarchy.service';
 import { ArticleSubfamily } from '../../shared/models/article-hierarchy.model';
 import { StockDialogComponent } from './stock-dialog/stock-dialog.component';
+import { StockService, StockEntry as ApiStockEntry } from '../../services/stock.service';
 
-interface StockEntry {
+interface DialogStockEntry {
   sphere: number;
   cylindre: number;
-  quantity: number;
+  quantite: number;
 }
 
 @Component({
@@ -43,13 +44,14 @@ export class ArticleManagerComponent implements OnInit {
   // Stock management
   sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
   cylindreValues: number[] = Array.from({length: 9}, (_, i) => -2 + (i * 0.25));
-  stockEntries: StockEntry[] = [];
+  stockEntries: DialogStockEntry[] = [];
 
   constructor(
     private fb: FormBuilder,
     private articleService: ArticleService,
     private articleParamsService: ArticleParamsService,
     private articleHierarchyService: ArticleHierarchyService,
+    private stockService: StockService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {
@@ -100,7 +102,7 @@ export class ArticleManagerComponent implements OnInit {
         this.stockEntries.push({
           sphere,
           cylindre,
-          quantity: 0
+          quantite: 0
         });
       });
     });
@@ -240,8 +242,44 @@ export class ArticleManagerComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // In a real application, you would save the stock entries
-        console.log('Stock entries saved:', result);
+        // Save stock entries
+        const stockEntries: ApiStockEntry[] = result.map((entry: DialogStockEntry) => ({
+          article_id: article.id!,
+          sphere: entry.sphere,
+          cylindre: entry.cylindre,
+          quantite: entry.quantite
+        }));
+
+        // First, get existing stock entries
+        this.stockService.getStockByArticleId(article.id!).subscribe({
+          next: (existingEntries) => {
+            // Update or create entries
+            const promises = stockEntries.map(entry => {
+              const existingEntry = existingEntries.find(
+                e => e.sphere === entry.sphere && e.cylindre === entry.cylindre
+              );
+
+              if (existingEntry) {
+                return this.stockService.updateStock(existingEntry.id!, entry).toPromise();
+              } else {
+                return this.stockService.createStock(entry).toPromise();
+              }
+            });
+
+            Promise.all(promises)
+              .then(() => {
+                this.snackBar.open('Stock updated successfully', 'Close', { duration: 3000 });
+              })
+              .catch(error => {
+                console.error('Error updating stock:', error);
+                this.snackBar.open('Error updating stock', 'Close', { duration: 3000 });
+              });
+          },
+          error: (error) => {
+            console.error('Error fetching existing stock:', error);
+            this.snackBar.open('Error fetching existing stock', 'Close', { duration: 3000 });
+          }
+        });
       }
     });
   }

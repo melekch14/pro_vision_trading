@@ -4,6 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +24,9 @@ import { ArticleManagerComponent } from './components/article-manager/article-ma
 import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
 import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption } from '@angular/material/select';
+import { MatIcon } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -33,9 +40,9 @@ import { FournisseurComponent } from './components/fournisseur/fournisseur.compo
     LoginComponent,
     RegisterComponent,
     ArticleManagerComponent,
-    StockDialogComponent,
     ArticleParamsComponent,
-    FournisseurComponent
+    FournisseurComponent,
+    StockDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +52,15 @@ import { FournisseurComponent } from './components/fournisseur/fournisseur.compo
     AppRoutingModule,
     HttpClientModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatFormField,
+    MatLabel,
+    MatOption,
+    MatIcon
   ],
   providers: [],
   bootstrap: [AppComponent]

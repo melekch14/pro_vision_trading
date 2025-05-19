@@ -1,12 +1,12 @@
-<div class="stock-dialog">
-  <h2>Manage Stock</h2>
-  
+<h2 mat-dialog-title>Stock Management - {{data.article.libelle}}</h2>
+
+<mat-dialog-content>
   <div class="stock-grid">
     <table>
       <thead>
         <tr>
           <th></th>
-          <th *ngFor="let sphere of sphereValues" class="sphere-header">
+          <th *ngFor="let sphere of sphereValues.slice(0, 17)" class="sphere-header">
             {{sphere}}
           </th>
         </tr>
@@ -14,22 +14,47 @@
       <tbody>
         <tr *ngFor="let cylindre of cylindreValues">
           <td class="cylindre-header">{{cylindre}}</td>
-          <td *ngFor="let sphere of sphereValues" class="quantity-cell">
-            <input 
-              type="number" 
-              [value]="getQuantity(sphere, cylindre)"
-              (change)="onQuantityChange(sphere, cylindre, $event)"
+          <td *ngFor="let sphere of sphereValues.slice(0, 17)" class="quantity-cell"
+              [class.has-stock]="hasExistingStock(sphere, cylindre)">
+            <input type="number" 
               min="0"
-              class="quantity-input"
-            >
+              [ngModel]="getQuantity(sphere, cylindre)"
+              (ngModelChange)="onQuantityChange(sphere, cylindre, $event)"
+              class="quantity-input">
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="dialog-actions">
-    <button (click)="onCancel()" class="cancel-btn">Cancel</button>
-    <button (click)="onSubmit()" class="submit-btn">Save</button>
+  <div class="stock-grid">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th *ngFor="let sphere of sphereValues.slice(17)" class="sphere-header">
+            {{sphere}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cylindre of cylindreValues">
+          <td class="cylindre-header">{{cylindre}}</td>
+          <td *ngFor="let sphere of sphereValues.slice(17)" class="quantity-cell"
+              [class.has-stock]="hasExistingStock(sphere, cylindre)">
+            <input type="number" 
+              min="0"
+              [ngModel]="getQuantity(sphere, cylindre)"
+              (ngModelChange)="onQuantityChange(sphere, cylindre, $event)"
+              class="quantity-input">
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

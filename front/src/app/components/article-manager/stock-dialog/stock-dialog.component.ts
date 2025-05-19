@@ -1,11 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Article } from '../../../services/article.service';
+import { StockService, StockEntry as ApiStockEntry } from '../../../services/stock.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-interface StockEntry {
+interface DialogStockEntry {
   sphere: number;
   cylindre: number;
-  quantity: number;
+  quantite: number;
 }
 
 @Component({
@@ -15,49 +17,101 @@ interface StockEntry {
   styleUrl: './stock-dialog.component.scss'
 })
 export class StockDialogComponent implements OnInit {
-  stockForm: FormGroup;
-  sphereValues: number[] = Array.from({length: 6}, (_, i) => -1 + (i * 0.25));
-  cylindreValues: number[] = Array.from({length: 6}, (_, i) => -1 + (i * 0.25));
-  stockEntries: { [key: string]: number } = {};
+  sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
+  cylindreValues: number[] = Array.from({length: 9}, (_, i) => -2 + (i * 0.25));
+  stockEntries: DialogStockEntry[] = [];
+  existingStock: ApiStockEntry[] = [];
 
   constructor(
-    private dialogRef: MatDialogRef<StockDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder
-  ) {
-    this.stockForm = this.fb.group({});
-  }
+    public dialogRef: MatDialogRef<StockDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { article: Article },
+    private stockService: StockService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
-    // Initialize stock entries
+    this.initializeStockEntries();
+    this.loadExistingStock();
+  }
+
+  private initializeStockEntries(): void {
+    this.stockEntries = [];
     this.sphereValues.forEach(sphere => {
       this.cylindreValues.forEach(cylindre => {
-        const key = `${sphere}_${cylindre}`;
-        this.stockEntries[key] = 0;
-        this.stockForm.addControl(key, this.fb.control(0));
+        this.stockEntries.push({
+          sphere,
+          cylindre,
+          quantite: 0
+        });
       });
     });
   }
 
-  getQuantity(sphere: number, cylindre: number): number {
-    const key = `${sphere}_${cylindre}`;
-    return this.stockEntries[key] || 0;
-  }
-
-  onQuantityChange(sphere: number, cylindre: number, event: any): void {
-    const key = `${sphere}_${cylindre}`;
-    this.stockEntries[key] = event.target.value;
-  }
-
-  onSubmit(): void {
-    const stockData = Object.entries(this.stockEntries).map(([key, quantity]) => {
-      const [sphere, cylindre] = key.split('_').map(Number);
-      return { sphere, cylindre, quantity };
+  private loadExistingStock(): void {
+    this.stockService.getStockByArticleId(this.data.article.id!).subscribe({
+      next: (entries) => {
+        this.existingStock = entries;
+        entries.forEach(entry => {
+          const sphere = parseFloat(entry.sphere.toString());
+          const cylindre = parseFloat(entry.cylindre.toString());
+          const stockEntry = this.stockEntries.find(
+            e => Math.abs(e.sphere - sphere) < 0.001 && Math.abs(e.cylindre - cylindre) < 0.001
+          );
+          if (stockEntry) {
+            stockEntry.quantite = entry.quantite;
+            console.log('Updated stock entry:', { sphere, cylindre, quantite: entry.quantite });
+          }
+        });
+        console.log('All stock entries:', this.stockEntries);
+      },
+      error: (error) => {
+        console.error('Error loading stock:', error);
+        this.snackBar.open('Error loading stock', 'Close', { duration: 3000 });
+      }
     });
-    this.dialogRef.close(stockData);
+  }
+
+  hasExistingStock(sphere: number, cylindre: number): boolean {
+    return this.existingStock.some(entry => {
+      const entrySphere = parseFloat(entry.sphere.toString());
+      const entryCylindre = parseFloat(entry.cylindre.toString());
+      return Math.abs(entrySphere - sphere) < 0.001 && 
+             Math.abs(entryCylindre - cylindre) < 0.001 && 
+             entry.quantite > 0;
+    });
+  }
+
+  getQuantity(sphere: number, cylindre: number): number {
+    const entry = this.stockEntries.find(
+      e => Math.abs(e.sphere - sphere) < 0.001 && Math.abs(e.cylindre - cylindre) < 0.001
+    );
+    return entry ? entry.quantite : 0;
+  }
+
+  onQuantityChange(sphere: number, cylindre: number, value: number): void {
+    const entry = this.stockEntries.find(
+      e => Math.abs(e.sphere - sphere) < 0.001 && Math.abs(e.cylindre - cylindre) < 0.001
+    );
+    
+    if (entry) {
+      entry.quantite = value || 0;
+      const existingEntry = this.existingStock.find(e => {
+        const entrySphere = parseFloat(e.sphere.toString());
+        const entryCylindre = parseFloat(e.cylindre.toString());
+        return Math.abs(entrySphere - sphere) < 0.001 && Math.abs(entryCylindre - cylindre) < 0.001;
+      });
+      if (existingEntry) {
+        existingEntry.quantite = value || 0;
+      }
+    }
   }
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  onSave(): void {
+    const entriesToSave = this.stockEntries.filter(entry => entry.quantite > 0);
+    this.dialogRef.close(entriesToSave);
   }
 }

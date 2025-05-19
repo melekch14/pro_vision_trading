@@ -7,6 +7,7 @@ const articleHierarchyRoutes = require('./routes/articleHierarchyRoutes');
 const articleParamRoutes = require('./routes/articleParamRoutes');
 const fournisseurRoutes = require('./routes/fournisseurRoutes');
 const articleRoutes = require('./routes/articleRoutes');
+const stockRoutes = require('./routes/stockRoutes');
 
 app.use(cors({
   origin: true,
@@ -20,6 +21,7 @@ app.use('/article-hierarchy', articleHierarchyRoutes);
 app.use('/article-params', articleParamRoutes);
 app.use('/fournisseurs', fournisseurRoutes);
 app.use('/articles', articleRoutes);
+app.use('/stock', stockRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

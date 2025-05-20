@@ -18,15 +18,19 @@ export class LoginComponent {
   submitted = false;
   loginError = '';
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) {
+    // Redirect to app if already logged in
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/app']);
+    }
+  }
 
   onSubmit(form: NgForm) {
     this.submitted = true;
     if (form.valid) {
       this.authService.loginUser(this.user).subscribe({
-        next: (res) => {
-          localStorage.setItem('token', res.token);
-          this.router.navigate(['/app']); // Redirect to dashboard or main app
+        next: () => {
+          this.router.navigate(['/app']);
         },
         error: (err) => {
           this.loginError = err.error?.message || 'Invalid login credentials';

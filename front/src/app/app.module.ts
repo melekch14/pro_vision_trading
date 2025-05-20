@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,6 +28,7 @@ import { FournisseurComponent } from './components/fournisseur/fournisseur.compo
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -40,16 +42,16 @@ import { MatIcon } from '@angular/material/icon';
     LoginComponent,
     RegisterComponent,
     ArticleManagerComponent,
+    StockDialogComponent,
     ArticleParamsComponent,
-    FournisseurComponent,
-    StockDialogComponent
+    FournisseurComponent
   ],
   imports: [
     BrowserModule,
-    CommonModule,
+    AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    AppRoutingModule,
+    CommonModule,
     HttpClientModule,
     MatDialogModule,
     MatSnackBarModule,
@@ -62,7 +64,13 @@ import { MatIcon } from '@angular/material/icon';
     MatOption,
     MatIcon
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

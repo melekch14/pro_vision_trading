@@ -21,13 +21,13 @@ const registerUser = async (user, table) => {
 
     if (table === 'opticien') {
         await db.query(
-            `INSERT INTO opticien (code, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
-            [user.code, user.nom, user.prenom, user.email, hashedPassword, user.role]
+            `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
+            [user.codee, user.nom, user.prenom, user.email, hashedPassword, user.role]
         );
     } else {
         await db.query(
-            `INSERT INTO client (code, raison_social, email, password, responsable, tel, adresse) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [user.code, user.raison_social, user.email, hashedPassword, user.responsable, user.tel, user.adresse]
+            `INSERT INTO client (codee, raison_social, email, password, responsable, tel, adresse) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [user.codee, user.raison_social, user.email, hashedPassword, user.responsable, user.tel, user.adresse]
         );
     }
 };
@@ -39,13 +39,17 @@ const authenticateDynamicUser = async (email, password) => {
     const { user, role } = result;
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return null;
-
     const token = jwt.sign(
-        { code: user.code, role },
+        {
+            code: user.code,
+            nom: user.nom,
+            prenom: user.prenom,
+            email: user.email,
+            role
+        },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
-
     return { token };
 };
 

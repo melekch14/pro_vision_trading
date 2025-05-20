@@ -10,6 +10,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
 import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -28,6 +29,7 @@ const routes: Routes = [
   {
     path: 'app',
     component: LayoutComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'customers', component: CustomersComponent },
       { path: 'customers/new', component: CustomerFormComponent },

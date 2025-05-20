@@ -8,6 +8,7 @@ interface DialogStockEntry {
   sphere: number;
   cylindre: number;
   quantite: number;
+  modified?: boolean;
 }
 
 @Component({
@@ -41,7 +42,8 @@ export class StockDialogComponent implements OnInit {
         this.stockEntries.push({
           sphere,
           cylindre,
-          quantite: 0
+          quantite: 0,
+          modified: false
         });
       });
     });
@@ -59,6 +61,7 @@ export class StockDialogComponent implements OnInit {
           );
           if (stockEntry) {
             stockEntry.quantite = entry.quantite;
+            stockEntry.modified = false;
             console.log('Updated stock entry:', { sphere, cylindre, quantite: entry.quantite });
           }
         });
@@ -94,15 +97,27 @@ export class StockDialogComponent implements OnInit {
     );
     
     if (entry) {
+      const oldValue = entry.quantite;
       entry.quantite = value || 0;
+      entry.modified = true;
+      
       const existingEntry = this.existingStock.find(e => {
         const entrySphere = parseFloat(e.sphere.toString());
         const entryCylindre = parseFloat(e.cylindre.toString());
         return Math.abs(entrySphere - sphere) < 0.001 && Math.abs(entryCylindre - cylindre) < 0.001;
       });
+      
       if (existingEntry) {
         existingEntry.quantite = value || 0;
       }
+      
+      console.log('Quantity changed:', {
+        sphere,
+        cylindre,
+        oldValue,
+        newValue: value,
+        modified: entry.modified
+      });
     }
   }
 
@@ -111,7 +126,67 @@ export class StockDialogComponent implements OnInit {
   }
 
   onSave(): void {
-    const entriesToSave = this.stockEntries.filter(entry => entry.quantite > 0);
-    this.dialogRef.close(entriesToSave);
+    if (!this.data.article.id) {
+      this.snackBar.open('Article ID is missing', 'Close', { duration: 3000 });
+      return;
+    }
+
+    // Get all entries with quantity > 0 or modified entries
+    const entriesToSave = this.stockEntries.filter(entry => entry.quantite > 0 || entry.modified);
+    console.log('Entries to save:', entriesToSave);
+    
+    const updates: ApiStockEntry[] = [];
+    const insertions: ApiStockEntry[] = [];
+
+    entriesToSave.forEach(entry => {
+      const existingEntry = this.existingStock.find(e => {
+        const entrySphere = parseFloat(e.sphere.toString());
+        const entryCylindre = parseFloat(e.cylindre.toString());
+        return Math.abs(entrySphere - entry.sphere) < 0.001 && 
+               Math.abs(entryCylindre - entry.cylindre) < 0.001;
+      });
+
+      console.log('Checking entry:', entry, 'Existing entry:', existingEntry);
+
+      const stockEntry: ApiStockEntry = {
+        article_id: this.data.article.id!,
+        sphere: entry.sphere,
+        cylindre: entry.cylindre,
+        quantite: entry.quantite
+      };
+
+      if (existingEntry) {
+        // If the entry was modified, update it
+        if (entry.modified) {
+          console.log('Adding to updates (modified):', { ...stockEntry, id: existingEntry.id });
+          updates.push({
+            ...stockEntry,
+            id: existingEntry.id
+          });
+        }
+      } else if (entry.quantite > 0) {
+        // Only insert if there's no existing entry and quantity > 0
+        console.log('Adding to insertions:', stockEntry);
+        insertions.push(stockEntry);
+      }
+    });
+
+    // Handle entries that were set to 0 (deletions)
+    const deletions: ApiStockEntry[] = this.existingStock.filter(existingEntry => {
+      const entrySphere = parseFloat(existingEntry.sphere.toString());
+      const entryCylindre = parseFloat(existingEntry.cylindre.toString());
+      const currentEntry = this.stockEntries.find(
+        e => Math.abs(e.sphere - entrySphere) < 0.001 && 
+             Math.abs(e.cylindre - entryCylindre) < 0.001
+      );
+      return currentEntry && currentEntry.quantite === 0;
+    });
+
+    console.log('Final result:', { updates, insertions, deletions });
+    this.dialogRef.close({
+      updates,
+      insertions,
+      deletions
+    });
   }
 }

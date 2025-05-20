@@ -242,44 +242,120 @@ export class ArticleManagerComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Save stock entries
-        const stockEntries: ApiStockEntry[] = result.map((entry: DialogStockEntry) => ({
-          article_id: article.id!,
-          sphere: entry.sphere,
-          cylindre: entry.cylindre,
-          quantite: entry.quantite
-        }));
+        console.log('Dialog result:', result);
+        const promises: Promise<any>[] = [];
 
-        // First, get existing stock entries
-        this.stockService.getStockByArticleId(article.id!).subscribe({
-          next: (existingEntries) => {
-            // Update or create entries
-            const promises = stockEntries.map(entry => {
-              const existingEntry = existingEntries.find(
-                e => e.sphere === entry.sphere && e.cylindre === entry.cylindre
-              );
-
-              if (existingEntry) {
-                return this.stockService.updateStock(existingEntry.id!, entry).toPromise();
-              } else {
-                return this.stockService.createStock(entry).toPromise();
-              }
+        // Handle updates
+        if (result.updates && result.updates.length > 0) {
+          console.log('Processing updates:', result.updates);
+          result.updates.forEach((entry: ApiStockEntry) => {
+            console.log('Updating entry with data:', {
+              id: entry.id,
+              article_id: entry.article_id,
+              sphere: entry.sphere,
+              cylindre: entry.cylindre,
+              quantite: entry.quantite
             });
-
-            Promise.all(promises)
-              .then(() => {
-                this.snackBar.open('Stock updated successfully', 'Close', { duration: 3000 });
+            
+            const updatePromise = this.stockService.updateStock(entry.id!, entry)
+              .toPromise()
+              .then(response => {
+                console.log('Update successful:', response);
+                return response;
               })
               .catch(error => {
-                console.error('Error updating stock:', error);
-                this.snackBar.open('Error updating stock', 'Close', { duration: 3000 });
+                console.error('Update failed:', error);
+                console.error('Error details:', {
+                  status: error.status,
+                  statusText: error.statusText,
+                  error: error.error
+                });
+                throw error;
               });
-          },
-          error: (error) => {
-            console.error('Error fetching existing stock:', error);
-            this.snackBar.open('Error fetching existing stock', 'Close', { duration: 3000 });
-          }
-        });
+            
+            promises.push(updatePromise);
+          });
+        } else {
+          console.log('No updates to process');
+        }
+
+        // Handle insertions
+        if (result.insertions && result.insertions.length > 0) {
+          console.log('Processing insertions:', result.insertions);
+          result.insertions.forEach((entry: ApiStockEntry) => {
+            console.log('Inserting entry with data:', {
+              article_id: entry.article_id,
+              sphere: entry.sphere,
+              cylindre: entry.cylindre,
+              quantite: entry.quantite
+            });
+            
+            const insertPromise = this.stockService.createStock(entry)
+              .toPromise()
+              .then(response => {
+                console.log('Insert successful:', response);
+                return response;
+              })
+              .catch(error => {
+                console.error('Insert failed:', error);
+                console.error('Error details:', {
+                  status: error.status,
+                  statusText: error.statusText,
+                  error: error.error
+                });
+                throw error;
+              });
+            
+            promises.push(insertPromise);
+          });
+        } else {
+          console.log('No insertions to process');
+        }
+
+        // Handle deletions
+        if (result.deletions && result.deletions.length > 0) {
+          console.log('Processing deletions:', result.deletions);
+          result.deletions.forEach((entry: ApiStockEntry) => {
+            if (entry.id) {
+              console.log('Deleting entry with id:', entry.id);
+              
+              const deletePromise = this.stockService.deleteStock(entry.id)
+                .toPromise()
+                .then(response => {
+                  console.log('Delete successful:', response);
+                  return response;
+                })
+                .catch(error => {
+                  console.error('Delete failed:', error);
+                  console.error('Error details:', {
+                    status: error.status,
+                    statusText: error.statusText,
+                    error: error.error
+                  });
+                  throw error;
+                });
+              
+              promises.push(deletePromise);
+            }
+          });
+        } else {
+          console.log('No deletions to process');
+        }
+
+        if (promises.length === 0) {
+          console.log('No operations to perform');
+          return;
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            console.log('All operations completed successfully');
+            this.snackBar.open('Stock updated successfully', 'Close', { duration: 3000 });
+          })
+          .catch(error => {
+            console.error('Error updating stock:', error);
+            this.snackBar.open('Error updating stock', 'Close', { duration: 3000 });
+          });
       }
     });
   }

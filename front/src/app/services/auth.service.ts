@@ -14,12 +14,14 @@ interface RegisterClientPayload {
 
 interface LoginResponse {
   token: string;
-  user: {
-    id: number;
-    email: string;
-    role: string;
-    name: string;
-  };
+}
+
+interface UserData {
+  code: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  role: string;
 }
 
 @Injectable({
@@ -28,7 +30,6 @@ interface LoginResponse {
 export class AuthService {
   private baseUrl = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'auth_token';
-  private readonly USER_KEY = 'user_data';
 
   constructor(private http: HttpClient) {}
 
@@ -40,14 +41,12 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, credentials).pipe(
       tap(response => {
         this.setToken(response.token);
-        this.setUserData(response.user);
       })
     );
   }
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
   }
 
   isAuthenticated(): boolean {
@@ -62,12 +61,17 @@ export class AuthService {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  private setUserData(user: any): void {
-    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-  }
+  getUserData(): UserData | null {
+    const token = this.getToken();
+    if (!token) return null;
 
-  getUserData(): any {
-    const userData = localStorage.getItem(this.USER_KEY);
-    return userData ? JSON.parse(userData) : null;
+    try {
+      const payload = token.split('.')[1];
+      const decodedPayload = atob(payload);
+      return JSON.parse(decodedPayload) as UserData;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
   }
 }

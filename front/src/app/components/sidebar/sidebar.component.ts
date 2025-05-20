@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { MenuItem } from '../../shared/models/menu-item.model';
 
 @Component({
@@ -7,7 +9,7 @@ import { MenuItem } from '../../shared/models/menu-item.model';
   styleUrls: ['./sidebar.component.css'],
   standalone: false
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { 
       id: 1, 
@@ -46,4 +48,41 @@ export class SidebarComponent {
       route: '/app/article-params'
     }
   ];
+
+  userData: any = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.userData = this.authService.getUserData();
+  }
+
+  getInitials(): string {
+    if (!this.userData) return '';
+    const { nom, prenom } = this.userData;
+    return `${prenom?.[0] || ''}${nom?.[0] || ''}`.toUpperCase();
+  }
+
+  getUserName(): string {
+    if (!this.userData) return '';
+    const { nom, prenom } = this.userData;
+    const fullName = `${prenom || ''} ${nom || ''}`.trim();
+    return fullName.split(' ').map(name => 
+      name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  getUserRole(): string {
+    if (!this.userData) return '';
+    const role = this.userData.role || '';
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

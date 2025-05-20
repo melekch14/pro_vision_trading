@@ -105,6 +105,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  position: relative;
 }
 
 .avatar {
@@ -139,6 +140,23 @@
   font-size: 12px;
   color: #64748b;
   margin: 0;
+}
+
+.logout-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  padding: 4px;
+}
+
+.logout-button:hover {
+  color: #34643C;
+}
+
+.logout-button .material-icons {
+  font-size: 20px;
 }
 
 @media (max-width: 768px) {

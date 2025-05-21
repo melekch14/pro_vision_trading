@@ -43,7 +43,8 @@ export class CustomerFormComponent implements OnInit {
       responsable: '',
       tel: '',
       status: CustomerStatus.Active,
-      adresse: ''
+      adresse: '',
+      password: ''
     };
   }
   
@@ -90,6 +91,8 @@ export class CustomerFormComponent implements OnInit {
       this.customer.codee.trim() !== '' &&
       this.customer.raison_social.trim() !== '' &&
       this.customer.email.trim() !== '' &&
+      this.customer.password.trim() !== '' &&
+      this.customer.password.length >= 6 &&
       this.customer.responsable.trim() !== '' &&
       this.customer.tel.trim() !== '' &&
       this.customer.status.trim() !== '' &&

@@ -20,7 +20,7 @@ const createClient = async (clientData) => {
         `INSERT INTO client (codee, raison_social, email, password, responsable, tel, status, adresse) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-            clientData.codeee,
+            clientData.codee,
             clientData.raison_social,
             clientData.email,
             hashedPassword,

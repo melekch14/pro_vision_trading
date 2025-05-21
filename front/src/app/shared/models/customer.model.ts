@@ -7,6 +7,7 @@ export interface Customer {
   tel: string;
   status: string;
   adresse: string;
+  password: string;
 }
 
 export interface Address {

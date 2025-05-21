@@ -21,7 +21,13 @@
         class="search-input"
       />
     </div>
-    <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
+    <div class="filters-actions">
+      <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
+      <button class="add-btn" routerLink="/app/customers/new">
+        <span class="material-icons">add</span>
+        Add New Customer
+      </button>
+    </div>
   </div>
 
   <div class="table-container">

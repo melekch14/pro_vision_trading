@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Customer } from '../../shared/models/customer.model';
 import { CustomerService } from '../../services/customer.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-customers',
@@ -17,7 +18,10 @@ export class CustomersComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
   
-  constructor(private customerService: CustomerService) {}
+  constructor(
+    private customerService: CustomerService,
+    private router: Router
+  ) {}
   
   ngOnInit(): void {
     this.loadCustomers();
@@ -144,8 +148,6 @@ export class CustomersComponent implements OnInit {
   }
 
   editCustomer(customer: Customer): void {
-    // Navigate to edit page or open edit modal
-    // This will be implemented based on your routing setup
-    console.log('Edit customer:', customer);
+    this.router.navigate(['/app/customers', customer.id]);
   }
 } 

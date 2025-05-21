@@ -258,22 +258,18 @@
             <tr>
               <th>Code</th>
               <th>Libellé</th>
-              <th>Quantité</th>
-              <th>Sphère</th>
+              <th>Qte</th>
+              <th>Sphere</th>
               <th>Cylindre</th>
-              <th>Famille</th>
-              <th>Sous-famille</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let entry of filteredStockEntries">
-              <td>{{ entry.article_code }}</td>
-              <td>{{ entry.article_libelle }}</td>
+              <td>{{ formatStockCode(entry) }}</td>
+              <td>{{ formatStockLibelle(entry) }}</td>
               <td>{{ entry.quantite }}</td>
               <td>{{ entry.sphere }}</td>
               <td>{{ entry.cylindre }}</td>
-              <td>{{ entry.family_code }}</td>
-              <td>{{ entry.subfamily_name }}</td>
             </tr>
           </tbody>
         </table>

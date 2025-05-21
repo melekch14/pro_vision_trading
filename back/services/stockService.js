@@ -47,6 +47,7 @@ const getAllStockWithArticles = async () => {
             a.code as article_code,
             a.libelle as article_libelle,
             sf.name as subfamily_name,
+            sf.code as subfamily_code,
             f.code as family_code
         FROM stock s
         JOIN article a ON s.article_id = a.id

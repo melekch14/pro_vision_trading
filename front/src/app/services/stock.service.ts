@@ -15,6 +15,7 @@ export interface StockEntryWithArticle extends StockEntry {
   article_code: string;
   article_libelle: string;
   subfamily_name: string;
+  subfamily_code: string;
   family_code: string;
 }
 

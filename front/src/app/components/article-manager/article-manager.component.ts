@@ -58,7 +58,7 @@ export class ArticleManagerComponent implements OnInit {
   // Stock panel properties
   stockEntries: StockEntryWithArticle[] = [];
   filteredStockEntries: StockEntryWithArticle[] = [];
-  displayedColumns: string[] = ['code', 'libelle', 'quantite', 'sphere', 'cylindre'];
+  displayedColumns: string[] = ['code', 'libelle', 'qte', 'sphere', 'cylindre'];
   
   stockFilters = {
     code: '',
@@ -202,13 +202,13 @@ export class ArticleManagerComponent implements OnInit {
   formatStockCode(entry: StockEntryWithArticle): string {
     const cyl = entry.cylindre.toString().padStart(4, '0');
     const sph = entry.sphere.toString().padStart(4, '0');
-    return `${entry.family_code}-${cyl}-${sph}`;
+    return `${entry.subfamily_code} — (${cyl}) — ${sph}`;
   }
 
   formatStockLibelle(entry: StockEntryWithArticle): string {
     const cyl = entry.cylindre.toString().padStart(4, '0');
     const sph = entry.sphere.toString().padStart(4, '0');
-    return `${entry.article_libelle} (${cyl})-${sph}`;
+    return `${entry.article_libelle} (${cyl}) — ${sph}`;
   }
 
   onSubmit(): void {
@@ -397,6 +397,7 @@ export class ArticleManagerComponent implements OnInit {
           .then(() => {
             console.log('All operations completed successfully');
             this.snackBar.open('Stock updated successfully', 'Close', { duration: 3000 });
+            this.loadStockEntries();
           })
           .catch(error => {
             console.error('Error updating stock:', error);

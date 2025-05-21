@@ -1,3 +1,15 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-spinner">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<!-- Error Message -->
+<div *ngIf="errorMessage" class="error-message">
+  <mat-icon>error</mat-icon>
+  {{ errorMessage }}
+</div>
+
+<!-- Main Content -->
 <div class="article-manager-bg">
   <div class="container">
     <h1 class="main-title">Article Management</h1>
@@ -17,45 +29,79 @@
 
     <!-- Browse Tab -->
     <ng-container *ngIf="activeTab === 'browse'">
-      <!-- Filter Section -->
-      <div class="card">
-        <h2 class="section-title">Filter Articles</h2>
-        <form [formGroup]="filterForm" class="filter-form">
-          <div class="form-group">
-            <label for="filterCode">Code</label>
-            <input type="text" id="filterCode" formControlName="code" class="form-control" placeholder="Search by code">
+      <div class="stock-panel">
+        <div class="stock-header">
+          <h2>Articles Management</h2>
+          <div class="stock-actions">
+            <button class="export-btn" (click)="exportToCSV()">
+              <span class="material-icons">file_download</span>
+              Export CSV
+            </button>
+            <button class="export-btn" (click)="exportToPDF()">
+              <span class="material-icons">picture_as_pdf</span>
+              Export PDF
+            </button>
+            <button class="export-btn" (click)="setTab('add')">
+              <span class="material-icons">add</span>
+              Add New Article
+            </button>
           </div>
-          <div class="form-group">
-            <label for="filterLibelle">Libelle</label>
-            <input type="text" id="filterLibelle" formControlName="libelle" class="form-control" placeholder="Search by libelle">
+        </div>
+
+        <div class="stock-filters">
+          <div class="filter-group">
+            <input type="text" class="filter-input" [ngModel]="filterForm.get('code')?.value" (ngModelChange)="filterForm.get('code')?.setValue($event); applyFilters()" placeholder="Search by code...">
           </div>
-          <div class="form-group">
-            <label for="filterFournisseur">Fournisseur</label>
-            <select id="filterFournisseur" formControlName="fournisseur" class="form-control">
+          <div class="filter-group">
+            <input type="text" class="filter-input" [ngModel]="filterForm.get('libelle')?.value" (ngModelChange)="filterForm.get('libelle')?.setValue($event); applyFilters()" placeholder="Search by libelle...">
+          </div>
+          <div class="filter-group">
+            <select class="filter-input" [ngModel]="filterForm.get('fournisseur')?.value" (ngModelChange)="filterForm.get('fournisseur')?.setValue($event); applyFilters()">
               <option value="">All Fournisseurs</option>
               <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
             </select>
           </div>
-        </form>
-      </div>
-
-      <!-- Articles List -->
-      <div class="card articles-card">
-        <div class="articles-header">
-          <h2 class="section-title">Articles List</h2>
-          <span class="articles-count">{{filteredArticles.length}} articles</span>
+          <button class="clear-filters-btn" (click)="resetFilters()">
+            <span class="material-icons">clear</span>
+            Clear Filters
+          </button>
         </div>
-        <table class="table">
+
+        <table class="stock-table">
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Libelle</th>
-              <th>Diametre</th>
-              <th>Foyer</th>
-              <th>Indice</th>
-              <th>Design</th>
-              <th>Prix Achat</th>
-              <th>Prix Vente</th>
+              <th (click)="onSort('code')" class="sortable">
+                Code
+                <span class="material-icons">{{ getSortIcon('code') }}</span>
+              </th>
+              <th (click)="onSort('libelle')" class="sortable">
+                Libelle
+                <span class="material-icons">{{ getSortIcon('libelle') }}</span>
+              </th>
+              <th (click)="onSort('diametre')" class="sortable">
+                Diametre
+                <span class="material-icons">{{ getSortIcon('diametre') }}</span>
+              </th>
+              <th (click)="onSort('foyer_name')" class="sortable">
+                Foyer
+                <span class="material-icons">{{ getSortIcon('foyer_name') }}</span>
+              </th>
+              <th (click)="onSort('indice_name')" class="sortable">
+                Indice
+                <span class="material-icons">{{ getSortIcon('indice_name') }}</span>
+              </th>
+              <th (click)="onSort('design_name')" class="sortable">
+                Design
+                <span class="material-icons">{{ getSortIcon('design_name') }}</span>
+              </th>
+              <th (click)="onSort('prix_achat')" class="sortable">
+                Prix Achat
+                <span class="material-icons">{{ getSortIcon('prix_achat') }}</span>
+              </th>
+              <th (click)="onSort('prix_vente')" class="sortable">
+                Prix Vente
+                <span class="material-icons">{{ getSortIcon('prix_vente') }}</span>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -69,22 +115,26 @@
               <td>{{article.design_name}}</td>
               <td>{{article.prix_achat}}</td>
               <td>{{article.prix_vente}}</td>
-              <td>
-                <div class="action-buttons">
-                  <button mat-icon-button color="primary" (click)="editArticle(article)" matTooltip="Edit">
-                    <span class="material-icons">edit</span>
-                  </button>
-                  <button mat-icon-button color="warn" (click)="deleteArticle(article.id!)" matTooltip="Delete">
-                    <span class="material-icons">delete</span>
-                  </button>
-                  <button mat-icon-button color="accent" (click)="openStockDialog(article)" matTooltip="Stock">
-                    <span class="material-icons">inventory_2</span>
-                  </button>
-                </div>
+              <td class="actions-cell">
+                <button class="edit-btn" (click)="editArticle(article)">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button class="delete-btn" (click)="deleteArticle(article.id!)">
+                  <span class="material-icons">delete</span>
+                </button>
+                <button class="stock-btn" (click)="openStockDialog(article)">
+                  <span class="material-icons">inventory_2</span>
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
+
+        <!-- No Results Message -->
+        <div *ngIf="filteredArticles.length === 0" class="no-results">
+          <mat-icon>search_off</mat-icon>
+          <p>No articles found matching your search criteria</p>
+        </div>
       </div>
     </ng-container>
 
@@ -239,13 +289,13 @@
 
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="stockFilters.code" (input)="applyStockFilters()" placeholder="Filter by code...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.code" (ngModelChange)="stockFilters.code = $event; applyStockFilters()" placeholder="Filter by code...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="stockFilters.libelle" (input)="applyStockFilters()" placeholder="Filter by libellé...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.libelle" (ngModelChange)="stockFilters.libelle = $event; applyStockFilters()" placeholder="Filter by libellé...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="stockFilters.quantity" (input)="applyStockFilters()" placeholder="Filter by quantity...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.quantity" (ngModelChange)="stockFilters.quantity = $event; applyStockFilters()" placeholder="Filter by quantity...">
           </div>
           <button class="clear-filters-btn" (click)="clearStockFilters()">
             <span class="material-icons">clear</span>

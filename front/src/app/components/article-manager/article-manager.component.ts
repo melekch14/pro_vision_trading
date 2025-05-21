@@ -66,6 +66,14 @@ export class ArticleManagerComponent implements OnInit {
     quantity: ''
   };
 
+  // Loading and error states
+  isLoading: boolean = false;
+  errorMessage: string | null = null;
+
+  // Sorting state
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   constructor(
     private fb: FormBuilder,
     private articleService: ArticleService,
@@ -130,12 +138,18 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   loadArticles(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
+    
     this.articleService.getArticles().subscribe({
       next: (articles) => {
         this.articles = articles;
         this.filteredArticles = [...articles];
+        this.isLoading = false;
       },
       error: (error) => {
+        this.errorMessage = 'Error loading articles';
+        this.isLoading = false;
         this.snackBar.open('Error loading articles', 'Close', { duration: 3000 });
         console.error('Error loading articles:', error);
       }
@@ -271,6 +285,7 @@ export class ArticleManagerComponent implements OnInit {
 
   applyFilters(): void {
     const filters = this.filterForm.value;
+    
     this.filteredArticles = this.articles.filter(article => {
       return (
         (!filters.code || article.code.toLowerCase().includes(filters.code.toLowerCase())) &&
@@ -278,6 +293,11 @@ export class ArticleManagerComponent implements OnInit {
         (!filters.fournisseur || article.fournisseur_id === filters.fournisseur)
       );
     });
+
+    // Reapply sorting if active
+    if (this.sortColumn) {
+      this.onSort(this.sortColumn);
+    }
   }
 
   openStockDialog(article: Article): void {
@@ -442,60 +462,82 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   exportToCSV(): void {
-    const data = this.filteredStockEntries.map(entry => ({
-      'Code': entry.article_code,
-      'Libellé': entry.article_libelle,
-      'Quantité': entry.quantite,
-      'Sphère': entry.sphere,
-      'Cylindre': entry.cylindre,
-      'Famille': entry.family_code,
-      'Sous-famille': entry.subfamily_name
+    const data = this.filteredArticles.map(article => ({
+      Code: article.code,
+      Libelle: article.libelle,
+      Diametre: article.diametre,
+      Foyer: article.foyer_name,
+      Indice: article.indice_name,
+      Design: article.design_name,
+      'Prix Achat': article.prix_achat,
+      'Prix Vente': article.prix_vente
     }));
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-    XLSX.writeFile(workbook, 'stock_export.csv');
+    const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
+    XLSX.writeFile(workbook, 'articles.csv');
   }
 
   exportToPDF(): void {
     const doc = new jsPDF();
     
-    // Add title
-    doc.setFontSize(16);
-    doc.text('Stock Report', 14, 15);
+    doc.text('Articles List', 14, 15);
     
-    // Add date
-    doc.setFontSize(10);
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
-
-    // Prepare table data
-    const tableData = this.filteredStockEntries.map(entry => [
-      entry.article_code,
-      entry.article_libelle,
-      entry.quantite.toString(),
-      entry.sphere.toString(),
-      entry.cylindre.toString(),
-      entry.family_code,
-      entry.subfamily_name
+    const data = this.filteredArticles.map(article => [
+      article.code,
+      article.libelle,
+      article.diametre,
+      article.foyer_name,
+      article.indice_name,
+      article.design_name,
+      article.prix_achat,
+      article.prix_vente
     ]);
 
-    // Add table
-    const options: UserOptions = {
-      head: [['Code', 'Libellé', 'Quantité', 'Sphère', 'Cylindre', 'Famille', 'Sous-famille']],
-      body: tableData,
-      startY: 30,
+    (doc as any).autoTable({
+      head: [['Code', 'Libelle', 'Diametre', 'Foyer', 'Indice', 'Design', 'Prix Achat', 'Prix Vente']],
+      body: data,
+      startY: 25,
       theme: 'grid',
-      styles: {
-        fontSize: 8,
-        cellPadding: 2
-      },
-      headStyles: {
-        fillColor: [30, 64, 175],
-        textColor: 255
-      }
-    };
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [37, 99, 235] }
+    });
 
-    (doc as any).autoTable(options);
-    doc.save('stock_report.pdf');
+    doc.save('articles.pdf');
+  }
+
+  // Sorting methods
+  onSort(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredArticles.sort((a: any, b: any) => {
+      const aValue = a[column];
+      const bValue = b[column];
+
+      if (aValue === bValue) return 0;
+      
+      const comparison = aValue < bValue ? -1 : 1;
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) return 'unfold_more';
+    return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  resetFilters(): void {
+    this.filterForm.reset();
+    this.filteredArticles = [...this.articles];
+    
+    // Reapply sorting if active
+    if (this.sortColumn) {
+      this.onSort(this.sortColumn);
+    }
   }
 }

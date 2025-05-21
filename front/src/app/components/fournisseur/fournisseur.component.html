@@ -1,170 +1,176 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Suppliers Management</h2>
-    <button class="btn btn-primary" (click)="toggleForm()">
-      <i class="material-icons">{{ showForm ? 'close' : 'add' }}</i>
-      {{ showForm ? 'Close Form' : 'Add New Supplier' }}
-    </button>
-  </div>
-  
-  <div *ngIf="showForm" class="form-container">
-    <h3>{{ isEditing ? 'Edit Supplier' : 'Add New Supplier' }}</h3>
-    <form [formGroup]="fournisseurForm" (ngSubmit)="onSubmit()" class="mb-4">
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="code">Code</label>
-          <input type="text" class="form-control" id="code" formControlName="code" [readonly]="isEditing">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="raison_social">Company Name</label>
-          <input type="text" class="form-control" id="raison_social" formControlName="raison_social">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="adresse">Address</label>
-          <input type="text" class="form-control" id="adresse" formControlName="adresse">
-        </div>
-      </div>
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-spinner">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
 
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="mat_vin">Mat. VIN</label>
-          <input type="text" class="form-control" id="mat_vin" formControlName="mat_vin">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="tel">Phone</label>
-          <input type="text" class="form-control" id="tel" formControlName="tel">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="fax">Fax</label>
-          <input type="text" class="form-control" id="fax" formControlName="fax">
-        </div>
-      </div>
+<!-- Error Message -->
+<div *ngIf="errorMessage" class="error-message">
+  <mat-icon>error</mat-icon>
+  {{ errorMessage }}
+</div>
 
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="email">Email</label>
-          <input type="email" class="form-control" id="email" formControlName="email">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="responsable">Responsible Person</label>
-          <input type="text" class="form-control" id="responsable" formControlName="responsable">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="id_fiscale">Fiscal ID</label>
-          <input type="text" class="form-control" id="id_fiscale" formControlName="id_fiscale">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="banque">Bank</label>
-          <input type="text" class="form-control" id="banque" formControlName="banque">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="agence">Agency</label>
-          <input type="text" class="form-control" id="agence" formControlName="agence">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="rib">RIB</label>
-          <input type="text" class="form-control" id="rib" formControlName="rib">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="categorie_prix_vente">Price Category</label>
-          <input type="text" class="form-control" id="categorie_prix_vente" formControlName="categorie_prix_vente">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="status">Status</label>
-          <input type="text" class="form-control" id="status" formControlName="status">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="activite_economique">Economic Activity</label>
-          <input type="text" class="form-control" id="activite_economique" formControlName="activite_economique">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="remise">Discount</label>
-          <input type="number" class="form-control" id="remise" formControlName="remise">
-        </div>
-        <div class="col-md-6 mb-3">
-          <label for="taux_retenue">Retention Rate</label>
-          <input type="number" class="form-control" id="taux_retenue" formControlName="taux_retenue">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <button type="submit" class="btn btn-primary mr-2" [disabled]="!fournisseurForm.valid">
-          {{ isEditing ? 'Update' : 'Add' }} Supplier
+<!-- Main Content -->
+<div class="customers-container">
+  <div class="stock-panel">
+    <div class="stock-header">
+      <h2>Suppliers Management</h2>
+      <div class="stock-actions">
+        <button class="export-btn" (click)="exportToCSV()">
+          <span class="material-icons">file_download</span>
+          Export CSV
         </button>
-        <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="filters-container mb-4">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="input-group">
-          <span class="input-group-text">
-            <i class="material-icons">search</i>
-          </span>
-          <input 
-            type="text" 
-            class="form-control" 
-            placeholder="Search suppliers..." 
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="applyFilters()"
-          >
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group">
-          <span class="input-group-text">
-            <i class="material-icons">filter_list</i>
-          </span>
-          <select 
-            class="form-select" 
-            [(ngModel)]="filterStatus"
-            (ngModelChange)="applyFilters()"
-          >
-            <option value="">All Statuses</option>
-            <option *ngFor="let status of getUniqueStatuses()" [value]="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
+        <button class="export-btn" (click)="exportToPDF()">
+          <span class="material-icons">picture_as_pdf</span>
+          Export PDF
+        </button>
+        <button class="export-btn" (click)="toggleForm()">
+          <span class="material-icons">{{ showForm ? 'close' : 'add' }}</span>
+          {{ showForm ? 'Close Form' : 'Add New Supplier' }}
+        </button>
       </div>
     </div>
-  </div>
 
-  <h3>Suppliers List</h3>
-  <div class="table-responsive">
-    <table class="table table-striped">
+    <!-- Add/Edit Form -->
+    <div *ngIf="showForm" class="form-container">
+      <h3>{{ isEditing ? 'Edit Supplier' : 'Add New Supplier' }}</h3>
+      <form [formGroup]="fournisseurForm" (ngSubmit)="onSubmit()" class="mb-4">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="code">Code</label>
+            <input type="text" class="form-control" id="code" formControlName="code" [readonly]="isEditing">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="raison_social">Company Name</label>
+            <input type="text" class="form-control" id="raison_social" formControlName="raison_social">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="adresse">Address</label>
+            <input type="text" class="form-control" id="adresse" formControlName="adresse">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="mat_vin">Mat. VIN</label>
+            <input type="text" class="form-control" id="mat_vin" formControlName="mat_vin">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="tel">Phone</label>
+            <input type="text" class="form-control" id="tel" formControlName="tel">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="fax">Fax</label>
+            <input type="text" class="form-control" id="fax" formControlName="fax">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" formControlName="email">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="responsable">Responsible Person</label>
+            <input type="text" class="form-control" id="responsable" formControlName="responsable">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="id_fiscale">Fiscal ID</label>
+            <input type="text" class="form-control" id="id_fiscale" formControlName="id_fiscale">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="banque">Bank</label>
+            <input type="text" class="form-control" id="banque" formControlName="banque">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="agence">Agency</label>
+            <input type="text" class="form-control" id="agence" formControlName="agence">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="rib">RIB</label>
+            <input type="text" class="form-control" id="rib" formControlName="rib">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="categorie_prix_vente">Price Category</label>
+            <input type="text" class="form-control" id="categorie_prix_vente" formControlName="categorie_prix_vente">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="status">Status</label>
+            <input type="text" class="form-control" id="status" formControlName="status">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="activite_economique">Economic Activity</label>
+            <input type="text" class="form-control" id="activite_economique" formControlName="activite_economique">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="remise">Discount</label>
+            <input type="number" class="form-control" id="remise" formControlName="remise">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="taux_retenue">Retention Rate</label>
+            <input type="number" class="form-control" id="taux_retenue" formControlName="taux_retenue">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary mr-2" [disabled]="!fournisseurForm.valid">
+            {{ isEditing ? 'Update' : 'Add' }} Supplier
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="stock-filters">
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by code...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by company name...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by email...">
+      </div>
+      <button class="clear-filters-btn" (click)="resetFilters()">
+        <span class="material-icons">clear</span>
+        Clear Filters
+      </button>
+    </div>
+
+    <table class="stock-table">
       <thead>
         <tr>
           <th (click)="onSort('code')" class="sortable">
             Code
-            <i class="material-icons">{{ getSortIcon('code') }}</i>
+            <span class="material-icons">{{ getSortIcon('code') }}</span>
           </th>
           <th (click)="onSort('raison_social')" class="sortable">
             Company Name
-            <i class="material-icons">{{ getSortIcon('raison_social') }}</i>
-          </th>
-          <th (click)="onSort('tel')" class="sortable">
-            Phone
-            <i class="material-icons">{{ getSortIcon('tel') }}</i>
+            <span class="material-icons">{{ getSortIcon('raison_social') }}</span>
           </th>
           <th (click)="onSort('email')" class="sortable">
             Email
-            <i class="material-icons">{{ getSortIcon('email') }}</i>
+            <span class="material-icons">{{ getSortIcon('email') }}</span>
+          </th>
+          <th (click)="onSort('tel')" class="sortable">
+            Phone
+            <span class="material-icons">{{ getSortIcon('tel') }}</span>
+          </th>
+          <th (click)="onSort('responsable')" class="sortable">
+            Responsible
+            <span class="material-icons">{{ getSortIcon('responsable') }}</span>
           </th>
           <th (click)="onSort('status')" class="sortable">
             Status
-            <i class="material-icons">{{ getSortIcon('status') }}</i>
+            <span class="material-icons">{{ getSortIcon('status') }}</span>
           </th>
           <th>Actions</th>
         </tr>
@@ -173,15 +179,30 @@
         <tr *ngFor="let fournisseur of filteredFournisseurs">
           <td>{{ fournisseur.code }}</td>
           <td>{{ fournisseur.raison_social }}</td>
-          <td>{{ fournisseur.tel }}</td>
           <td>{{ fournisseur.email }}</td>
-          <td>{{ fournisseur.status }}</td>
+          <td>{{ fournisseur.tel }}</td>
+          <td>{{ fournisseur.responsable }}</td>
           <td>
-            <button class="btn btn-sm btn-primary mr-2" (click)="editFournisseur(fournisseur)">Edit</button>
-            <button class="btn btn-sm btn-danger" (click)="deleteFournisseur(fournisseur.code)">Delete</button>
+            <span class="status-badge" [ngClass]="'status-' + fournisseur.status">
+              {{ fournisseur.status | titlecase }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="edit-btn" (click)="editFournisseur(fournisseur)">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="delete-btn" (click)="deleteFournisseur(fournisseur.code)">
+              <span class="material-icons">delete</span>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- No Results Message -->
+  <div *ngIf="filteredFournisseurs.length === 0" class="no-results">
+    <mat-icon>search_off</mat-icon>
+    <p>No suppliers found matching your search criteria</p>
   </div>
 </div> 

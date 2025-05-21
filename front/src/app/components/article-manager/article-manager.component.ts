@@ -1,13 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArticleService, Article } from '../../services/article.service';
 import { ArticleParamsService } from '../../services/article-params.service';
 import { ArticleHierarchyService } from '../../shared/services/article-hierarchy.service';
 import { ArticleSubfamily } from '../../shared/models/article-hierarchy.model';
 import { StockDialogComponent } from './stock-dialog/stock-dialog.component';
-import { StockService, StockEntry as ApiStockEntry } from '../../services/stock.service';
+import { StockService, StockEntryWithArticle, StockEntry as ApiStockEntry } from '../../services/stock.service';
+import { FormsModule } from '@angular/forms';
+import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import { UserOptions } from 'jspdf-autotable';
 
 interface DialogStockEntry {
   sphere: number;
@@ -17,9 +26,9 @@ interface DialogStockEntry {
 
 @Component({
   selector: 'app-article-manager',
-  standalone: false,
   templateUrl: './article-manager.component.html',
-  styleUrl: './article-manager.component.scss'
+  styleUrls: ['./article-manager.component.scss'],
+  standalone: false
 })
 export class ArticleManagerComponent implements OnInit {
   articleForm: FormGroup;
@@ -38,13 +47,24 @@ export class ArticleManagerComponent implements OnInit {
   subfamilyOptions: ArticleSubfamily[] = [];
   
   // Tab state
-  activeTab: 'browse' | 'add' = 'browse';
+  activeTab: 'browse' | 'add' | 'stock' = 'browse';
   editingArticle: Article | null = null;
 
   // Stock management
   sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
   cylindreValues: number[] = Array.from({length: 9}, (_, i) => -2 + (i * 0.25));
-  stockEntries: DialogStockEntry[] = [];
+  dialogStockEntries: DialogStockEntry[] = [];
+
+  // Stock panel properties
+  stockEntries: StockEntryWithArticle[] = [];
+  filteredStockEntries: StockEntryWithArticle[] = [];
+  displayedColumns: string[] = ['code', 'libelle', 'quantite', 'sphere', 'cylindre'];
+  
+  stockFilters = {
+    code: '',
+    libelle: '',
+    quantity: ''
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -89,6 +109,7 @@ export class ArticleManagerComponent implements OnInit {
   ngOnInit(): void {
     this.loadArticles();
     this.loadOptions();
+    this.loadStockEntries();
     
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
@@ -96,10 +117,10 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   private initializeStockEntries(): void {
-    this.stockEntries = [];
+    this.dialogStockEntries = [];
     this.sphereValues.forEach(sphere => {
       this.cylindreValues.forEach(cylindre => {
-        this.stockEntries.push({
+        this.dialogStockEntries.push({
           sphere,
           cylindre,
           quantite: 0
@@ -163,6 +184,31 @@ export class ArticleManagerComponent implements OnInit {
       next: (subfamilies) => this.subfamilyOptions = subfamilies,
       error: (error) => console.error('Error loading subfamilies:', error)
     });
+  }
+
+  loadStockEntries(): void {
+    this.stockService.getAllStockWithArticles().subscribe({
+      next: (data: StockEntryWithArticle[]) => {
+        this.stockEntries = data;
+        this.applyStockFilters();
+      },
+      error: (error) => {
+        console.error('Error loading stock entries:', error);
+        this.snackBar.open('Error loading stock entries', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  formatStockCode(entry: StockEntryWithArticle): string {
+    const cyl = entry.cylindre.toString().padStart(4, '0');
+    const sph = entry.sphere.toString().padStart(4, '0');
+    return `${entry.family_code}-${cyl}-${sph}`;
+  }
+
+  formatStockLibelle(entry: StockEntryWithArticle): string {
+    const cyl = entry.cylindre.toString().padStart(4, '0');
+    const sph = entry.sphere.toString().padStart(4, '0');
+    return `${entry.article_libelle} (${cyl})-${sph}`;
   }
 
   onSubmit(): void {
@@ -365,10 +411,90 @@ export class ArticleManagerComponent implements OnInit {
     console.log('Stock entries:', this.stockEntries);
   }
 
-  setTab(tab: 'browse' | 'add'): void {
+  setTab(tab: 'browse' | 'add' | 'stock'): void {
     this.activeTab = tab;
     if (tab === 'add' && !this.editingArticle) {
       this.resetForm();
     }
+  }
+
+  applyStockFilters(): void {
+    this.filteredStockEntries = this.stockEntries.filter(entry => {
+      const matchesCode = !this.stockFilters.code || 
+        entry.article_code.toLowerCase().includes(this.stockFilters.code.toLowerCase());
+      const matchesLibelle = !this.stockFilters.libelle || 
+        entry.article_libelle.toLowerCase().includes(this.stockFilters.libelle.toLowerCase());
+      const matchesQuantity = !this.stockFilters.quantity || 
+        entry.quantite.toString().includes(this.stockFilters.quantity);
+
+      return matchesCode && matchesLibelle && matchesQuantity;
+    });
+  }
+
+  clearStockFilters(): void {
+    this.stockFilters = {
+      code: '',
+      libelle: '',
+      quantity: ''
+    };
+    this.applyStockFilters();
+  }
+
+  exportToCSV(): void {
+    const data = this.filteredStockEntries.map(entry => ({
+      'Code': entry.article_code,
+      'Libellé': entry.article_libelle,
+      'Quantité': entry.quantite,
+      'Sphère': entry.sphere,
+      'Cylindre': entry.cylindre,
+      'Famille': entry.family_code,
+      'Sous-famille': entry.subfamily_name
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    XLSX.writeFile(workbook, 'stock_export.csv');
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text('Stock Report', 14, 15);
+    
+    // Add date
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+
+    // Prepare table data
+    const tableData = this.filteredStockEntries.map(entry => [
+      entry.article_code,
+      entry.article_libelle,
+      entry.quantite.toString(),
+      entry.sphere.toString(),
+      entry.cylindre.toString(),
+      entry.family_code,
+      entry.subfamily_name
+    ]);
+
+    // Add table
+    const options: UserOptions = {
+      head: [['Code', 'Libellé', 'Quantité', 'Sphère', 'Cylindre', 'Famille', 'Sous-famille']],
+      body: tableData,
+      startY: 30,
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        cellPadding: 2
+      },
+      headStyles: {
+        fillColor: [30, 64, 175],
+        textColor: 255
+      }
+    };
+
+    (doc as any).autoTable(options);
+    doc.save('stock_report.pdf');
   }
 }

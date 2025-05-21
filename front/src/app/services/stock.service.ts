@@ -11,6 +11,13 @@ export interface StockEntry {
   quantite: number;
 }
 
+export interface StockEntryWithArticle extends StockEntry {
+  article_code: string;
+  article_libelle: string;
+  subfamily_name: string;
+  family_code: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,6 +25,10 @@ export class StockService {
   private apiUrl = `${environment.apiUrl}/stock`;
 
   constructor(private http: HttpClient) {}
+
+  getAllStockWithArticles(): Observable<StockEntryWithArticle[]> {
+    return this.http.get<StockEntryWithArticle[]>(`${this.apiUrl}/all`);
+  }
 
   getStockByArticleId(articleId: number): Observable<StockEntry[]> {
     return this.http.get<StockEntry[]>(`${this.apiUrl}/article/${articleId}`);

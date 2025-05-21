@@ -51,4 +51,14 @@ exports.getStockById = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+// Get all stock entries with article information
+exports.getAllStockWithArticles = async (req, res) => {
+    try {
+        const stockEntries = await stockService.getAllStockWithArticles();
+        res.json(stockEntries);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }; 

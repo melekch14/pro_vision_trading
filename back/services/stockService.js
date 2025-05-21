@@ -39,10 +39,29 @@ const getStockById = async (id) => {
     return rows[0];
 };
 
+// Get all stock entries with article information
+const getAllStockWithArticles = async () => {
+    const [rows] = await db.query(`
+        SELECT 
+            s.*,
+            a.code as article_code,
+            a.libelle as article_libelle,
+            sf.name as subfamily_name,
+            f.code as family_code
+        FROM stock s
+        JOIN article a ON s.article_id = a.id
+        JOIN article_subfamilies sf ON a.article_subfamily_id = sf.id
+        JOIN article_families f ON sf.family_id = f.id
+        ORDER BY a.code, s.cylindre, s.sphere
+    `);
+    return rows;
+};
+
 module.exports = {
     createStock,
     getStockByArticleId,
     updateStock,
     deleteStock,
-    getStockById
+    getStockById,
+    getAllStockWithArticles
 }; 

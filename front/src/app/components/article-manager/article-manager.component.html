@@ -10,6 +10,9 @@
       <button class="tab-btn" [class.active]="activeTab === 'add'" (click)="setTab('add')">
         {{ editingArticle ? 'Edit Article' : 'Add Article' }}
       </button>
+      <button class="tab-btn" [class.active]="activeTab === 'stock'" (click)="setTab('stock')">
+        Stock
+      </button>
     </div>
 
     <!-- Browse Tab -->
@@ -67,9 +70,17 @@
               <td>{{article.prix_achat}}</td>
               <td>{{article.prix_vente}}</td>
               <td>
-                <button class="manage-btn" (click)="editArticle(article)">Edit</button>
-                <button class="manage-btn" (click)="deleteArticle(article.id!)">Delete</button>
-                <button class="manage-btn" (click)="openStockDialog(article)">Stock</button>
+                <div class="action-buttons">
+                  <button mat-icon-button color="primary" (click)="editArticle(article)" matTooltip="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteArticle(article.id!)" matTooltip="Delete">
+                    <span class="material-icons">delete</span>
+                  </button>
+                  <button mat-icon-button color="accent" (click)="openStockDialog(article)" matTooltip="Stock">
+                    <span class="material-icons">inventory_2</span>
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -206,6 +217,66 @@
             </button>
           </div>
         </form>
+      </div>
+    </ng-container>
+
+    <!-- Stock Tab -->
+    <ng-container *ngIf="activeTab === 'stock'">
+      <div class="stock-panel">
+        <div class="stock-header">
+          <h2>Stock Management</h2>
+          <div class="stock-actions">
+            <button class="export-btn" (click)="exportToCSV()">
+              <span class="material-icons">file_download</span>
+              Export CSV
+            </button>
+            <button class="export-btn" (click)="exportToPDF()">
+              <span class="material-icons">picture_as_pdf</span>
+              Export PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="stock-filters">
+          <div class="filter-group">
+            <input type="text" class="filter-input" [(ngModel)]="stockFilters.code" (input)="applyStockFilters()" placeholder="Filter by code...">
+          </div>
+          <div class="filter-group">
+            <input type="text" class="filter-input" [(ngModel)]="stockFilters.libelle" (input)="applyStockFilters()" placeholder="Filter by libellé...">
+          </div>
+          <div class="filter-group">
+            <input type="text" class="filter-input" [(ngModel)]="stockFilters.quantity" (input)="applyStockFilters()" placeholder="Filter by quantity...">
+          </div>
+          <button class="clear-filters-btn" (click)="clearStockFilters()">
+            <span class="material-icons">clear</span>
+            Clear Filters
+          </button>
+        </div>
+
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Quantité</th>
+              <th>Sphère</th>
+              <th>Cylindre</th>
+              <th>Famille</th>
+              <th>Sous-famille</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of filteredStockEntries">
+              <td>{{ entry.article_code }}</td>
+              <td>{{ entry.article_libelle }}</td>
+              <td>{{ entry.quantite }}</td>
+              <td>{{ entry.sphere }}</td>
+              <td>{{ entry.cylindre }}</td>
+              <td>{{ entry.family_code }}</td>
+              <td>{{ entry.subfamily_name }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </ng-container>
   </div>

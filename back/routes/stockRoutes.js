@@ -3,6 +3,7 @@ const router = express.Router();
 const stockController = require('../controllers/stockController');
 
 // Stock Routes
+router.get('/all', stockController.getAllStockWithArticles);
 router.post('/', stockController.createStock);
 router.get('/article/:articleId', stockController.getStockByArticleId);
 router.get('/:id', stockController.getStockById);

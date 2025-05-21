@@ -1,14 +1,12 @@
 export interface Customer {
   id: number;
-  firstName: string;
-  lastName: string;
+  codee: string;
+  raison_social: string;
   email: string;
-  phone: string;
-  address: Address;
-  joinDate: Date;
-  totalOrders: number;
-  totalSpent: number;
-  status: CustomerStatus;
+  responsable: string;
+  tel: string;
+  status: string;
+  adresse: string;
 }
 
 export interface Address {
@@ -20,7 +18,7 @@ export interface Address {
 }
 
 export enum CustomerStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
-  New = 'New'
+  Active = 'active',
+  Inactive = 'inactive',
+  Pending = 'pending'
 } 

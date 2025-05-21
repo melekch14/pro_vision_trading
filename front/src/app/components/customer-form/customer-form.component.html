@@ -4,167 +4,135 @@
   </div>
   
   <div class="form-container">
+    <div class="form-header">
+      <h2>{{ formTitle }}</h2>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
     <form (ngSubmit)="onSubmit()" #customerForm="ngForm">
-      <div class="form-section">
-        <h2 class="section-title">Personal Information</h2>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">First Name*</label>
-            <input 
-              type="text" 
-              id="firstName" 
-              name="firstName" 
-              [(ngModel)]="customer.firstName" 
-              required
-            >
-          </div>
-          
-          <div class="form-group">
-            <label for="lastName">Last Name*</label>
-            <input 
-              type="text" 
-              id="lastName" 
-              name="lastName" 
-              [(ngModel)]="customer.lastName" 
-              required
-            >
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="codee">Code</label>
+          <input
+            type="text"
+            id="codee"
+            name="codee"
+            [(ngModel)]="customer.codee"
+            required
+            #codee="ngModel"
+          />
+          <div *ngIf="codee.invalid && (codee.dirty || codee.touched)" class="validation-error">
+            Code is required
           </div>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="email">Email Address*</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              [(ngModel)]="customer.email" 
-              required
-            >
-          </div>
-          
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input 
-              type="tel" 
-              id="phone" 
-              name="phone" 
-              [(ngModel)]="customer.phone"
-            >
+
+        <div class="form-group">
+          <label for="raison_social">Raison Social</label>
+          <input
+            type="text"
+            id="raison_social"
+            name="raison_social"
+            [(ngModel)]="customer.raison_social"
+            required
+            #raison_social="ngModel"
+          />
+          <div *ngIf="raison_social.invalid && (raison_social.dirty || raison_social.touched)" class="validation-error">
+            Raison Social is required
           </div>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="status">Status</label>
-            <select 
-              id="status" 
-              name="status" 
-              [(ngModel)]="customer.status"
-            >
-              <option *ngFor="let status of customerStatuses" [value]="status">
-                {{ status }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="form-group" *ngIf="isEditMode">
-            <label>Join Date</label>
-            <input 
-              type="text" 
-              [value]="customer.joinDate | date:'MMM d, y'" 
-              disabled
-            >
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="customer.email"
+            required
+            email
+            #email="ngModel"
+          />
+          <div *ngIf="email.invalid && (email.dirty || email.touched)" class="validation-error">
+            <div *ngIf="email.errors?.['required']">Email is required</div>
+            <div *ngIf="email.errors?.['email']">Please enter a valid email</div>
           </div>
         </div>
-      </div>
-      
-      <div class="form-section">
-        <h2 class="section-title">Address Information</h2>
-        
-        <div class="form-group full-width">
-          <label for="street">Street Address</label>
-          <input 
-            type="text" 
-            id="street" 
-            name="street" 
-            [(ngModel)]="customer.address.street"
+
+        <div class="form-group">
+          <label for="responsable">Responsable</label>
+          <input
+            type="text"
+            id="responsable"
+            name="responsable"
+            [(ngModel)]="customer.responsable"
+            required
+            #responsable="ngModel"
+          />
+          <div *ngIf="responsable.invalid && (responsable.dirty || responsable.touched)" class="validation-error">
+            Responsable is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tel">Tel</label>
+          <input
+            type="tel"
+            id="tel"
+            name="tel"
+            [(ngModel)]="customer.tel"
+            required
+            #tel="ngModel"
+          />
+          <div *ngIf="tel.invalid && (tel.dirty || tel.touched)" class="validation-error">
+            Tel is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select
+            id="status"
+            name="status"
+            [(ngModel)]="customer.status"
+            required
+            #status="ngModel"
           >
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="city">City</label>
-            <input 
-              type="text" 
-              id="city" 
-              name="city" 
-              [(ngModel)]="customer.address.city"
-            >
-          </div>
-          
-          <div class="form-group">
-            <label for="state">State/Province</label>
-            <input 
-              type="text" 
-              id="state" 
-              name="state" 
-              [(ngModel)]="customer.address.state"
-            >
+            <option *ngFor="let status of customerStatuses" [value]="status">
+              {{ status | titlecase }}
+            </option>
+          </select>
+          <div *ngIf="status.invalid && (status.dirty || status.touched)" class="validation-error">
+            Status is required
           </div>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="postalCode">Postal/Zip Code</label>
-            <input 
-              type="text" 
-              id="postalCode" 
-              name="postalCode" 
-              [(ngModel)]="customer.address.postalCode"
-            >
-          </div>
-          
-          <div class="form-group">
-            <label for="country">Country</label>
-            <input 
-              type="text" 
-              id="country" 
-              name="country" 
-              [(ngModel)]="customer.address.country"
-            >
+
+        <div class="form-group full-width">
+          <label for="adresse">Adresse</label>
+          <textarea
+            id="adresse"
+            name="adresse"
+            [(ngModel)]="customer.adresse"
+            required
+            rows="3"
+            #adresse="ngModel"
+          ></textarea>
+          <div *ngIf="adresse.invalid && (adresse.dirty || adresse.touched)" class="validation-error">
+            Adresse is required
           </div>
         </div>
       </div>
-      
-      <div class="form-section" *ngIf="isEditMode">
-        <h2 class="section-title">Order Information</h2>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label>Total Orders</label>
-            <input 
-              type="text" 
-              [value]="customer.totalOrders" 
-              disabled
-            >
-          </div>
-          
-          <div class="form-group">
-            <label>Total Spent</label>
-            <input 
-              type="text" 
-              [value]="'$' + customer.totalSpent.toFixed(2)" 
-              disabled
-            >
-          </div>
-        </div>
-      </div>
-      
+
       <div class="form-actions">
-        <button type="button" class="cancel-button" (click)="cancel()">Cancel</button>
-        <button type="submit" class="save-button" [disabled]="!customerForm.form.valid">Save Customer</button>
+        <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="isLoading">
+          Cancel
+        </button>
+        <button type="submit" class="submit-btn" [disabled]="customerForm.invalid || isLoading">
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
       </div>
     </form>
   </div>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Customer, CustomerStatus } from '../../shared/models/customer.model';
+import { Customer } from '../../shared/models/customer.model';
+import { CustomerService } from '../../services/customer.service';
 
 @Component({
   selector: 'app-customers',
@@ -11,130 +12,46 @@ export class CustomersComponent implements OnInit {
   customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
   searchQuery: string = '';
-  statusFilter: string = 'All';
   sortBy: string = 'id';
   sortDirection: 'asc' | 'desc' = 'asc';
+  isLoading: boolean = false;
+  errorMessage: string = '';
   
-  // Get all possible status values for dropdown
-  statuses: string[] = Object.values(CustomerStatus);
+  constructor(private customerService: CustomerService) {}
   
   ngOnInit(): void {
-    // Load sample customers data
-    this.customers = this.getSampleCustomers();
-    this.filteredCustomers = [...this.customers];
+    this.loadCustomers();
   }
   
-  getSampleCustomers(): Customer[] {
-    return [
-      {
-        id: 1,
-        firstName: 'John',
-        lastName: 'Smith',
-        email: 'john.smith@example.com',
-        phone: '(555) 123-4567',
-        address: {
-          street: '123 Main St',
-          city: 'Boston',
-          state: 'MA',
-          postalCode: '02108',
-          country: 'USA'
-        },
-        joinDate: new Date(2022, 2, 15),
-        totalOrders: 12,
-        totalSpent: 1245.87,
-        status: CustomerStatus.Active
+  loadCustomers(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    this.customerService.getAllCustomers().subscribe({
+      next: (data) => {
+        this.customers = data;
+        this.filteredCustomers = [...this.customers];
+        this.isLoading = false;
       },
-      {
-        id: 2,
-        firstName: 'Jane',
-        lastName: 'Doe',
-        email: 'jane.doe@example.com',
-        phone: '(555) 987-6543',
-        address: {
-          street: '456 Oak Ave',
-          city: 'New York',
-          state: 'NY',
-          postalCode: '10001',
-          country: 'USA'
-        },
-        joinDate: new Date(2022, 6, 20),
-        totalOrders: 5,
-        totalSpent: 567.50,
-        status: CustomerStatus.Active
-      },
-      {
-        id: 3,
-        firstName: 'Robert',
-        lastName: 'Johnson',
-        email: 'robert.johnson@example.com',
-        phone: '(555) 222-3333',
-        address: {
-          street: '789 Pine St',
-          city: 'Chicago',
-          state: 'IL',
-          postalCode: '60601',
-          country: 'USA'
-        },
-        joinDate: new Date(2023, 1, 10),
-        totalOrders: 3,
-        totalSpent: 325.45,
-        status: CustomerStatus.New
-      },
-      {
-        id: 4,
-        firstName: 'Sarah',
-        lastName: 'Williams',
-        email: 'sarah.williams@example.com',
-        phone: '(555) 444-5555',
-        address: {
-          street: '101 Maple Rd',
-          city: 'Los Angeles',
-          state: 'CA',
-          postalCode: '90001',
-          country: 'USA'
-        },
-        joinDate: new Date(2022, 9, 5),
-        totalOrders: 8,
-        totalSpent: 890.20,
-        status: CustomerStatus.Active
-      },
-      {
-        id: 5,
-        firstName: 'Michael',
-        lastName: 'Brown',
-        email: 'michael.brown@example.com',
-        phone: '(555) 777-8888',
-        address: {
-          street: '202 Cedar Blvd',
-          city: 'Seattle',
-          state: 'WA',
-          postalCode: '98101',
-          country: 'USA'
-        },
-        joinDate: new Date(2021, 5, 12),
-        totalOrders: 0,
-        totalSpent: 0,
-        status: CustomerStatus.Inactive
+      error: (error) => {
+        console.error('Error loading customers:', error);
+        this.errorMessage = 'Failed to load customers';
+        this.isLoading = false;
       }
-    ];
+    });
   }
   
   applyFilters(): void {
     let filtered = [...this.customers];
     
-    // Apply status filter
-    if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(customer => customer.status === this.statusFilter);
-    }
-    
     // Apply search query
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(customer =>
-        customer.firstName.toLowerCase().includes(query) ||
-        customer.lastName.toLowerCase().includes(query) ||
+        customer.raison_social.toLowerCase().includes(query) ||
         customer.email.toLowerCase().includes(query) ||
-        `${customer.firstName} ${customer.lastName}`.toLowerCase().includes(query) ||
+        customer.codee.toLowerCase().includes(query) ||
+        customer.responsable.toLowerCase().includes(query) ||
         customer.id.toString().includes(query)
       );
     }
@@ -150,21 +67,21 @@ export class CustomersComponent implements OnInit {
       let valueA, valueB;
       
       switch (this.sortBy) {
-        case 'name':
-          valueA = `${a.firstName} ${a.lastName}`;
-          valueB = `${b.firstName} ${b.lastName}`;
+        case 'raison_social':
+          valueA = a.raison_social;
+          valueB = b.raison_social;
           break;
-        case 'joinDate':
-          valueA = a.joinDate.getTime();
-          valueB = b.joinDate.getTime();
+        case 'email':
+          valueA = a.email;
+          valueB = b.email;
           break;
-        case 'totalOrders':
-          valueA = a.totalOrders;
-          valueB = b.totalOrders;
+        case 'responsable':
+          valueA = a.responsable;
+          valueB = b.responsable;
           break;
-        case 'totalSpent':
-          valueA = a.totalSpent;
-          valueB = b.totalSpent;
+        case 'status':
+          valueA = a.status;
+          valueB = b.status;
           break;
         default:
           valueA = a.id;
@@ -200,28 +117,35 @@ export class CustomersComponent implements OnInit {
   }
   
   resetFilters(): void {
-    this.statusFilter = 'All';
     this.searchQuery = '';
     this.sortBy = 'id';
     this.sortDirection = 'asc';
     this.filteredCustomers = [...this.customers];
   }
-  
-  getStatusClass(status: CustomerStatus): string {
-    switch (status) {
-      case CustomerStatus.Active:
-        return 'status-active';
-      case CustomerStatus.Inactive:
-        return 'status-inactive';
-      case CustomerStatus.New:
-        return 'status-new';
-      default:
-        return '';
+
+  deleteCustomer(id: number): void {
+    if (confirm('Are you sure you want to delete this customer?')) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      
+      this.customerService.deleteCustomer(id).subscribe({
+        next: () => {
+          this.customers = this.customers.filter(c => c.id !== id);
+          this.filteredCustomers = this.filteredCustomers.filter(c => c.id !== id);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error deleting customer:', error);
+          this.errorMessage = 'Failed to delete customer';
+          this.isLoading = false;
+        }
+      });
     }
   }
-  
-  getFullAddress(customer: Customer): string {
-    const { street, city, state, postalCode, country } = customer.address;
-    return `${street}, ${city}, ${state} ${postalCode}, ${country}`;
+
+  editCustomer(customer: Customer): void {
+    // Navigate to edit page or open edit modal
+    // This will be implemented based on your routing setup
+    console.log('Edit customer:', customer);
   }
 } 

@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -62,7 +64,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     MatFormField,
     MatLabel,
     MatOption,
-    MatIcon
+    MatIcon,
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   providers: [
     {

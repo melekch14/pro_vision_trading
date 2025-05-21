@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Customer, CustomerStatus, Address } from '../../shared/models/customer.model';
+import { Customer, CustomerStatus } from '../../shared/models/customer.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-customer-form',
@@ -12,11 +14,14 @@ export class CustomerFormComponent implements OnInit {
   customer: Customer = this.getEmptyCustomer();
   isEditMode: boolean = false;
   formTitle: string = 'Add New Customer';
+  isLoading: boolean = false;
+  errorMessage: string = '';
   customerStatuses = Object.values(CustomerStatus);
   
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
   
   ngOnInit(): void {
@@ -25,78 +30,74 @@ export class CustomerFormComponent implements OnInit {
     if (customerId && customerId !== 'new') {
       this.isEditMode = true;
       this.formTitle = 'Edit Customer';
-      // In a real app, you would fetch the customer from a service
-      // For now, we'll use a mock customer
-      this.customer = this.getMockCustomer(+customerId);
+      this.loadCustomer(+customerId);
     }
   }
   
   getEmptyCustomer(): Customer {
     return {
       id: 0,
-      firstName: '',
-      lastName: '',
+      codee: '',
+      raison_social: '',
       email: '',
-      phone: '',
-      address: {
-        street: '',
-        city: '',
-        state: '',
-        postalCode: '',
-        country: ''
-      },
-      joinDate: new Date(),
-      totalOrders: 0,
-      totalSpent: 0,
-      status: CustomerStatus.New
+      responsable: '',
+      tel: '',
+      status: CustomerStatus.Active,
+      adresse: ''
     };
   }
   
-  getMockCustomer(id: number): Customer {
-    // This would typically be fetched from a service
-    return {
-      id: id,
-      firstName: 'John',
-      lastName: 'Smith',
-      email: 'john.smith@example.com',
-      phone: '(555) 123-4567',
-      address: {
-        street: '123 Main St',
-        city: 'Boston',
-        state: 'MA',
-        postalCode: '02108',
-        country: 'USA'
+  loadCustomer(id: number): void {
+    this.isLoading = true;
+    this.http.get<Customer>(`${environment.apiUrl}/clients/${id}`).subscribe({
+      next: (data) => {
+        this.customer = data;
+        this.isLoading = false;
       },
-      joinDate: new Date(2022, 2, 15),
-      totalOrders: 12,
-      totalSpent: 1245.87,
-      status: CustomerStatus.Active
-    };
+      error: (error) => {
+        console.error('Error loading customer:', error);
+        this.errorMessage = 'Failed to load customer data';
+        this.isLoading = false;
+      }
+    });
   }
   
   onSubmit(): void {
     if (this.validateForm()) {
-      // In a real app, you would save the customer via a service
-      console.log('Saving customer:', this.customer);
-      
-      // Simulate API call delay
-      setTimeout(() => {
-        // Navigate back to customers list
-        this.router.navigate(['/customers']);
-      }, 500);
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      const request = this.isEditMode
+        ? this.http.put(`${environment.apiUrl}/clients/${this.customer.id}`, this.customer)
+        : this.http.post(`${environment.apiUrl}/clients`, this.customer);
+
+      request.subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['/customers']);
+        },
+        error: (error) => {
+          console.error('Error saving customer:', error);
+          this.errorMessage = 'Failed to save customer data';
+          this.isLoading = false;
+        }
+      });
     }
   }
   
   validateForm(): boolean {
-    // Basic validation
     return (
-      this.customer.firstName.trim() !== '' &&
-      this.customer.lastName.trim() !== '' &&
-      this.customer.email.trim() !== ''
+      this.customer.codee.trim() !== '' &&
+      this.customer.raison_social.trim() !== '' &&
+      this.customer.email.trim() !== '' &&
+      this.customer.responsable.trim() !== '' &&
+      this.customer.tel.trim() !== '' &&
+      this.customer.status.trim() !== '' &&
+      this.customer.adresse.trim() !== ''
     );
   }
   
   cancel(): void {
-    this.router.navigate(['/app/customers']);
+    this.router.navigate(['/customers']);
   }
 } 

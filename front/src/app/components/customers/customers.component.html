@@ -11,27 +11,38 @@
 
 <!-- Main Content -->
 <div class="customers-container">
-  <div class="filters-section">
-    <div class="search-box">
-      <input
-        type="text"
-        [(ngModel)]="searchQuery"
-        (input)="applyFilters()"
-        placeholder="Search customers..."
-        class="search-input"
-      />
+  <div class="stock-panel">
+    <div class="stock-header">
+      <h2>Customers Management</h2>
+      <div class="stock-actions">
+        <button class="export-btn" (click)="exportToCSV()">
+          <span class="material-icons">file_download</span>
+          Export CSV
+        </button>
+        <button class="export-btn" (click)="exportToPDF()">
+          <span class="material-icons">picture_as_pdf</span>
+          Export PDF
+        </button>
+      </div>
     </div>
-    <div class="filters-actions">
-      <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
-      <button class="add-btn" routerLink="/app/customers/new">
-        <span class="material-icons">add</span>
-        Add New Customer
+
+    <div class="stock-filters">
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by code...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by raison social...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by email...">
+      </div>
+      <button class="clear-filters-btn" (click)="resetFilters()">
+        <span class="material-icons">clear</span>
+        Clear Filters
       </button>
     </div>
-  </div>
 
-  <div class="table-container">
-    <table class="customers-table">
+    <table class="stock-table">
       <thead>
         <tr>
           <th (click)="setSortBy('id')" class="sortable">

@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Customer } from '../../shared/models/customer.model';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
+import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import { UserOptions } from 'jspdf-autotable';
 
 @Component({
   selector: 'app-customers',
@@ -127,6 +131,70 @@ export class CustomersComponent implements OnInit {
     this.filteredCustomers = [...this.customers];
   }
 
+  exportToCSV(): void {
+    const data = this.filteredCustomers.map(customer => ({
+      ID: customer.id,
+      Code: customer.codee,
+      'Raison Social': customer.raison_social,
+      Email: customer.email,
+      Responsable: customer.responsable,
+      Tel: customer.tel,
+      Status: customer.status,
+      Adresse: customer.adresse
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Customers': worksheet }, SheetNames: ['Customers'] };
+    XLSX.writeFile(workbook, 'customers_report.csv');
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text('Customers Report', 14, 15);
+    
+    // Add date
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+
+    // Prepare table data
+    const tableData = this.filteredCustomers.map(customer => [
+      customer.id.toString(),
+      customer.codee,
+      customer.raison_social,
+      customer.email,
+      customer.responsable,
+      customer.tel,
+      customer.status,
+      customer.adresse
+    ]);
+
+    // Add table
+    const options: UserOptions = {
+      head: [['ID', 'Code', 'Raison Social', 'Email', 'Responsable', 'Tel', 'Status', 'Adresse']],
+      body: tableData,
+      startY: 30,
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        cellPadding: 2
+      },
+      headStyles: {
+        fillColor: [30, 64, 175],
+        textColor: 255
+      }
+    };
+
+    (doc as any).autoTable(options);
+    doc.save('customers_report.pdf');
+  }
+  
+  editCustomer(customer: Customer): void {
+    this.router.navigate(['/app/customers', customer.id]);
+  }
+
   deleteCustomer(id: number): void {
     if (confirm('Are you sure you want to delete this customer?')) {
       this.isLoading = true;
@@ -145,9 +213,5 @@ export class CustomersComponent implements OnInit {
         }
       });
     }
-  }
-
-  editCustomer(customer: Customer): void {
-    this.router.navigate(['/app/customers', customer.id]);
   }
 } 

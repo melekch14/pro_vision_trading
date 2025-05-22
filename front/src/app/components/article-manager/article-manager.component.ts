@@ -217,13 +217,13 @@ export class ArticleManagerComponent implements OnInit {
   formatStockCode(entry: StockEntryWithArticle): string {
     const cyl = entry.cylindre.toString().padStart(4, '0');
     const sph = entry.sphere.toString().padStart(4, '0');
-    return `${entry.subfamily_code} — (${cyl}) — ${sph}`;
+    return `${entry.subfamily_code} - (${cyl}) - ${sph}`;
   }
 
   formatStockLibelle(entry: StockEntryWithArticle): string {
     const cyl = entry.cylindre.toString().padStart(4, '0');
     const sph = entry.sphere.toString().padStart(4, '0');
-    return `${entry.article_libelle} (${cyl}) — ${sph}`;
+    return `${entry.article_libelle} (${cyl}) - ${sph}`;
   }
 
   onSubmit(): void {
@@ -491,7 +491,18 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   exportArticlesToCSV(): void {
-    const data = this.filteredArticles.map(article => ({
+    interface ArticleExport {
+      Code: string;
+      Libelle: string;
+      Diametre: number;
+      Foyer: string | undefined;
+      Indice: string | undefined;
+      Design: string | undefined;
+      'Prix Achat': number;
+      'Prix Vente': number;
+    }
+
+    const data: ArticleExport[] = this.filteredArticles.map(article => ({
       Code: article.code,
       Libelle: article.libelle,
       Diametre: article.diametre,
@@ -502,12 +513,21 @@ export class ArticleManagerComponent implements OnInit {
       'Prix Vente': article.prix_vente
     }));
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
-    
-    // Add UTF-8 BOM for proper encoding
-    const wbout = XLSX.write(workbook, { bookType: 'csv', type: 'binary' });
-    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), wbout], { type: 'text/csv;charset=utf-8' });
+    // Create CSV content manually
+    const headers = Object.keys(data[0]) as (keyof ArticleExport)[];
+    const csvRows = [
+      headers.join(','),
+      ...data.map(row => headers.map(header => {
+        const value = row[header];
+        // Wrap string values in quotes and escape any existing quotes
+        return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : value;
+      }).join(','))
+    ];
+    const csvContent = csvRows.join('\n');
+
+    // Create and download file with proper UTF-8 encoding
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -517,20 +537,37 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   exportStockToCSV(): void {
-    const data = this.filteredStockEntries.map(entry => ({
-      Code: this.formatStockCode(entry),
-      Libelle: this.formatStockLibelle(entry),
+    interface StockExport {
+      Code: string;
+      Libelle: string;
+      Quantite: number;
+      Sphere: number;
+      Cylindre: number;
+    }
+
+    const data: StockExport[] = this.filteredStockEntries.map(entry => ({
+      Code: this.formatStockCode(entry).replace(/—/g, '-'),
+      Libelle: this.formatStockLibelle(entry).replace(/—/g, '-'),
       Quantite: entry.quantite,
       Sphere: entry.sphere,
       Cylindre: entry.cylindre
     }));
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const workbook: XLSX.WorkBook = { Sheets: { 'Stock': worksheet }, SheetNames: ['Stock'] };
-    
-    // Add UTF-8 BOM for proper encoding
-    const wbout = XLSX.write(workbook, { bookType: 'csv', type: 'binary' });
-    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), wbout], { type: 'text/csv;charset=utf-8' });
+    // Create CSV content manually
+    const headers = Object.keys(data[0]) as (keyof StockExport)[];
+    const csvRows = [
+      headers.join(','),
+      ...data.map(row => headers.map(header => {
+        const value = row[header];
+        // Wrap string values in quotes and escape any existing quotes
+        return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : value;
+      }).join(','))
+    ];
+    const csvContent = csvRows.join('\n');
+
+    // Create and download file with proper UTF-8 encoding
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

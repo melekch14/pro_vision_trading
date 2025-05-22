@@ -15,7 +15,7 @@ import { StockService, StockEntryWithArticle, StockEntry as ApiStockEntry } from
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { UserOptions } from 'jspdf-autotable';
 
 interface DialogStockEntry {
@@ -519,15 +519,20 @@ export class ArticleManagerComponent implements OnInit {
       headers.join(','),
       ...data.map(row => headers.map(header => {
         const value = row[header];
-        // Wrap string values in quotes and escape any existing quotes
         return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : value;
       }).join(','))
     ];
     const csvContent = csvRows.join('\n');
 
     // Create and download file with proper UTF-8 encoding
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([headers, ...data.map(row => 
+      headers.map(header => row[header])
+    )]);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
+    
+    // Convert to CSV with proper encoding
+    const csv = XLSX.utils.sheet_to_csv(worksheet, { FS: ',' });
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -559,15 +564,20 @@ export class ArticleManagerComponent implements OnInit {
       headers.join(','),
       ...data.map(row => headers.map(header => {
         const value = row[header];
-        // Wrap string values in quotes and escape any existing quotes
         return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : value;
       }).join(','))
     ];
     const csvContent = csvRows.join('\n');
 
     // Create and download file with proper UTF-8 encoding
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([headers, ...data.map(row => 
+      headers.map(header => row[header])
+    )]);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Stock': worksheet }, SheetNames: ['Stock'] };
+    
+    // Convert to CSV with proper encoding
+    const csv = XLSX.utils.sheet_to_csv(worksheet, { FS: ',' });
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -582,17 +592,17 @@ export class ArticleManagerComponent implements OnInit {
     doc.text('Articles List', 14, 15);
     
     const data = this.filteredArticles.map(article => [
-      article.code,
-      article.libelle,
-      article.diametre,
-      article.foyer_name,
-      article.indice_name,
-      article.design_name,
-      article.prix_achat,
-      article.prix_vente
+      article.code || '',
+      article.libelle || '',
+      article.diametre || 0,
+      article.foyer_name || '',
+      article.indice_name || '',
+      article.design_name || '',
+      article.prix_achat || 0,
+      article.prix_vente || 0
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       head: [['Code', 'Libelle', 'Diametre', 'Foyer', 'Indice', 'Design', 'Prix Achat', 'Prix Vente']],
       body: data,
       startY: 25,
@@ -612,12 +622,12 @@ export class ArticleManagerComponent implements OnInit {
     const data = this.filteredStockEntries.map(entry => [
       this.formatStockCode(entry),
       this.formatStockLibelle(entry),
-      entry.quantite,
-      entry.sphere,
-      entry.cylindre
+      entry.quantite || 0,
+      entry.sphere || 0,
+      entry.cylindre || 0
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       head: [['Code', 'Libelle', 'Quantite', 'Sphere', 'Cylindre']],
       body: data,
       startY: 25,

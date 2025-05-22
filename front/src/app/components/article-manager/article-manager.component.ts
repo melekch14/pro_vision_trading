@@ -441,7 +441,9 @@ export class ArticleManagerComponent implements OnInit {
 
   setTab(tab: 'browse' | 'add' | 'stock'): void {
     this.activeTab = tab;
-    if (tab === 'add' && !this.editingArticle) {
+    if (tab === 'browse') {
+      this.resetForm();
+    } else if (tab === 'add' && !this.editingArticle) {
       this.resetForm();
     }
   }

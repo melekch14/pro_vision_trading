@@ -63,7 +63,9 @@ export class ArticleManagerComponent implements OnInit {
   stockFilters = {
     code: '',
     libelle: '',
-    quantity: ''
+    quantity: '',
+    sphere: '',
+    cylindre: ''
   };
 
   // Loading and error states
@@ -447,13 +449,17 @@ export class ArticleManagerComponent implements OnInit {
   applyStockFilters(): void {
     this.filteredStockEntries = this.stockEntries.filter(entry => {
       const matchesCode = !this.stockFilters.code || 
-        entry.article_code.toLowerCase().includes(this.stockFilters.code.toLowerCase());
+        this.formatStockCode(entry).toLowerCase().includes(this.stockFilters.code.toLowerCase());
       const matchesLibelle = !this.stockFilters.libelle || 
-        entry.article_libelle.toLowerCase().includes(this.stockFilters.libelle.toLowerCase());
+        this.formatStockLibelle(entry).toLowerCase().includes(this.stockFilters.libelle.toLowerCase());
       const matchesQuantity = !this.stockFilters.quantity || 
         entry.quantite.toString().includes(this.stockFilters.quantity);
+      const matchesSphere = !this.stockFilters.sphere || 
+        entry.sphere.toString().includes(this.stockFilters.sphere);
+      const matchesCylindre = !this.stockFilters.cylindre || 
+        entry.cylindre.toString().includes(this.stockFilters.cylindre);
 
-      return matchesCode && matchesLibelle && matchesQuantity;
+      return matchesCode && matchesLibelle && matchesQuantity && matchesSphere && matchesCylindre;
     });
   }
 
@@ -461,7 +467,9 @@ export class ArticleManagerComponent implements OnInit {
     this.stockFilters = {
       code: '',
       libelle: '',
-      quantity: ''
+      quantity: '',
+      sphere: '',
+      cylindre: ''
     };
     this.applyStockFilters();
   }

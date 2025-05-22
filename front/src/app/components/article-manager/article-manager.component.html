@@ -297,6 +297,12 @@
           <div class="filter-group">
             <input type="text" class="filter-input" [ngModel]="stockFilters.quantity" (ngModelChange)="stockFilters.quantity = $event; applyStockFilters()" placeholder="Filter by quantity...">
           </div>
+          <div class="filter-group">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.sphere" (ngModelChange)="stockFilters.sphere = $event; applyStockFilters()" placeholder="Filter by sphere...">
+          </div>
+          <div class="filter-group">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.cylindre" (ngModelChange)="stockFilters.cylindre = $event; applyStockFilters()" placeholder="Filter by cylindre...">
+          </div>
           <button class="clear-filters-btn" (click)="clearStockFilters()">
             <span class="material-icons">clear</span>
             Clear Filters

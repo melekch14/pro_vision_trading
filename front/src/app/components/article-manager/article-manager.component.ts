@@ -139,19 +139,18 @@ export class ArticleManagerComponent implements OnInit {
 
   loadArticles(): void {
     this.isLoading = true;
-    this.errorMessage = null;
-    
     this.articleService.getArticles().subscribe({
-      next: (articles) => {
-        this.articles = articles;
-        this.filteredArticles = [...articles];
+      next: (data) => {
+        this.articles = data;
+        this.applyFilters();
         this.isLoading = false;
+        // Refresh stock table after loading articles
+        this.loadStockEntries();
       },
       error: (error) => {
-        this.errorMessage = 'Error loading articles';
-        this.isLoading = false;
-        this.snackBar.open('Error loading articles', 'Close', { duration: 3000 });
         console.error('Error loading articles:', error);
+        this.errorMessage = 'Failed to load articles';
+        this.isLoading = false;
       }
     });
   }
@@ -227,30 +226,34 @@ export class ArticleManagerComponent implements OnInit {
 
   onSubmit(): void {
     if (this.articleForm.valid) {
-      const article = this.articleForm.value;
+      const articleData = this.articleForm.value;
       
       if (this.editingArticle) {
-        this.articleService.updateArticle(this.editingArticle.id!, article).subscribe({
+        this.articleService.updateArticle(this.editingArticle.id!, articleData).subscribe({
           next: () => {
             this.snackBar.open('Article updated successfully', 'Close', { duration: 3000 });
             this.loadArticles();
-            this.resetForm();
+            this.setTab('browse');
+            // Refresh stock table after updating article
+            this.loadStockEntries();
           },
           error: (error) => {
-            this.snackBar.open('Error updating article', 'Close', { duration: 3000 });
             console.error('Error updating article:', error);
+            this.snackBar.open('Error updating article', 'Close', { duration: 3000 });
           }
         });
       } else {
-        this.articleService.createArticle(article).subscribe({
+        this.articleService.createArticle(articleData).subscribe({
           next: () => {
             this.snackBar.open('Article created successfully', 'Close', { duration: 3000 });
             this.loadArticles();
-            this.resetForm();
+            this.setTab('browse');
+            // Refresh stock table after creating article
+            this.loadStockEntries();
           },
           error: (error) => {
-            this.snackBar.open('Error creating article', 'Close', { duration: 3000 });
             console.error('Error creating article:', error);
+            this.snackBar.open('Error creating article', 'Close', { duration: 3000 });
           }
         });
       }
@@ -269,10 +272,12 @@ export class ArticleManagerComponent implements OnInit {
         next: () => {
           this.snackBar.open('Article deleted successfully', 'Close', { duration: 3000 });
           this.loadArticles();
+          // Refresh stock table after deleting article
+          this.loadStockEntries();
         },
         error: (error) => {
-          this.snackBar.open('Error deleting article', 'Close', { duration: 3000 });
           console.error('Error deleting article:', error);
+          this.snackBar.open('Error deleting article', 'Close', { duration: 3000 });
         }
       });
     }

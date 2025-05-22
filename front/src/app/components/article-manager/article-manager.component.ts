@@ -475,6 +475,22 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   exportToCSV(): void {
+    if (this.activeTab === 'stock') {
+      this.exportStockToCSV();
+    } else {
+      this.exportArticlesToCSV();
+    }
+  }
+
+  exportToPDF(): void {
+    if (this.activeTab === 'stock') {
+      this.exportStockToPDF();
+    } else {
+      this.exportArticlesToPDF();
+    }
+  }
+
+  exportArticlesToCSV(): void {
     const data = this.filteredArticles.map(article => ({
       Code: article.code,
       Libelle: article.libelle,
@@ -488,10 +504,42 @@ export class ArticleManagerComponent implements OnInit {
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
-    XLSX.writeFile(workbook, 'articles.csv');
+    
+    // Add UTF-8 BOM for proper encoding
+    const wbout = XLSX.write(workbook, { bookType: 'csv', type: 'binary' });
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), wbout], { type: 'text/csv;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'articles.csv';
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
-  exportToPDF(): void {
+  exportStockToCSV(): void {
+    const data = this.filteredStockEntries.map(entry => ({
+      Code: this.formatStockCode(entry),
+      Libelle: this.formatStockLibelle(entry),
+      Quantite: entry.quantite,
+      Sphere: entry.sphere,
+      Cylindre: entry.cylindre
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Stock': worksheet }, SheetNames: ['Stock'] };
+    
+    // Add UTF-8 BOM for proper encoding
+    const wbout = XLSX.write(workbook, { bookType: 'csv', type: 'binary' });
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), wbout], { type: 'text/csv;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'stock.csv';
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportArticlesToPDF(): void {
     const doc = new jsPDF();
     
     doc.text('Articles List', 14, 15);
@@ -517,6 +565,31 @@ export class ArticleManagerComponent implements OnInit {
     });
 
     doc.save('articles.pdf');
+  }
+
+  exportStockToPDF(): void {
+    const doc = new jsPDF();
+    
+    doc.text('Stock List', 14, 15);
+    
+    const data = this.filteredStockEntries.map(entry => [
+      this.formatStockCode(entry),
+      this.formatStockLibelle(entry),
+      entry.quantite,
+      entry.sphere,
+      entry.cylindre
+    ]);
+
+    (doc as any).autoTable({
+      head: [['Code', 'Libelle', 'Quantite', 'Sphere', 'Cylindre']],
+      body: data,
+      startY: 25,
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [37, 99, 235] }
+    });
+
+    doc.save('stock.pdf');
   }
 
   // Sorting methods

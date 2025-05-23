@@ -7,8 +7,10 @@ export interface StockEntry {
   id?: number;
   article_id: number;
   sphere: number;
-  cylindre: number;
+  cylindre: number | null;
   quantite: number;
+  addition: number | null;
+  type_stock?: string;
 }
 
 export interface StockEntryWithArticle extends StockEntry {

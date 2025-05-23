@@ -6,8 +6,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface DialogStockEntry {
   sphere: number;
-  cylindre: number;
+  cylindre: number | null;
   quantite: number;
+  addition?: number | null;
   modified?: boolean;
 }
 
@@ -55,14 +56,16 @@ export class StockDialogComponent implements OnInit {
         this.existingStock = entries;
         entries.forEach(entry => {
           const sphere = parseFloat(entry.sphere.toString());
-          const cylindre = parseFloat(entry.cylindre.toString());
+          const value = this.data.article.type_stock === 'addition' ? entry.addition : entry.cylindre;
           const stockEntry = this.stockEntries.find(
-            e => Math.abs(e.sphere - sphere) < 0.001 && Math.abs(e.cylindre - cylindre) < 0.001
+            e => Math.abs(e.sphere - sphere) < 0.001 && 
+                 (value === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - value) < 0.001))
           );
           if (stockEntry) {
             stockEntry.quantite = entry.quantite;
+            stockEntry.addition = entry.addition;
             stockEntry.modified = false;
-            console.log('Updated stock entry:', { sphere, cylindre, quantite: entry.quantite });
+            console.log('Updated stock entry:', { sphere, value, quantite: entry.quantite, addition: entry.addition });
           }
         });
         console.log('All stock entries:', this.stockEntries);
@@ -77,23 +80,25 @@ export class StockDialogComponent implements OnInit {
   hasExistingStock(sphere: number, cylindre: number): boolean {
     return this.existingStock.some(entry => {
       const entrySphere = parseFloat(entry.sphere.toString());
-      const entryCylindre = parseFloat(entry.cylindre.toString());
+      const value = this.data.article.type_stock === 'addition' ? entry.addition : entry.cylindre;
       return Math.abs(entrySphere - sphere) < 0.001 && 
-             Math.abs(entryCylindre - cylindre) < 0.001 && 
+             (value === null ? cylindre === null : Math.abs(value - cylindre) < 0.001) && 
              entry.quantite > 0;
     });
   }
 
   getQuantity(sphere: number, cylindre: number): number {
     const entry = this.stockEntries.find(
-      e => Math.abs(e.sphere - sphere) < 0.001 && Math.abs(e.cylindre - cylindre) < 0.001
+      e => Math.abs(e.sphere - sphere) < 0.001 && 
+           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
     );
     return entry ? entry.quantite : 0;
   }
 
   onQuantityChange(sphere: number, cylindre: number, value: number): void {
     const entry = this.stockEntries.find(
-      e => Math.abs(e.sphere - sphere) < 0.001 && Math.abs(e.cylindre - cylindre) < 0.001
+      e => Math.abs(e.sphere - sphere) < 0.001 && 
+           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
     );
     
     if (entry) {
@@ -103,8 +108,9 @@ export class StockDialogComponent implements OnInit {
       
       const existingEntry = this.existingStock.find(e => {
         const entrySphere = parseFloat(e.sphere.toString());
-        const entryCylindre = parseFloat(e.cylindre.toString());
-        return Math.abs(entrySphere - sphere) < 0.001 && Math.abs(entryCylindre - cylindre) < 0.001;
+        const value = this.data.article.type_stock === 'addition' ? e.addition : e.cylindre;
+        return Math.abs(entrySphere - sphere) < 0.001 && 
+               (value === null ? cylindre === null : Math.abs(value - cylindre) < 0.001);
       });
       
       if (existingEntry) {
@@ -141,9 +147,10 @@ export class StockDialogComponent implements OnInit {
     entriesToSave.forEach(entry => {
       const existingEntry = this.existingStock.find(e => {
         const entrySphere = parseFloat(e.sphere.toString());
-        const entryCylindre = parseFloat(e.cylindre.toString());
+        // For addition type, we compare with the addition value
+        const value = this.data.article.type_stock === 'addition' ? e.addition : e.cylindre;
         return Math.abs(entrySphere - entry.sphere) < 0.001 && 
-               Math.abs(entryCylindre - entry.cylindre) < 0.001;
+               (value === null ? entry.cylindre === null : (entry.cylindre !== null && Math.abs(value - entry.cylindre) < 0.001));
       });
 
       console.log('Checking entry:', entry, 'Existing entry:', existingEntry);
@@ -151,9 +158,13 @@ export class StockDialogComponent implements OnInit {
       const stockEntry: ApiStockEntry = {
         article_id: this.data.article.id!,
         sphere: entry.sphere,
-        cylindre: entry.cylindre,
-        quantite: entry.quantite
+        cylindre: this.data.article.type_stock === 'cylindre' ? entry.cylindre : null,
+        addition: this.data.article.type_stock === 'addition' ? entry.cylindre : null,
+        quantite: entry.quantite,
+        type_stock: this.data.article.type_stock
       };
+
+      console.log('Stock entry to save:', stockEntry);
 
       if (existingEntry) {
         // If the entry was modified, update it
@@ -174,10 +185,11 @@ export class StockDialogComponent implements OnInit {
     // Handle entries that were set to 0 (deletions)
     const deletions: ApiStockEntry[] = this.existingStock.filter(existingEntry => {
       const entrySphere = parseFloat(existingEntry.sphere.toString());
-      const entryCylindre = parseFloat(existingEntry.cylindre.toString());
+      // For addition type, we compare with the addition value
+      const value = this.data.article.type_stock === 'addition' ? existingEntry.addition : existingEntry.cylindre;
       const currentEntry = this.stockEntries.find(
         e => Math.abs(e.sphere - entrySphere) < 0.001 && 
-             Math.abs(e.cylindre - entryCylindre) < 0.001
+             (value === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - value) < 0.001))
       );
       return currentEntry && currentEntry.quantite === 0;
     });

@@ -2,10 +2,17 @@ const db = require('../models/db');
 
 // Create stock entry
 const createStock = async (stockData) => {
-    const { article_id, sphere, cylindre, quantite } = stockData;
+    const { article_id, sphere, cylindre, addition, quantite, type_stock } = stockData;
+    console.log('Creating stock with data:', stockData);
     const [result] = await db.query(
         'INSERT INTO stock (article_id, sphere, cylindre, addition, quantite) VALUES (?, ?, ?, ?, ?)',
-        [article_id, sphere, cylindre, cylindre === 0 ? sphere : null, quantite]
+        [
+            article_id, 
+            sphere, 
+            type_stock === 'cylindre' ? cylindre : null, 
+            type_stock === 'addition' ? addition : null, 
+            quantite
+        ]
     );
     return result.insertId;
 };
@@ -21,10 +28,17 @@ const getStockByArticleId = async (articleId) => {
 
 // Update stock entry
 const updateStock = async (id, stockData) => {
-    const { sphere, cylindre, quantite } = stockData;
+    const { sphere, cylindre, addition, quantite, type_stock } = stockData;
+    console.log('Updating stock with data:', stockData);
     await db.query(
         'UPDATE stock SET sphere = ?, cylindre = ?, addition = ?, quantite = ? WHERE id = ?',
-        [sphere, cylindre, cylindre === 0 ? sphere : null, quantite, id]
+        [
+            sphere, 
+            type_stock === 'cylindre' ? cylindre : null, 
+            type_stock === 'addition' ? addition : null, 
+            quantite, 
+            id
+        ]
     );
 };
 
@@ -49,7 +63,8 @@ const getAllStockWithArticles = async () => {
             a.type_stock,
             sf.name as subfamily_name,
             sf.code as subfamily_code,
-            f.code as family_code
+            f.code as family_code,
+            s.addition
         FROM stock s
         JOIN article a ON s.article_id = a.id
         JOIN article_subfamilies sf ON a.article_subfamily_id = sf.id

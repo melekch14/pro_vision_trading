@@ -58,14 +58,15 @@ export class ArticleManagerComponent implements OnInit {
   // Stock panel properties
   stockEntries: StockEntryWithArticle[] = [];
   filteredStockEntries: StockEntryWithArticle[] = [];
-  displayedColumns: string[] = ['code', 'libelle', 'qte', 'sphere', 'cylindre'];
+  displayedColumns: string[] = ['code', 'libelle', 'qte', 'sphere', 'cylindre', 'addition'];
   
   stockFilters = {
     code: '',
     libelle: '',
     quantity: '',
     sphere: '',
-    cylindre: ''
+    cylindre: '',
+    addition: ''
   };
 
   // Loading and error states
@@ -214,13 +215,13 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   formatStockCode(entry: StockEntryWithArticle): string {
-    const cyl = entry.cylindre.toString().padStart(4, '0');
+    const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') : '0000';
     const sph = entry.sphere.toString().padStart(4, '0');
     return `${entry.subfamily_code} - (${cyl}) - ${sph}`;
   }
 
   formatStockLibelle(entry: StockEntryWithArticle): string {
-    const cyl = entry.cylindre.toString().padStart(4, '0');
+    const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') : '0000';
     const sph = entry.sphere.toString().padStart(4, '0');
     return `${entry.article_libelle} (${cyl}) - ${sph}`;
   }
@@ -458,9 +459,11 @@ export class ArticleManagerComponent implements OnInit {
       const matchesSphere = !this.stockFilters.sphere || 
         entry.sphere.toString().includes(this.stockFilters.sphere);
       const matchesCylindre = !this.stockFilters.cylindre || 
-        entry.cylindre.toString().includes(this.stockFilters.cylindre);
+        (entry.cylindre !== null && entry.cylindre.toString().includes(this.stockFilters.cylindre));
+      const matchesAddition = !this.stockFilters.addition || 
+        entry.addition?.toString().includes(this.stockFilters.addition);
 
-      return matchesCode && matchesLibelle && matchesQuantity && matchesSphere && matchesCylindre;
+      return matchesCode && matchesLibelle && matchesQuantity && matchesSphere && matchesCylindre && matchesAddition;
     });
   }
 
@@ -470,7 +473,8 @@ export class ArticleManagerComponent implements OnInit {
       libelle: '',
       quantity: '',
       sphere: '',
-      cylindre: ''
+      cylindre: '',
+      addition: ''
     };
     this.applyStockFilters();
   }
@@ -548,7 +552,8 @@ export class ArticleManagerComponent implements OnInit {
       Libelle: string;
       Quantite: number;
       Sphere: number;
-      Cylindre: number;
+      Cylindre: number | null;
+      Addition: number;
     }
 
     const data: StockExport[] = this.filteredStockEntries.map(entry => ({
@@ -556,7 +561,8 @@ export class ArticleManagerComponent implements OnInit {
       Libelle: this.formatStockLibelle(entry).replace(/—/g, '-'),
       Quantite: entry.quantite,
       Sphere: entry.sphere,
-      Cylindre: entry.cylindre
+      Cylindre: entry.cylindre,
+      Addition: entry.addition || 0
     }));
 
     // Create CSV content manually
@@ -625,11 +631,12 @@ export class ArticleManagerComponent implements OnInit {
       this.formatStockLibelle(entry),
       entry.quantite || 0,
       entry.sphere || 0,
-      entry.cylindre || 0
+      entry.cylindre || 0,
+      entry.addition || 0
     ]);
 
     autoTable(doc, {
-      head: [['Code', 'Libelle', 'Quantite', 'Sphere', 'Cylindre']],
+      head: [['Code', 'Libelle', 'Quantite', 'Sphere', 'Cylindre', 'Addition']],
       body: data,
       startY: 25,
       theme: 'grid',

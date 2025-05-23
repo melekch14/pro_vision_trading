@@ -208,18 +208,18 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label for="axe">Axe</label>
-              <input type="text" id="axe" formControlName="axe" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="addition">Addition</label>
-              <input type="number" id="addition" formControlName="addition" class="form-control">
-            </div>
-            <div class="form-group">
               <label for="typeArticle">Type Article</label>
               <select id="typeArticle" formControlName="typeArticle_id" class="form-control">
                 <option value="">Select Type Article</option>
                 <option *ngFor="let option of typeArticleOptions" [value]="option">{{option}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="typeStock">Type Stock</label>
+              <select id="typeStock" formControlName="type_stock" class="form-control">
+                <option value="">Select Type Stock</option>
+                <option value="addition">Addition</option>
+                <option value="cylindre">Cylindre</option>
               </select>
             </div>
           </div>

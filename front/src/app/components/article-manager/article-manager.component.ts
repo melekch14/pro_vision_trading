@@ -94,8 +94,6 @@ export class ArticleManagerComponent implements OnInit {
       design_id: ['', Validators.required],
       couleur_photo_id: ['', Validators.required],
       traitement_id: ['', Validators.required],
-      axe: ['', Validators.required],
-      addition: ['', [Validators.required, Validators.min(0)]],
       prix_achat: ['', [Validators.required, Validators.min(0)]],
       tva: ['', [Validators.required, Validators.min(0)]],
       prix_vente: ['', [Validators.required, Validators.min(0)]],
@@ -103,7 +101,8 @@ export class ArticleManagerComponent implements OnInit {
       expiration: ['', Validators.required],
       fournisseur_id: ['', Validators.required],
       typeArticle_id: ['', Validators.required],
-      article_subfamily_id: ['', Validators.required]
+      article_subfamily_id: ['', Validators.required],
+      type_stock: ['', Validators.required]
     });
 
     this.filterForm = this.fb.group({

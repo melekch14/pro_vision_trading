@@ -5,16 +5,16 @@ const createArticle = async (article) => {
     const [result] = await db.query(
         `INSERT INTO article (
             code, libelle, diametre, foyer_id, indice_id, design_id, 
-            couleur_photo_id, traitement_id, axe, addition, 
-            prix_achat, tva, prix_vente, code_a_barre, 
-            expiration, fournisseur_id, typeArticle_id, article_subfamily_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            couleur_photo_id, traitement_id, prix_achat, tva, prix_vente, 
+            code_a_barre, expiration, fournisseur_id, typeArticle_id, 
+            article_subfamily_id, type_stock
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
-            article.axe, article.addition, article.prix_achat, article.tva,
-            article.prix_vente, article.code_a_barre, article.expiration,
-            article.fournisseur_id, article.typeArticle_id, article.article_subfamily_id
+            article.prix_achat, article.tva, article.prix_vente, article.code_a_barre, 
+            article.expiration, article.fournisseur_id, article.typeArticle_id, 
+            article.article_subfamily_id, article.type_stock
         ]
     );
     return result.insertId;
@@ -70,17 +70,16 @@ const updateArticle = async (id, article) => {
         `UPDATE article SET 
             code = ?, libelle = ?, diametre = ?, foyer_id = ?, indice_id = ?, 
             design_id = ?, couleur_photo_id = ?, traitement_id = ?, 
-            axe = ?, addition = ?, prix_achat = ?, tva = ?, 
-            prix_vente = ?, code_a_barre = ?, expiration = ?, 
-            fournisseur_id = ?, typeArticle_id = ?, article_subfamily_id = ?
+            prix_achat = ?, tva = ?, prix_vente = ?, code_a_barre = ?, 
+            expiration = ?, fournisseur_id = ?, typeArticle_id = ?, 
+            article_subfamily_id = ?, type_stock = ?
         WHERE id = ?`,
         [
-
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
-            article.axe, article.addition, article.prix_achat, article.tva,
-            article.prix_vente, article.code_a_barre, article.expiration,
-            article.fournisseur_id, article.typeArticle_id, article.article_subfamily_id, id
+            article.prix_achat, article.tva, article.prix_vente, article.code_a_barre, 
+            article.expiration, article.fournisseur_id, article.typeArticle_id, 
+            article.article_subfamily_id, article.type_stock, id
         ]
     );
 };

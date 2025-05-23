@@ -13,8 +13,6 @@ export interface Article {
   design_id: number;
   couleur_photo_id: number;
   traitement_id: number;
-  axe: string;
-  addition: number;
   prix_achat: number;
   tva: number;
   prix_vente: number;
@@ -23,6 +21,7 @@ export interface Article {
   fournisseur_id: string;
   typeArticle_id: number;
   article_subfamily_id?: number;
+  type_stock: string;
   // Display names from joins
   foyer_name?: string;
   indice_name?: string;

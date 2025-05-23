@@ -4,8 +4,8 @@ const db = require('../models/db');
 const createStock = async (stockData) => {
     const { article_id, sphere, cylindre, quantite } = stockData;
     const [result] = await db.query(
-        'INSERT INTO stock (article_id, sphere, cylindre, quantite) VALUES (?, ?, ?, ?)',
-        [article_id, sphere, cylindre, quantite]
+        'INSERT INTO stock (article_id, sphere, cylindre, addition, quantite) VALUES (?, ?, ?, ?, ?)',
+        [article_id, sphere, cylindre, cylindre === 0 ? sphere : null, quantite]
     );
     return result.insertId;
 };
@@ -23,8 +23,8 @@ const getStockByArticleId = async (articleId) => {
 const updateStock = async (id, stockData) => {
     const { sphere, cylindre, quantite } = stockData;
     await db.query(
-        'UPDATE stock SET sphere = ?, cylindre = ?, quantite = ? WHERE id = ?',
-        [sphere, cylindre, quantite, id]
+        'UPDATE stock SET sphere = ?, cylindre = ?, addition = ?, quantite = ? WHERE id = ?',
+        [sphere, cylindre, cylindre === 0 ? sphere : null, quantite, id]
     );
 };
 
@@ -46,6 +46,7 @@ const getAllStockWithArticles = async () => {
             s.*,
             a.code as article_code,
             a.libelle as article_libelle,
+            a.type_stock,
             sf.name as subfamily_name,
             sf.code as subfamily_code,
             f.code as family_code

@@ -109,7 +109,7 @@ export class ArticleManagerComponent implements OnInit {
     // Subscribe to subfamily changes
     this.articleForm.get('article_subfamily_id')?.valueChanges.subscribe(subfamilyId => {
       if (subfamilyId) {
-        const selectedSubfamily = this.subfamilyOptions.find(sf => sf.id === subfamilyId);
+        const selectedSubfamily = this.subfamilyOptions.find(sf => sf.id === Number(subfamilyId));
         if (selectedSubfamily) {
           this.articleForm.patchValue({
             code: selectedSubfamily.code,

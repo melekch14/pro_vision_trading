@@ -42,10 +42,62 @@ const deleteOpticien = async (id) => {
     return result.affectedRows > 0;
 };
 
+// Get opticien permissions
+const getOpticienPermissions = async (opticienId) => {
+  const [permissions] = await db.query(
+    'SELECT component_id, has_access FROM opticien_permissions WHERE opticien_id = ?',
+    [opticienId]
+  );
+  return permissions;
+};
+
+// Update opticien permissions
+const updateOpticienPermissions = async (opticienId, permissions) => {
+  // Start a transaction
+  const connection = await db.getConnection();
+  await connection.beginTransaction();
+
+  try {
+    // Delete existing permissions
+    await connection.query(
+      'DELETE FROM opticien_permissions WHERE opticien_id = ?',
+      [opticienId]
+    );
+
+    // Insert new permissions
+    for (const permission of permissions) {
+      await connection.query(
+        'INSERT INTO opticien_permissions (opticien_id, component_id, has_access) VALUES (?, ?, ?)',
+        [opticienId, permission.componentId, permission.hasAccess]
+      );
+    }
+
+    await connection.commit();
+    return permissions;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+};
+
+// Check if opticien has access to a component
+const checkOpticienAccess = async (opticienId, componentId) => {
+  const [permissions] = await db.query(
+    'SELECT has_access FROM opticien_permissions WHERE opticien_id = ? AND component_id = ?',
+    [opticienId, componentId]
+  );
+  return permissions.length > 0 ? permissions[0].has_access : false;
+};
+
 module.exports = {
     getAllOpticiens,
     getOpticienById,
     createOpticien,
     updateOpticien,
-    deleteOpticien
+    deleteOpticien,
+    getOpticienPermissions,
+    updateOpticienPermissions,
+    checkOpticienAccess
 }; 

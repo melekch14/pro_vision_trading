@@ -17,4 +17,9 @@ router.put('/:id', opticienController.updateOpticien);
 // Delete opticien
 router.delete('/:id', opticienController.deleteOpticien);
 
+// Permission routes
+router.get('/:id/permissions', opticienController.getOpticienPermissions);
+router.put('/:id/permissions', opticienController.updateOpticienPermissions);
+router.get('/:id/access/:componentId', opticienController.checkOpticienAccess);
+
 module.exports = router; 

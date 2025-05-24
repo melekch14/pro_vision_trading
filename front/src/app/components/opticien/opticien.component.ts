@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { OpticienService, Opticien } from '../../services/opticien.service';
+import { OpticienService, Opticien, ComponentPermission } from '../../services/opticien.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from '../../services/theme.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-opticien',
@@ -33,11 +34,24 @@ export class OpticienComponent implements OnInit {
   sortColumn = '';
   sortDirection: 'asc' | 'desc' = 'asc';
 
+  // Permissions management
+  showPermissionsPanel = false;
+  selectedOpticien: Opticien | null = null;
+  availableComponents: ComponentPermission[] = [
+    { componentId: 'article-manager', componentName: 'Article Manager', hasAccess: false },
+    { componentId: 'article-hierarchy', componentName: 'Article Hierarchy', hasAccess: false },
+    { componentId: 'article-params', componentName: 'Article Parameters', hasAccess: false },
+    { componentId: 'orders', componentName: 'Orders', hasAccess: false },
+    { componentId: 'customers', componentName: 'Customers', hasAccess: false },
+    { componentId: 'fournisseurs', componentName: 'Suppliers', hasAccess: false }
+  ];
+
   constructor(
     private opticienService: OpticienService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private authService: AuthService
   ) {
     this.opticienForm = this.fb.group({
       codee: ['', Validators.required],
@@ -250,5 +264,69 @@ export class OpticienComponent implements OnInit {
       horizontalPosition: 'end',
       verticalPosition: 'top'
     });
+  }
+
+  openPermissionsPanel(opticien: Opticien): void {
+    if (this.authService.getUserData()?.role !== 'opticien') {
+      this.showMessage('Only opticiens can manage permissions');
+      return;
+    }
+
+    if (opticien.role !== 'technicien') {
+      this.showMessage('Permissions can only be managed for technicians');
+      return;
+    }
+
+    this.selectedOpticien = opticien;
+    this.showPermissionsPanel = true;
+    this.loadOpticienPermissions(opticien.id!);
+  }
+
+  loadOpticienPermissions(opticienId: number): void {
+    this.opticienService.getOpticienPermissions(opticienId).subscribe({
+      next: (permissions) => {
+        // Update the available components with the current permissions
+        this.availableComponents = this.availableComponents.map(comp => {
+          const existingPermission = permissions.find(p => p.componentId === comp.componentId);
+          return {
+            ...comp,
+            hasAccess: existingPermission?.hasAccess || false
+          };
+        });
+      },
+      error: (error) => {
+        this.showMessage('Error loading permissions');
+      }
+    });
+  }
+
+  savePermissions(): void {
+    if (!this.selectedOpticien?.id) return;
+
+    this.opticienService.updateOpticienPermissions(
+      this.selectedOpticien.id,
+      this.availableComponents
+    ).subscribe({
+      next: () => {
+        this.showMessage('Permissions updated successfully');
+        this.closePermissionsPanel();
+      },
+      error: (error) => {
+        this.showMessage('Error updating permissions');
+      }
+    });
+  }
+
+  closePermissionsPanel(): void {
+    this.showPermissionsPanel = false;
+    this.selectedOpticien = null;
+    this.availableComponents = this.availableComponents.map(comp => ({
+      ...comp,
+      hasAccess: false
+    }));
+  }
+
+  toggleComponentAccess(component: ComponentPermission): void {
+    component.hasAccess = !component.hasAccess;
   }
 } 

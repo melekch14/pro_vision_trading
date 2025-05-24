@@ -44,7 +44,10 @@ export class CustomerFormComponent implements OnInit {
       tel: '',
       status: CustomerStatus.Active,
       adresse: '',
-      password: ''
+      password: '',
+      rccm: '',
+      ninea: '',
+      code_douane: ''
     };
   }
   

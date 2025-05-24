@@ -140,6 +140,51 @@
             Adresse is required
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="rccm">RCCM</label>
+          <input
+            type="text"
+            id="rccm"
+            name="rccm"
+            [(ngModel)]="customer.rccm"
+            required
+            #rccm="ngModel"
+          />
+          <div *ngIf="rccm.invalid && (rccm.dirty || rccm.touched)" class="validation-error">
+            RCCM is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ninea">NINEA</label>
+          <input
+            type="text"
+            id="ninea"
+            name="ninea"
+            [(ngModel)]="customer.ninea"
+            required
+            #ninea="ngModel"
+          />
+          <div *ngIf="ninea.invalid && (ninea.dirty || ninea.touched)" class="validation-error">
+            NINEA is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="code_douane">Customs Code</label>
+          <input
+            type="text"
+            id="code_douane"
+            name="code_douane"
+            [(ngModel)]="customer.code_douane"
+            required
+            #code_douane="ngModel"
+          />
+          <div *ngIf="code_douane.invalid && (code_douane.dirty || code_douane.touched)" class="validation-error">
+            Customs Code is required
+          </div>
+        </div>
       </div>
 
       <div class="form-actions">

@@ -8,6 +8,9 @@ export interface Customer {
   status: string;
   adresse: string;
   password: string;
+  rccm: string;
+  ninea: string;
+  code_douane: string;
 }
 
 export interface Address {

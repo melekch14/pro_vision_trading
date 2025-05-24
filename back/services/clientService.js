@@ -37,7 +37,7 @@ const createClient = async (clientData) => {
 };
 
 // Update client
-const updateClient = async (codee, clientData) => {
+const updateClient = async (id, clientData) => {
     const updates = [];
     const values = [];
     
@@ -84,14 +84,16 @@ const updateClient = async (codee, clientData) => {
     }
 
     if (updates.length === 0) {
-        return;
+        return false;
     }
 
-    values.push(codee);
-    await db.query(
-        `UPDATE client SET ${updates.join(', ')} WHERE codee = ?`,
+    values.push(id);
+    const [result] = await db.query(
+        `UPDATE client SET ${updates.join(', ')} WHERE id = ?`,
         values
     );
+    
+    return result.affectedRows > 0;
 };
 
 // Delete client

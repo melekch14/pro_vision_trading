@@ -71,6 +71,9 @@
             <span class="material-icons">{{ getSortIcon('status') }}</span>
           </th>
           <th>Adresse</th>
+          <th>RCCM</th>
+          <th>NINEA</th>
+          <th>Customs Code</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -88,6 +91,9 @@
             </span>
           </td>
           <td>{{ customer.adresse }}</td>
+          <td>{{ customer.rccm }}</td>
+          <td>{{ customer.ninea }}</td>
+          <td>{{ customer.code_douane }}</td>
           <td class="actions-cell">
             <button class="edit-btn" (click)="editCustomer(customer)">
               <span class="material-icons">edit</span>

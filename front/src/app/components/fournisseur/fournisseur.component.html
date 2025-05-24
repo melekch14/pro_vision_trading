@@ -163,40 +163,30 @@
     <table class="stock-table">
       <thead>
         <tr>
-          <th (click)="onSort('code')" class="sortable">
-            Code
-            <span class="material-icons">{{ getSortIcon('code') }}</span>
-          </th>
-          <th (click)="onSort('raison_social')" class="sortable">
-            Company Name
-            <span class="material-icons">{{ getSortIcon('raison_social') }}</span>
-          </th>
-          <th (click)="onSort('email')" class="sortable">
-            Email
-            <span class="material-icons">{{ getSortIcon('email') }}</span>
-          </th>
-          <th (click)="onSort('tel')" class="sortable">
-            Phone
-            <span class="material-icons">{{ getSortIcon('tel') }}</span>
-          </th>
-          <th (click)="onSort('responsable')" class="sortable">
-            Responsible
-            <span class="material-icons">{{ getSortIcon('responsable') }}</span>
-          </th>
-          <th (click)="onSort('status')" class="sortable">
-            Status
-            <span class="material-icons">{{ getSortIcon('status') }}</span>
-          </th>
+          <th>Code</th>
+          <th>Company Name</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Responsible</th>
+          <th>RCCM</th>
+          <th>NINEA</th>
+          <th>Customs Code</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let fournisseur of filteredFournisseurs">
+        <tr *ngFor="let fournisseur of fournisseurs">
           <td>{{ fournisseur.code }}</td>
           <td>{{ fournisseur.raison_social }}</td>
-          <td>{{ fournisseur.email }}</td>
+          <td>{{ fournisseur.adresse }}</td>
           <td>{{ fournisseur.tel }}</td>
+          <td>{{ fournisseur.email }}</td>
           <td>{{ fournisseur.responsable }}</td>
+          <td>{{ fournisseur.rccm }}</td>
+          <td>{{ fournisseur.ninea }}</td>
+          <td>{{ fournisseur.code_douane }}</td>
           <td>
             <span class="status-badge" [ngClass]="'status-' + fournisseur.status">
               {{ fournisseur.status | titlecase }}

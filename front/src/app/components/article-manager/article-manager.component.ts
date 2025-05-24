@@ -87,6 +87,7 @@ export class ArticleManagerComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.articleForm = this.fb.group({
+      article_subfamily_id: ['', Validators.required],
       code: ['', Validators.required],
       libelle: ['', Validators.required],
       diametre: ['', [Validators.required, Validators.min(0)]],
@@ -102,8 +103,20 @@ export class ArticleManagerComponent implements OnInit {
       expiration: ['', Validators.required],
       fournisseur_id: ['', Validators.required],
       typeArticle_id: ['', Validators.required],
-      article_subfamily_id: ['', Validators.required],
       type_stock: ['', Validators.required]
+    });
+
+    // Subscribe to subfamily changes
+    this.articleForm.get('article_subfamily_id')?.valueChanges.subscribe(subfamilyId => {
+      if (subfamilyId) {
+        const selectedSubfamily = this.subfamilyOptions.find(sf => sf.id === subfamilyId);
+        if (selectedSubfamily) {
+          this.articleForm.patchValue({
+            code: selectedSubfamily.code,
+            libelle: selectedSubfamily.name
+          }, { emitEvent: false }); // Prevent infinite loop
+        }
+      }
     });
 
     this.filterForm = this.fb.group({

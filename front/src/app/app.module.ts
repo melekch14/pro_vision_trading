@@ -12,6 +12,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,6 +33,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { SettingsComponent } from './components/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ArticleManagerComponent,
     StockDialogComponent,
     ArticleParamsComponent,
-    FournisseurComponent
+    FournisseurComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     MatIcon,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatIconModule
+    MatIconModule,
+    MatSlideToggleModule
   ],
   providers: [
     {

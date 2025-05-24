@@ -46,6 +46,12 @@ export class SidebarComponent implements OnInit {
       title: 'Article Parameters', 
       icon: 'settings',
       route: '/app/article-params'
+    },
+    { 
+      id: 7, 
+      title: 'Settings', 
+      icon: 'settings_applications',
+      route: '/app/settings'
     }
   ];
 

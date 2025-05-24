@@ -1,0 +1,20 @@
+.settings-container {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+    color: var(--text-color);
+  }
+
+  .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+
+    span {
+      color: var(--text-color);
+    }
+  }
+}

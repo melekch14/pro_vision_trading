@@ -1,0 +1,10 @@
+<div class="settings-container">
+  <h2>Settings</h2>
+  <div class="setting-item">
+    <span>Dark Mode</span>
+    <mat-slide-toggle
+      [checked]="themeService.isDarkMode$ | async"
+      (change)="themeService.toggleTheme()">
+    </mat-slide-toggle>
+  </div>
+</div>

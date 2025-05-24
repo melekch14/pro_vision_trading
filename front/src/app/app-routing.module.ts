@@ -11,6 +11,7 @@ import { ArticleManagerComponent } from './components/article-manager/article-ma
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
 import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
 import { AuthGuard } from './guards/auth.guard';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   {
@@ -38,7 +39,8 @@ const routes: Routes = [
       { path: 'article-hierarchy', component: ArticleHierarchyComponent },
       { path: 'article-manager', component: ArticleManagerComponent },
       { path: 'article-params', component: ArticleParamsComponent },
-      { path: 'fournisseurs', component: FournisseurComponent }
+      { path: 'fournisseurs', component: FournisseurComponent },
+      { path: 'settings', component: SettingsComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }

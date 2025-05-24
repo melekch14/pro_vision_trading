@@ -3,14 +3,15 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  max-width: 100%;
+  max-width: 1200px;
 }
 
 .filter-section {
   margin-bottom: 30px;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: var(--card-background);
   border-radius: 8px;
+  border: 1px solid var(--border-color);
 
   .filter-form {
     display: flex;
@@ -45,14 +46,15 @@
 }
 
 .article-form {
-  background-color: #fff;
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
 
   h2 {
     margin-bottom: 20px;
-    color: #333;
+    color: var(--text-color);
   }
 
   .form-row {
@@ -69,20 +71,23 @@
     label {
       display: block;
       margin-bottom: 5px;
-      color: #666;
+      color: var(--text-color);
+      opacity: 0.7;
     }
 
     .form-control {
       width: 100%;
       padding: 8px 12px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--input-border);
       border-radius: 4px;
       font-size: 14px;
+      background-color: var(--input-bg);
+      color: var(--input-text);
 
       &:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.25);
       }
     }
   }
@@ -93,7 +98,7 @@
 
     button {
       padding: 10px 20px;
-      background-color: #007bff;
+      background-color: var(--primary-color);
       color: white;
       border: none;
       border-radius: 4px;
@@ -101,11 +106,12 @@
       font-size: 14px;
 
       &:hover {
-        background-color: #0056b3;
+        opacity: 0.9;
       }
 
       &:disabled {
-        background-color: #ccc;
+        background-color: var(--button-bg);
+        color: var(--button-text);
         cursor: not-allowed;
       }
     }
@@ -127,75 +133,75 @@ button {
 
 // Page background
 .article-manager-bg {
-  background-color: #f8f9fa;
+  background-color: var(--background-color);
   min-height: 100vh;
-  padding: 2rem 0;
+  padding: 20px;
 }
 
 .main-title {
-  color: #2c3e50;
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  text-align: center;
+  color: var(--text-color);
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 // Tabs
 .tabs {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 1rem;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
 }
 
-  .tab-btn {
-  padding: 0.75rem 1.5rem;
-    border: none;
+.tab-btn {
   background: none;
-  color: #6c757d;
-  font-weight: 500;
-    cursor: pointer;
+  border: none;
+  color: var(--text-color);
+  padding: 8px 16px;
+  cursor: pointer;
+  opacity: 0.7;
   transition: all 0.3s ease;
-  border-radius: 4px;
 
   &:hover {
-    background-color: #e9ecef;
-    color: #2c3e50;
+    opacity: 1;
   }
 
-    &.active {
-    background-color: #2563eb;
-    color: white;
+  &.active {
+    opacity: 1;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
   }
 }
 
 // Card containers
 .card {
-  background: #fff;
+  background: var(--card-background);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   padding: 28px 28px 20px 28px;
   margin-bottom: 32px;
+  border: 1px solid var(--border-color);
 }
 
 .section-title {
-  color: #2c3e50;
+  color: var(--text-color);
   font-size: 1.5rem;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .section-subtitle {
-  color: #4b5563;
+  color: var(--text-color);
   font-size: 1.1rem;
   margin-bottom: 1rem;
-      font-weight: 500;
-    }
+  font-weight: 500;
+}
 
 // Form Card
 .article-form-card {
-  background: white;
+  background: var(--card-background);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
@@ -203,6 +209,7 @@ button {
   width: 100%;
   margin-left: 0;
   margin-right: 0;
+  border: 1px solid var(--border-color);
 }
 
 .section-title {
@@ -226,20 +233,26 @@ button {
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   width: 100%;
+  background-color: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .form-column {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  background-color: var(--card-background);
 }
 
 // Form Sections
 .form-section {
-  background-color: #f8fafc;
+  background-color: var(--card-background);
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   padding: 1rem;
+  margin-bottom: 1rem;
 
   &:last-child {
     margin-bottom: 0;
@@ -267,32 +280,36 @@ button {
   }
 
   label {
-    color: #4b5563;
+    color: var(--text-color);
+    opacity: 0.7;
     font-weight: 500;
     font-size: 0.875rem;
   }
 
   .form-control {
     padding: 0.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 0.875rem;
     transition: all 0.3s ease;
-    background-color: white;
+    background-color: var(--input-bg);
+    color: var(--input-text);
 
     &:focus {
       outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
     }
 
     &:disabled {
-      background-color: #f1f5f9;
+      background-color: var(--input-bg);
+      opacity: 0.7;
       cursor: not-allowed;
     }
 
     &[readonly] {
-      background-color: #f1f5f9;
+      background-color: var(--input-bg);
+      opacity: 0.7;
       cursor: not-allowed;
     }
   }
@@ -314,7 +331,8 @@ button {
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--card-background);
 }
 
 .btn {
@@ -332,20 +350,21 @@ button {
   }
 
   &.btn-primary {
-    background-color: #2563eb;
+    background-color: var(--primary-color);
     color: white;
 
     &:hover:not(:disabled) {
-      background-color: #1d4ed8;
+      opacity: 0.9;
     }
   }
 
   &.btn-secondary {
-    background-color: #e2e8f0;
-    color: #4b5563;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--border-color);
 
     &:hover {
-      background-color: #cbd5e1;
+      background-color: var(--button-hover);
     }
   }
 }
@@ -356,6 +375,7 @@ button {
   justify-content: center;
   align-items: center;
   min-height: 200px;
+  color: var(--primary-color);
 }
 
 // Error Message
@@ -363,8 +383,8 @@ button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #dc2626;
-  background-color: #fee2e2;
+  color: var(--error-text);
+  background-color: var(--error-bg);
   padding: 1rem;
   border-radius: 4px;
   margin-bottom: 1rem;
@@ -372,11 +392,12 @@ button {
 
 // Stock panel
 .stock-panel {
-  background: #fff;
+  background-color: var(--card-background);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 24px;
+  border: 1px solid var(--border-color);
 }
 
 .stock-header {
@@ -385,12 +406,12 @@ button {
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
 
   h2 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     margin: 0;
   }
 
@@ -405,9 +426,9 @@ button {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background-color: #f3f4f6;
-  color: #4b5563;
-  border: 1px solid #e5e7eb;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
@@ -415,7 +436,7 @@ button {
   transition: all 0.2s;
 
   &:hover {
-    background-color: #e5e7eb;
+    background-color: var(--button-hover);
   }
 
   .material-icons {
@@ -440,16 +461,16 @@ button {
 .filter-input {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--input-border);
   border-radius: 6px;
   font-size: 14px;
-  color: #4b5563;
-  background-color: #fff;
+  color: var(--input-text);
+  background-color: var(--input-bg);
   transition: border-color 0.2s;
 
   &:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: var(--primary-color);
   }
 }
 
@@ -458,9 +479,9 @@ button {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background-color: #f3f4f6;
-  color: #4b5563;
-  border: 1px solid #e5e7eb;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
@@ -468,7 +489,7 @@ button {
   transition: all 0.2s;
 
   &:hover {
-    background-color: #e5e7eb;
+    background-color: var(--button-hover);
   }
 
   .material-icons {
@@ -482,17 +503,18 @@ button {
   border-collapse: separate;
   border-spacing: 0;
   margin-bottom: 20px;
+  background-color: var(--card-background);
 
   th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
   }
 
   th {
-    background-color: #f9fafb;
+    background-color: var(--table-header-bg);
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-color);
     font-size: 14px;
     white-space: nowrap;
 
@@ -501,7 +523,7 @@ button {
       user-select: none;
 
       &:hover {
-        background-color: #f3f4f6;
+        background-color: var(--hover-color);
       }
 
       .material-icons {
@@ -514,11 +536,11 @@ button {
 
   td {
     font-size: 14px;
-    color: #1f2937;
+    color: var(--text-color);
   }
 
   tr:hover {
-    background-color: #f9fafb;
+    background-color: var(--hover-color);
   }
 }
 
@@ -573,14 +595,16 @@ button {
   justify-content: center;
   padding: 40px 20px;
   text-align: center;
-  color: #6b7280;
+  color: var(--text-color);
+  opacity: 0.7;
 
   mat-icon {
     font-size: 48px;
     width: 48px;
     height: 48px;
     margin-bottom: 16px;
-    color: #9ca3af;
+    color: var(--text-color);
+    opacity: 0.7;
   }
 
   p {

@@ -4,6 +4,8 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .header-row {
@@ -16,7 +18,7 @@
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -33,10 +35,11 @@
 .hierarchy-column {
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: var(--card-background);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  border: 1px solid var(--border-color);
 }
 
 .column-header {
@@ -44,14 +47,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background-color: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--card-background);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .column-header h2 {
   font-size: 18px;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -59,7 +62,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background-color: #34643C;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -70,11 +73,13 @@
 }
 
 .add-button:hover {
-  background-color: #34643C;
+  background-color: var(--primary-color);
+  opacity: 0.9;
 }
 
 .add-button:disabled {
-  background-color: #93c5fd;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   cursor: not-allowed;
 }
 
@@ -86,20 +91,23 @@
 .search-container {
   position: relative;
   padding: 12px 16px;
-  background-color: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--card-background);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .search-container input {
   width: 100%;
   padding: 8px 12px 8px 32px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 14px;
+  background-color: var(--input-bg);
+  color: var(--input-text);
 }
 
 .search-container input:disabled {
-  background-color: #f1f5f9;
+  background-color: var(--input-bg);
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
@@ -108,7 +116,8 @@
   left: 24px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--text-color);
+  opacity: 0.7;
   font-size: 18px;
 }
 
@@ -126,18 +135,19 @@
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 8px;
-  background-color: #f8fafc;
+  background-color: var(--card-background);
   cursor: pointer;
   transition: all 0.2s;
+  border: 1px solid var(--border-color);
 }
 
 .item:hover {
-  background-color: #f1f5f9;
+  background-color: var(--hover-color);
 }
 
 .item.selected {
-  background-color: #e0f2fe;
-  border-left: 4px solid #34643C;
+  background-color: var(--hover-color);
+  border-left: 4px solid var(--primary-color);
 }
 
 .item-content {
@@ -147,13 +157,14 @@
 
 .item-code {
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-color);
+  opacity: 0.7;
   margin-bottom: 4px;
 }
 
 .item-name {
   font-weight: 500;
-  color: #334155;
+  color: var(--text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -180,22 +191,22 @@
   height: 28px;
   border-radius: 4px;
   border: none;
-  background-color: #e2e8f0;
-  color: #64748b;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .icon-button:hover {
-  background-color: #cbd5e1;
+  background-color: var(--button-hover);
 }
 
 .icon-button.delete {
-  color: #ef4444;
+  color: var(--error-text);
 }
 
 .icon-button.delete:hover {
-  background-color: #fee2e2;
+  background-color: var(--error-bg);
 }
 
 .icon-button i {
@@ -207,14 +218,15 @@
   align-items: center;
   justify-content: center;
   height: 100px;
-  color: #94a3b8;
+  color: var(--text-color);
+  opacity: 0.7;
   font-size: 14px;
   text-align: center;
 }
 
 .empty-message.info {
-  color: #34643C;
-  background-color: #f0f9ff;
+  color: var(--primary-color);
+  background-color: var(--hover-color);
   border-radius: 6px;
   padding: 16px;
 }
@@ -226,12 +238,13 @@
   right: -400px;
   width: 380px;
   height: 100%;
-  background-color: white;
+  background-color: var(--card-background);
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 200;
   transition: right 0.3s ease;
   display: flex;
   flex-direction: column;
+  border-left: 1px solid var(--border-color);
 }
 
 .side-panel.active {
@@ -261,13 +274,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .panel-header h2 {
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -277,7 +290,7 @@
   justify-content: center;
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--text-color);
   cursor: pointer;
   padding: 4px;
 }
@@ -299,21 +312,25 @@
 .form-group label {
   display: block;
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-color);
+  opacity: 0.7;
   margin-bottom: 6px;
 }
 
 .form-group input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 14px;
+  background-color: var(--input-bg);
+  color: var(--input-text);
 }
 
 .form-group input:disabled {
-  background-color: #f1f5f9;
-  color: #64748b;
+  background-color: var(--input-bg);
+  opacity: 0.7;
+  color: var(--text-color);
   cursor: not-allowed;
 }
 
@@ -322,7 +339,7 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
 }
 
 .secondary-button,
@@ -335,27 +352,28 @@
 }
 
 .secondary-button {
-  background-color: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #64748b;
+  background-color: var(--button-bg);
+  border: 1px solid var(--border-color);
+  color: var(--button-text);
 }
 
 .secondary-button:hover {
-  background-color: #e2e8f0;
+  background-color: var(--button-hover);
 }
 
 .primary-button {
-  background-color: #3b82f6;
+  background-color: var(--primary-color);
   border: none;
   color: white;
 }
 
 .primary-button:hover {
-  background-color: #2563eb;
+  opacity: 0.9;
 }
 
 .primary-button:disabled {
-  background-color: #93c5fd;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   cursor: not-allowed;
 }
 

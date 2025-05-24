@@ -1,3 +1,41 @@
+:root {
+  --bg-color: white;
+  --text-color: #1e293b;
+  --text-secondary: #4b5563;
+  --border-color: #d1d5db;
+  --input-bg: white;
+  --error-bg: #fee2e2;
+  --error-text: #dc2626;
+  --button-bg: #f3f4f6;
+  --button-border: #d1d5db;
+  --button-text: #4b5563;
+  --submit-bg: #3b82f6;
+  --submit-border: #2563eb;
+  --submit-text: white;
+  --form-bg: white;
+  --border-top: #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1a1a1a;
+    --text-color: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+    --input-bg: #2d2d2d;
+    --error-bg: #7f1d1d;
+    --error-text: #fca5a5;
+    --button-bg: #374151;
+    --button-border: #4b5563;
+    --button-text: #e5e7eb;
+    --submit-bg: #2563eb;
+    --submit-border: #1d4ed8;
+    --submit-text: white;
+    --form-bg: #2d2d2d;
+    --border-top: #374151;
+  }
+}
+
 .page-container {
   height: 100%;
   position: relative;
@@ -5,6 +43,7 @@
   flex-direction: column;
   padding: 20px;
   width: 100%;
+  background-color: var(--bg-color);
 }
 
 .header-row {
@@ -18,13 +57,13 @@
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-color);
   margin: 0;
 }
 
 .form-container {
   width: 100%;
-  background-color: white;
+  background-color: var(--form-bg);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 24px;
@@ -37,13 +76,13 @@
 
 .form-header h2 {
   font-size: 20px;
-  color: #334155;
+  color: var(--text-color);
   margin: 0;
 }
 
 .error-message {
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: var(--error-bg);
+  color: var(--error-text);
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 20px;
@@ -74,7 +113,7 @@
 label {
   font-size: 14px;
   font-weight: 500;
-  color: #4b5563;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
@@ -83,12 +122,12 @@ select,
 textarea {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
-  color: #334155;
+  color: var(--text-color);
   transition: all 0.2s;
-  background-color: white;
+  background-color: var(--input-bg);
   box-sizing: border-box;
 }
 
@@ -106,7 +145,7 @@ textarea {
 }
 
 .validation-error {
-  color: #dc2626;
+  color: var(--error-text);
   font-size: 12px;
   margin-top: 4px;
 }
@@ -117,7 +156,7 @@ textarea {
   gap: 12px;
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-top);
   width: 100%;
 }
 
@@ -136,23 +175,23 @@ textarea {
 }
 
 .cancel-btn {
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  color: #4b5563;
+  background-color: var(--button-bg);
+  border: 1px solid var(--button-border);
+  color: var(--button-text);
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background-color: #e5e7eb;
+  background-color: var(--button-border);
 }
 
 .submit-btn {
-  background-color: #3b82f6;
-  border: 1px solid #2563eb;
-  color: white;
+  background-color: var(--submit-bg);
+  border: 1px solid var(--submit-border);
+  color: var(--submit-text);
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #2563eb;
+  background-color: var(--submit-border);
 }
 
 .cancel-btn:disabled,

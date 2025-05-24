@@ -12,6 +12,7 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
   padding: 20px;
   background-color: var(--background-color);
   color: var(--text-color);
+  min-height: 100vh;
 }
 
 .form-container {
@@ -21,6 +22,7 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   animation: slideDown 0.3s ease-out;
+  border: 1px solid var(--border-color);
 }
 
 .filters-container {
@@ -28,6 +30,7 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
 }
 
 .input-group-text {
@@ -110,6 +113,8 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
 }
 
 .table th {
@@ -192,6 +197,7 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
   background: var(--card-background);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
 }
 
 .stock-header {

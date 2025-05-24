@@ -78,7 +78,7 @@ export class CustomerFormComponent implements OnInit {
       request.subscribe({
         next: () => {
           this.isLoading = false;
-          this.router.navigate(['/customers']);
+          this.router.navigate(['/app/customers']);
         },
         error: (error) => {
           console.error('Error saving customer:', error);
@@ -104,6 +104,6 @@ export class CustomerFormComponent implements OnInit {
   }
   
   cancel(): void {
-    this.router.navigate(['/customers']);
+    this.router.navigate(['/app/customers']);
   }
 } 

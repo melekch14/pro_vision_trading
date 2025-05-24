@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
@@ -17,7 +19,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,17 +30,12 @@ import { ArticleHierarchyComponent } from './components/article-hierarchy/articl
 import { CustomerFormComponent } from './components/customer-form/customer-form.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { HttpClientModule } from '@angular/common/http';
 import { ArticleManagerComponent } from './components/article-manager/article-manager.component';
-import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
 import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatOption } from '@angular/material/select';
-import { MatIcon } from '@angular/material/icon';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { SettingsComponent } from './components/settings/settings.component';
 import { OpticienComponent } from './components/opticien/opticien.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -61,7 +57,6 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     LoginComponent,
     RegisterComponent,
     ArticleManagerComponent,
-    StockDialogComponent,
     ArticleParamsComponent,
     FournisseurComponent,
     SettingsComponent,
@@ -78,6 +73,7 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
@@ -88,13 +84,9 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatFormField,
-    MatLabel,
-    MatOption,
-    MatIcon,
+    MatIconModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatIconModule,
     MatSlideToggleModule,
     MatSelectModule,
     MatSortModule,

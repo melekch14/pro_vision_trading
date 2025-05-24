@@ -19,7 +19,8 @@ interface LoginResponse {
   token: string;
 }
 
-interface UserData {
+export interface UserData {
+  id: number;
   code: string;
   nom: string;
   prenom: string;

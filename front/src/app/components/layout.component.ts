@@ -6,4 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./layout.component.css'],
   standalone: false
 })
-export class LayoutComponent { }
+export class LayoutComponent {
+  constructor() {}
+}

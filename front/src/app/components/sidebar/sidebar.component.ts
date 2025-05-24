@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { MenuItem } from '../../shared/models/menu-item.model';
+import { PermissionService } from '../../services/permission.service';
+
+interface MenuItem {
+  id: string;
+  name: string;
+  icon: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-sidebar',
@@ -12,64 +19,54 @@ import { MenuItem } from '../../shared/models/menu-item.model';
 export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { 
-      id: 1, 
-      title: 'Products', 
+      id: 'article-manager',
+      name: 'Article Manager',
       icon: 'inventory_2',
       route: '/app/article-manager'
     },
     { 
-      id: 2, 
-      title: 'Orders', 
-      icon: 'shopping_cart',
-      route: '/app/orders'
-    },
-    { 
-      id: 3, 
-      title: 'Customers', 
-      icon: 'people',
-      route: '/app/customers'
-    },
-    { 
-      id: 4, 
-      title: 'Suppliers', 
-      icon: 'local_shipping',
-      route: '/app/fournisseurs'
-    },
-    { 
-      id: 5, 
-      title: 'Article Hierarchy', 
+      id: 'article-hierarchy',
+      name: 'Article Hierarchy',
       icon: 'account_tree',
       route: '/app/article-hierarchy'
     },
     { 
-      id: 6, 
-      title: 'Article Parameters', 
+      id: 'article-params',
+      name: 'Article Parameters',
       icon: 'settings',
       route: '/app/article-params'
     },
     { 
-      id: 7, 
-      title: 'Opticiens', 
-      icon: 'person',
-      route: '/app/opticiens'
+      id: 'orders',
+      name: 'Orders',
+      icon: 'shopping_cart',
+      route: '/app/orders'
     },
     { 
-      id: 8, 
-      title: 'Settings', 
-      icon: 'settings_applications',
-      route: '/app/settings'
+      id: 'customers',
+      name: 'Customers',
+      icon: 'people',
+      route: '/app/customers'
+    },
+    { 
+      id: 'fournisseurs',
+      name: 'Suppliers',
+      icon: 'local_shipping',
+      route: '/app/fournisseurs'
     }
   ];
 
   userData: any = null;
 
   constructor(
+    private router: Router,
     private authService: AuthService,
-    private router: Router
+    private permissionService: PermissionService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userData = this.authService.getUserData();
+    this.permissionService.loadUserPermissions().subscribe();
   }
 
   getInitials(): string {
@@ -93,8 +90,21 @@ export class SidebarComponent implements OnInit {
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
   }
 
-  logout() {
+  hasAccess(componentId: string): boolean {
+    return this.permissionService.hasAccess(componentId);
+  }
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+  }
+
+  logout(): void {
     this.authService.logout();
+    this.permissionService.clearPermissions();
     this.router.navigate(['/login']);
   }
 }

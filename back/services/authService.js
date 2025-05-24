@@ -42,6 +42,7 @@ const authenticateDynamicUser = async (email, password) => {
     if (!valid) return null;
     const token = jwt.sign(
         {
+            id: user.id,
             code: user.code,
             nom: user.nom,
             prenom: user.prenom,

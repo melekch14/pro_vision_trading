@@ -7,12 +7,14 @@
   
   <nav class="sidebar-nav">
     <ul class="nav-list list-unstyled">
-      <li *ngFor="let item of menuItems" class="nav-item">
-        <a [routerLink]="item.route" routerLinkActive="active" class="nav-link">
-          <span class="nav-icon material-icons">{{item.icon}}</span>
-          <span class="nav-title">{{item.title}}</span>
-        </a>
-      </li>
+      <ng-container *ngFor="let item of menuItems">
+        <li *ngIf="hasAccess(item.id)" class="nav-item">
+          <a [routerLink]="item.route" routerLinkActive="active" class="nav-link">
+            <span class="nav-icon material-icons">{{item.icon}}</span>
+            <span class="nav-title">{{item.name}}</span>
+          </a>
+        </li>
+      </ng-container>
     </ul>
   </nav>
   

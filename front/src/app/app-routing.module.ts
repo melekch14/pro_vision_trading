@@ -42,6 +42,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'opticien' },
     children: [
+      { path: '', redirectTo: 'article-manager', pathMatch: 'full' },
       { path: 'customers', component: CustomersComponent },
       { path: 'customers/new', component: CustomerFormComponent },
       { path: 'customers/:id', component: CustomerFormComponent },

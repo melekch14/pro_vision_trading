@@ -53,6 +53,12 @@ export class SidebarComponent implements OnInit {
       name: 'Suppliers',
       icon: 'local_shipping',
       route: '/app/fournisseurs'
+    },
+    { 
+      id: 'settings',
+      name: 'Settings',
+      icon: 'settings_applications',
+      route: '/app/settings'
     }
   ];
 

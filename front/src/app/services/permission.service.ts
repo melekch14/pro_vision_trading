@@ -41,10 +41,10 @@ export class PermissionService {
     const userData = this.authService.getUserData();
     if (!userData) return false;
     
-    // If user is not an opticien, they have full access
-    if (userData.role !== 'opticien') return true;
+    // If user is an opticien, they have full access to everything
+    if (userData.role === 'opticien') return true;
     
-    // For opticiens, check their permissions
+    // For other roles (like technicien), check their permissions
     return this.userPermissions[componentId] || false;
   }
 

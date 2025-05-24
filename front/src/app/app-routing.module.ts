@@ -13,6 +13,13 @@ import { FournisseurComponent } from './components/fournisseur/fournisseur.compo
 import { AuthGuard } from './guards/auth.guard';
 import { SettingsComponent } from './components/settings/settings.component';
 
+// Client Components
+import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
+import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
+import { ClientCreateOrderComponent } from './components/client-create-order/client-create-order.component';
+import { ClientOrdersComponent } from './components/client-orders/client-orders.component';
+import { ClientProfileComponent } from './components/client-profile/client-profile.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -41,6 +48,18 @@ const routes: Routes = [
       { path: 'article-params', component: ArticleParamsComponent },
       { path: 'fournisseurs', component: FournisseurComponent },
       { path: 'settings', component: SettingsComponent }
+    ]
+  },
+  {
+    path: 'client',
+    component: ClientLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: ClientDashboardComponent },
+      { path: 'create-order', component: ClientCreateOrderComponent },
+      { path: 'orders', component: ClientOrdersComponent },
+      { path: 'profile', component: ClientProfileComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }

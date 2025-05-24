@@ -35,6 +35,14 @@ import { MatIcon } from '@angular/material/icon';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { SettingsComponent } from './components/settings/settings.component';
 
+// Client Components
+import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
+import { ClientSidebarComponent } from './components/client-sidebar/client-sidebar.component';
+import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
+import { ClientCreateOrderComponent } from './components/client-create-order/client-create-order.component';
+import { ClientOrdersComponent } from './components/client-orders/client-orders.component';
+import { ClientProfileComponent } from './components/client-profile/client-profile.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,7 +58,14 @@ import { SettingsComponent } from './components/settings/settings.component';
     StockDialogComponent,
     ArticleParamsComponent,
     FournisseurComponent,
-    SettingsComponent
+    SettingsComponent,
+    // Client Components
+    ClientLayoutComponent,
+    ClientSidebarComponent,
+    ClientDashboardComponent,
+    ClientCreateOrderComponent,
+    ClientOrdersComponent,
+    ClientProfileComponent
   ],
   imports: [
     BrowserModule,

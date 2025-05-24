@@ -19,9 +19,14 @@ export class LoginComponent {
   loginError = '';
 
   constructor(private router: Router, private authService: AuthService) {
-    // Redirect to app if already logged in
+    // Redirect to appropriate dashboard if already logged in
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/app']);
+      const userData = this.authService.getUserData();
+      if (userData?.role === 'client') {
+        this.router.navigate(['/client/dashboard']);
+      } else {
+        this.router.navigate(['/app']);
+      }
     }
   }
 
@@ -30,7 +35,12 @@ export class LoginComponent {
     if (form.valid) {
       this.authService.loginUser(this.user).subscribe({
         next: () => {
-          this.router.navigate(['/app']);
+          const userData = this.authService.getUserData();
+          if (userData?.role === 'client') {
+            this.router.navigate(['/client/dashboard']);
+          } else {
+            this.router.navigate(['/app']);
+          }
         },
         error: (err) => {
           this.loginError = err.error?.message || 'Invalid login credentials';

@@ -49,6 +49,12 @@ export class SidebarComponent implements OnInit {
     },
     { 
       id: 7, 
+      title: 'Opticiens', 
+      icon: 'person',
+      route: '/app/opticiens'
+    },
+    { 
+      id: 8, 
       title: 'Settings', 
       icon: 'settings_applications',
       route: '/app/settings'

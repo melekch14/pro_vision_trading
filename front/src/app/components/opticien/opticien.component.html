@@ -1,0 +1,98 @@
+<div class="container">
+  <h2>{{ isEditing ? 'Edit Opticien' : 'Add New Opticien' }}</h2>
+  
+  <form [formGroup]="opticienForm" (ngSubmit)="onSubmit()" class="form-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Code</mat-label>
+      <input matInput formControlName="codee" placeholder="Enter code">
+      <mat-error *ngIf="opticienForm.get('codee')?.hasError('required')">Code is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="nom" placeholder="Enter last name">
+      <mat-error *ngIf="opticienForm.get('nom')?.hasError('required')">Last name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Prénom</mat-label>
+      <input matInput formControlName="prenom" placeholder="Enter first name">
+      <mat-error *ngIf="opticienForm.get('prenom')?.hasError('required')">First name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Enter email" type="email">
+      <mat-error *ngIf="opticienForm.get('email')?.hasError('required')">Email is required</mat-error>
+      <mat-error *ngIf="opticienForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="!isEditing">
+      <mat-label>Password</mat-label>
+      <input matInput formControlName="password" placeholder="Enter password" type="password">
+      <mat-error *ngIf="opticienForm.get('password')?.hasError('required')">Password is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option *ngFor="let role of roles" [value]="role">
+          {{role | titlecase}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="opticienForm.get('role')?.hasError('required')">Role is required</mat-error>
+    </mat-form-field>
+
+    <div class="button-container">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!opticienForm.valid">
+        {{ isEditing ? 'Update' : 'Create' }}
+      </button>
+      <button mat-button type="button" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+
+  <div class="table-container">
+    <h3>Opticiens List</h3>
+    <table mat-table [dataSource]="opticiens" class="mat-elevation-z8">
+      <ng-container matColumnDef="codee">
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let opticien">{{opticien.codee}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let opticien">{{opticien.nom}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="prenom">
+        <th mat-header-cell *matHeaderCellDef>Prénom</th>
+        <td mat-cell *matCellDef="let opticien">{{opticien.prenom}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let opticien">{{opticien.email}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let opticien">{{opticien.role | titlecase}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let opticien">
+          <button mat-icon-button color="primary" (click)="editOpticien(opticien)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteOpticien(opticien.id!)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['codee', 'nom', 'prenom', 'email', 'role', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['codee', 'nom', 'prenom', 'email', 'role', 'actions'];"></tr>
+    </table>
+  </div>
+</div> 

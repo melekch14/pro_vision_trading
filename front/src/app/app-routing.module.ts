@@ -13,6 +13,7 @@ import { FournisseurComponent } from './components/fournisseur/fournisseur.compo
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { SettingsComponent } from './components/settings/settings.component';
+import { OpticienComponent } from './components/opticien/opticien.component';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -49,7 +50,8 @@ const routes: Routes = [
       { path: 'article-manager', component: ArticleManagerComponent },
       { path: 'article-params', component: ArticleParamsComponent },
       { path: 'fournisseurs', component: FournisseurComponent },
-      { path: 'settings', component: SettingsComponent }
+      { path: 'settings', component: SettingsComponent },
+      { path: 'opticiens', component: OpticienComponent }
     ]
   },
   {

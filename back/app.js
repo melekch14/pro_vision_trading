@@ -9,6 +9,7 @@ const fournisseurRoutes = require('./routes/fournisseurRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 const stockRoutes = require('./routes/stockRoutes');
+const opticienRoutes = require('./routes/opticienRoutes');
 
 app.use(cors({
   origin: true,
@@ -24,6 +25,7 @@ app.use('/fournisseurs', fournisseurRoutes);
 app.use('/clients', clientRoutes);
 app.use('/articles', articleRoutes);
 app.use('/stock', stockRoutes);
+app.use('/opticiens', opticienRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

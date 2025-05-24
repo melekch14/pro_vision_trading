@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -34,6 +35,7 @@ import { MatOption } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { SettingsComponent } from './components/settings/settings.component';
+import { OpticienComponent } from './components/opticien/opticien.component';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -59,6 +61,7 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     ArticleParamsComponent,
     FournisseurComponent,
     SettingsComponent,
+    OpticienComponent,
     // Client Components
     ClientLayoutComponent,
     ClientSidebarComponent,
@@ -87,7 +90,8 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatIconModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSelectModule
   ],
   providers: [
     {

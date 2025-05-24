@@ -36,6 +36,7 @@ import { FournisseurComponent } from './components/fournisseur/fournisseur.compo
 import { SettingsComponent } from './components/settings/settings.component';
 import { OpticienComponent } from './components/opticien/opticien.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -67,7 +68,8 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     ClientDashboardComponent,
     ClientCreateOrderComponent,
     ClientOrdersComponent,
-    ClientProfileComponent
+    ClientProfileComponent,
+    StockDialogComponent
   ],
   imports: [
     BrowserModule,

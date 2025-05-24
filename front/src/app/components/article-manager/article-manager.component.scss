@@ -546,42 +546,49 @@ button {
 
 // Action buttons
 .actions-cell {
-  white-space: nowrap;
-  text-align: right;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
 
   button {
     padding: 6px;
     border: none;
-    background: none;
-    cursor: pointer;
     border-radius: 4px;
-    transition: background-color 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 
     .material-icons {
       font-size: 18px;
     }
 
     &.edit-btn {
-      color: #2563eb;
+      background-color: #2196f3;
+      color: white;
 
       &:hover {
-        background-color: #eff6ff;
+        background-color: #1976d2;
       }
     }
 
     &.delete-btn {
-      color: #dc2626;
+      background-color: #f44336;
+      color: white;
 
       &:hover {
-        background-color: #fee2e2;
+        background-color: #d32f2f;
       }
     }
 
     &.stock-btn {
-      color: #059669;
+      background-color: #4caf50;
+      color: white;
 
       &:hover {
-        background-color: #ecfdf5;
+        background-color: #388e3c;
       }
     }
   }

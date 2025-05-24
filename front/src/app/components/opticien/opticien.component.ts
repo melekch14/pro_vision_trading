@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OpticienService, Opticien } from '../../services/opticien.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-opticien',
@@ -11,15 +12,32 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class OpticienComponent implements OnInit {
   opticiens: Opticien[] = [];
+  filteredOpticiens: Opticien[] = [];
   opticienForm: FormGroup;
   isEditing = false;
+  showForm = false;
   selectedOpticienId: number | null = null;
   roles = ['opticien', 'technicien'];
+  
+  // Loading and error states
+  isLoading = false;
+  errorMessage = '';
+  
+  // Search and filter properties
+  searchCode = '';
+  searchName = '';
+  searchEmail = '';
+  filterRole = '';
+  
+  // Sorting
+  sortColumn = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(
     private opticienService: OpticienService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public themeService: ThemeService
   ) {
     this.opticienForm = this.fb.group({
       codee: ['', Validators.required],
@@ -36,14 +54,125 @@ export class OpticienComponent implements OnInit {
   }
 
   loadOpticiens(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
     this.opticienService.getAllOpticiens().subscribe({
       next: (data) => {
         this.opticiens = data;
+        this.filteredOpticiens = [...data];
+        this.isLoading = false;
       },
       error: (error) => {
+        this.errorMessage = 'Error loading opticiens';
+        this.isLoading = false;
         this.showMessage('Error loading opticiens');
       }
     });
+  }
+
+  toggleForm(): void {
+    this.showForm = !this.showForm;
+    if (!this.showForm) {
+      this.resetForm();
+    }
+  }
+
+  applyFilters(): void {
+    this.filteredOpticiens = this.opticiens.filter(opticien => {
+      const matchesCode = !this.searchCode || 
+        opticien.codee.toLowerCase().includes(this.searchCode.toLowerCase());
+      const matchesName = !this.searchName || 
+        (opticien.nom.toLowerCase().includes(this.searchName.toLowerCase()) ||
+         opticien.prenom.toLowerCase().includes(this.searchName.toLowerCase()));
+      const matchesEmail = !this.searchEmail || 
+        opticien.email.toLowerCase().includes(this.searchEmail.toLowerCase());
+      const matchesRole = !this.filterRole || opticien.role === this.filterRole;
+      
+      return matchesCode && matchesName && matchesEmail && matchesRole;
+    });
+  }
+
+  resetFilters(): void {
+    this.searchCode = '';
+    this.searchName = '';
+    this.searchEmail = '';
+    this.filterRole = '';
+    this.filteredOpticiens = [...this.opticiens];
+  }
+
+  sortData(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredOpticiens.sort((a, b) => {
+      const aValue = (a as any)[column];
+      const bValue = (b as any)[column];
+      
+      let comparison = 0;
+      if (aValue > bValue) {
+        comparison = 1;
+      } else if (aValue < bValue) {
+        comparison = -1;
+      }
+      
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) {
+      return 'unfold_more';
+    }
+    return this.sortDirection === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+  }
+
+  exportToCSV(): void {
+    const csvData = this.filteredOpticiens.map(opticien => ({
+      Code: opticien.codee,
+      'Last Name': opticien.nom,
+      'First Name': opticien.prenom,
+      Email: opticien.email,
+      Role: opticien.role
+    }));
+
+    const csvContent = this.convertToCSV(csvData);
+    this.downloadFile(csvContent, 'opticiens.csv', 'text/csv');
+  }
+
+  exportToPDF(): void {
+    // For now, just show a message. You can implement PDF export later
+    this.showMessage('PDF export feature will be implemented soon');
+  }
+
+  private convertToCSV(data: any[]): string {
+    if (data.length === 0) return '';
+
+    const headers = Object.keys(data[0]);
+    const csvRows = [
+      headers.join(','),
+      ...data.map(row => 
+        headers.map(header => {
+          const value = row[header];
+          return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
+        }).join(',')
+      )
+    ];
+
+    return csvRows.join('\n');
+  }
+
+  private downloadFile(content: string, fileName: string, contentType: string): void {
+    const blob = new Blob([content], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
   onSubmit(): void {
@@ -78,6 +207,7 @@ export class OpticienComponent implements OnInit {
 
   editOpticien(opticien: Opticien): void {
     this.isEditing = true;
+    this.showForm = true;
     this.selectedOpticienId = opticien.id!;
     this.opticienForm.patchValue({
       codee: opticien.codee,
@@ -108,6 +238,7 @@ export class OpticienComponent implements OnInit {
   resetForm(): void {
     this.opticienForm.reset();
     this.isEditing = false;
+    this.showForm = false;
     this.selectedOpticienId = null;
     this.opticienForm.get('password')?.setValidators([Validators.required]);
     this.opticienForm.get('password')?.updateValueAndValidity();

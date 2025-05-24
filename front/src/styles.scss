@@ -20,6 +20,10 @@
   --error-text: #dc2626;
   --success-bg: #dcfce7;
   --success-text: #16a34a;
+  --warning-bg: #fff3e0;
+  --warning-text: #e65100;
+  --info-bg: #e3f2fd;
+  --info-text: #1976d2;
 }
 
 .dark-theme {
@@ -41,6 +45,10 @@
   --error-text: #fecaca;
   --success-bg: #14532d;
   --success-text: #bbf7d0;
+  --warning-bg: #7c2d12;
+  --warning-text: #fdba74;
+  --info-bg: #1e3a8a;
+  --info-text: #93c5fd;
 }
 
 body {
@@ -61,7 +69,12 @@ body {
 }
 
 .mat-mdc-dialog-container {
-  background-color: var(--background-color) !important;
+  background-color: var(--card-background) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-dialog-surface {
+  background-color: var(--card-background) !important;
   color: var(--text-color) !important;
 }
 

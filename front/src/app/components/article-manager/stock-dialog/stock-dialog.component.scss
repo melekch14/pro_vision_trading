@@ -45,15 +45,25 @@
 
   .quantity-cell {
     padding: 0;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
     
     &.has-stock {
-      background-color: #e8f5e9;
+      background-color: #e8f5e9 !important;
       
       .quantity-input {
-        background-color: #e8f5e9;
+        background-color: #e8f5e9 !important;
         font-weight: bold;
-        color: #2e7d32;
+        color: #2e7d32 !important;
+      }
+    }
+
+    &.non-zero {
+      background-color: #fff3e0 !important;
+      
+      .quantity-input {
+        background-color: #fff3e0 !important;
+        font-weight: bold;
+        color: #e65100 !important;
       }
     }
     
@@ -66,20 +76,11 @@
       font-size: 11px;
       box-sizing: border-box;
       transition: all 0.2s;
-
-      &::placeholder {
-        color: #2e7d32;
-        opacity: 0.7;
-      }
+      background-color: white;
 
       &:focus {
         outline: 2px solid #4caf50;
-        background-color: white;
-      }
-
-      &:not(:placeholder-shown) {
-        font-weight: bold;
-        color: #2e7d32;
+        background-color: white !important;
       }
     }
   }
@@ -103,6 +104,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 20px;
 
   button {
     padding: 8px 16px;

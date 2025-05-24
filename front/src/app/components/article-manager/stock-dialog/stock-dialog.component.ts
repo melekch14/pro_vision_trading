@@ -87,6 +87,14 @@ export class StockDialogComponent implements OnInit {
     });
   }
 
+  hasNonZeroValue(sphere: number, cylindre: number | null): boolean {
+    const entry = this.stockEntries.find(
+      e => Math.abs(e.sphere - sphere) < 0.001 && 
+           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
+    );
+    return entry ? entry.quantite > 0 : false;
+  }
+
   getQuantity(sphere: number, cylindre: number | null): number {
     const entry = this.stockEntries.find(
       e => Math.abs(e.sphere - sphere) < 0.001 && 

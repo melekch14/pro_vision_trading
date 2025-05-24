@@ -16,7 +16,10 @@ export class RegisterComponent {
     password: '',
     responsable: '',
     phone: '',
-    adresse: ''
+    adresse: '',
+    rccm: '',
+    ninea: '',
+    code_douane: ''
   };
 
   submitted = false;
@@ -34,7 +37,10 @@ export class RegisterComponent {
         password: this.user.password,
         responsable: this.user.responsable,
         tel: this.user.phone,
-        adresse: this.user.adresse
+        adresse: this.user.adresse,
+        rccm: this.user.rccm,
+        ninea: this.user.ninea,
+        code_douane: this.user.code_douane
       };
 
       this.authService.registerClient(payload).subscribe({

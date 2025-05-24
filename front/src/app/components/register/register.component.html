@@ -7,119 +7,201 @@
     <div class="register-title">Create an account</div>
 
     <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate>
-      <div class="form-group">
-        <label for="responsable">Responsable</label>
-        <input 
-          type="text" 
-          id="responsable" 
-          name="responsable"
-          [(ngModel)]="user.responsable"
-          #responsable="ngModel"
-          required
-          minlength="3"
-          class="form-control"
-          [ngClass]="{'is-invalid': (responsable.invalid && (responsable.dirty || responsable.touched)) || (submitted && responsable.invalid)}"
-          placeholder="Enter the name of the responsable"
-        >
-        <div *ngIf="(responsable.invalid && (responsable.dirty || responsable.touched)) || (submitted && responsable.invalid)" class="error-message">
-          <div *ngIf="responsable.errors?.['required']">Responsable is required</div>
-          <div *ngIf="responsable.errors?.['minlength']">Must be at least 3 characters</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="responsable">Responsable</label>
+            <input 
+              type="text" 
+              id="responsable" 
+              name="responsable"
+              [(ngModel)]="user.responsable"
+              #responsable="ngModel"
+              required
+              minlength="3"
+              class="form-control"
+              [ngClass]="{'is-invalid': (responsable.invalid && (responsable.dirty || responsable.touched)) || (submitted && responsable.invalid)}"
+              placeholder="Enter the name of the responsable"
+            >
+            <div *ngIf="(responsable.invalid && (responsable.dirty || responsable.touched)) || (submitted && responsable.invalid)" class="error-message">
+              <div *ngIf="responsable.errors?.['required']">Responsable is required</div>
+              <div *ngIf="responsable.errors?.['minlength']">Must be at least 3 characters</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              [(ngModel)]="user.email"
+              #email="ngModel"
+              required
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+              class="form-control"
+              [ngClass]="{'is-invalid': (email.invalid && (email.dirty || email.touched)) || (submitted && email.invalid)}"
+              placeholder="Enter your email"
+            >
+            <div *ngIf="(email.invalid && (email.dirty || email.touched)) || (submitted && email.invalid)" class="error-message">
+              <div *ngIf="email.errors?.['required']">Email is required</div>
+              <div *ngIf="email.errors?.['pattern']">Please enter a valid email address</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email"
-          [(ngModel)]="user.email"
-          #email="ngModel"
-          required
-          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-          class="form-control"
-          [ngClass]="{'is-invalid': (email.invalid && (email.dirty || email.touched)) || (submitted && email.invalid)}"
-          placeholder="Enter your email"
-        >
-        <div *ngIf="(email.invalid && (email.dirty || email.touched)) || (submitted && email.invalid)" class="error-message">
-          <div *ngIf="email.errors?.['required']">Email is required</div>
-          <div *ngIf="email.errors?.['pattern']">Please enter a valid email address</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              name="phone"
+              [(ngModel)]="user.phone"
+              #phone="ngModel"
+              required
+              pattern="^[0-9]{8,15}$"
+              class="form-control"
+              [ngClass]="{'is-invalid': (phone.invalid && (phone.dirty || phone.touched)) || (submitted && phone.invalid)}"
+              placeholder="Enter your phone number"
+            >
+            <div *ngIf="(phone.invalid && (phone.dirty || phone.touched)) || (submitted && phone.invalid)" class="error-message">
+              <div *ngIf="phone.errors?.['required']">Phone is required</div>
+              <div *ngIf="phone.errors?.['pattern']">Invalid phone number</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="adresse">Adresse</label>
+            <input 
+              type="text" 
+              id="adresse" 
+              name="adresse"
+              [(ngModel)]="user.adresse"
+              #adresse="ngModel"
+              required
+              class="form-control"
+              [ngClass]="{'is-invalid': (adresse.invalid && (adresse.dirty || adresse.touched)) || (submitted && adresse.invalid)}"
+              placeholder="Enter your address"
+            >
+            <div *ngIf="(adresse.invalid && (adresse.dirty || adresse.touched)) || (submitted && adresse.invalid)" class="error-message">
+              <div *ngIf="adresse.errors?.['required']">Adresse is required</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="phone">Phone</label>
-        <input 
-          type="tel" 
-          id="phone" 
-          name="phone"
-          [(ngModel)]="user.phone"
-          #phone="ngModel"
-          required
-          pattern="^[0-9]{8,15}$"
-          class="form-control"
-          [ngClass]="{'is-invalid': (phone.invalid && (phone.dirty || phone.touched)) || (submitted && phone.invalid)}"
-          placeholder="Enter your phone number"
-        >
-        <div *ngIf="(phone.invalid && (phone.dirty || phone.touched)) || (submitted && phone.invalid)" class="error-message">
-          <div *ngIf="phone.errors?.['required']">Phone is required</div>
-          <div *ngIf="phone.errors?.['pattern']">Invalid phone number</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="raisonSociale">Raison Sociale</label>
+            <input 
+              type="text" 
+              id="raisonSociale" 
+              name="raisonSociale"
+              [(ngModel)]="user.raisonSociale"
+              #raisonSociale="ngModel"
+              required
+              class="form-control"
+              [ngClass]="{'is-invalid': (raisonSociale.invalid && (raisonSociale.dirty || raisonSociale.touched)) || (submitted && raisonSociale.invalid)}"
+              placeholder="Enter your business name"
+            >
+            <div *ngIf="(raisonSociale.invalid && (raisonSociale.dirty || raisonSociale.touched)) || (submitted && raisonSociale.invalid)" class="error-message">
+              <div *ngIf="raisonSociale.errors?.['required']">Raison Sociale is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="rccm">RCCM</label>
+            <input 
+              type="text" 
+              id="rccm" 
+              name="rccm"
+              [(ngModel)]="user.rccm"
+              #rccm="ngModel"
+              required
+              class="form-control"
+              [ngClass]="{'is-invalid': (rccm.invalid && (rccm.dirty || rccm.touched)) || (submitted && rccm.invalid)}"
+              placeholder="Enter your RCCM number"
+            >
+            <div *ngIf="(rccm.invalid && (rccm.dirty || rccm.touched)) || (submitted && rccm.invalid)" class="error-message">
+              <div *ngIf="rccm.errors?.['required']">RCCM is required</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="adresse">Adresse</label>
-        <input 
-          type="text" 
-          id="adresse" 
-          name="adresse"
-          [(ngModel)]="user.adresse"
-          #adresse="ngModel"
-          required
-          class="form-control"
-          [ngClass]="{'is-invalid': (adresse.invalid && (adresse.dirty || adresse.touched)) || (submitted && adresse.invalid)}"
-          placeholder="Enter your address"
-        >
-        <div *ngIf="(adresse.invalid && (adresse.dirty || adresse.touched)) || (submitted && adresse.invalid)" class="error-message">
-          <div *ngIf="adresse.errors?.['required']">Adresse is required</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="ninea">NINEA</label>
+            <input 
+              type="text" 
+              id="ninea" 
+              name="ninea"
+              [(ngModel)]="user.ninea"
+              #ninea="ngModel"
+              required
+              class="form-control"
+              [ngClass]="{'is-invalid': (ninea.invalid && (ninea.dirty || ninea.touched)) || (submitted && ninea.invalid)}"
+              placeholder="Enter your NINEA number"
+            >
+            <div *ngIf="(ninea.invalid && (ninea.dirty || ninea.touched)) || (submitted && ninea.invalid)" class="error-message">
+              <div *ngIf="ninea.errors?.['required']">NINEA is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="code_douane">Customs Code</label>
+            <input 
+              type="text" 
+              id="code_douane" 
+              name="code_douane"
+              [(ngModel)]="user.code_douane"
+              #code_douane="ngModel"
+              required
+              class="form-control"
+              [ngClass]="{'is-invalid': (code_douane.invalid && (code_douane.dirty || code_douane.touched)) || (submitted && code_douane.invalid)}"
+              placeholder="Enter your customs code"
+            >
+            <div *ngIf="(code_douane.invalid && (code_douane.dirty || code_douane.touched)) || (submitted && code_douane.invalid)" class="error-message">
+              <div *ngIf="code_douane.errors?.['required']">Customs code is required</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="raisonSociale">Raison Sociale</label>
-        <input 
-          type="text" 
-          id="raisonSociale" 
-          name="raisonSociale"
-          [(ngModel)]="user.raisonSociale"
-          #raisonSociale="ngModel"
-          required
-          class="form-control"
-          [ngClass]="{'is-invalid': (raisonSociale.invalid && (raisonSociale.dirty || raisonSociale.touched)) || (submitted && raisonSociale.invalid)}"
-          placeholder="Enter your business name"
-        >
-        <div *ngIf="(raisonSociale.invalid && (raisonSociale.dirty || raisonSociale.touched)) || (submitted && raisonSociale.invalid)" class="error-message">
-          <div *ngIf="raisonSociale.errors?.['required']">Raison Sociale is required</div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password"
-          [(ngModel)]="user.password"
-          #password="ngModel"
-          required
-          minlength="6"
-          class="form-control"
-          [ngClass]="{'is-invalid': (password.invalid && (password.dirty || password.touched)) || (submitted && password.invalid)}"
-          placeholder="Create a password"
-        >
-        <div *ngIf="(password.invalid && (password.dirty || password.touched)) || (submitted && password.invalid)" class="error-message">
-          <div *ngIf="password.errors?.['required']">Password is required</div>
-          <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password"
+              [(ngModel)]="user.password"
+              #password="ngModel"
+              required
+              minlength="6"
+              class="form-control"
+              [ngClass]="{'is-invalid': (password.invalid && (password.dirty || password.touched)) || (submitted && password.invalid)}"
+              placeholder="Create a password"
+            >
+            <div *ngIf="(password.invalid && (password.dirty || password.touched)) || (submitted && password.invalid)" class="error-message">
+              <div *ngIf="password.errors?.['required']">Password is required</div>
+              <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</div>
+            </div>
+          </div>
         </div>
       </div>
 

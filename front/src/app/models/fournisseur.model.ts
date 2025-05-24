@@ -16,4 +16,7 @@ export interface Fournisseur {
     activite_economique: string;
     remise: number;
     taux_retenue: number;
+    rccm: string;
+    ninea: string;
+    code_douane: string;
 } 

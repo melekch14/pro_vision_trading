@@ -6,8 +6,8 @@ const createFournisseur = async (fournisseur) => {
             code, raison_social, adresse, mat_vin, tel, fax, email, 
             responsable, id_fiscale, banque, agence, rib, 
             categorie_prix_vente, status, activite_economique, 
-            remise, taux_retenue
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            remise, taux_retenue, rccm, ninea, code_douane
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             fournisseur.code,
             fournisseur.raison_social,
@@ -25,7 +25,10 @@ const createFournisseur = async (fournisseur) => {
             fournisseur.status,
             fournisseur.activite_economique,
             fournisseur.remise,
-            fournisseur.taux_retenue
+            fournisseur.taux_retenue,
+            fournisseur.rccm,
+            fournisseur.ninea,
+            fournisseur.code_douane
         ]
     );
     return result.insertId;
@@ -59,7 +62,10 @@ const updateFournisseur = async (code, fournisseur) => {
             status = ?,
             activite_economique = ?,
             remise = ?,
-            taux_retenue = ?
+            taux_retenue = ?,
+            rccm = ?,
+            ninea = ?,
+            code_douane = ?
         WHERE code = ?`,
         [
             fournisseur.raison_social,
@@ -78,6 +84,9 @@ const updateFournisseur = async (code, fournisseur) => {
             fournisseur.activite_economique,
             fournisseur.remise,
             fournisseur.taux_retenue,
+            fournisseur.rccm,
+            fournisseur.ninea,
+            fournisseur.code_douane,
             code
         ]
     );

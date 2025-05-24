@@ -10,6 +10,9 @@ interface RegisterClientPayload {
   responsable: string;
   tel: string;
   adresse: string;
+  rccm: string;
+  ninea: string;
+  code_douane: string;
 }
 
 interface LoginResponse {

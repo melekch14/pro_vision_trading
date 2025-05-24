@@ -50,7 +50,10 @@ export class FournisseurComponent implements OnInit {
       status: [''],
       activite_economique: [''],
       remise: [0],
-      taux_retenue: [0]
+      taux_retenue: [0],
+      rccm: [''],
+      ninea: [''],
+      code_douane: ['']
     });
   }
 

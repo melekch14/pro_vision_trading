@@ -26,8 +26,9 @@ const registerUser = async (user, table) => {
         );
     } else {
         await db.query(
-            `INSERT INTO client (codee, raison_social, email, password, responsable, tel, adresse) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [user.codee, user.raison_social, user.email, hashedPassword, user.responsable, user.tel, user.adresse]
+            `INSERT INTO client (codee, raison_social, email, password, responsable, tel, adresse, rccm, ninea, code_douane) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [user.codee, user.raison_social, user.email, hashedPassword, user.responsable, user.tel, user.adresse, user.rccm, user.ninea, user.code_douane]
         );
     }
 };

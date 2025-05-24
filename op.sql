@@ -155,6 +155,9 @@ CREATE TABLE IF NOT EXISTS `client` (
   `tel` varchar(20) DEFAULT NULL,
   `status` varchar(20) NOT NULL,
   `adresse` text,
+  `rccm` varchar(100) DEFAULT NULL,
+  `ninea` varchar(100) DEFAULT NULL,
+  `code_douane` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -163,9 +166,9 @@ CREATE TABLE IF NOT EXISTS `client` (
 -- Déchargement des données de la table `client`
 --
 
-INSERT INTO `client` (`id`, `codee`, `raison_social`, `email`, `password`, `responsable`, `tel`, `status`, `adresse`) VALUES
-(1, 'C003', 'test', 'test2@gmail.com', '$2b$10$LQ54qX30qEDRiXJYweQqPu2CMiI.9ZLWDbw2qcImyHdkQGYfDGk5y', 'test', 'test', 'inactive', 'test'),
-(2, 'C004', 'sdfdsfdsf', 'malek.chaari96@gmail.com', '$2b$10$l.HplWdLsCwF2Ges8WlPIuVZO8QkQQdm7FmoZ7FtxcZ8kLJI922Ce', 'mhamed', '+216 55558048', 'active', 'kkkkkkkkkkkkkkkkk');
+INSERT INTO `client` (`id`, `codee`, `raison_social`, `email`, `password`, `responsable`, `tel`, `status`, `adresse`, `rccm`, `ninea`, `code_douane`) VALUES
+(1, 'C003', 'test', 'test2@gmail.com', '$2b$10$LQ54qX30qEDRiXJYweQqPu2CMiI.9ZLWDbw2qcImyHdkQGYfDGk5y', 'test', 'test', 'inactive', 'test', 'rccm1', 'ninea1', 'code_douane1'),
+(2, 'C004', 'sdfdsfdsf', 'malek.chaari96@gmail.com', '$2b$10$l.HplWdLsCwF2Ges8WlPIuVZO8QkQQdm7FmoZ7FtxcZ8kLJI922Ce', 'mhamed', '+216 55558048', 'active', 'kkkkkkkkkkkkkkkkk', 'rccm2', 'ninea2', 'code_douane2');
 
 -- --------------------------------------------------------
 
@@ -234,6 +237,9 @@ CREATE TABLE IF NOT EXISTS `fournisseur` (
   `activite_economique` varchar(255) DEFAULT NULL,
   `remise` decimal(5,2) DEFAULT NULL,
   `taux_retenue` decimal(5,2) DEFAULT NULL,
+  `rccm` varchar(100) DEFAULT NULL,
+  `ninea` varchar(100) DEFAULT NULL,
+  `code_douane` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -241,8 +247,8 @@ CREATE TABLE IF NOT EXISTS `fournisseur` (
 -- Déchargement des données de la table `fournisseur`
 --
 
-INSERT INTO `fournisseur` (`code`, `raison_social`, `adresse`, `mat_vin`, `tel`, `fax`, `email`, `responsable`, `id_fiscale`, `banque`, `agence`, `rib`, `categorie_prix_vente`, `status`, `activite_economique`, `remise`, `taux_retenue`) VALUES
-('6425', 'qdqsd', 'Tunis, Gouvernorat Tunis, Tunisie', 'qsdqsd', '+216 55558048', '+216 55558048', 'malek.chaari@supcom.tn', 'melek chaari', 'qsdqsdqs', 'qdqsdqs', 'qdqsdqs', 'qdqsd', 'qsdqsd', 'qdqd', 'qsdqsd', 4.00, 0.00);
+INSERT INTO `fournisseur` (`code`, `raison_social`, `adresse`, `mat_vin`, `tel`, `fax`, `email`, `responsable`, `id_fiscale`, `banque`, `agence`, `rib`, `categorie_prix_vente`, `status`, `activite_economique`, `remise`, `taux_retenue`, `rccm`, `ninea`, `code_douane`) VALUES
+('6425', 'qdqsd', 'Tunis, Gouvernorat Tunis, Tunisie', 'qsdqsd', '+216 55558048', '+216 55558048', 'malek.chaari@supcom.tn', 'melek chaari', 'qsdqsdqs', 'qdqsdqs', 'qdqsdqs', 'qdqsd', 'qsdqsd', 'qdqd', 'qsdqsd', 4.00, 0.00, 'rccm1', 'ninea1', 'code_douane1');
 
 -- --------------------------------------------------------
 

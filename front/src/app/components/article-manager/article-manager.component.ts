@@ -97,7 +97,7 @@ export class ArticleManagerComponent implements OnInit {
       couleur_photo_id: ['', Validators.required],
       traitement_id: ['', Validators.required],
       prix_achat: ['', [Validators.required, Validators.min(0)]],
-      tva: ['', [Validators.required, Validators.min(0)]],
+      tva: [18, [Validators.required, Validators.min(0)]],
       prix_vente: ['', [Validators.required, Validators.min(0)]],
       code_a_barre: ['', Validators.required],
       expiration: ['', Validators.required],
@@ -119,6 +119,20 @@ export class ArticleManagerComponent implements OnInit {
       }
     });
 
+    // Subscribe to prix_achat changes to calculate prix_vente
+    this.articleForm.get('prix_achat')?.valueChanges.subscribe(prixAchat => {
+      if (prixAchat) {
+        const tva = 18; // Fixed TVA at 18%
+        const prixVente = prixAchat * (1 + tva/100);
+        this.articleForm.patchValue({
+          prix_vente: prixVente.toFixed(2)
+        }, { emitEvent: false });
+      }
+    });
+
+    // Ensure TVA is always set to 18
+    this.articleForm.get('tva')?.setValue(18);
+
     this.filterForm = this.fb.group({
       code: [''],
       libelle: [''],
@@ -137,6 +151,9 @@ export class ArticleManagerComponent implements OnInit {
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
     });
+
+    // Set initial TVA value
+    this.setTvaValue();
   }
 
   private initializeStockEntries(): void {
@@ -286,6 +303,8 @@ export class ArticleManagerComponent implements OnInit {
   editArticle(article: Article): void {
     this.editingArticle = article;
     this.articleForm.patchValue(article);
+    // Ensure TVA is set to 18 even when editing
+    this.setTvaValue();
     this.setTab('add');
   }
 
@@ -308,6 +327,8 @@ export class ArticleManagerComponent implements OnInit {
 
   resetForm(): void {
     this.articleForm.reset();
+    // Ensure TVA is set to 18 after reset
+    this.setTvaValue();
     this.editingArticle = null;
   }
 
@@ -711,5 +732,9 @@ export class ArticleManagerComponent implements OnInit {
     if (this.sortColumn) {
       this.onSort(this.sortColumn);
     }
+  }
+
+  private setTvaValue(): void {
+    this.articleForm.patchValue({ tva: 18 });
   }
 }

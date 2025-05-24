@@ -11,6 +11,7 @@ import { ArticleManagerComponent } from './components/article-manager/article-ma
 import { ArticleParamsComponent } from './components/article-params/article-params.component';
 import { FournisseurComponent } from './components/fournisseur/fournisseur.component';
 import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 import { SettingsComponent } from './components/settings/settings.component';
 
 // Client Components
@@ -37,7 +38,8 @@ const routes: Routes = [
   {
     path: 'app',
     component: LayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'opticien' },
     children: [
       { path: 'customers', component: CustomersComponent },
       { path: 'customers/new', component: CustomerFormComponent },
@@ -53,7 +55,8 @@ const routes: Routes = [
   {
     path: 'client',
     component: ClientLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'client' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: ClientDashboardComponent },

@@ -5,6 +5,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from '../../services/theme.service';
 import { AuthService } from '../../services/auth.service';
 
+interface DisplayPermission {
+  componentId: string;
+  componentName: string;
+  hasAccess: boolean;
+}
+
 @Component({
   selector: 'app-opticien',
   templateUrl: './opticien.component.html',
@@ -37,7 +43,7 @@ export class OpticienComponent implements OnInit {
   // Permissions management
   showPermissionsPanel = false;
   selectedOpticien: Opticien | null = null;
-  availableComponents: ComponentPermission[] = [
+  availableComponents: DisplayPermission[] = [
     { componentId: 'article-manager', componentName: 'Article Manager', hasAccess: false },
     { componentId: 'article-hierarchy', componentName: 'Article Hierarchy', hasAccess: false },
     { componentId: 'article-params', componentName: 'Article Parameters', hasAccess: false },
@@ -285,16 +291,19 @@ export class OpticienComponent implements OnInit {
   loadOpticienPermissions(opticienId: number): void {
     this.opticienService.getOpticienPermissions(opticienId).subscribe({
       next: (permissions) => {
+        console.log('Received permissions:', permissions);
         // Update the available components with the current permissions
         this.availableComponents = this.availableComponents.map(comp => {
-          const existingPermission = permissions.find(p => p.componentId === comp.componentId);
+          const existingPermission = permissions.find(p => p.component_id === comp.componentId);
           return {
             ...comp,
-            hasAccess: existingPermission?.hasAccess || false
+            hasAccess: existingPermission ? existingPermission.has_access : false
           };
         });
+        console.log('Updated components:', this.availableComponents);
       },
       error: (error) => {
+        console.error('Error loading permissions:', error);
         this.showMessage('Error loading permissions');
       }
     });
@@ -303,15 +312,21 @@ export class OpticienComponent implements OnInit {
   savePermissions(): void {
     if (!this.selectedOpticien?.id) return;
 
+    const permissionsToSave = this.availableComponents.map(comp => ({
+      component_id: comp.componentId,
+      has_access: comp.hasAccess
+    }));
+
     this.opticienService.updateOpticienPermissions(
       this.selectedOpticien.id,
-      this.availableComponents
+      permissionsToSave
     ).subscribe({
       next: () => {
         this.showMessage('Permissions updated successfully');
         this.closePermissionsPanel();
       },
       error: (error) => {
+        console.error('Error updating permissions:', error);
         this.showMessage('Error updating permissions');
       }
     });
@@ -326,7 +341,7 @@ export class OpticienComponent implements OnInit {
     }));
   }
 
-  toggleComponentAccess(component: ComponentPermission): void {
+  toggleComponentAccess(component: DisplayPermission): void {
     component.hasAccess = !component.hasAccess;
   }
 } 

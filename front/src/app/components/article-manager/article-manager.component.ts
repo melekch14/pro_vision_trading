@@ -43,7 +43,7 @@ export class ArticleManagerComponent implements OnInit {
   couleurPhotoOptions: any[] = [];
   traitementOptions: any[] = [];
   fournisseurOptions: any[] = [];
-  typeArticleOptions = [1, 2, 3]; // Static for now
+  typeArticleOptions: any[] = [];
   subfamilyOptions: ArticleSubfamily[] = [];
   
   // Tab state
@@ -199,6 +199,12 @@ export class ArticleManagerComponent implements OnInit {
     this.articleParamsService.getParams('traitements').subscribe({
       next: (params) => this.traitementOptions = params,
       error: (error) => console.error('Error loading traitements:', error)
+    });
+
+    // Load type articles
+    this.articleParamsService.getParams('type-articles').subscribe({
+      next: (params) => this.typeArticleOptions = params,
+      error: (error) => console.error('Error loading type articles:', error)
     });
 
     // Load fournisseurs

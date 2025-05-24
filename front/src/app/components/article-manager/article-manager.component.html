@@ -175,7 +175,7 @@
                     <label for="typeArticle">Type Article</label>
                     <select id="typeArticle" formControlName="typeArticle_id" class="form-control">
                       <option value="">Select Type Article</option>
-                      <option *ngFor="let option of typeArticleOptions" [value]="option">{{option}}</option>
+                      <option *ngFor="let option of typeArticleOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
                 </div>

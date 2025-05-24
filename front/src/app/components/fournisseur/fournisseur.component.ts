@@ -24,7 +24,9 @@ export class FournisseurComponent implements OnInit {
   errorMessage: string = '';
 
   // Filter and sort properties
-  searchTerm: string = '';
+  searchCode: string = '';
+  searchCompany: string = '';
+  searchEmail: string = '';
   sortColumn: string = 'code';
   sortDirection: 'asc' | 'desc' = 'asc';
   filterStatus: string = '';
@@ -89,14 +91,27 @@ export class FournisseurComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.fournisseurs];
     
-    // Apply search query
-    if (this.searchTerm.trim()) {
-      const query = this.searchTerm.toLowerCase().trim();
+    // Apply code filter
+    if (this.searchCode.trim()) {
+      const query = this.searchCode.toLowerCase().trim();
       filtered = filtered.filter(fournisseur =>
-        fournisseur.raison_social.toLowerCase().includes(query) ||
-        fournisseur.email.toLowerCase().includes(query) ||
-        fournisseur.code.toLowerCase().includes(query) ||
-        fournisseur.responsable.toLowerCase().includes(query)
+        fournisseur.code.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply company name filter
+    if (this.searchCompany.trim()) {
+      const query = this.searchCompany.toLowerCase().trim();
+      filtered = filtered.filter(fournisseur =>
+        fournisseur.raison_social.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply email filter
+    if (this.searchEmail.trim()) {
+      const query = this.searchEmail.toLowerCase().trim();
+      filtered = filtered.filter(fournisseur =>
+        fournisseur.email.toLowerCase().includes(query)
       );
     }
     
@@ -171,7 +186,9 @@ export class FournisseurComponent implements OnInit {
   }
 
   resetFilters(): void {
-    this.searchTerm = '';
+    this.searchCode = '';
+    this.searchCompany = '';
+    this.searchEmail = '';
     this.filterStatus = '';
     this.sortColumn = 'code';
     this.sortDirection = 'asc';

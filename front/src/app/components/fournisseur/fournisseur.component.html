@@ -146,13 +146,19 @@
 
     <div class="stock-filters">
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by code...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Search by code...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by company name...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()" placeholder="Search by company name...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by email...">
+        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Search by email...">
+      </div>
+      <div class="filter-group">
+        <select class="filter-input" [(ngModel)]="filterStatus" (change)="applyFilters()">
+          <option value="">All Statuses</option>
+          <option *ngFor="let status of getUniqueStatuses()" [value]="status">{{ status | titlecase }}</option>
+        </select>
       </div>
       <button class="clear-filters-btn" (click)="resetFilters()">
         <span class="material-icons">clear</span>
@@ -177,7 +183,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let fournisseur of fournisseurs">
+        <tr *ngFor="let fournisseur of filteredFournisseurs">
           <td>{{ fournisseur.code }}</td>
           <td>{{ fournisseur.raison_social }}</td>
           <td>{{ fournisseur.adresse }}</td>

@@ -16,8 +16,11 @@ import { UserOptions } from 'jspdf-autotable';
 export class CustomersComponent implements OnInit {
   customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
-  searchQuery: string = '';
-  sortBy: string = 'id';
+  searchCode: string = '';
+  searchCompany: string = '';
+  searchEmail: string = '';
+  searchResponsable: string = '';
+  sortColumn: string = 'id';
   sortDirection: 'asc' | 'desc' = 'asc';
   isLoading: boolean = false;
   errorMessage: string = '';
@@ -52,15 +55,35 @@ export class CustomersComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.customers];
     
-    // Apply search query
-    if (this.searchQuery.trim()) {
-      const query = this.searchQuery.toLowerCase().trim();
+    // Apply code filter
+    if (this.searchCode.trim()) {
+      const query = this.searchCode.toLowerCase().trim();
       filtered = filtered.filter(customer =>
-        customer.raison_social.toLowerCase().includes(query) ||
-        customer.email.toLowerCase().includes(query) ||
-        customer.codee.toLowerCase().includes(query) ||
-        customer.responsable.toLowerCase().includes(query) ||
-        customer.id.toString().includes(query)
+        customer.codee.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply company name filter
+    if (this.searchCompany.trim()) {
+      const query = this.searchCompany.toLowerCase().trim();
+      filtered = filtered.filter(customer =>
+        customer.raison_social.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply email filter
+    if (this.searchEmail.trim()) {
+      const query = this.searchEmail.toLowerCase().trim();
+      filtered = filtered.filter(customer =>
+        customer.email.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply responsable filter
+    if (this.searchResponsable.trim()) {
+      const query = this.searchResponsable.toLowerCase().trim();
+      filtered = filtered.filter(customer =>
+        customer.responsable.toLowerCase().includes(query)
       );
     }
     
@@ -74,7 +97,7 @@ export class CustomersComponent implements OnInit {
     customers.sort((a, b) => {
       let valueA, valueB;
       
-      switch (this.sortBy) {
+      switch (this.sortColumn) {
         case 'raison_social':
           valueA = a.raison_social;
           valueB = b.raison_social;
@@ -107,26 +130,29 @@ export class CustomersComponent implements OnInit {
   }
   
   setSortBy(field: string): void {
-    if (this.sortBy === field) {
+    if (this.sortColumn === field) {
       // Toggle direction if already sorting by this field
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      this.sortBy = field;
+      this.sortColumn = field;
       this.sortDirection = 'asc';
     }
     this.applyFilters();
   }
   
   getSortIcon(field: string): string {
-    if (this.sortBy !== field) {
+    if (this.sortColumn !== field) {
       return 'unfold_more';
     }
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
   }
   
   resetFilters(): void {
-    this.searchQuery = '';
-    this.sortBy = 'id';
+    this.searchCode = '';
+    this.searchCompany = '';
+    this.searchEmail = '';
+    this.searchResponsable = '';
+    this.sortColumn = 'id';
     this.sortDirection = 'asc';
     this.filteredCustomers = [...this.customers];
   }

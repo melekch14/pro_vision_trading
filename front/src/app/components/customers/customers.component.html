@@ -28,13 +28,16 @@
 
     <div class="stock-filters">
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by code...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Search by code...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by raison social...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()" placeholder="Search by company name...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by email...">
+        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Search by email...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchResponsable" (input)="applyFilters()" placeholder="Search by responsable...">
       </div>
       <button class="clear-filters-btn" (click)="resetFilters()">
         <span class="material-icons">clear</span>

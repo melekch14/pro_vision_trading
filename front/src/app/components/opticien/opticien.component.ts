@@ -317,6 +317,8 @@ export class OpticienComponent implements OnInit {
       has_access: comp.hasAccess
     }));
 
+    console.log('Saving permissions:', permissionsToSave); // Debug log
+
     this.opticienService.updateOpticienPermissions(
       this.selectedOpticien.id,
       permissionsToSave

@@ -66,9 +66,12 @@ const updateOpticienPermissions = async (opticienId, permissions) => {
 
     // Insert new permissions
     for (const permission of permissions) {
+      if (!permission.component_id) {
+        throw new Error('Component ID cannot be null');
+      }
       await connection.query(
         'INSERT INTO opticien_permissions (opticien_id, component_id, has_access) VALUES (?, ?, ?)',
-        [opticienId, permission.componentId, permission.hasAccess]
+        [opticienId, permission.component_id, permission.has_access]
       );
     }
 

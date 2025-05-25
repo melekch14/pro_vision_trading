@@ -10,7 +10,7 @@ const findUserByEmail = async (email) => {
 
     const [opticiens] = await db.query('SELECT * FROM opticien WHERE email = ?', [email]);
     if (opticiens.length > 0) {
-        return { user: opticiens[0], role: 'opticien' };
+        return { user: opticiens[0], role: opticiens[0].role };
     }
 
     return null;
@@ -47,7 +47,7 @@ const authenticateDynamicUser = async (email, password) => {
             nom: user.nom,
             prenom: user.prenom,
             email: user.email,
-            role
+            role: role
         },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }

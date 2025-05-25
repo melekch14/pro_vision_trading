@@ -18,7 +18,12 @@ export class RoleGuard implements CanActivate {
 
     const requiredRole = route.data['role'];
     
-    if (userData.role === requiredRole) {
+    // Special handling for app route which should allow both opticien and technicien
+    if (route.routeConfig?.path === 'app') {
+      if (userData.role === 'opticien' || userData.role === 'technicien') {
+        return true;
+      }
+    } else if (userData.role === requiredRole) {
       return true;
     }
 

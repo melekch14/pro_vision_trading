@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { PermissionService } from '../../services/permission.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,11 @@ export class LoginComponent {
   submitted = false;
   loginError = '';
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private permissionService: PermissionService
+  ) {
     // Redirect to appropriate dashboard if already logged in
     if (this.authService.isAuthenticated()) {
       const userData = this.authService.getUserData();
@@ -35,12 +40,15 @@ export class LoginComponent {
     if (form.valid) {
       this.authService.loginUser(this.user).subscribe({
         next: () => {
-          const userData = this.authService.getUserData();
-          if (userData?.role === 'client') {
-            this.router.navigate(['/client/dashboard']);
-          } else {
-            this.router.navigate(['/app']);
-          }
+          // Load permissions after successful login
+          this.permissionService.loadUserPermissions().subscribe(() => {
+            const userData = this.authService.getUserData();
+            if (userData?.role === 'client') {
+              this.router.navigate(['/client/dashboard']);
+            } else {
+              this.router.navigate(['/app']);
+            }
+          });
         },
         error: (err) => {
           this.loginError = err.error?.message || 'Invalid login credentials';

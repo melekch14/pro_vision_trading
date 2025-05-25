@@ -1,3 +1,121 @@
 <div class="create-order-container">
-  <h1>Create Order</h1>
+  <h1 class="title">Commande Optique</h1>
+  <p class="subtitle">Interface professionnelle de commande</p>
+
+  <!-- Step 1: Valeurs Corrections -->
+  <div class="step-card step-1">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <span class="step-title">Valeurs Corrections</span>
+    </div>
+    <div class="corrections-table">
+      <div class="corrections-header">
+        <span>Œil</span>
+        <span>Sphère *</span>
+        <span>Cylindre *</span>
+        <span>Axe</span>
+        <span>Addition</span>
+        <span>Copier</span>
+      </div>
+      <div class="corrections-row od-row">
+        <span class="eye-label od">OD</span>
+        <input type="text" placeholder="-" [(ngModel)]="order.od.sphere">
+        <input type="text" placeholder="-" [(ngModel)]="order.od.cylinder">
+        <input type="text" placeholder="°" [(ngModel)]="order.od.axe">
+        <input type="text" placeholder="+" [(ngModel)]="order.od.addition">
+        <button class="copy-btn right-arrow-btn" (click)="copyToOG()">→</button>
+      </div>
+      <div class="corrections-row arrows-row">
+        <span></span>
+        <button class="arrow-btn" (click)="copyFieldToOG('sphere')">↓</button>
+        <button class="arrow-btn" (click)="copyFieldToOG('cylinder')">↓</button>
+        <button class="arrow-btn" (click)="copyFieldToOG('axe')">↓</button>
+        <button class="arrow-btn" (click)="copyFieldToOG('addition')">↓</button>
+        <span></span>
+      </div>
+      <div class="corrections-row og-row">
+        <span class="eye-label og">OG</span>
+        <input type="text" placeholder="-" [(ngModel)]="order.og.sphere">
+        <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder">
+        <input type="text" placeholder="°" [(ngModel)]="order.og.axe">
+        <input type="text" placeholder="+" [(ngModel)]="order.og.addition">
+        <button class="copy-btn right-arrow-btn" (click)="copyToOD()">←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Porteur -->
+  <div class="step-card step-2">
+    <div class="step-header">
+      <span class="step-number">2</span>
+      <span class="step-title">Porteur</span>
+    </div>
+    <div class="porteur-form">
+      <input type="text" placeholder="Nom de famille" [(ngModel)]="order.lastName" required>
+      <input type="text" placeholder="Prénom" [(ngModel)]="order.firstName" required>
+      <input type="text" placeholder="+33 1 23 45 67 89" [(ngModel)]="order.phone">
+      <input type="email" placeholder="exemple@email.com" [(ngModel)]="order.email">
+    </div>
+  </div>
+
+  <!-- Step 3: Suppléments -->
+  <div class="step-card step-3">
+    <div class="step-header">
+      <span class="step-number">3</span>
+      <span class="step-title">Suppléments</span>
+    </div>
+    <div class="supplements-options">
+      <label class="supplement-option precal">
+        <input type="radio" name="supplement" value="precal" [(ngModel)]="order.supplement" (change)="onSupplementChange()">
+        <span>Précal</span>
+        <small>Calcul de précision</small>
+      </label>
+      <label class="supplement-option rx">
+        <input type="radio" name="supplement" value="rx" [(ngModel)]="order.supplement" (change)="onSupplementChange()">
+        <span>RX</span>
+        <small>Prescription standard</small>
+      </label>
+      <label class="supplement-option simple">
+        <input type="radio" name="supplement" value="simple" [(ngModel)]="order.supplement" (change)="onSupplementChange()">
+        <span>Simple</span>
+        <small>Configuration basique</small>
+      </label>
+    </div>
+  </div>
+
+  <!-- Step 4: Traitement -->
+  <div class="step-card step-4">
+    <div class="step-header">
+      <span class="step-number">4</span>
+      <span class="step-title">Traitement</span>
+    </div>
+    <div class="traitement-select">
+      <label>Sélectionner un traitement</label>
+      <select [(ngModel)]="order.traitement">
+        <option value="">Choisir un traitement...</option>
+        <option *ngFor="let t of traitements" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Précal File Upload (conditional) -->
+  <div class="step-card precal-file" *ngIf="order.supplement === 'precal'">
+    <div class="step-header orange">
+      <span class="step-title">Fichier Précal Requis</span>
+    </div>
+    <div class="precal-info">
+      <p>Pour le supplément Précal, veuillez d'abord télécharger le template et le remplir avant de le téléverser.</p>
+      <a class="download-template" href="/assets/precal-template.docx" download>Télécharger le Template Précal</a>
+    </div>
+    <div class="file-upload">
+      <label>Téléverser le fichier complété *</label>
+      <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.txt">
+      <div *ngIf="selectedFileName" class="file-name">{{ selectedFileName }}</div>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="submit-section">
+    <button class="submit-btn" (click)="submitOrder()">Soumettre la Commande</button>
+  </div>
 </div> 

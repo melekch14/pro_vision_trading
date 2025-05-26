@@ -98,6 +98,21 @@
     </div>
   </div>
 
+  <!-- Step 5: Produit -->
+  <div class="step-card step-5">
+    <div class="step-header">
+      <span class="step-number">5</span>
+      <span class="step-title">Produit</span>
+    </div>
+    <div class="produit-select">
+      <label>Sélectionner un produit</label>
+      <select [(ngModel)]="order.produit">
+        <option value="">Choisir un produit...</option>
+        <option *ngFor="let p of produits" [value]="p">{{ p }}</option>
+      </select>
+    </div>
+  </div>
+
   <!-- Précal File Upload (conditional) -->
   <div class="step-card precal-file" *ngIf="order.supplement === 'precal'">
     <div class="step-header orange">

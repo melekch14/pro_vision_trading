@@ -2,10 +2,10 @@
 .create-order-container {
   max-width: 900px;
   margin: 40px auto;
-  background: #f7f9fc;
+  border: 2px solid #e0e7ef;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
   padding: 32px 24px 24px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
 }
 
 .title {
@@ -22,6 +22,7 @@
 
 .step-card {
   background: #fff;
+  border: 1px solid #e0e7ef;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   margin-bottom: 24px;
@@ -181,9 +182,6 @@
 .supplement-option input[type="radio"]:checked + span {
   text-decoration: underline;
 }
-.supplement-option input[type="radio"]:checked {
-  box-shadow: 0 0 0 2px #a21caf;
-}
 .supplement-option.precal input[type="radio"]:checked + span {
   color: #a21caf;
 }
@@ -211,6 +209,26 @@
 }
 .traitement-select select:focus {
   border: 1.5px solid #d97706;
+  outline: none;
+}
+
+/* Produit */
+.produit-select {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.produit-select select {
+  padding: 8px 12px;
+  border: 1px solid #e0e7ef;
+  border-radius: 6px;
+  background: #f8fafc;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+.produit-select select:focus {
+  border: 1.5px solid #2953f3;
   outline: none;
 }
 

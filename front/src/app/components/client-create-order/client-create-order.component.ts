@@ -15,7 +15,8 @@ export class ClientCreateOrderComponent {
     phone: '',
     email: '',
     supplement: '',
-    traitement: ''
+    traitement: '',
+    produit: ''
   };
 
   traitements = [
@@ -24,6 +25,14 @@ export class ClientCreateOrderComponent {
     'Photochromique',
     'Polarisant',
     'Blue Cut'
+  ];
+
+  produits = [
+    'Verre Simple',
+    'Verre Progressif',
+    'Verre Bifocal',
+    'Verre Sport',
+    'Verre Enfant'
   ];
 
   selectedFileName: string = '';

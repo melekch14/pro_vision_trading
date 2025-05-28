@@ -37,6 +37,42 @@ export class ClientCreateOrderComponent {
 
   selectedFileName: string = '';
 
+  price: number = 0;
+  shippingType: string = '';
+  deliveryTime: string = '';
+
+  // Example product prices
+  productPrices: { [key: string]: number } = {
+    'Verre Simple': 50,
+    'Verre Progressif': 120,
+    'Verre Bifocal': 90,
+    'Verre Sport': 80,
+    'Verre Enfant': 40
+  };
+
+  ngOnInit() {
+    // Optionally, set default values
+  }
+
+  ngDoCheck() {
+    // Update price when product changes
+    if (this.order.produit && this.productPrices[this.order.produit]) {
+      this.price = this.productPrices[this.order.produit];
+    } else {
+      this.price = 0;
+    }
+  }
+
+  onShippingTypeChange() {
+    if (this.shippingType === 'free') {
+      this.deliveryTime = '7-10 jours ouvrables';
+    } else if (this.shippingType === 'express') {
+      this.deliveryTime = '24-48 heures';
+    } else {
+      this.deliveryTime = '';
+    }
+  }
+
   copyToOG() {
     this.order.og.sphere = this.order.od.sphere;
     this.order.og.cylinder = this.order.od.cylinder;

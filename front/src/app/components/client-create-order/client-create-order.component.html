@@ -129,6 +129,47 @@
     </div>
   </div>
 
+  <!-- Step 6: Prix et Délais -->
+  <div class="step-card step-6">
+    <div class="step-header">
+      <span class="step-number">6</span>
+      <span class="step-title">Prix et Délais</span>
+    </div>
+    <div class="prix-delais-content">
+      <div class="livraison-block">
+        <span class="livraison-label">Type de Livraison</span>
+        <div class="livraison-options">
+          <label>
+            Livraison Gratuite <small>(7-10 jours ouvrables)</small>
+            <input type="radio" name="shippingType" value="free" [(ngModel)]="shippingType" (change)="onShippingTypeChange()">
+          </label>
+          <label>
+            Livraison Express <small>(24-48 heures)</small>
+            <input type="radio" name="shippingType" value="express" [(ngModel)]="shippingType" (change)="onShippingTypeChange()">
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="resume-commande">
+      <h3>Résumé de la Commande</h3>
+      <div class="resume-row">
+        <div>
+          <span class="resume-label">Prix Total</span>
+          <span class="resume-value">{{ price | number:'1.2-2' }} €</span>
+        </div>
+        <div>
+          <span class="resume-label">Type de Livraison</span>
+          <span class="resume-value">{{ shippingType ? (shippingType === 'free' ? 'Gratuite' : 'Express') : 'À choisir' }}</span>
+        </div>
+        <div>
+          <span class="resume-label">Délais</span>
+          <span class="resume-value">{{ deliveryTime ? deliveryTime : 'À définir' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Step 6 -->
+
   <!-- Submit Button -->
   <div class="submit-section">
     <button class="submit-btn" (click)="submitOrder()">Soumettre la Commande</button>

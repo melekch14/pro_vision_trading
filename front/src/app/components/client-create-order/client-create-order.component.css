@@ -367,4 +367,206 @@
     flex-direction: column;
     gap: 8px;
   }
+}
+
+/* Prix et Délais Section */
+.step-card.step-6 {
+  background: #f8f6fc;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(41,83,243,0.07);
+  margin-bottom: 24px;
+  padding: 24px 20px 18px 20px;
+}
+.prix-delais-content {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.prix-total-block, .livraison-block, .delais-block {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(41,83,243,0.04);
+  padding: 18px 16px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 8px;
+}
+.prix-total-block {
+  border: 2px solid #34c759;
+}
+.livraison-block {
+  border: 2px solid #fdba74;
+}
+.delais-block {
+  border: 2px solid #2563eb;
+}
+.prix-label, .livraison-label, .delais-label {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.prix-label::before {
+  content: '\20AC';
+  background: #34c759;
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-right: 6px;
+}
+.livraison-label::before {
+  content: '\1F69A';
+  background: #fdba74;
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-right: 6px;
+}
+.delais-label::before {
+  content: '\23F0';
+  background: #2563eb;
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-right: 6px;
+}
+.prix-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #34c759;
+  background: #f6fff8;
+  border-radius: 8px;
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+}
+.livraison-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+.livraison-options label {
+  background: #fff7ed;
+  border: 1.5px solid #fdba74;
+  border-radius: 10px;
+  padding: 12px 18px 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.livraison-options input[type="radio"] {
+  background-color: initial !important;
+  color: initial !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  width: auto !important;
+  transition: none !important;
+}
+.livraison-options label:has(input[type="radio"]:checked) {
+  border: 2px solid #f59e42;
+  background: #fff3e0;
+}
+.livraison-options small {
+  color: #b26a00;
+  font-size: 0.98rem;
+  margin-left: 6px;
+}
+.delais-value {
+  background: #f1f5ff;
+  color: #2563eb;
+  border-radius: 8px;
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
+
+/* Résumé de la Commande */
+.resume-commande {
+  background: #f6e9fa;
+  border-radius: 14px;
+  padding: 18px 10px 10px 10px;
+  margin-top: 18px;
+  box-shadow: 0 2px 8px rgba(162,28,175,0.07);
+}
+.resume-commande h3 {
+  color: #7c3aed;
+  text-align: center;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.resume-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+.resume-row > div {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 8px;
+}
+.resume-label {
+  color: #888;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+.resume-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2953f3;
+}
+.resume-row > div:first-child .resume-value {
+  color: #16a34a;
+}
+.resume-row > div:nth-child(2) .resume-value {
+  color: #f59e42;
+}
+.resume-row > div:last-child .resume-value {
+  color: #2563eb;
+}
+@media (max-width: 900px) {
+  .prix-delais-content, .resume-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .prix-total-block, .livraison-block, .delais-block, .resume-row > div {
+    margin: 0;
+    width: 100%;
+  }
 } 

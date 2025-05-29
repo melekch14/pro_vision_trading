@@ -44,6 +44,7 @@ export class LoginComponent {
           this.permissionService.loadUserPermissions().subscribe(() => {
             const userData = this.authService.getUserData();
             if (userData?.role === 'client') {
+              this.authService.decodeAndDisplayClientInfo();
               this.router.navigate(['/client/dashboard']);
             } else {
               this.router.navigate(['/app']);

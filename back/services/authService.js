@@ -40,19 +40,61 @@ const authenticateDynamicUser = async (email, password) => {
     const { user, role } = result;
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return null;
+
+    let tokenPayload = {
+        id: user.id,
+        code: user.codee,
+        email: user.email,
+        role: role
+    };
+
+    if (role === 'client') {
+        tokenPayload.raison_social = user.raison_social;
+    } else if (role === 'opticien') {
+        tokenPayload.nom = user.nom;
+        tokenPayload.prenom = user.prenom;
+    }
+
     const token = jwt.sign(
-        {
-            id: user.id,
-            code: user.code,
-            nom: user.nom,
-            prenom: user.prenom,
-            email: user.email,
-            role: role
-        },
+        tokenPayload,
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
+
+    // Log client information if the user is a client
+    if (role === 'client') {
+        console.log('Client Login Information:');
+        console.log('------------------------');
+        console.log('ID:', user.id);
+        console.log('Code:', user.code);
+        console.log('Email:', user.email);
+        console.log('Raison Social:', user.raison_social);
+        console.log('Role:', role);
+        console.log('------------------------');
+    }
+
     return { token };
 };
 
-module.exports = { registerUser, authenticateDynamicUser };
+const decodeClientToken = (token) => {
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role === 'client') {
+            console.log('Client Token Information:');
+            console.log('------------------------');
+            console.log('ID:', decoded.id);
+            console.log('Code:', decoded.code);
+            console.log('Email:', decoded.email);
+            console.log('Raison Social:', decoded.raison_social);
+            console.log('Role:', decoded.role);
+            console.log('------------------------');
+            return decoded;
+        }
+        return null;
+    } catch (error) {
+        console.error('Error decoding token:', error.message);
+        return null;
+    }
+};
+
+module.exports = { registerUser, authenticateDynamicUser, decodeClientToken };

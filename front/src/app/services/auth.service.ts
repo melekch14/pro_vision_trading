@@ -22,10 +22,11 @@ interface LoginResponse {
 export interface UserData {
   id: number;
   code: string;
-  nom: string;
-  prenom: string;
   email: string;
   role: string;
+  raison_social?: string;
+  nom?: string;
+  prenom?: string;
 }
 
 @Injectable({
@@ -76,6 +77,20 @@ export class AuthService {
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
+    }
+  }
+
+  decodeAndDisplayClientInfo(): void {
+    const userData = this.getUserData();
+    if (userData && userData.role === 'client') {
+      console.log('Client Information:');
+      console.log('------------------');
+      console.log('ID:', userData.id);
+      console.log('Code:', userData.code);
+      console.log('Email:', userData.email);
+      console.log('Raison Social:', userData.raison_social);
+      console.log('Role:', userData.role);
+      console.log('------------------');
     }
   }
 }

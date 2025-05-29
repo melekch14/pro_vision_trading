@@ -61,4 +61,32 @@ exports.getAllStockWithArticles = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+// Get matching products based on sphere and cylinder
+exports.getMatchingProducts = async (req, res) => {
+    try {
+        console.log('Full request query:', req.query);
+        console.log('Request parameters:', {
+            sphere: req.query.sphere,
+            cylinder: req.query.cylinder,
+            rawQuery: req.originalUrl
+        });
+
+        const { sphere, cylinder } = req.query;
+        
+        if (!sphere || !cylinder) {
+            return res.status(400).json({ 
+                message: 'Both sphere and cylinder parameters are required' 
+            });
+        }
+
+        const products = await stockService.getMatchingProducts(sphere, cylinder);
+        
+        // Return empty array if no products found, instead of error
+        res.json(products || []);
+    } catch (error) {
+        console.error('Error in getMatchingProducts controller:', error);
+        res.status(500).json({ message: error.message });
+    }
 }; 

@@ -12,13 +12,20 @@ const stockRoutes = require('./routes/stockRoutes');
 const opticienRoutes = require('./routes/opticienRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+    console.log('Incoming request:', req.method, req.originalUrl);
+    next();
+});
+
 app.use(cors({
   origin: true,
   credentials: true
 }));
 
-app.use(cors());
 app.use(express.json());
+
+// Routes
 app.use('/auth', authRoutes);
 app.use('/article-hierarchy', articleHierarchyRoutes);
 app.use('/article-params', articleParamRoutes);
@@ -29,5 +36,19 @@ app.use('/stock', stockRoutes);
 app.use('/opticiens', opticienRoutes);
 app.use('/orders', orderRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Test route to verify server is working
+app.get('/test', (req, res) => {
+    console.log('Test route hit');
+    res.json({ message: 'Server is working' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+});
+
+const PORT = process.env.PORT || 3080;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});

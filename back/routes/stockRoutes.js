@@ -2,6 +2,18 @@ const express = require('express');
 const router = express.Router();
 const stockController = require('../controllers/stockController');
 
+// Debug middleware to log all requests
+router.use((req, res, next) => {
+    console.log('Stock route hit:', req.method, req.originalUrl);
+    next();
+});
+
+// Get matching products based on sphere and cylinder - MUST BE BEFORE /:id route
+router.get('/matching', (req, res, next) => {
+    console.log('Matching route hit with query:', req.query);
+    next();
+}, stockController.getMatchingProducts);
+
 // Stock Routes
 router.get('/all', stockController.getAllStockWithArticles);
 router.post('/', stockController.createStock);

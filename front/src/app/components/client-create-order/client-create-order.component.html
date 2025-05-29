@@ -91,7 +91,7 @@
     </div>
     <div class="traitement-select">
       <label>Sélectionner un traitement</label>
-      <select [(ngModel)]="order.traitement">
+      <select [(ngModel)]="order.traitement" (change)="onTraitementChange()">
         <option value="">Choisir un traitement...</option>
         <option *ngFor="let t of traitements" [value]="t">{{ t }}</option>
       </select>
@@ -106,9 +106,11 @@
     </div>
     <div class="produit-select">
       <label>Sélectionner un produit</label>
-      <select [(ngModel)]="order.produit">
-        <option value="">Choisir un produit...</option>
-        <option *ngFor="let p of produits" [value]="p">{{ p }}</option>
+      <select [(ngModel)]="order.produit" name="produit" required>
+        <option value="">Sélectionnez un produit</option>
+        <option *ngFor="let product of filteredProducts" [value]="product.id">
+          {{ getProductDisplayName(product) }}
+        </option>
       </select>
     </div>
   </div>

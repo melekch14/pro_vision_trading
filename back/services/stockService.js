@@ -74,11 +74,50 @@ const getAllStockWithArticles = async () => {
     return rows;
 };
 
+// Get matching products based on sphere and cylinder
+const getMatchingProducts = async (sphere, cylinder) => {
+    try {
+        console.log('Searching for products with sphere:', sphere, 'and cylinder:', cylinder);
+        
+        const [rows] = await db.query(`
+            SELECT 
+                s.id,
+                a.libelle as article_libelle,
+                s.sphere,
+                s.cylindre as cylinder,
+                a.code as article_code,
+                a.type_stock,
+                sf.name as subfamily_name,
+                sf.code as subfamily_code,
+                f.code as family_code,
+                s.addition
+            FROM stock s
+            JOIN article a ON s.article_id = a.id
+            JOIN article_subfamilies sf ON a.article_subfamily_id = sf.id
+            JOIN article_families f ON sf.family_id = f.id
+            WHERE s.sphere = ? AND s.cylindre = ?
+            ORDER BY a.libelle
+        `, [sphere, cylinder]);
+
+        console.log('Query results:', rows);
+        
+        if (rows.length === 0) {
+            console.log('No products found matching the criteria');
+        }
+        
+        return rows;
+    } catch (error) {
+        console.error('Error in getMatchingProducts:', error);
+        throw new Error(`Error fetching matching products: ${error.message}`);
+    }
+};
+
 module.exports = {
     createStock,
     getStockByArticleId,
     updateStock,
     deleteStock,
     getStockById,
-    getAllStockWithArticles
+    getAllStockWithArticles,
+    getMatchingProducts
 }; 

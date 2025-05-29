@@ -1,4 +1,22 @@
 const db = require('../models/db');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const orderId = req.body.orderId;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const extension = path.extname(file.originalname);
+    cb(null, `order_${orderId}_${timestamp}${extension}`);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // Create order
 const createOrder = async (orderData) => {
@@ -102,11 +120,59 @@ const getOrdersByClientId = async (clientId) => {
     return rows;
 };
 
-module.exports = {
-    createOrder,
-    getAllOrders,
-    getOrderById,
-    updateOrder,
-    deleteOrder,
-    getOrdersByClientId
-}; 
+class OrderService {
+  async createOrder(orderData) {
+    try {
+      const {
+        od, og, lastName, firstName, phone, email,
+        supplement, traitement, produit, price,
+        shippingType, deliveryTime
+      } = orderData;
+
+      const [result] = await db.query(
+        `INSERT INTO orders (
+          od_sphere, od_cylinder, od_axe, od_addition,
+          og_sphere, og_cylinder, og_axe, og_addition,
+          last_name, first_name, phone, email,
+          supplement, traitement, produit, price,
+          shipping_type, delivery_time, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        [
+          od.sphere, od.cylinder, od.axe, od.addition,
+          og.sphere, og.cylinder, og.axe, og.addition,
+          lastName, firstName, phone, email,
+          supplement, traitement, produit, price,
+          shippingType, deliveryTime
+        ]
+      );
+
+      return { id: result.insertId, ...orderData };
+    } catch (error) {
+      throw new Error(`Error creating order: ${error.message}`);
+    }
+  }
+
+  async uploadFile(file, orderId) {
+    try {
+      // Update order with file information
+      await db.query(
+        'UPDATE orders SET file_path = ?, file_name = ? WHERE id = ?',
+        [file.path, file.filename, orderId]
+      );
+
+      return { message: 'File uploaded successfully', filePath: file.path };
+    } catch (error) {
+      // If there's an error, delete the uploaded file
+      if (file && file.path) {
+        fs.unlinkSync(file.path);
+      }
+      throw new Error(`Error uploading file: ${error.message}`);
+    }
+  }
+
+  getUploadMiddleware() {
+    return upload.single('file');
+  }
+}
+
+module.exports = new OrderService(); 

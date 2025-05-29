@@ -9,10 +9,9 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    const orderId = req.body.orderId;
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const extension = path.extname(file.originalname);
-    cb(null, `order_${orderId}_${timestamp}${extension}`);
+    cb(null, `temp_${timestamp}${extension}`);
   }
 });
 
@@ -154,14 +153,22 @@ class OrderService {
 
   async uploadFile(file, orderId) {
     try {
+      // Rename the file with the order ID
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const extension = path.extname(file.originalname);
+      const newFilename = `order_${orderId}_${timestamp}${extension}`;
+      const newPath = path.join('uploads', newFilename);
+      
+      // Rename the file
+      fs.renameSync(file.path, newPath);
+
       // Update order with file information
-      console.log(file.filename, orderId);
       await db.query(
         'UPDATE orders SET selected_file = ? WHERE id = ?',
-        [file.filename, orderId]
+        [newFilename, orderId]
       );
 
-      return { message: 'File uploaded successfully', filePath: file.path };
+      return { message: 'File uploaded successfully', filePath: newPath };
     } catch (error) {
       // If there's an error, delete the uploaded file
       if (file && file.path) {

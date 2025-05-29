@@ -209,8 +209,18 @@ export class ClientCreateOrderComponent {
 
   async submitOrder() {
     try {
+      // Prepare order data with additional fields
+      const orderData = {
+        ...this.order,
+        price: this.price,
+        shippingType: this.shippingType,
+        deliveryTime: this.deliveryTime,
+        selectedProduct: this.selectedProduct,
+        selectedArticle: this.selectedArticle
+      };
+
       // First create the order
-      const orderResponse = await this.orderService.createOrder(this.order).toPromise();
+      const orderResponse = await this.orderService.createOrder(orderData).toPromise();
       
       // If there's a file and it's a precal supplement, upload it
       if (this.selectedFile && this.order.supplement === 'precal') {

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-client-create-order',
@@ -44,7 +45,8 @@ export class ClientCreateOrderComponent {
 
   constructor(
     private orderService: OrderService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -216,7 +218,8 @@ export class ClientCreateOrderComponent {
         shippingType: this.shippingType,
         deliveryTime: this.deliveryTime,
         selectedProduct: this.selectedProduct,
-        selectedArticle: this.selectedArticle
+        selectedArticle: this.selectedArticle,
+        client_id: this.authService.getClientId()
       };
 
       // First create the order

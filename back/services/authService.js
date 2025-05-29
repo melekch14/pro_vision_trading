@@ -66,7 +66,7 @@ const authenticateDynamicUser = async (email, password) => {
         console.log('Client Login Information:');
         console.log('------------------------');
         console.log('ID:', user.id);
-        console.log('Code:', user.code);
+        console.log('Code:', user.codee);
         console.log('Email:', user.email);
         console.log('Raison Social:', user.raison_social);
         console.log('Role:', role);

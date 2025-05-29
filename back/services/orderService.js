@@ -123,21 +123,21 @@ class OrderService {
   async createOrder(orderData) {
     try {
       const {
-        od, og, lastName, firstName, phone, email,
+        client_id, od, og, lastName, firstName, phone, email,
         supplement, traitement, produit, price,
         shippingType, deliveryTime
       } = orderData;
-
+      console.log("ssssssssssssssssssss "+orderData.client_id);
       const [result] = await db.query(
         `INSERT INTO orders (
-          od_sphere, od_cylinder, od_axe, od_addition,
+          client_id, od_sphere, od_cylinder, od_axe, od_addition,
           og_sphere, og_cylinder, og_axe, og_addition,
           last_name, first_name, phone, email,
           supplement, traitement, produit, price,
           shipping_type, delivery_time, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
         [
-          od.sphere, od.cylinder, od.axe, od.addition,
+          client_id, od.sphere, od.cylinder, od.axe, od.addition,
           og.sphere, og.cylinder, og.axe, og.addition,
           lastName, firstName, phone, email,
           supplement, traitement, produit, price,

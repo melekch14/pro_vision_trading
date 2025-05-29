@@ -93,4 +93,11 @@ export class AuthService {
       console.log('------------------');
     }
   }
+
+  getClientId(): number {
+    const token = this.getToken();
+    if (!token) return 0;
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    return decodedToken.id;
+  }
 }

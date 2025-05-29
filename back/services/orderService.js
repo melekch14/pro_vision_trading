@@ -155,9 +155,10 @@ class OrderService {
   async uploadFile(file, orderId) {
     try {
       // Update order with file information
+      console.log(file.filename, orderId);
       await db.query(
-        'UPDATE orders SET file_path = ?, file_name = ? WHERE id = ?',
-        [file.path, file.filename, orderId]
+        'UPDATE orders SET selected_file = ? WHERE id = ?',
+        [file.filename, orderId]
       );
 
       return { message: 'File uploaded successfully', filePath: file.path };

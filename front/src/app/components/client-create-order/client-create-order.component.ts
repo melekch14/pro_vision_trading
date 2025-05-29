@@ -221,10 +221,10 @@ export class ClientCreateOrderComponent {
 
       // First create the order
       const orderResponse = await this.orderService.createOrder(orderData).toPromise();
-      
+      console.log('Order response:', orderResponse);
       // If there's a file and it's a precal supplement, upload it
       if (this.selectedFile && this.order.supplement === 'precal') {
-        const orderId = orderResponse._id; // Assuming the backend returns the order ID
+        const orderId = orderResponse.id; // Assuming the backend returns the order ID
         await this.orderService.uploadFile(this.selectedFile, orderId).toPromise();
       }
 

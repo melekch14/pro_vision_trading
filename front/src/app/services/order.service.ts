@@ -33,4 +33,12 @@ export class OrderService {
 
     return this.http.get(`${environment.apiUrl}/stock/matching`, { params });
   }
+
+  getStockById(id: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/stock/${id}`);
+  }
+
+  getArticleById(id: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/articles/${id}`);
+  }
 } 

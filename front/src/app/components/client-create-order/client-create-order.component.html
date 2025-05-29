@@ -106,7 +106,7 @@
     </div>
     <div class="produit-select">
       <label>Sélectionner un produit</label>
-      <select [(ngModel)]="order.produit" name="produit" required>
+      <select [(ngModel)]="order.produit" name="produit" (change)="onProductSelect()" required>
         <option value="">Sélectionnez un produit</option>
         <option *ngFor="let product of filteredProducts" [value]="product.id">
           {{ getProductDisplayName(product) }}

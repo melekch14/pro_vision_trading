@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-client-create-order',
@@ -31,6 +32,8 @@ export class ClientCreateOrderComponent {
 
   produits: any[] = [];
   filteredProducts: any[] = [];
+  selectedProduct: any = null;
+  selectedArticle: any = null;
 
   selectedFileName: string = '';
   selectedFile: File | null = null;
@@ -38,15 +41,6 @@ export class ClientCreateOrderComponent {
   price: number = 0;
   shippingType: string = '';
   deliveryTime: string = '';
-
-  // Example product prices
-  productPrices: { [key: string]: number } = {
-    'Verre Simple': 50,
-    'Verre Progressif': 120,
-    'Verre Bifocal': 90,
-    'Verre Sport': 80,
-    'Verre Enfant': 40
-  };
 
   constructor(
     private orderService: OrderService,
@@ -95,10 +89,73 @@ export class ClientCreateOrderComponent {
     return `${product.article_libelle} (${product.cylinder}) - ${product.sphere}`;
   }
 
-  ngDoCheck() {
-    // Update price when product changes
-    if (this.order.produit && this.productPrices[this.order.produit]) {
-      this.price = this.productPrices[this.order.produit];
+  onProductSelect() {
+    if (this.order.produit) {
+      // First get the stock details
+      this.orderService.getStockById(this.order.produit).subscribe({
+        next: (stock) => {
+          this.selectedProduct = stock;
+          console.log('Selected stock:', stock);
+          
+          // Then get the article details to get the prix_vente
+          if (stock.article_id) {
+            this.orderService.getArticleById(stock.article_id).subscribe({
+              next: (article) => {
+                this.selectedArticle = article;
+                console.log('Selected article:', article);
+                this.updatePrice();
+              },
+              error: (error) => {
+                console.error('Error fetching article details:', error);
+                this.selectedArticle = null;
+                this.price = 0;
+              }
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching stock details:', error);
+          this.selectedProduct = null;
+          this.selectedArticle = null;
+          this.price = 0;
+        }
+      });
+    } else {
+      this.selectedProduct = null;
+      this.selectedArticle = null;
+      this.price = 0;
+    }
+  }
+
+  updatePrice() {
+    if (this.selectedArticle) {
+      // Get the base price from the article's prix_vente
+      const basePrice = this.selectedArticle.prix_vente || 0;
+      
+      // Add traitement cost if applicable
+      let totalPrice = basePrice;
+      if (this.order.traitement) {
+        // Add treatment costs based on the selected treatment
+        switch (this.order.traitement) {
+          case 'Antireflet':
+            totalPrice += 30;
+            break;
+          case 'Durci':
+            totalPrice += 20;
+            break;
+          case 'Photochromique':
+            totalPrice += 50;
+            break;
+          case 'Polarisant':
+            totalPrice += 40;
+            break;
+          case 'Blue Cut':
+            totalPrice += 35;
+            break;
+        }
+      }
+
+      this.price = totalPrice;
     } else {
       this.price = 0;
     }
@@ -125,7 +182,7 @@ export class ClientCreateOrderComponent {
     this.order.od.sphere = this.order.og.sphere;
     this.order.od.cylinder = this.order.og.cylinder;
     this.order.od.axe = this.order.og.axe;
-    this.order.od.addition = this.order.og.addition;
+    this.order.od.addition = this.order.od.addition;
   }
 
   copyFieldToOG(field: 'sphere' | 'cylinder' | 'axe' | 'addition') {

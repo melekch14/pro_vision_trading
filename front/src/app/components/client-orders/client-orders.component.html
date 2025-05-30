@@ -82,7 +82,7 @@
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let order">
             <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-              {{order.status}}
+              {{ getDisplayStatus(order.status) }}
             </span>
           </td>
         </ng-container>

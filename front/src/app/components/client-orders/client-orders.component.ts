@@ -98,7 +98,9 @@ export class ClientOrdersComponent implements OnInit {
     
     // Apply status filter
     if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(order => order.status === this.statusFilter);
+      filtered = filtered.filter(order => 
+        order.status.toLowerCase() === this.statusFilter.toLowerCase()
+      );
     }
     
     // Apply date filter
@@ -131,5 +133,10 @@ export class ClientOrdersComponent implements OnInit {
 
   getStatusClass(status: string): string {
     return `status-${status.toLowerCase()}`;
+  }
+
+  // Helper method to normalize status display
+  getDisplayStatus(status: string): string {
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   }
 } 

@@ -19,70 +19,70 @@ const upload = multer({ storage: storage });
 
 // Create order
 const createOrder = async (orderData) => {
-    const {
-        client_id, first_name, last_name, phone, email,
-        od_sphere, od_cylinder, od_axe, od_addition,
-        og_sphere, og_cylinder, og_axe, og_addition,
-        supplement, traitement, produit,
-        price, shipping_type, delivery_time, selected_file
-    } = orderData;
+  const {
+    client_id, first_name, last_name, phone, email,
+    od_sphere, od_cylinder, od_axe, od_addition,
+    og_sphere, og_cylinder, og_axe, og_addition,
+    supplement, traitement, produit,
+    price, shipping_type, delivery_time, selected_file
+  } = orderData;
 
-    const [result] = await db.query(
-        `INSERT INTO orders (
+  const [result] = await db.query(
+    `INSERT INTO orders (
             client_id, first_name, last_name, phone, email,
             od_sphere, od_cylinder, od_axe, od_addition,
             og_sphere, og_cylinder, og_axe, og_addition,
             supplement, traitement, produit,
             price, shipping_type, delivery_time, selected_file
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-            client_id, first_name, last_name, phone, email,
-            od_sphere, od_cylinder, od_axe, od_addition,
-            og_sphere, og_cylinder, og_axe, og_addition,
-            supplement, traitement, produit,
-            price, shipping_type, delivery_time, selected_file
-        ]
-    );
-    return result.insertId;
+    [
+      client_id, first_name, last_name, phone, email,
+      od_sphere, od_cylinder, od_axe, od_addition,
+      og_sphere, og_cylinder, og_axe, og_addition,
+      supplement, traitement, produit,
+      price, shipping_type, delivery_time, selected_file
+    ]
+  );
+  return result.insertId;
 };
 
 // Get all orders
 const getAllOrders = async () => {
-    const [rows] = await db.query(`
+  const [rows] = await db.query(`
         SELECT o.*, 
                s.article_id as stock_article_id
         FROM orders o
         LEFT JOIN stock s ON o.produit = s.id
         ORDER BY o.order_datetime DESC
     `);
-    return rows;
+  return rows;
 };
 
 // Get order by ID
 const getOrderById = async (id) => {
-    const [rows] = await db.query(`
+  const [rows] = await db.query(`
         SELECT o.*,
                s.article_id as stock_article_id
         FROM orders o
         LEFT JOIN stock s ON o.produit = s.id
         WHERE o.id = ?
     `, [id]);
-    return rows[0];
+  return rows[0];
 };
 
 // Update order
 const updateOrder = async (id, orderData) => {
-    const {
-        first_name, last_name, phone, email,
-        od_sphere, od_cylinder, od_axe, od_addition,
-        og_sphere, og_cylinder, og_axe, og_addition,
-        supplement, traitement, produit,
-        price, shipping_type, delivery_time, selected_file,
-        status
-    } = orderData;
+  const {
+    first_name, last_name, phone, email,
+    od_sphere, od_cylinder, od_axe, od_addition,
+    og_sphere, og_cylinder, og_axe, og_addition,
+    supplement, traitement, produit,
+    price, shipping_type, delivery_time, selected_file,
+    status
+  } = orderData;
 
-    await db.query(
-        `UPDATE orders SET 
+  await db.query(
+    `UPDATE orders SET 
             first_name = ?, last_name = ?, phone = ?, email = ?,
             od_sphere = ?, od_cylinder = ?, od_axe = ?, od_addition = ?,
             og_sphere = ?, og_cylinder = ?, og_axe = ?, og_addition = ?,
@@ -90,34 +90,24 @@ const updateOrder = async (id, orderData) => {
             price = ?, shipping_type = ?, delivery_time = ?, selected_file = ?,
             status = ?
         WHERE id = ?`,
-        [
-            first_name, last_name, phone, email,
-            od_sphere, od_cylinder, od_axe, od_addition,
-            og_sphere, og_cylinder, og_axe, og_addition,
-            supplement, traitement, produit,
-            price, shipping_type, delivery_time, selected_file,
-            status, id
-        ]
-    );
+    [
+      first_name, last_name, phone, email,
+      od_sphere, od_cylinder, od_axe, od_addition,
+      og_sphere, og_cylinder, og_axe, og_addition,
+      supplement, traitement, produit,
+      price, shipping_type, delivery_time, selected_file,
+      status, id
+    ]
+  );
 };
 
 // Delete order
 const deleteOrder = async (id) => {
-    await db.query('DELETE FROM orders WHERE id = ?', [id]);
+  await db.query('DELETE FROM orders WHERE id = ?', [id]);
 };
 
 // Get orders by client ID
-const getOrdersByClientId = async (clientId) => {
-    const [rows] = await db.query(`
-        SELECT o.*,
-               s.article_id as stock_article_id
-        FROM orders o
-        LEFT JOIN stock s ON o.produit = s.id
-        WHERE o.client_id = ?
-        ORDER BY o.order_datetime DESC
-    `, [clientId]);
-    return rows;
-};
+
 
 class OrderService {
   async createOrder(orderData) {
@@ -127,7 +117,7 @@ class OrderService {
         supplement, traitement, produit, price,
         shippingType, deliveryTime
       } = orderData;
-      console.log("ssssssssssssssssssss "+orderData.client_id);
+      console.log("ssssssssssssssssssss " + orderData.client_id);
       const [result] = await db.query(
         `INSERT INTO orders (
           client_id, od_sphere, od_cylinder, od_axe, od_addition,
@@ -158,7 +148,7 @@ class OrderService {
       const extension = path.extname(file.originalname);
       const newFilename = `order_${orderId}_${timestamp}${extension}`;
       const newPath = path.join('uploads', newFilename);
-      
+
       // Rename the file
       fs.renameSync(file.path, newPath);
 
@@ -180,6 +170,18 @@ class OrderService {
 
   getUploadMiddleware() {
     return upload.single('file');
+  }
+
+  async getOrdersByClientId(clientId) {
+    const [rows] = await db.query(`
+        SELECT o.*,
+               s.article_id as stock_article_id
+        FROM orders o
+        LEFT JOIN stock s ON o.produit = s.id
+        WHERE o.client_id = ?
+        ORDER BY o.order_datetime DESC
+    `, [clientId]);
+    return rows;
   }
 }
 

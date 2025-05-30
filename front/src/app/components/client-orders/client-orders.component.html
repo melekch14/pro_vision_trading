@@ -1,3 +1,131 @@
 <div class="orders-container">
-  <h1>My Orders</h1>
+  <!-- Header Section -->
+  <div class="header">
+    <div class="title-section">
+      <h1>My Orders</h1>
+      <p class="subtitle">Track and manage your orders</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading your orders...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error">
+    <div class="error-icon">!</div>
+    <p>{{ error }}</p>
+    <button class="retry-button" (click)="loadOrders()">Retry</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" *ngIf="!loading && !error">
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="applyFilters()"
+          placeholder="Search orders..."
+        >
+      </div>
+      
+      <div class="filter-controls">
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+          <option *ngFor="let status of statuses" [value]="status">
+            {{ status }}
+          </option>
+        </select>
+        
+        <input 
+          type="date" 
+          [(ngModel)]="dateFilter" 
+          (change)="applyFilters()"
+        >
+        
+        <button class="reset-button" (click)="resetFilters()">
+          Reset Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="table-container">
+      <table mat-table [dataSource]="filteredOrders" class="orders-table">
+        <!-- Order ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>Order ID</th>
+          <td mat-cell *matCellDef="let order">#{{order.id}}</td>
+        </ng-container>
+
+        <!-- Order Date Column -->
+        <ng-container matColumnDef="orderDate">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let order">
+            {{order.order_datetime | date:'medium'}}
+          </td>
+        </ng-container>
+
+        <!-- Customer Column -->
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef>Customer</th>
+          <td mat-cell *matCellDef="let order">
+            {{order.first_name}} {{order.last_name}}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let order">
+            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+              {{order.status}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Price Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let order">
+            {{order.price | currency}}
+          </td>
+        </ng-container>
+
+        <!-- Shipping Column -->
+        <ng-container matColumnDef="shipping">
+          <th mat-header-cell *matHeaderCellDef>Shipping</th>
+          <td mat-cell *matCellDef="let order">
+            {{order.shipping_type}}
+            <div class="delivery-time">{{order.delivery_time}}</div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let order">
+            <button class="view-details-button" (click)="openOrderDetails(order)">
+              View Details
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredOrders.length === 0">
+      <div class="empty-icon">📦</div>
+      <p>No orders found matching your filters</p>
+      <button class="reset-button" (click)="resetFilters()">
+        Reset Filters
+      </button>
+    </div>
+  </div>
 </div> 

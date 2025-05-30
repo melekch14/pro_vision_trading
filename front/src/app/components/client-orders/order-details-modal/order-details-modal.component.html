@@ -1,0 +1,137 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <h2>Order Details #{{ data.id }}</h2>
+    <button class="close-button" (click)="close()">
+      <i class="material-icons">close</i>
+    </button>
+  </div>
+
+  <div class="modal-content">
+    <!-- Customer Information -->
+    <div class="section">
+      <h3>Customer Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Name:</span>
+          <span class="value">{{ data.first_name }} {{ data.last_name }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Email:</span>
+          <span class="value">{{ data.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Phone:</span>
+          <span class="value">{{ data.phone }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Information -->
+    <div class="section">
+      <h3>Order Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Order Date:</span>
+          <span class="value">{{ formatDate(data.order_datetime) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Status:</span>
+          <span class="value status-badge" [ngClass]="'status-' + data.status.toLowerCase()">
+            {{ data.status }}
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="label">Total Amount:</span>
+          <span class="value">${{ data.price }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping Information -->
+    <div class="section">
+      <h3>Shipping Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Shipping Type:</span>
+          <span class="value">{{ data.shipping_type }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Delivery Time:</span>
+          <span class="value">{{ data.delivery_time }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lens Specifications -->
+    <div class="section">
+      <h3>Lens Specifications</h3>
+      <div class="lens-specs">
+        <div class="lens-side">
+          <h4>Right Eye (OD)</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Sphere:</span>
+              <span class="value">{{ data.od_sphere }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Cylinder:</span>
+              <span class="value">{{ data.od_cylinder }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Axis:</span>
+              <span class="value">{{ data.od_axe }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Addition:</span>
+              <span class="value">{{ data.od_addition }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="lens-side">
+          <h4>Left Eye (OG)</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Sphere:</span>
+              <span class="value">{{ data.og_sphere }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Cylinder:</span>
+              <span class="value">{{ data.og_cylinder }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Axis:</span>
+              <span class="value">{{ data.og_axe }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Addition:</span>
+              <span class="value">{{ data.og_addition }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="section">
+      <h3>Additional Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Treatment:</span>
+          <span class="value">{{ data.traitement }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Supplement:</span>
+          <span class="value">{{ data.supplement }}</span>
+        </div>
+        <div class="info-item" *ngIf="data.selected_file">
+          <span class="label">Prescription File:</span>
+          <span class="value">{{ data.selected_file }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="close-btn" (click)="close()">Close</button>
+  </div>
+</div> 

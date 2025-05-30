@@ -41,4 +41,8 @@ export class OrderService {
   getArticleById(id: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}/articles/${id}`);
   }
+
+  getClientOrders(clientId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/client/${clientId}`);
+  }
 } 

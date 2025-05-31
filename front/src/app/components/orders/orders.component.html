@@ -49,7 +49,7 @@
       <tbody>
         <ng-container *ngFor="let order of filteredOrders">
           <tr>
-            <td>{{ order.id }}</td>
+            <td>{{ order['order_id'] }}</td>
             <td>
               <div class="client-info">
                 <span class="client-name">{{ order.raison_social }}</span>

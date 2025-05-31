@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 
 interface Order {
   id: number;
+  order_id: number;
   order_datetime: string;
   status: string;
   price: string;

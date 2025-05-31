@@ -6,6 +6,7 @@ import { OrderDetailsModalComponent } from './order-details-modal/order-details-
 
 interface Order {
   id: number;
+  order_id: number;
   order_datetime: string;
   status: string;
   price: string;

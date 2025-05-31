@@ -186,9 +186,12 @@ class OrderService {
 
   async getAllOrders() {
     const [rows] = await db.query(`
-          SELECT o.*, s.article_id as stock_article_id, c.raison_social 
-FROM orders o LEFT JOIN stock s ON o.produit = s.id 
-LEFT JOIN client c on c.id = o.client_id ORDER BY o.order_datetime DESC
+          SELECT o.*, s.article_id as stock_article_id, c.raison_social, s.*, a.libelle as article_libelle
+FROM orders o 
+LEFT JOIN stock s ON o.produit = s.id 
+LEFT JOIN article a ON s.article_id = a.id
+LEFT JOIN client c on c.id = o.client_id 
+ORDER BY o.order_datetime DESC
       `);
     return rows;
   }

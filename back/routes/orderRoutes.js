@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
 const orderService = require('../services/orderService');
+const path = require('path');
 
 // Create a new order
 router.post('/', async (req, res) => {
@@ -41,5 +42,23 @@ router.delete('/:id', orderController.deleteOrder);
 
 // Get orders by client ID
 router.get('/client/:clientId', orderController.getOrdersByClientId);
+
+// Download order file
+router.get('/download/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { filePath, fileName } = await orderService.downloadFile(orderId);
+    
+    res.download(filePath, fileName, (err) => {
+      if (err) {
+        console.error('Error downloading file:', err);
+        res.status(500).json({ error: 'Error downloading file' });
+      }
+    });
+  } catch (error) {
+    console.error('Error in download route:', error);
+    res.status(404).json({ error: error.message });
+  }
+});
 
 module.exports = router; 

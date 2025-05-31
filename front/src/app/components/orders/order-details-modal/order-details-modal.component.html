@@ -61,6 +61,13 @@
             <label>Supplement:</label>
             <span>{{ order.supplement || 'None' }}</span>
           </div>
+          <div class="info-item" *ngIf="order.selected_file">
+            <label>File:</label>
+            <button class="download-btn" (click)="downloadFile()">
+              <i class="material-icons">download</i>
+              Download File
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 interface Order {
   id: number;
@@ -18,6 +20,7 @@ interface Order {
   sphere?: number;
   cylindre?: number;
   addition?: number;
+  selected_file?: string;
   [key: string]: any;
 }
 
@@ -31,7 +34,8 @@ interface Order {
 export class OrderDetailsModalComponent {
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public order: Order
+    @Inject(MAT_DIALOG_DATA) public order: Order,
+    private http: HttpClient
   ) {}
 
   close(): void {
@@ -55,5 +59,24 @@ export class OrderDetailsModalComponent {
                this.order.addition.toString().padStart(4, '0') : '0000');
     const sph = this.order.sphere?.toString().padStart(4, '0') || '0000';
     return `${this.order.article_libelle} (${cyl}) - ${sph}`;
+  }
+
+  downloadFile(): void {
+    if (this.order.selected_file) {
+      const url = `${environment.apiUrl}/orders/download/${this.order.id}`;
+      this.http.get(url, { responseType: 'blob' }).subscribe(
+        (blob: Blob) => {
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = this.order.selected_file || 'order_file';
+          link.click();
+          window.URL.revokeObjectURL(link.href);
+        },
+        error => {
+          console.error('Error downloading file:', error);
+          // You might want to show an error message to the user here
+        }
+      );
+    }
   }
 } 

@@ -195,6 +195,34 @@ ORDER BY o.order_datetime DESC
       `);
     return rows;
   }
+
+  async downloadFile(orderId) {
+    try {
+      // Get the file information from the order
+      const [rows] = await db.query(
+        'SELECT selected_file FROM orders WHERE id = ?',
+        [orderId]
+      );
+
+      if (!rows[0] || !rows[0].selected_file) {
+        throw new Error('File not found');
+      }
+
+      const filePath = path.join(__dirname, '..', 'uploads', rows[0].selected_file);
+      
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found on server');
+      }
+
+      return {
+        filePath,
+        fileName: rows[0].selected_file
+      };
+    } catch (error) {
+      throw new Error(`Error downloading file: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new OrderService(); 

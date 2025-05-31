@@ -38,7 +38,7 @@
       <thead>
         <tr>
           <th>Order ID</th>
-          <th>Customer</th>
+          <th>Client</th>
           <th>Order Date</th>
           <th>Status</th>
           <th>Price</th>
@@ -50,7 +50,11 @@
         <ng-container *ngFor="let order of filteredOrders">
           <tr>
             <td>{{ order.id }}</td>
-            <td>{{ order.first_name }} {{ order.last_name }}</td>
+            <td>
+              <div class="client-info">
+                <span class="client-name">{{ order.raison_social }}</span>
+              </div>
+            </td>
             <td>{{ order.order_datetime | date:'MMM d, y' }}</td>
             <td>
               <span class="status-badge" [ngClass]="getStatusClass(order.status)">
@@ -58,7 +62,11 @@
               </span>
             </td>
             <td class="amount">{{ order.price }}</td>
-            <td>{{ order.shipping_type }}</td>
+            <td>
+              <span class="shipping-badge" [ngClass]="getShippingClass(order.shipping_type)">
+                {{ order.shipping_type }}
+              </span>
+            </td>
             <td class="actions">
               <button class="action-btn view" (click)="openOrderDetails(order)">
                 <i class="material-icons">visibility</i>

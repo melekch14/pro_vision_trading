@@ -183,6 +183,15 @@ class OrderService {
     `, [clientId]);
     return rows;
   }
+
+  async getAllOrders() {
+    const [rows] = await db.query(`
+          SELECT o.*, s.article_id as stock_article_id, c.raison_social 
+FROM orders o LEFT JOIN stock s ON o.produit = s.id 
+LEFT JOIN client c on c.id = o.client_id ORDER BY o.order_datetime DESC
+      `);
+    return rows;
+  }
 }
 
 module.exports = new OrderService(); 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
+import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
 
 interface Order {
   id: number;
@@ -15,6 +16,9 @@ interface Order {
   produit: number;
   supplement: string;
   traitement: string;
+  email?: string;
+  phone?: string;
+  raison_social: string;
   [key: string]: any;
 }
 
@@ -63,7 +67,7 @@ export class OrdersComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    this.orderService.getClientOrders('all').subscribe({
+    this.orderService.getAllOrders().subscribe({
       next: (response: Order[]) => {
         this.orders = response;
         this.filteredOrders = [...this.orders];
@@ -78,8 +82,11 @@ export class OrdersComponent implements OnInit {
   }
 
   openOrderDetails(order: Order): void {
-    // TODO: Implement order details modal
-    console.log('Opening order details for:', order);
+    this.dialog.open(OrderDetailsModalComponent, {
+      data: order,
+      width: '800px',
+      maxHeight: '90vh'
+    });
   }
 
   applyFilters(): void {
@@ -126,6 +133,14 @@ export class OrdersComponent implements OnInit {
 
   getDisplayStatus(status: string): string {
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  }
+
+  getShippingClass(type: string): string {
+    switch (type?.toLowerCase()) {
+      case 'free': return 'shipping-free';
+      case 'express': return 'shipping-express';
+      default: return 'shipping-default';
+    }
   }
 
   exportOrders(): void {

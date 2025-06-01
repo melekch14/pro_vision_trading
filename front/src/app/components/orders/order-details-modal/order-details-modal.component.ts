@@ -53,6 +53,7 @@ export class OrderDetailsModalComponent implements OnInit {
   statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
   isUpdating: boolean = false;
   orderDetails: Order | null = null;
+  showCard: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,

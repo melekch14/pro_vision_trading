@@ -176,6 +176,51 @@
                 </div>
               </div>
             </div>
+            <!-- Card Generation Section -->
+            <div class="info-section">
+              <button class="confirm-btn" (click)="showCard = true">
+                <mat-icon>credit_card</mat-icon>
+                Generate Card
+              </button>
+              <div *ngIf="showCard" class="order-card">
+                <div><strong>Opticien:</strong> {{ order['raison_social'] || 'Opticien Name' }}</div>
+                <div><strong>Porteur:</strong> {{ order.first_name }} {{ order.last_name }}</div>
+                <div><strong>Verres:</strong></div>
+                <ul>
+                  <li><strong>Right:</strong> {{ order.article_libelle || 'Product Name' }}</li>
+                  <li><strong>Left:</strong> {{ order.article_libelle || 'Product Name' }}</li>
+                </ul>
+                <table class="card-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>SPH</th>
+                      <th>CYL</th>
+                      <th>AXE</th>
+                      <th>ADD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>OD</td>
+                      <td>{{ order.od_sphere || '0.00' }}</td>
+                      <td>{{ order.od_cylinder || '0.00' }}</td>
+                      <td>{{ order['od_axe'] || '0' }}</td>
+                      <td>{{ order.od_addition || '0.00' }}</td>
+                    </tr>
+                    <tr>
+                      <td>OG</td>
+                      <td>{{ order.og_sphere || '0.00' }}</td>
+                      <td>{{ order.og_cylinder || '0.00' }}</td>
+                      <td>{{ order['og_axe'] || '0' }}</td>
+                      <td>{{ order.og_addition || '0.00' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div><strong>Date:</strong> {{ order.order_datetime | date:'dd/MM/yyyy' }}</div>
+                <div><strong>Fournisseur Code:</strong> {{ order['fournisseur_code'] || order.fournisseur_id || 'N/A' }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 interface Order {
   id: number;
@@ -22,6 +24,8 @@ interface Order {
   cylindre?: number;
   addition?: number;
   selected_file?: string;
+  fournisseur_id?: number;
+  payment_status?: string;
   [key: string]: any;
 }
 
@@ -30,14 +34,54 @@ interface Order {
   templateUrl: './order-details-modal.component.html',
   styleUrls: ['./order-details-modal.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, FormsModule, MatIconModule]
 })
 export class OrderDetailsModalComponent {
+  fournisseurs: any[] = []; // Will store the list of fournisseurs
+  selectedFournisseur: number | undefined;
+  activeTab: 'details' | 'management' = 'details';
+
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public order: Order,
     private http: HttpClient
-  ) {}
+  ) {
+    this.selectedFournisseur = this.order.fournisseur_id;
+    this.loadFournisseurs();
+  }
+
+  switchTab(tab: 'details' | 'management'): void {
+    this.activeTab = tab;
+  }
+
+  loadFournisseurs(): void {
+    // Load fournisseurs from your API
+    this.http.get(`${environment.apiUrl}/fournisseurs`).subscribe({
+      next: (response: any) => {
+        this.fournisseurs = response;
+      },
+      error: (error) => {
+        console.error('Error loading fournisseurs:', error);
+      }
+    });
+  }
+
+  updateFournisseur(): void {
+    if (this.selectedFournisseur !== undefined) {
+      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}`, {
+        fournisseur_id: this.selectedFournisseur
+      }).subscribe({
+        next: (response) => {
+          this.order.fournisseur_id = this.selectedFournisseur;
+          // You might want to show a success message here
+        },
+        error: (error) => {
+          console.error('Error updating fournisseur:', error);
+          // You might want to show an error message here
+        }
+      });
+    }
+  }
 
   close(): void {
     this.dialogRef.close();

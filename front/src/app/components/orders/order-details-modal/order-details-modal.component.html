@@ -2,71 +2,116 @@
   <div class="modal-header">
     <h2>Order Details #{{ order['order_id'] }}</h2>
     <button class="close-button" (click)="close()">
-      <i class="material-icons">close</i>
+      <mat-icon>close</mat-icon>
     </button>
   </div>
 
   <div class="modal-content">
-    <div class="order-info">
-      <div class="info-section">
-        <h3>Customer Information</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <label>Name:</label>
-            <span>{{ order.first_name }} {{ order.last_name }}</span>
-          </div>
-        </div>
+    <div class="tabs-container">
+      <div class="tabs-header">
+        <button class="tab-button" [class.active]="activeTab === 'details'" (click)="switchTab('details')">
+          <mat-icon>receipt_long</mat-icon>
+          Order Details
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'management'" (click)="switchTab('management')">
+          <mat-icon>settings</mat-icon>
+          Order Management
+        </button>
       </div>
 
-      <div class="info-section">
-        <h3>Order Information</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <label>Order Date:</label>
-            <span>{{ order.order_datetime | date:'medium' }}</span>
-          </div>
-          <div class="info-item">
-            <label>Status:</label>
-            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-              {{ getDisplayStatus(order.status) }}
-            </span>
-          </div>
-          <div class="info-item">
-            <label>Price:</label>
-            <span>{{ order.price }}</span>
-          </div>
-          <div class="info-item">
-            <label>Shipping Type:</label>
-            <span>{{ order.shipping_type }}</span>
-          </div>
-          <div class="info-item">
-            <label>Delivery Time:</label>
-            <span>{{ order.delivery_time }}</span>
+      <div class="tab-content">
+        <!-- Details Tab -->
+        <div class="tab-panel" [class.active]="activeTab === 'details'">
+          <div class="order-info">
+            <div class="info-section">
+              <h3>Customer Information</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Name:</label>
+                  <span>{{ order.first_name }} {{ order.last_name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h3>Order Information</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Order Date:</label>
+                  <span>{{ order.order_datetime | date:'medium' }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Status:</label>
+                  <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                    {{ getDisplayStatus(order.status) }}
+                  </span>
+                </div>
+                <div class="info-item">
+                  <label>Price:</label>
+                  <span>{{ order.price }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Shipping Type:</label>
+                  <span>{{ order.shipping_type }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Delivery Time:</label>
+                  <span>{{ order.delivery_time }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h3>Product Details</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Product:</label>
+                  <span>{{ formatStockLibelle() }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Treatment:</label>
+                  <span>{{ order.traitement }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Supplement:</label>
+                  <span>{{ order.supplement || 'None' }}</span>
+                </div>
+                <div class="info-item" *ngIf="order.selected_file">
+                  <label>File:</label>
+                  <button class="download-btn" (click)="downloadFile()">
+                    <mat-icon>download</mat-icon>
+                    Download File
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="info-section">
-        <h3>Product Details</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <label>Product:</label>
-            <span>{{ formatStockLibelle() }}</span>
-          </div>
-          <div class="info-item">
-            <label>Treatment:</label>
-            <span>{{ order.traitement }}</span>
-          </div>
-          <div class="info-item">
-            <label>Supplement:</label>
-            <span>{{ order.supplement || 'None' }}</span>
-          </div>
-          <div class="info-item" *ngIf="order.selected_file">
-            <label>File:</label>
-            <button class="download-btn" (click)="downloadFile()">
-              <i class="material-icons">download</i>
-              Download File
-            </button>
+        <!-- Management Tab -->
+        <div class="tab-panel" [class.active]="activeTab === 'management'">
+          <div class="management-content">
+            <div class="info-section">
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Fournisseur:</label>
+                  <div class="fournisseur-select">
+                    <select [(ngModel)]="selectedFournisseur" (change)="updateFournisseur()">
+                      <option [ngValue]="null">Select Fournisseur</option>
+                      <option *ngFor="let fournisseur of fournisseurs" [ngValue]="fournisseur.id">
+                        {{ fournisseur.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label>Payment Status:</label>
+                  <span class="payment-status" [ngClass]="'status-' + (order.payment_status?.toLowerCase() || 'pending')">
+                    {{ order.payment_status || 'Pending' }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

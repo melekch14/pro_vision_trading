@@ -174,7 +174,7 @@ export class OrderDetailsModalComponent {
         fournisseurCode: this.tempFournisseur
       };
       
-      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}/status`, updates).subscribe({
+      this.http.patch(`${environment.apiUrl}/orders/${this.order.order_id}/status`, updates).subscribe({
         next: (response) => {
           this.order.status = this.tempStatus;
           this.selectedStatus = this.tempStatus;

@@ -51,8 +51,8 @@ export class OrderDetailsModalComponent {
     @Inject(MAT_DIALOG_DATA) public order: Order,
     private http: HttpClient
   ) {
-    this.selectedFournisseur = this.order.fournisseur_id;
-    this.tempFournisseur = this.order.fournisseur_id;
+    this.selectedFournisseur = this.order['fournisseur_code'];
+    this.tempFournisseur = this.order['fournisseur_code'];
     this.selectedStatus = this.order.status;
     this.tempStatus = this.order.status;
     this.loadFournisseurs();
@@ -171,14 +171,14 @@ export class OrderDetailsModalComponent {
       this.isUpdating = true;
       const updates = {
         status: this.tempStatus,
-        fournisseurCode: this.tempFournisseur
+        fournisseur_code: this.tempFournisseur
       };
       
-      this.http.patch(`${environment.apiUrl}/orders/${this.order.order_id}/status`, updates).subscribe({
+      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}/status`, updates).subscribe({
         next: (response) => {
           this.order.status = this.tempStatus;
           this.selectedStatus = this.tempStatus;
-          this.order.fournisseur_id = this.tempFournisseur;
+          this.order['fournisseur_code'] = this.tempFournisseur;
           this.selectedFournisseur = this.tempFournisseur;
           this.isUpdating = false;
           // You might want to show a success message here

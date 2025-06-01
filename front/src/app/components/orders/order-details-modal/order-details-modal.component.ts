@@ -128,8 +128,9 @@ export class OrderDetailsModalComponent implements OnInit {
   updateStatus(): void {
     if (this.tempStatus) {
       this.isUpdating = true;
-      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}`, {
-        status: this.tempStatus
+      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}/status`, {
+        status: this.tempStatus,
+        fournisseurCode: this.tempFournisseur || this.order['fournisseur_code']
       }).subscribe({
         next: (response) => {
           this.order.status = this.tempStatus;
@@ -209,7 +210,8 @@ export class OrderDetailsModalComponent implements OnInit {
           this.order['fournisseur_code'] = this.tempFournisseur;
           this.selectedFournisseur = this.tempFournisseur;
           this.isUpdating = false;
-          // You might want to show a success message here
+          // Close the modal and pass true to indicate successful update
+          this.dialogRef.close(true);
         },
         error: (error) => {
           console.error('Error updating order:', error);

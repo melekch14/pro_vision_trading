@@ -82,13 +82,13 @@ const getOrdersByClientId = async (req, res) => {
 const updateOrderStatusAndFournisseur = async (req, res) => {
     try {
         const { orderId } = req.params;
-        const { fournisseurCode, status } = req.body;
-
-        if (!fournisseurCode || !status) {
+        const { fournisseur_code, status } = req.body;
+        console.log(fournisseur_code, status);
+        if (!fournisseur_code || !status) {
             return res.status(400).json({ error: 'Fournisseur code and status are required' });
         }
 
-        const result = await orderService.updateOrderStatusAndFournisseur(orderId, fournisseurCode, status);
+        const result = await orderService.updateOrderStatusAndFournisseur(orderId, fournisseur_code, status);
         res.json(result);
     } catch (error) {
         console.error('Error updating order status and fournisseur:', error);

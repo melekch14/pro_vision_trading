@@ -83,10 +83,17 @@ export class OrdersComponent implements OnInit {
   }
 
   openOrderDetails(order: Order): void {
-    this.dialog.open(OrderDetailsModalComponent, {
+    const dialogRef = this.dialog.open(OrderDetailsModalComponent, {
       data: order,
       width: '800px',
       maxHeight: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Refresh the orders list if the update was successful
+        this.loadOrders();
+      }
     });
   }
 

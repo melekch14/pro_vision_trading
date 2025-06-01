@@ -1,10 +1,11 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { OrderService } from '../../../services/order.service';
 
 interface Order {
   id: number;
@@ -26,6 +27,12 @@ interface Order {
   selected_file?: string;
   fournisseur_id?: number;
   payment_status?: string;
+  od_sphere?: string;
+  od_cylinder?: string;
+  od_addition?: string;
+  og_sphere?: string;
+  og_cylinder?: string;
+  og_addition?: string;
   [key: string]: any;
 }
 
@@ -36,7 +43,7 @@ interface Order {
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule]
 })
-export class OrderDetailsModalComponent {
+export class OrderDetailsModalComponent implements OnInit {
   fournisseurs: any[] = []; // Will store the list of fournisseurs
   selectedFournisseur: number | undefined;
   tempFournisseur: number | undefined;
@@ -45,17 +52,38 @@ export class OrderDetailsModalComponent {
   tempStatus: string;
   statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
   isUpdating: boolean = false;
+  orderDetails: Order | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public order: Order,
-    private http: HttpClient
+    private http: HttpClient,
+    private orderService: OrderService
   ) {
     this.selectedFournisseur = this.order['fournisseur_code'];
     this.tempFournisseur = this.order['fournisseur_code'];
     this.selectedStatus = this.order.status;
     this.tempStatus = this.order.status;
     this.loadFournisseurs();
+  }
+
+  ngOnInit() {
+    this.loadOrderDetails();
+  }
+
+  loadOrderDetails() {
+    console.log('Loading order details for order_id:', this.order.order_id);
+    this.orderService.getOrderById(this.order.order_id.toString()).subscribe({
+      next: (response) => {
+        console.log('Order details received:', response);
+        this.orderDetails = response;
+        // Merge the details with the existing order data
+        this.order = { ...this.order, ...response };
+      },
+      error: (error) => {
+        console.error('Error loading order details:', error);
+      }
+    });
   }
 
   switchTab(tab: 'details' | 'management'): void {

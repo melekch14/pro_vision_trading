@@ -395,4 +395,51 @@
   font-size: 18px;
   width: 18px;
   height: 18px;
+}
+
+.lens-specs {
+  display: flex;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.eye-specs {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.eye-specs h4 {
+  margin: 0 0 15px 0;
+  color: #444;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.eye-specs .info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.eye-specs .info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eye-specs .info-item label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.eye-specs .info-item span {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
 } 

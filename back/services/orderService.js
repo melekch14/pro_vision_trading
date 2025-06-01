@@ -58,17 +58,7 @@ const getAllOrders = async () => {
   return rows;
 };
 
-// Get order by ID
-const getOrderById = async (id) => {
-  const [rows] = await db.query(`
-        SELECT o.*,
-               s.article_id as stock_article_id
-        FROM orders o
-        LEFT JOIN stock s ON o.produit = s.id
-        WHERE o.id = ?
-    `, [id]);
-  return rows[0];
-};
+
 
 // Update order
 const updateOrder = async (id, orderData) => {
@@ -117,7 +107,7 @@ class OrderService {
         supplement, traitement, produit, price,
         shippingType, deliveryTime
       } = orderData;
-      console.log("ssssssssssssssssssss " + orderData.client_id);
+      
       const [result] = await db.query(
         `INSERT INTO orders (
           client_id, od_sphere, od_cylinder, od_axe, od_addition,
@@ -239,6 +229,18 @@ ORDER BY o.order_datetime DESC
     } catch (error) {
       throw new Error(`Error updating order: ${error.message}`);
     }
+  }
+
+  // Get order by ID
+    async getOrderById(id){
+    const [rows] = await db.query(`
+          SELECT o.*,
+                s.article_id as stock_article_id
+          FROM orders o
+          LEFT JOIN stock s ON o.produit = s.id
+          WHERE o.id = ?
+      `, [id]);
+    return rows[0];
   }
 }
 

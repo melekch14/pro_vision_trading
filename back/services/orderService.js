@@ -223,6 +223,23 @@ ORDER BY o.order_datetime DESC
       throw new Error(`Error downloading file: ${error.message}`);
     }
   }
+
+  async updateOrderStatusAndFournisseur(orderId, fournisseurCode, status) {
+    try {
+      const [result] = await db.query(
+        'UPDATE orders SET fournisseur_code = ?, status = ? WHERE id = ?',
+        [fournisseurCode, status, orderId]
+      );
+
+      if (result.affectedRows === 0) {
+        throw new Error('Order not found');
+      }
+
+      return { message: 'Order updated successfully' };
+    } catch (error) {
+      throw new Error(`Error updating order: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new OrderService(); 

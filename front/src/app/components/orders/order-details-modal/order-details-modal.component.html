@@ -94,12 +94,22 @@
             <div class="info-section">
               <div class="info-grid">
                 <div class="info-item">
+                  <label>Order Status:</label>
+                  <div class="status-select">
+                    <select [(ngModel)]="tempStatus">
+                      <option *ngFor="let status of statuses" [value]="status">
+                        {{ status }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="info-item">
                   <label>Fournisseur:</label>
                   <div class="fournisseur-select">
-                    <select [(ngModel)]="selectedFournisseur" (change)="updateFournisseur()">
+                    <select [(ngModel)]="tempFournisseur">
                       <option [ngValue]="null">Select Fournisseur</option>
-                      <option *ngFor="let fournisseur of fournisseurs" [ngValue]="fournisseur.id">
-                        {{ fournisseur.name }}
+                      <option *ngFor="let fournisseur of fournisseurs" [ngValue]="fournisseur.code">
+                        {{ fournisseur.raison_social }}
                       </option>
                     </select>
                   </div>
@@ -109,6 +119,20 @@
                   <span class="payment-status" [ngClass]="'status-' + (order.payment_status?.toLowerCase() || 'pending')">
                     {{ order.payment_status || 'Pending' }}
                   </span>
+                </div>
+                <div class="info-item full-width">
+                  <div class="action-buttons">
+                    <button class="confirm-btn" (click)="updateAll()" 
+                            [disabled]="isUpdating || (tempStatus === selectedStatus && tempFournisseur === selectedFournisseur)">
+                      <mat-icon>check</mat-icon>
+                      Confirm All Changes
+                    </button>
+                    <button class="cancel-btn" (click)="cancelChanges()" 
+                            [disabled]="isUpdating || (tempStatus === selectedStatus && tempFournisseur === selectedFournisseur)">
+                      <mat-icon>close</mat-icon>
+                      Cancel Changes
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

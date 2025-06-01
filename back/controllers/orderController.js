@@ -78,11 +78,30 @@ const getOrdersByClientId = async (req, res) => {
     }
 };
 
+// Update order status and fournisseur code
+const updateOrderStatusAndFournisseur = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { fournisseurCode, status } = req.body;
+
+        if (!fournisseurCode || !status) {
+            return res.status(400).json({ error: 'Fournisseur code and status are required' });
+        }
+
+        const result = await orderService.updateOrderStatusAndFournisseur(orderId, fournisseurCode, status);
+        res.json(result);
+    } catch (error) {
+        console.error('Error updating order status and fournisseur:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     createOrder,
     getAllOrders,
     getOrderById,
     updateOrder,
     deleteOrder,
-    getOrdersByClientId
+    getOrdersByClientId,
+    updateOrderStatusAndFournisseur
 }; 

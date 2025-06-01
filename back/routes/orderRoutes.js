@@ -61,4 +61,7 @@ router.get('/download/:orderId', async (req, res) => {
   }
 });
 
+// Update order status and fournisseur code
+router.patch('/:orderId/status', orderController.updateOrderStatusAndFournisseur);
+
 module.exports = router; 

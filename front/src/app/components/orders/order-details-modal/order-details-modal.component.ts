@@ -39,7 +39,12 @@ interface Order {
 export class OrderDetailsModalComponent {
   fournisseurs: any[] = []; // Will store the list of fournisseurs
   selectedFournisseur: number | undefined;
+  tempFournisseur: number | undefined;
   activeTab: 'details' | 'management' = 'details';
+  selectedStatus: string;
+  tempStatus: string;
+  statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  isUpdating: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -47,6 +52,9 @@ export class OrderDetailsModalComponent {
     private http: HttpClient
   ) {
     this.selectedFournisseur = this.order.fournisseur_id;
+    this.tempFournisseur = this.order.fournisseur_id;
+    this.selectedStatus = this.order.status;
+    this.tempStatus = this.order.status;
     this.loadFournisseurs();
   }
 
@@ -59,6 +67,7 @@ export class OrderDetailsModalComponent {
     this.http.get(`${environment.apiUrl}/fournisseurs`).subscribe({
       next: (response: any) => {
         this.fournisseurs = response;
+        console.log(this.fournisseurs);
       },
       error: (error) => {
         console.error('Error loading fournisseurs:', error);
@@ -67,20 +76,52 @@ export class OrderDetailsModalComponent {
   }
 
   updateFournisseur(): void {
-    if (this.selectedFournisseur !== undefined) {
+    if (this.tempFournisseur !== undefined) {
+      this.isUpdating = true;
       this.http.patch(`${environment.apiUrl}/orders/${this.order.id}`, {
-        fournisseur_id: this.selectedFournisseur
+        fournisseur_id: this.tempFournisseur
       }).subscribe({
         next: (response) => {
-          this.order.fournisseur_id = this.selectedFournisseur;
+          this.order.fournisseur_id = this.tempFournisseur;
+          this.selectedFournisseur = this.tempFournisseur;
+          this.isUpdating = false;
           // You might want to show a success message here
         },
         error: (error) => {
           console.error('Error updating fournisseur:', error);
+          this.tempFournisseur = this.selectedFournisseur; // Reset on error
+          this.isUpdating = false;
           // You might want to show an error message here
         }
       });
     }
+  }
+
+  updateStatus(): void {
+    if (this.tempStatus) {
+      this.isUpdating = true;
+      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}`, {
+        status: this.tempStatus
+      }).subscribe({
+        next: (response) => {
+          this.order.status = this.tempStatus;
+          this.selectedStatus = this.tempStatus;
+          this.isUpdating = false;
+          // You might want to show a success message here
+        },
+        error: (error) => {
+          console.error('Error updating status:', error);
+          this.tempStatus = this.selectedStatus; // Reset on error
+          this.isUpdating = false;
+          // You might want to show an error message here
+        }
+      });
+    }
+  }
+
+  cancelChanges(): void {
+    this.tempFournisseur = this.selectedFournisseur;
+    this.tempStatus = this.selectedStatus;
   }
 
   close(): void {
@@ -122,6 +163,34 @@ export class OrderDetailsModalComponent {
           // You might want to show an error message to the user here
         }
       );
+    }
+  }
+
+  updateAll(): void {
+    if (this.tempStatus !== this.selectedStatus || this.tempFournisseur !== this.selectedFournisseur) {
+      this.isUpdating = true;
+      const updates = {
+        status: this.tempStatus,
+        fournisseurCode: this.tempFournisseur
+      };
+      
+      this.http.patch(`${environment.apiUrl}/orders/${this.order.id}/status`, updates).subscribe({
+        next: (response) => {
+          this.order.status = this.tempStatus;
+          this.selectedStatus = this.tempStatus;
+          this.order.fournisseur_id = this.tempFournisseur;
+          this.selectedFournisseur = this.tempFournisseur;
+          this.isUpdating = false;
+          // You might want to show a success message here
+        },
+        error: (error) => {
+          console.error('Error updating order:', error);
+          this.tempStatus = this.selectedStatus;
+          this.tempFournisseur = this.selectedFournisseur;
+          this.isUpdating = false;
+          // You might want to show an error message here
+        }
+      });
     }
   }
 } 

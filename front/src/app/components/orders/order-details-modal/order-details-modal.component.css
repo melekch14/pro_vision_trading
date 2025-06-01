@@ -269,6 +269,52 @@
   color: #383d41;
 }
 
+.status-select {
+  width: 100%;
+}
+
+.status-select select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.status-select select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.status-select select option {
+  padding: 8px;
+}
+
+.status-select select option[value="Pending"] {
+  color: #856404;
+}
+
+.status-select select option[value="Processing"] {
+  color: #004085;
+}
+
+.status-select select option[value="Shipped"] {
+  color: #155724;
+}
+
+.status-select select option[value="Delivered"] {
+  color: #0f5132;
+}
+
+.status-select select option[value="Cancelled"] {
+  color: #721c24;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .panels-container {
@@ -278,4 +324,75 @@
   .panel {
     min-height: auto;
   }
+}
+
+.action-buttons {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.confirm-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.confirm-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+}
+
+.cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.cancel-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.cancel-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 } 

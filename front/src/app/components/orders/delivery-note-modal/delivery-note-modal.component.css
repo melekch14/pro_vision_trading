@@ -178,13 +178,13 @@ tr:hover {
 
 @media print {
   @page {
-    size: A4 portrait;
-    margin: 15mm;
+    size: A5 landscape;
+    margin: 5mm;
   }
 
   html, body {
     width: 210mm;
-    height: 297mm;
+    height: 148mm;
     margin: 0;
     padding: 0;
     background: white;
@@ -206,8 +206,8 @@ tr:hover {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     margin: 0;
     padding: 0;
     background: white;
@@ -217,140 +217,108 @@ tr:hover {
 
   /* Header styles */
   .delivery-note-header {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #000;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #000;
   }
 
   .company-info h1 {
-    font-size: 28pt;
+    font-size: 22pt;
     font-weight: 700;
     color: #000;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     letter-spacing: -0.5px;
   }
 
   .company-name {
-    font-size: 16pt;
+    font-size: 14pt;
     font-weight: 600;
     color: #000;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
   }
 
   .company-info p {
     font-size: 11pt;
     color: #000;
-    margin: 5px 0;
-    line-height: 1.4;
+    margin: 2px 0;
+    line-height: 1.3;
   }
 
   /* Delivery info styles */
   .delivery-info {
     background-color: #f8fafc !important;
-    padding: 15px;
-    border: 1px solid #000;
+    padding: 6px;
+    min-width: 160px;
   }
 
   .info-group {
-    margin-bottom: 10px;
+    margin-bottom: 2px;
   }
 
   .info-group label {
-    font-weight: 600;
     font-size: 11pt;
-    color: #000;
   }
 
   .info-group span {
     font-size: 11pt;
-    color: #000;
   }
 
-  /* Client info section */
+  /* Client info styles */
   .client-info {
-    background-color: #f8fafc !important;
-    padding: 20px;
-    border: 1px solid #000;
-    margin-bottom: 30px;
+    margin-bottom: 6px;
+    padding: 3px 6px;
+    font-size: 9pt;
   }
 
   .client-info h2 {
-    font-size: 16pt;
-    font-weight: 600;
-    color: #000;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #000;
+    font-size: 11pt;
+    margin-bottom: 3px;
+    padding-bottom: 1px;
   }
 
   .info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 0.5rem;
+  }
+
+  .info-group label, .info-group span {
+    font-size: 9pt;
   }
 
   /* Table styles */
-  .orders-table {
-    margin-bottom: 30px;
-    border: 1px solid #000;
+  table {
+    font-size: 11pt;
+    width: 100%;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0;
-    page-break-inside: avoid;
+  th, td {
+    padding: 8px 10px;
   }
 
   th {
-    background-color: #f8fafc !important;
-    color: #000;
-    font-weight: 600;
-    font-size: 11pt;
-    text-transform: uppercase;
-    padding: 12px 15px;
-    border: 1px solid #000;
-    text-align: left;
+    font-size: 10pt;
   }
 
-  td {
-    padding: 10px 15px;
-    font-size: 11pt;
-    border: 1px solid #000;
-    color: #000;
-  }
-
-  /* Total row */
-  .total-row {
-    background-color: #f8fafc !important;
-  }
-
-  .total-row td {
-    font-weight: 600;
-    font-size: 12pt;
-    border-top: 2px solid #000;
-  }
-
-  /* Hide action buttons */
+  /* Hide action buttons when printing */
   .action-buttons {
     display: none !important;
   }
 
-  /* Ensure proper page breaks */
-  .delivery-note-header,
-  .client-info,
-  .orders-table {
-    page-break-inside: avoid;
+  /* Ensure total row and footer are visible and styled */
+  .total-row {
+    background-color: #f8fafc !important;
+    border-top: 2px solid #e2e8f0;
+    font-weight: bold;
   }
-
-  /* Full width info groups */
-  .info-group.full-width {
-    grid-column: 1 / -1;
+  .total-row td {
+    font-size: 12pt;
+    padding: 10px 12px;
   }
-
-  .info-group.full-width span {
-    display: block;
-    margin-top: 5px;
+  .delivery-note-footer {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 2px solid #e8eef3;
+    font-size: 12pt;
+    font-weight: bold;
   }
 }
 

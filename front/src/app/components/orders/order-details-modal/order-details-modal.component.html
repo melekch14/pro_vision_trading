@@ -187,13 +187,13 @@
                 <div class="card-row">
                   <div class="verre-block">
                     <span class="verre-label">Opticien:</span>
-                    <span class="product">{{ order['raison_social'] || 'Opticien Name' }}</span>
+                    <span class="product">{{ (order['raison_social'] || 'Opticien Name') | uppercase }}</span>
                   </div>
                 </div>
                 <div class="card-row">
                   <div class="verre-block">
                     <span class="verre-label">Porteur:</span>
-                    <span class="product bold-italic">{{ order.first_name }} {{ order.last_name }}</span>
+                    <span class="product bold-italic">{{ (order.first_name + ' ' + order.last_name) | uppercase }}</span>
                   </div>
                 </div>
                 <div class="card-row">

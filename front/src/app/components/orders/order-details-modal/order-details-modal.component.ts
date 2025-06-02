@@ -373,6 +373,8 @@ export class OrderDetailsModalComponent implements OnInit {
               justify-content: center;
               align-items: center;
               background: white;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
             }
             ${styles}
           </style>

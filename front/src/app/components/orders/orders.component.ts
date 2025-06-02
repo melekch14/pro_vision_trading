@@ -3,6 +3,7 @@ import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
+import { DeliveryNoteModalComponent } from './delivery-note-modal/delivery-note-modal.component';
 
 interface Order {
   id: number;
@@ -209,5 +210,19 @@ export class OrdersComponent implements OnInit {
 
   getSelectedClient(): string | null {
     return this.selectedClient;
+  }
+
+  openDeliveryNote(): void {
+    const selectedOrders = this.orders.filter(order => this.selectedOrders.has(order.id));
+    
+    if (selectedOrders.length === 0) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(DeliveryNoteModalComponent, {
+      data: { orders: selectedOrders },
+      width: '1000px',
+      maxHeight: '90vh'
+    });
   }
 } 

@@ -8,6 +8,12 @@
           from {{ getSelectedClient() }}
         </span>
       </span>
+      <button class="delivery-note-button" 
+              *ngIf="getSelectedOrdersCount() > 0"
+              (click)="openDeliveryNote()">
+        <i class="material-icons">local_shipping</i>
+        Générer BL
+      </button>
       <button class="export-button" (click)="exportOrders()">
         <i class="material-icons">file_download</i>
         Export to CSV

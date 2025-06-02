@@ -75,26 +75,15 @@
   </div>
 
   <div class="delivery-note-footer">
-    <div class="signature-section">
-      <div class="signature-box">
-        <p>Signature du Livreur</p>
-        <div class="signature-line"></div>
-      </div>
-      <div class="signature-box">
-        <p>Signature du Client</p>
-        <div class="signature-line"></div>
-      </div>
+    <div class="action-buttons">
+      <button class="print-button" (click)="printDeliveryNote()">
+        <i class="material-icons">print</i>
+        Imprimer
+      </button>
+      <button class="close-button" (click)="close()">
+        <i class="material-icons">close</i>
+        Fermer
+      </button>
     </div>
-  </div>
-
-  <div class="action-buttons">
-    <button class="print-button" (click)="printDeliveryNote()">
-      <i class="material-icons">print</i>
-      Imprimer
-    </button>
-    <button class="close-button" (click)="close()">
-      <i class="material-icons">close</i>
-      Fermer
-    </button>
   </div>
 </div> 

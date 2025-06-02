@@ -221,8 +221,10 @@ export class OrdersComponent implements OnInit {
 
     const dialogRef = this.dialog.open(DeliveryNoteModalComponent, {
       data: { orders: selectedOrders },
-      width: '1000px',
-      maxHeight: '90vh'
+      width: '100%',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'full-width-dialog'
     });
   }
 } 

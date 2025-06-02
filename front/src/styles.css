@@ -1,0 +1,18 @@
+/* Full width dialog styles */
+.full-width-dialog .mat-mdc-dialog-container {
+  padding: 0;
+  margin: 0;
+  max-width: 100vw;
+}
+
+.full-width-dialog .mat-mdc-dialog-surface {
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.full-width-dialog .mat-mdc-dialog-content {
+  padding: 0;
+  margin: 0;
+  max-height: 100vh;
+} 

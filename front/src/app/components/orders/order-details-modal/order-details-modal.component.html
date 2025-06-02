@@ -184,49 +184,60 @@
               </button>
               <div *ngIf="showCard" class="order-card">
                 <div class="card-fournisseur-vertical">{{ order['fournisseur_code'] || order.fournisseur_id || 'N/A' }}</div>
-                <div class="card-date-vertical">{{ order.order_datetime | date:'dd/MM/yyyy' }}</div>
                 <div class="card-row">
-                  <span class="label">Opticien:</span>
-                  <span class="value">{{ order['raison_social'] || 'Opticien Name' }}</span>
-                </div>
-                <div class="card-row">
-                  <span class="label">Porteur:</span>
-                  <span class="value bold-italic">{{ order.first_name }} {{ order.last_name }}</span>
+                  <div class="verre-block">
+                    <span class="verre-label">Opticien:</span>
+                    <span class="product">{{ order['raison_social'] || 'Opticien Name' }}</span>
+                  </div>
                 </div>
                 <div class="card-row">
-                  <span class="label">verres:</span>
-                  <span class="product">{{ order.article_libelle || 'Product Name' }}</span>
+                  <div class="verre-block">
+                    <span class="verre-label">Porteur:</span>
+                    <span class="product bold-italic">{{ order.first_name }} {{ order.last_name }}</span>
+                  </div>
                 </div>
-                <div class="card-row product-line">
-                  <span class="product">{{ order.article_libelle || 'Product Name' }}</span>
+                <div class="card-row">
+                  <div class="verre-block">
+                    <span class="verre-label">verres:</span>
+                    <span class="product">{{ order.article_libelle || 'Product Name' }}</span>
+                  </div>
                 </div>
-                <table class="card-table">
-                  <thead>
-                    <tr>
-                      <th>Ø</th>
-                      <th>SPH</th>
-                      <th>CYL</th>
-                      <th>AXE</th>
-                      <th>ADD</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>70</td>
-                      <td>{{ order.od_sphere || '0.00' }}</td>
-                      <td>{{ order.od_cylinder || '0.00' }}</td>
-                      <td>{{ order['od_axe'] || '0' }}</td>
-                      <td>{{ order.od_addition || '0.00' }}</td>
-                    </tr>
-                    <tr>
-                      <td>70</td>
-                      <td>{{ order.og_sphere || '0.00' }}</td>
-                      <td>{{ order.og_cylinder || '0.00' }}</td>
-                      <td>{{ order['og_axe'] || '0' }}</td>
-                      <td>{{ order.og_addition || '0.00' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="card-row">
+                  <div class="verre-block">
+                    <span class="verre-label"></span>
+                    <span class="product">{{ order.article_libelle || 'Product Name' }}</span>
+                  </div>
+                </div>
+                <div class="table-date-row">
+                  <table class="card-table">
+                    <thead>
+                      <tr>
+                        <th>Ø</th>
+                        <th>SPH</th>
+                        <th>CYL</th>
+                        <th>AXE</th>
+                        <th>ADD</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>70</td>
+                        <td>{{ order.od_sphere || '0.00' }}</td>
+                        <td>{{ order.od_cylinder || '0.00' }}</td>
+                        <td>{{ order['od_axe'] || '0' }}</td>
+                        <td>{{ order.od_addition || '0.00' }}</td>
+                      </tr>
+                      <tr>
+                        <td>70</td>
+                        <td>{{ order.og_sphere || '0.00' }}</td>
+                        <td>{{ order.og_cylinder || '0.00' }}</td>
+                        <td>{{ order['og_axe'] || '0' }}</td>
+                        <td>{{ order.og_addition || '0.00' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="card-date-vertical">{{ order.order_datetime | date:'dd/MM/yyyy' }}</div>
+                </div>
               </div>
             </div>
           </div>

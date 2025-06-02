@@ -247,6 +247,10 @@
   </div>
 
   <div class="modal-footer">
+    <button class="print-btn" (click)="printCard()" *ngIf="showCard">
+      <mat-icon>print</mat-icon>
+      Print Card
+    </button>
     <button class="close-btn" (click)="close()">Close</button>
   </div>
 </div> 

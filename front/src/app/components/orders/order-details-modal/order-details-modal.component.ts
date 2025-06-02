@@ -224,4 +224,171 @@ export class OrderDetailsModalComponent implements OnInit {
       });
     }
   }
+
+  printCard() {
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    // Get the card element
+    const card = document.querySelector('.order-card');
+    if (!card) return;
+
+    // Get all the card-related styles
+    const styles = `
+      .order-card {
+        background: #fff;
+        border: none;
+        width: 3.5in;
+        height: 2in;
+        padding: 30px;
+        padding-left: 0px;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #222;
+        font-size: 11px;
+        letter-spacing: 0.01em;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: hidden;
+        align-items: center;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .card-fournisseur-vertical {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        height: 44px;
+        display: flex;
+        align-items: flex-start;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        font-size: 10px;
+        font-weight: bold;
+        color: #222;
+        transform: rotate(180deg);
+        letter-spacing: 0.05em;
+        line-height: 1.1;
+      }
+      .card-row {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 2px;
+        align-items: baseline;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+      }
+      .verre-block {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 2px;
+        text-align: center;
+      }
+      .verre-label {
+        display: inline-block;
+        min-width: 60px;
+        max-width: 60px;
+        text-align: center;
+        font-weight: bold;
+      }
+      .product {
+        font-size: 11px;
+      }
+      .bold-italic {
+        font-weight: bold;
+        font-style: italic;
+      }
+      .table-date-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        width: 100%;
+        margin-top: 4px;
+      }
+      .card-table {
+        width: 250px;
+        min-width: 0;
+        max-width: 300px;
+        border-collapse: collapse;
+        margin-top: 4px;
+        font-size: 10px;
+        text-align: center;
+        display: inline-table;
+      }
+      .card-table th, .card-table td {
+        border: none;
+        text-align: center;
+        padding: 0 3px;
+        font-size: 10px;
+        min-width: 18px;
+        max-width: 32px;
+      }
+      .card-table th {
+        font-weight: bold;
+      }
+      .card-date-vertical {
+        position: absolute;
+        top: 85px;
+        right: 15px;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        font-size: 10px;
+        font-weight: bold;
+        color: #222;
+        transform: rotate(180deg);
+        letter-spacing: 0.05em;
+        line-height: 1.1;
+        height: auto;
+        display: flex;
+        align-items: flex-start;
+        margin-left: 0;
+      }
+    `;
+
+    // Write the HTML content to the new window
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Card</title>
+          <style>
+            @page {
+              size: 3.5in 2in;
+              margin: 0;
+            }
+            html, body {
+              margin: 0;
+              padding: 0;
+              width: 3.5in;
+              height: 2in;
+              overflow: hidden;
+            }
+            body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: white;
+            }
+            ${styles}
+          </style>
+        </head>
+        <body>
+          ${card.outerHTML}
+        </body>
+      </html>
+    `);
+
+    // Wait for content to load then print
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  }
 } 

@@ -75,6 +75,7 @@ export class OrdersComponent implements OnInit {
       next: (response: Order[]) => {
         this.orders = response;
         this.filteredOrders = [...this.orders];
+        this.filteredOrders.forEach(order => order['_selected'] = this.selectedOrders.has(order.id));
         this.loading = false;
       },
       error: (error: any) => {
@@ -129,6 +130,7 @@ export class OrdersComponent implements OnInit {
     }
     
     this.filteredOrders = filtered;
+    this.filteredOrders.forEach(order => order['_selected'] = this.selectedOrders.has(order.id));
   }
 
   resetFilters(): void {
@@ -181,23 +183,32 @@ export class OrdersComponent implements OnInit {
   }
 
   toggleOrderSelection(order: Order): void {
+    // If no orders are selected, select this one and set the client
+    if (this.selectedOrders.size === 0) {
+      this.selectedOrders.add(order.id);
+      this.selectedClient = order.raison_social;
+      return;
+    }
+
+    // If the clicked order is from a different client, clear selection and select only this one
+    if (order.raison_social !== this.selectedClient) {
+      this.selectedOrders.clear();
+      this.selectedOrders.add(order.id);
+      this.selectedClient = order.raison_social;
+      return;
+    }
+
+    // If the order is already selected, deselect it
     if (this.selectedOrders.has(order.id)) {
-      // If deselecting the last order from a client, clear the selected client
-      if (this.selectedOrders.size === 1) {
+      this.selectedOrders.delete(order.id);
+      if (this.selectedOrders.size === 0) {
         this.selectedClient = null;
       }
-      this.selectedOrders.delete(order.id);
-    } else {
-      // If this is the first order being selected
-      if (this.selectedOrders.size === 0) {
-        this.selectedClient = order.raison_social;
-        this.selectedOrders.add(order.id);
-      } 
-      // If we already have selected orders, only allow selection from the same client
-      else if (order.raison_social === this.selectedClient) {
-        this.selectedOrders.add(order.id);
-      }
+      return;
     }
+
+    // If the order is not selected and is from the same client, add it
+    this.selectedOrders.add(order.id);
   }
 
   isOrderSelected(orderId: number): boolean {
@@ -205,15 +216,16 @@ export class OrdersComponent implements OnInit {
   }
 
   getSelectedOrdersCount(): number {
-    return this.selectedOrders.size;
+    return this.orders.filter(order => order['_selected']).length;
   }
 
   getSelectedClient(): string | null {
-    return this.selectedClient;
+    const selected = this.orders.find(order => order['_selected']);
+    return selected ? selected.raison_social : null;
   }
 
   openDeliveryNote(): void {
-    const selectedOrders = this.orders.filter(order => this.selectedOrders.has(order.id));
+    const selectedOrders = this.orders.filter(order => order['_selected']);
     
     if (selectedOrders.length === 0) {
       return;
@@ -226,5 +238,30 @@ export class OrdersComponent implements OnInit {
       maxHeight: '100vh',
       panelClass: 'full-width-dialog'
     });
+  }
+
+  trackByOrderId(index: number, order: Order): number {
+    return order.id;
+  }
+
+  onOrderCheckboxChange(order: Order, checked: boolean): void {
+    if (checked) {
+      // If no orders are selected, or same client, add
+      if (this.selectedOrders.size === 0 || order.raison_social === this.selectedClient) {
+        this.selectedOrders.add(order.id);
+        this.selectedClient = order.raison_social;
+      } else {
+        // If different client, clear and select only this one
+        this.selectedOrders.clear();
+        this.selectedOrders.add(order.id);
+        this.selectedClient = order.raison_social;
+        this.filteredOrders.forEach(o => o['_selected'] = o.id === order.id);
+      }
+    } else {
+      this.selectedOrders.delete(order.id);
+      if (this.selectedOrders.size === 0) {
+        this.selectedClient = null;
+      }
+    }
   }
 } 

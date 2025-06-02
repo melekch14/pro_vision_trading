@@ -60,12 +60,12 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let order of filteredOrders">
+        <ng-container *ngFor="let order of filteredOrders; trackBy: trackByOrderId">
           <tr>
             <td>
               <input type="checkbox" 
-                     [checked]="isOrderSelected(order.id)"
-                     (change)="toggleOrderSelection(order)"
+                     [(ngModel)]="order['_selected']"
+                     (ngModelChange)="onOrderCheckboxChange(order, $event)"
                      class="order-checkbox"
                      [disabled]="getSelectedOrdersCount() > 0 && order.raison_social !== getSelectedClient()">
             </td>

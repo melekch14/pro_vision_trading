@@ -1,0 +1,96 @@
+<div class="delivery-note-container">
+  <div class="delivery-note-header">
+    <div class="company-info">
+      <h1>BON DE LIVRAISON</h1>
+      <p class="company-name">Pro Vision Trading</p>
+      <p>123 Business Street</p>
+      <p>City, Country</p>
+      <p>Phone: +123 456 7890</p>
+    </div>
+    <div class="delivery-info">
+      <div class="info-group">
+        <label>N° BL:</label>
+        <span>{{ deliveryNoteNumber }}</span>
+      </div>
+      <div class="info-group">
+        <label>Date:</label>
+        <span>{{ currentDate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="client-info">
+    <h2>Informations Client</h2>
+    <div class="info-grid">
+      <div class="info-group">
+        <label>Raison Sociale:</label>
+        <span>{{ customerDetails?.raison_social }}</span>
+      </div>
+      <div class="info-group">
+        <label>Téléphone:</label>
+        <span>{{ customerDetails?.tel }}</span>
+      </div>
+      <div class="info-group">
+        <label>Email:</label>
+        <span>{{ customerDetails?.email }}</span>
+      </div>
+      <div class="info-group">
+        <label>Responsable:</label>
+        <span>{{ customerDetails?.responsable }}</span>
+      </div>
+      <div class="info-group full-width">
+        <label>Adresse:</label>
+        <span>{{ customerDetails?.adresse }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="orders-table">
+    <table>
+      <thead>
+        <tr>
+          <th>N° Commande</th>
+          <th>Date</th>
+          <th>Produit</th>
+          <th>Traitement</th>
+          <th>Supplément</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of data.orders">
+          <td>{{ order.order_id }}</td>
+          <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
+          <td>{{ order.produit }}</td>
+          <td>{{ order.traitement }}</td>
+          <td>{{ order.supplement || 'N/A' }}</td>
+          <td>{{ order.price }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="delivery-note-footer">
+    <div class="signature-section">
+      <div class="signature-box">
+        <p>Signature du Livreur</p>
+        <div class="signature-line"></div>
+      </div>
+      <div class="signature-box">
+        <p>Signature du Client</p>
+        <div class="signature-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="print-button" (click)="printDeliveryNote()">
+      <i class="material-icons">print</i>
+      Imprimer
+    </button>
+    <button class="close-button" (click)="close()">
+      <i class="material-icons">close</i>
+      Fermer
+    </button>
+  </div>
+</div> 

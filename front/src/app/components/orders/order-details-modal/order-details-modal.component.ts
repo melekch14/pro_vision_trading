@@ -243,7 +243,7 @@ export class OrderDetailsModalComponent implements OnInit {
         height: 2in;
         padding: 30px;
         padding-left: 0px;
-        margin: 0;
+        margin-top: 80px;
         font-family: Arial, sans-serif;
         color: #222;
         font-size: 11px;
@@ -255,12 +255,11 @@ export class OrderDetailsModalComponent implements OnInit {
         overflow: hidden;
         align-items: center;
         text-align: center;
-        box-sizing: border-box;
       }
       .card-fournisseur-vertical {
         position: absolute;
-        top: 15px;
-        right: 15px;
+        top: 12px;
+        right: 2px;
         height: 44px;
         display: flex;
         align-items: flex-start;
@@ -276,7 +275,7 @@ export class OrderDetailsModalComponent implements OnInit {
       .card-row {
         display: flex;
         gap: 4px;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
         align-items: baseline;
         justify-content: center;
         width: 100%;
@@ -288,7 +287,7 @@ export class OrderDetailsModalComponent implements OnInit {
         align-items: baseline;
         justify-content: center;
         width: 100%;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
         text-align: center;
       }
       .verre-label {
@@ -310,14 +309,14 @@ export class OrderDetailsModalComponent implements OnInit {
         align-items: flex-start;
         justify-content: center;
         width: 100%;
-        margin-top: 4px;
+        margin-top: 5px;
       }
       .card-table {
         width: 250px;
         min-width: 0;
         max-width: 300px;
         border-collapse: collapse;
-        margin-top: 4px;
+        margin-top: 5px;
         font-size: 10px;
         text-align: center;
         display: inline-table;
@@ -336,7 +335,7 @@ export class OrderDetailsModalComponent implements OnInit {
       .card-date-vertical {
         position: absolute;
         top: 85px;
-        right: 15px;
+        right: 2px;
         writing-mode: vertical-rl;
         text-orientation: mixed;
         font-size: 10px;

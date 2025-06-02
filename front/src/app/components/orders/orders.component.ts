@@ -34,6 +34,8 @@ export class OrdersComponent implements OnInit {
   filteredOrders: Order[] = [];
   loading: boolean = true;
   error: string | null = null;
+  selectedOrders: Set<number> = new Set();
+  selectedClient: string | null = null;
   
   // Filter states
   statusFilter: string = 'All';
@@ -175,5 +177,37 @@ export class OrdersComponent implements OnInit {
     // Clean up
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  toggleOrderSelection(order: Order): void {
+    if (this.selectedOrders.has(order.id)) {
+      // If deselecting the last order from a client, clear the selected client
+      if (this.selectedOrders.size === 1) {
+        this.selectedClient = null;
+      }
+      this.selectedOrders.delete(order.id);
+    } else {
+      // If this is the first order being selected
+      if (this.selectedOrders.size === 0) {
+        this.selectedClient = order.raison_social;
+        this.selectedOrders.add(order.id);
+      } 
+      // If we already have selected orders, only allow selection from the same client
+      else if (order.raison_social === this.selectedClient) {
+        this.selectedOrders.add(order.id);
+      }
+    }
+  }
+
+  isOrderSelected(orderId: number): boolean {
+    return this.selectedOrders.has(orderId);
+  }
+
+  getSelectedOrdersCount(): number {
+    return this.selectedOrders.size;
+  }
+
+  getSelectedClient(): string | null {
+    return this.selectedClient;
   }
 } 

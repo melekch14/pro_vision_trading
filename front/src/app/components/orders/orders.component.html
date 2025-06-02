@@ -2,6 +2,12 @@
   <div class="header-row">
     <h1 class="page-title">Orders</h1>
     <div class="action-buttons">
+      <span class="selected-count" *ngIf="getSelectedOrdersCount() > 0">
+        {{ getSelectedOrdersCount() }} orders selected
+        <span *ngIf="getSelectedClient()" class="selected-client">
+          from {{ getSelectedClient() }}
+        </span>
+      </span>
       <button class="export-button" (click)="exportOrders()">
         <i class="material-icons">file_download</i>
         Export to CSV
@@ -37,6 +43,7 @@
     <table class="orders-table">
       <thead>
         <tr>
+          <th>Select</th>
           <th>Order ID</th>
           <th>Client</th>
           <th>Order Date</th>
@@ -49,6 +56,13 @@
       <tbody>
         <ng-container *ngFor="let order of filteredOrders">
           <tr>
+            <td>
+              <input type="checkbox" 
+                     [checked]="isOrderSelected(order.id)"
+                     (change)="toggleOrderSelection(order)"
+                     class="order-checkbox"
+                     [disabled]="getSelectedOrdersCount() > 0 && order.raison_social !== getSelectedClient()">
+            </td>
             <td>{{ order['order_id'] }}</td>
             <td>
               <div class="client-info">

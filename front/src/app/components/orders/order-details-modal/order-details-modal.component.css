@@ -448,8 +448,10 @@
   background: #fff;
   border: 1.2px solid #bdbdbd;
   border-radius: 6px;
-  width: 8.5cm;
-  padding: 6px 7px 6px 7px;
+  width: 3.5in;  /* Standard business card width */
+  height: 2in;   /* Standard business card height */
+  padding: 18px;  /* Equal padding on all sides */
+  padding-left: 0px;
   margin-top: 10px;
   font-family: Arial, sans-serif;
   color: #222;
@@ -507,7 +509,7 @@
 .card-date-vertical {
   position: absolute;
   top: 85px;
-  right: 2px;
+  right: 6px;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-size: 10px;
@@ -552,7 +554,7 @@
 .card-fournisseur-vertical {
   position: absolute;
   top: 12px;
-  right: 2px;
+  right: 6px;
   height: 44px;
   display: flex;
   align-items: flex-start;

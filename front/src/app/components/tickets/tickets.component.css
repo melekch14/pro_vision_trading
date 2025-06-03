@@ -178,7 +178,7 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   box-shadow: 0 0 4px rgba(0,0,0,0.08);
-  font-size: 9px;
+  font-size: 11px;
   font-family: Arial, sans-serif;
   padding: 0;
 }
@@ -190,7 +190,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 9px;
+  font-size: 11px;
   font-family: Arial, sans-serif;
   text-align: center;
 }
@@ -198,14 +198,14 @@
 .ticket-header {
   font-weight: normal;
   margin-bottom: 1px;
-  font-size: 9px;
+  font-size: 11px;
   font-family: Arial, sans-serif;
   text-align: center;
 }
 
 .ticket-row {
   margin-bottom: 0.5px;
-  font-size: 9px;
+  font-size: 11px;
   font-family: Arial, sans-serif;
   text-align: center;
 }
@@ -232,7 +232,7 @@
   flex-direction: row;
   justify-content: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 11px;
   margin-bottom: 0.5px;
   font-family: Arial, sans-serif;
   text-align: center;
@@ -260,7 +260,7 @@
 .ticket-vertical {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 8px;
+  font-size: 10px;
   color: #222;
   letter-spacing: 1px;
   margin-bottom: 0.5px;

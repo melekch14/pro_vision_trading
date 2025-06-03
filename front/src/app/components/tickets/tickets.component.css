@@ -250,6 +250,7 @@
 
 .ticket-table-row {
   font-family: monospace, Arial, sans-serif;
+  gap: 12px;
 }
 
 .ticket-side-info {
@@ -463,4 +464,22 @@
   font-size: 18px;
   vertical-align: middle;
   margin-right: 6px;
+}
+
+.ticket-table-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+}
+.ticket-table-header-col,
+.ticket-table-value-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.ticket-table-header-col span {
+  font-weight: bold;
 } 

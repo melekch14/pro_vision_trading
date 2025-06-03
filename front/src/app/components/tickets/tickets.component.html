@@ -92,8 +92,16 @@
   <div class="eye-modal">
     <p>Do you want to put the ticket for eyes right or left?</p>
     <div class="eye-modal-buttons">
-      <button (click)="confirmEye('right')">Right</button>
-      <button (click)="confirmEye('left')">Left</button>
+      <button 
+        (click)="confirmEye('right')" 
+        [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id]?.right">
+        Right
+      </button>
+      <button 
+        (click)="confirmEye('left')" 
+        [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id]?.left">
+        Left
+      </button>
       <button (click)="cancelEyeModal()">Cancel</button>
     </div>
   </div>

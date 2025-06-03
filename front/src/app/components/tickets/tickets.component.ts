@@ -86,7 +86,19 @@ export class TicketsComponent implements OnInit {
     event.preventDefault();
     cell.dragOver = false;
     if (this.draggedOrder) {
-      // Show confirmation modal for eye selection
+      // If dragging from another cell, move the ticket
+      if (this.draggedFromCell !== null && this.draggedFromCell !== undefined) {
+        const sourceCell = this.gridCells[this.draggedFromCell];
+        // Move the ticket
+        cell.ticket = sourceCell.ticket;
+        sourceCell.ticket = null;
+        // Reset drag state
+        this.draggedOrder = null;
+        this.draggedFromCell = null;
+        this.draggedFromList = false;
+        return;
+      }
+      // Show confirmation modal for eye selection if dragging from list
       this.showEyeModal = true;
       this.pendingDropCell = cell;
       this.pendingDropOrder = this.draggedOrder;

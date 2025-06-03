@@ -35,7 +35,7 @@ export class TicketsComponent implements OnInit {
   loadOrders() {
     this.orderService.getAllOrders().subscribe({
       next: (orders) => {
-        this.orders = orders;
+        this.orders = orders.filter((order: Order) => order.status?.toLowerCase() === 'processing');
       },
       error: (error) => {
         console.error('Error loading orders:', error);

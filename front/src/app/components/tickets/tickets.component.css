@@ -457,4 +457,10 @@
 }
 .print-btn:hover {
   background: #e0e0e0;
+}
+
+.print-btn .material-icons {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 6px;
 } 

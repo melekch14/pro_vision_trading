@@ -124,4 +124,8 @@ export class TicketsComponent implements OnInit {
     this.pendingDropCell = null;
     this.pendingDropOrder = null;
   }
+
+  printGrid() {
+    window.print();
+  }
 } 

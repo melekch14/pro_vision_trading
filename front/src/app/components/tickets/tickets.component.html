@@ -24,6 +24,9 @@
   </div>
 
   <div class="right-panel">
+    <div class="print-bar">
+      <button class="print-btn" (click)="printGrid()">Print Grid</button>
+    </div>
     <div class="a4-sheet">
       <div class="grid-cell" 
            *ngFor="let cell of gridCells"

@@ -28,26 +28,23 @@
       <div class="grid-cell" 
            *ngFor="let cell of gridCells"
            [class.drag-over]="cell.dragOver"
-           [class.has-order]="cell.order"
+           [class.has-order]="cell.ticket"
            draggable="true"
            (dragstart)="onCellDragStart(cell, $event)"
            (dragover)="onDragOver($event, cell)"
            (dragleave)="onDragLeave($event, cell)"
            (drop)="onDrop($event, cell)">
-        <ng-container *ngIf="cell.order">
+        <ng-container *ngIf="cell.ticket">
           <div class="ticket-card">
             <div class="ticket-content">
               <div class="ticket-header">
-                <span>Opticien: <span class="bold">{{cell.order.raison_social}}</span></span>
+                <span>Opticien: <span class="bold">{{cell.ticket.order.raison_social}}</span></span>
               </div>
               <div class="ticket-row">
-                <span>Porteur: <span class="bold italic">{{cell.order.first_name}} {{cell.order.last_name}}</span></span>
+                <span>Porteur: <span class="bold italic">{{cell.ticket.order.first_name}} {{cell.ticket.order.last_name}}</span></span>
               </div>
               <div class="ticket-row">
-                <span>verres: <span class="bold">{{cell.order.traitement}}</span></span>
-              </div>
-              <div class="ticket-row">
-                <span class="invisible">verres:</span> <span class="bold">{{cell.order.traitement}}</span>
+                <span>verre {{cell.ticket.eye === 'right' ? 'D' : 'G'}}: <span class="bold">{{cell.ticket.order.article_libelle}}</span></span>
               </div>
               <div class="ticket-table">
                 <div class="ticket-table-header">
@@ -57,30 +54,42 @@
                   <span>AXE</span>
                   <span>ADD</span>
                 </div>
-                <div class="ticket-table-row">
-                  <span>{{cell.order.diameter_left || '70'}}</span>
-                  <span>{{cell.order.sph_left || '-4'}}</span>
-                  <span>{{cell.order.cyl_left || '-2'}}</span>
-                  <span>{{cell.order.axe_left || '11'}}</span>
-                  <span>{{cell.order.add_left || '120'}}</span>
+                <div class="ticket-table-row" *ngIf="cell.ticket.eye === 'right'">
+                  <span>70</span>
+                  <span>{{cell.ticket.order.od_sphere || '0.00'}}</span>
+                  <span>{{cell.ticket.order.od_cylinder || '0.00'}}</span>
+                  <span>{{cell.ticket.order.od_axe || '0'}}</span>
+                  <span>{{cell.ticket.order.od_addition || '0.00'}}</span>
                 </div>
-                <div class="ticket-table-row">
-                  <span>{{cell.order.diameter_right || '70'}}</span>
-                  <span>{{cell.order.sph_right || '-4'}}</span>
-                  <span>{{cell.order.cyl_right || '-2'}}</span>
-                  <span>{{cell.order.axe_right || '11'}}</span>
-                  <span>{{cell.order.add_right || '120'}}</span>
+                <div class="ticket-table-row" *ngIf="cell.ticket.eye === 'left'">
+                  <span>70</span>
+                  <span>{{cell.ticket.order.og_sphere || '0.00'}}</span>
+                  <span>{{cell.ticket.order.og_cylinder || '0.00'}}</span>
+                  <span>{{cell.ticket.order.og_axe || '0'}}</span>
+                  <span>{{cell.ticket.order.og_addition || '0.00'}}</span>
                 </div>
               </div>
             </div>
             <div class="ticket-side-info">
-              <span class="ticket-vertical">{{cell.order.fournisseur_code}}</span>
+              <span class="ticket-vertical">{{cell.ticket.order.fournisseur_code}}</span>
               <span class="ticket-vertical-spacer"></span>
-              <span class="ticket-vertical">{{cell.order.order_datetime | date:'dd/MM/yyyy'}}</span>
+              <span class="ticket-vertical">{{cell.ticket.order.order_datetime | date:'dd/MM/yyyy'}}</span>
             </div>
           </div>
         </ng-container>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Eye Selection Modal -->
+<div *ngIf="showEyeModal" class="eye-modal-backdrop">
+  <div class="eye-modal">
+    <p>Do you want to put the ticket for eyes right or left?</p>
+    <div class="eye-modal-buttons">
+      <button (click)="confirmEye('right')">Right</button>
+      <button (click)="confirmEye('left')">Left</button>
+      <button (click)="cancelEyeModal()">Cancel</button>
     </div>
   </div>
 </div> 

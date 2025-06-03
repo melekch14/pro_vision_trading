@@ -17,6 +17,14 @@ export class TicketsComponent implements OnInit {
   draggedFromCell: number | null = null;
   draggedFromList: boolean = false;
 
+  // New state for confirmation modal
+  showEyeModal: boolean = false;
+  pendingDropCell: any = null;
+  pendingDropOrder: Order | null = null;
+
+  // Track which eyes are placed for each order
+  placedEyes: { [orderId: number]: { right: boolean; left: boolean } } = {};
+
   constructor(private orderService: OrderService) {}
 
   ngOnInit() {
@@ -39,7 +47,7 @@ export class TicketsComponent implements OnInit {
     // Create 24 grid cells (3x8 grid)
     this.gridCells = Array(24).fill(null).map((_, index) => ({
       index,
-      order: null
+      ticket: null // { order, eye: 'right' | 'left' }
     }));
   }
 
@@ -53,8 +61,8 @@ export class TicketsComponent implements OnInit {
   }
 
   onCellDragStart(cell: any, event: DragEvent) {
-    if (cell.order) {
-      this.draggedOrder = cell.order;
+    if (cell.ticket) {
+      this.draggedOrder = cell.ticket.order;
       this.draggedFromCell = cell.index;
       this.draggedFromList = false;
       if (event.dataTransfer) {
@@ -77,43 +85,43 @@ export class TicketsComponent implements OnInit {
   onDrop(event: DragEvent, cell: any) {
     event.preventDefault();
     cell.dragOver = false;
-
     if (this.draggedOrder) {
-      // If dropping from list
-      if (this.draggedFromList) {
-        if (cell.order) {
-          // If cell has an order, swap them
-          const tempOrder = cell.order;
-          cell.order = this.draggedOrder;
-          // Remove the order from the list
-          this.orders = this.orders.filter(o => o.id !== this.draggedOrder?.id);
-          // Add the swapped order back to the list
-          this.orders.push(tempOrder);
-        } else {
-          // If cell is empty, just place the order
-          cell.order = this.draggedOrder;
-          // Remove the order from the list
-          this.orders = this.orders.filter(o => o.id !== this.draggedOrder?.id);
-        }
-      }
-      // If dropping from another cell
-      else if (this.draggedFromCell !== null) {
-        const sourceCell = this.gridCells[this.draggedFromCell];
-        if (cell.order) {
-          // If target cell has an order, swap them
-          const tempOrder = cell.order;
-          cell.order = this.draggedOrder;
-          sourceCell.order = tempOrder;
-        } else {
-          // If target cell is empty, move the order
-          cell.order = this.draggedOrder;
-          sourceCell.order = null;
-        }
-      }
+      // Show confirmation modal for eye selection
+      this.showEyeModal = true;
+      this.pendingDropCell = cell;
+      this.pendingDropOrder = this.draggedOrder;
     }
-
     this.draggedOrder = null;
     this.draggedFromCell = null;
     this.draggedFromList = false;
+  }
+
+  confirmEye(eye: 'right' | 'left') {
+    if (!this.pendingDropCell || !this.pendingDropOrder) return;
+    // Place the ticket in the cell
+    this.pendingDropCell.ticket = {
+      order: this.pendingDropOrder,
+      eye
+    };
+    // Mark the eye as placed
+    const orderId = this.pendingDropOrder.id;
+    if (!this.placedEyes[orderId]) {
+      this.placedEyes[orderId] = { right: false, left: false };
+    }
+    this.placedEyes[orderId][eye] = true;
+    // Remove from list if both eyes are placed
+    if (this.placedEyes[orderId].right && this.placedEyes[orderId].left) {
+      this.orders = this.orders.filter(o => o.id !== orderId);
+    }
+    // Hide modal and clear pending
+    this.showEyeModal = false;
+    this.pendingDropCell = null;
+    this.pendingDropOrder = null;
+  }
+
+  cancelEyeModal() {
+    this.showEyeModal = false;
+    this.pendingDropCell = null;
+    this.pendingDropOrder = null;
   }
 } 

@@ -103,21 +103,24 @@
 }
 
 .right-panel {
-  width: 70%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   background: #f8f9fa;
-  padding: 20px;
+  padding: 20px 0;
+  overflow: auto;
 }
 
 .a4-sheet {
   width: 210mm;
   height: 297mm;
-  max-width: none;
-  max-height: none;
-  min-width: unset;
-  min-height: unset;
+  max-width: 100vw;
+  max-height: 98vh;
+  min-width: 210mm;
+  min-height: 297mm;
   aspect-ratio: 210 / 297;
   background: #fff;
   border: 2px solid #000;
@@ -126,7 +129,9 @@
   grid-template-rows: repeat(8, 1fr);
   gap: 8px;
   padding: 16px;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px 4px 32px rgba(0,0,0,0.10), 0px 0px 0px 1px #e0e0e0;
+  margin: 0 auto;
+  transition: box-shadow 0.2s;
 }
 
 .grid-cell {
@@ -306,7 +311,12 @@
   }
 
   .a4-sheet {
-    height: 60vh;
+    width: 100vw;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100vw;
+    max-height: 98vh;
+    padding: 4px;
   }
 }
 

@@ -104,14 +104,14 @@ export class TicketsComponent implements OnInit {
       eye
     };
     // Mark the eye as placed
-    const orderId = this.pendingDropOrder.id;
+    const orderId = this.pendingDropOrder.order_id;
     if (!this.placedEyes[orderId]) {
       this.placedEyes[orderId] = { right: false, left: false };
     }
     this.placedEyes[orderId][eye] = true;
     // Remove from list if both eyes are placed
     if (this.placedEyes[orderId].right && this.placedEyes[orderId].left) {
-      this.orders = this.orders.filter(o => o.id !== orderId);
+      this.orders = this.orders.filter(o => o.order_id !== orderId);
     }
     // Hide modal and clear pending
     this.showEyeModal = false;

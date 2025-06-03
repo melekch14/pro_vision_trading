@@ -233,24 +233,25 @@
   width: 100%;
 }
 
-.ticket-table-header, .ticket-table-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 4px;
+.ticket-table-header,
+.ticket-table-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  justify-items: center;
+  align-items: center;
   font-size: 11px;
-  margin-bottom: 0.5px;
+  margin-bottom: 2px;
   font-family: Arial, sans-serif;
   text-align: center;
+  width: 100%;
 }
 
-.ticket-table-header {
+.ticket-table-header span {
   font-weight: bold;
 }
 
 .ticket-table-row {
   font-family: monospace, Arial, sans-serif;
-  gap: 12px;
 }
 
 .ticket-side-info {

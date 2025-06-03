@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="left-panel">
+    <h2>Orders</h2>
+    <div class="draggable-item" 
+         *ngFor="let order of orders" 
+         draggable="true"
+         (dragstart)="onDragStart(order, $event)">
+      <div class="order-card">
+        <div class="order-header">
+          <span class="order-id">#{{order.order_id}}</span>
+          <span class="status-badge" [ngClass]="'status-' + order.status.toLowerCase()">
+            {{order.status}}
+          </span>
+        </div>
+        <div class="order-info">
+          <div class="customer-name">{{order.first_name}} {{order.last_name}}</div>
+          <div class="order-details">
+            <span class="price">{{order.price}}</span>
+            <span class="shipping-type">{{order.shipping_type}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="a4-sheet">
+      <div class="grid-cell" 
+           *ngFor="let cell of gridCells"
+           [class.drag-over]="cell.dragOver"
+           [class.has-order]="cell.order"
+           draggable="true"
+           (dragstart)="onCellDragStart(cell, $event)"
+           (dragover)="onDragOver($event, cell)"
+           (dragleave)="onDragLeave($event, cell)"
+           (drop)="onDrop($event, cell)">
+        <ng-container *ngIf="cell.order">
+          <div class="ticket-card">
+            <div class="ticket-content">
+              <div class="ticket-header">
+                <span>Opticien: <span class="bold">{{cell.order.raison_social}}</span></span>
+              </div>
+              <div class="ticket-row">
+                <span>Porteur: <span class="bold italic">{{cell.order.first_name}} {{cell.order.last_name}}</span></span>
+              </div>
+              <div class="ticket-row">
+                <span>verres: <span class="bold">{{cell.order.traitement}}</span></span>
+              </div>
+              <div class="ticket-row">
+                <span class="invisible">verres:</span> <span class="bold">{{cell.order.traitement}}</span>
+              </div>
+              <div class="ticket-table">
+                <div class="ticket-table-header">
+                  <span>Ø</span>
+                  <span>SPH</span>
+                  <span>CYL</span>
+                  <span>AXE</span>
+                  <span>ADD</span>
+                </div>
+                <div class="ticket-table-row">
+                  <span>{{cell.order.diameter_left || '70'}}</span>
+                  <span>{{cell.order.sph_left || '-4'}}</span>
+                  <span>{{cell.order.cyl_left || '-2'}}</span>
+                  <span>{{cell.order.axe_left || '11'}}</span>
+                  <span>{{cell.order.add_left || '120'}}</span>
+                </div>
+                <div class="ticket-table-row">
+                  <span>{{cell.order.diameter_right || '70'}}</span>
+                  <span>{{cell.order.sph_right || '-4'}}</span>
+                  <span>{{cell.order.cyl_right || '-2'}}</span>
+                  <span>{{cell.order.axe_right || '11'}}</span>
+                  <span>{{cell.order.add_right || '120'}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="ticket-side-info">
+              <span class="ticket-vertical">{{cell.order.fournisseur_code}}</span>
+              <span class="ticket-vertical-spacer"></span>
+              <span class="ticket-vertical">{{cell.order.order_datetime | date:'dd/MM/yyyy'}}</span>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div> 

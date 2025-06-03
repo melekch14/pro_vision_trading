@@ -14,6 +14,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { SettingsComponent } from './components/settings/settings.component';
 import { OpticienComponent } from './components/opticien/opticien.component';
+import { TicketsComponent } from './components/tickets/tickets.component';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -47,6 +48,7 @@ const routes: Routes = [
       { path: 'customers/new', component: CustomerFormComponent },
       { path: 'customers/:id', component: CustomerFormComponent },
       { path: 'orders', component: OrdersComponent },
+      { path: 'tickets', component: TicketsComponent },
       { path: 'article-hierarchy', component: ArticleHierarchyComponent },
       { path: 'article-manager', component: ArticleManagerComponent },
       { path: 'article-params', component: ArticleParamsComponent },

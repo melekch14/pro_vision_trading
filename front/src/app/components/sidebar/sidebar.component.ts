@@ -43,6 +43,12 @@ export class SidebarComponent implements OnInit {
       route: '/app/orders'
     },
     { 
+      id: 'tickets',
+      name: 'Tickets',
+      icon: 'confirmation_number',
+      route: '/app/tickets'
+    },
+    { 
       id: 'customers',
       name: 'Customers',
       icon: 'people',

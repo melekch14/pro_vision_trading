@@ -1,0 +1,379 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.left-panel {
+  width: 30%;
+  background: #fff;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #dee2e6;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+.left-panel h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.draggable-item {
+  cursor: grab;
+  margin-bottom: 15px;
+  transition: transform 0.2s;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+}
+
+.order-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-processing {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-shipped {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-delivered {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.order-info {
+  font-size: 0.9rem;
+}
+
+.customer-name {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  color: #6c757d;
+}
+
+.right-panel {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 20px;
+}
+
+.a4-sheet {
+  width: 210mm;
+  height: 297mm;
+  max-width: none;
+  max-height: none;
+  min-width: unset;
+  min-height: unset;
+  aspect-ratio: 210 / 297;
+  background: #fff;
+  border: 2px solid #000;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 8px;
+  padding: 16px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+}
+
+.grid-cell {
+  border: 1px dashed #dee2e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: #fafafa;
+  transition: all 0.2s;
+  min-width: 0;
+  min-height: 0;
+}
+
+.grid-cell.drag-over {
+  background-color: #d1e7dd;
+  border: 2px dashed #0f5132;
+}
+
+.grid-cell.has-order {
+  border: 1px solid #dee2e6;
+}
+
+.grid-cell .order-card {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  padding: 8px;
+}
+
+.grid-cell .order-card .order-header {
+  margin-bottom: 5px;
+}
+
+.grid-cell .order-card .order-info {
+  font-size: 0.8rem;
+}
+
+.ticket-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 98%;
+  height: 98%;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 4px rgba(0,0,0,0.08);
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  padding: 0;
+}
+
+.ticket-content {
+  flex: 1 1 auto;
+  padding: 4px 2px 2px 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.ticket-header {
+  font-weight: normal;
+  margin-bottom: 1px;
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.ticket-row {
+  margin-bottom: 0.5px;
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.ticket-table {
+  margin-top: 2px;
+  width: 100%;
+}
+
+.ticket-table-header, .ticket-table-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 4px;
+  font-size: 9px;
+  margin-bottom: 0.5px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.ticket-table-header {
+  font-weight: bold;
+}
+
+.ticket-table-row {
+  font-family: monospace, Arial, sans-serif;
+}
+
+.ticket-side-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 0.5px 0 0.5px;
+  min-width: 5px;
+  height: 100%;
+  gap: 0.5px;
+}
+
+.ticket-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 8px;
+  color: #222;
+  letter-spacing: 1px;
+  margin-bottom: 0.5px;
+  font-family: monospace, Arial, sans-serif;
+}
+
+.ticket-side-info .ticket-vertical:last-child {
+  margin-bottom: 10px;
+}
+
+/* Make sure the ticket fits nicely in the grid cell */
+.grid-cell .ticket-card {
+  min-width: 0;
+  min-height: 0;
+  height: 98%;
+  width: 98%;
+  margin: auto;
+  box-shadow: none;
+  border: 1px solid #eee;
+}
+
+/* Hide the default order card in grid cells */
+.grid-cell .order-card {
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+  }
+
+  .left-panel {
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .a4-sheet {
+    height: 60vh;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  .container, .right-panel, .left-panel {
+    height: auto !important;
+    width: auto !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+  .a4-sheet {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    max-width: unset !important;
+    max-height: unset !important;
+    aspect-ratio: unset !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    gap: 0.5mm;
+    page-break-after: always;
+  }
+  .grid-cell {
+    border: none !important;
+    background: #fff !important;
+    min-width: 0;
+    min-height: 0;
+    box-shadow: none !important;
+  }
+  .ticket-card {
+    width: 100% !important;
+    height: 100% !important;
+    font-size: 0.95rem !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .ticket-content {
+    padding: 10px 6px 6px 6px !important;
+    font-size: 0.95em !important;
+  }
+  .ticket-side-info {
+    padding: 0 2px 0 2px !important;
+    min-width: 10px !important;
+    gap: 2px !important;
+  }
+}
+
+.ticket-vertical-spacer {
+  display: block;
+  height: 12px;
+  width: 1px;
+  content: '';
+} 

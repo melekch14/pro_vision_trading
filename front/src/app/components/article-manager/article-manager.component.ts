@@ -24,6 +24,9 @@ interface DialogStockEntry {
   quantite: number;
 }
 
+// Add type for origineArticle
+type OrigineArticle = 'stock' | 'fabrication';
+
 @Component({
   selector: 'app-article-manager',
   templateUrl: './article-manager.component.html',
@@ -103,7 +106,8 @@ export class ArticleManagerComponent implements OnInit {
       expiration: ['', Validators.required],
       fournisseur_id: ['', Validators.required],
       typeArticle_id: ['', Validators.required],
-      type_stock: ['', Validators.required]
+      type_stock: ['', Validators.required],
+      origineArticle: ['stock', Validators.required] // Add new field with default value 'stock'
     });
 
     // Subscribe to subfamily changes
@@ -557,6 +561,7 @@ export class ArticleManagerComponent implements OnInit {
       Design: string | undefined;
       'Prix Achat': number;
       'Prix Vente': number;
+      'Origine Article': string;
     }
 
     const data: ArticleExport[] = this.filteredArticles.map(article => ({
@@ -567,7 +572,8 @@ export class ArticleManagerComponent implements OnInit {
       Indice: article.indice_name,
       Design: article.design_name,
       'Prix Achat': article.prix_achat,
-      'Prix Vente': article.prix_vente
+      'Prix Vente': article.prix_vente,
+      'Origine Article': article.origineArticle
     }));
 
     // Create CSV content manually
@@ -658,11 +664,12 @@ export class ArticleManagerComponent implements OnInit {
       article.indice_name || '',
       article.design_name || '',
       article.prix_achat || 0,
-      article.prix_vente || 0
+      article.prix_vente || 0,
+      article.origineArticle || 'stock'
     ]);
 
     autoTable(doc, {
-      head: [['Code', 'Libelle', 'Diametre', 'Foyer', 'Indice', 'Design', 'Prix Achat', 'Prix Vente']],
+      head: [['Code', 'Libelle', 'Diametre', 'Foyer', 'Indice', 'Design', 'Prix Achat', 'Prix Vente', 'Origine Article']],
       body: data,
       startY: 25,
       theme: 'grid',

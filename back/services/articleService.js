@@ -7,14 +7,14 @@ const createArticle = async (article) => {
             code, libelle, diametre, foyer_id, indice_id, design_id, 
             couleur_photo_id, traitement_id, prix_achat, tva, prix_vente, 
             code_a_barre, expiration, fournisseur_id, typeArticle_id, 
-            article_subfamily_id, type_stock
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            article_subfamily_id, type_stock, origineArticle
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
             article.prix_achat, article.tva, article.prix_vente, article.code_a_barre, 
             article.expiration, article.fournisseur_id, article.typeArticle_id, 
-            article.article_subfamily_id, article.type_stock
+            article.article_subfamily_id, article.type_stock, article.origineArticle
         ]
     );
     return result.insertId;
@@ -72,14 +72,14 @@ const updateArticle = async (id, article) => {
             design_id = ?, couleur_photo_id = ?, traitement_id = ?, 
             prix_achat = ?, tva = ?, prix_vente = ?, code_a_barre = ?, 
             expiration = ?, fournisseur_id = ?, typeArticle_id = ?, 
-            article_subfamily_id = ?, type_stock = ?
+            article_subfamily_id = ?, type_stock = ?, origineArticle = ?
         WHERE id = ?`,
         [
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
             article.prix_achat, article.tva, article.prix_vente, article.code_a_barre, 
             article.expiration, article.fournisseur_id, article.typeArticle_id, 
-            article.article_subfamily_id, article.type_stock, id
+            article.article_subfamily_id, article.type_stock, article.origineArticle, id
         ]
     );
 };

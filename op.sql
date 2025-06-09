@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS `article` (
   `fournisseur_id` varchar(100) DEFAULT NULL,
   `typeArticle_id` int DEFAULT NULL,
   `article_subfamily_id` int DEFAULT NULL,
+  `type_stock` varchar(50) DEFAULT NULL,
+  `origineArticle` enum('stock','fabrication') NOT NULL DEFAULT 'stock',
   PRIMARY KEY (`id`),
   KEY `foyer_id` (`foyer_id`),
   KEY `indice_id` (`indice_id`),

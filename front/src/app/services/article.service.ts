@@ -22,6 +22,7 @@ export interface Article {
   typeArticle_id: number;
   article_subfamily_id?: number;
   type_stock: string;
+  origineArticle: 'stock' | 'fabrication';
   // Display names from joins
   foyer_name?: string;
   indice_name?: string;

@@ -122,7 +122,7 @@
                 <button class="delete-btn" (click)="deleteArticle(article.id!)">
                   <span class="material-icons">delete</span>
                 </button>
-                <button class="stock-btn" (click)="openStockDialog(article)">
+                <button *ngIf="article.origineArticle === 'stock'" class="stock-btn" (click)="openStockDialog(article)">
                   <span class="material-icons">inventory_2</span>
                 </button>
               </td>

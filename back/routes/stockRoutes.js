@@ -14,6 +14,12 @@ router.get('/matching', (req, res, next) => {
     next();
 }, stockController.getMatchingProducts);
 
+// Get matching products based on sphere and addition
+router.get('/matching-by-addition', (req, res, next) => {
+    console.log('Matching by addition route hit with query:', req.query);
+    next();
+}, stockController.getMatchingProductsBySphereAndAddition);
+
 // Stock Routes
 router.get('/all', stockController.getAllStockWithArticles);
 router.post('/', stockController.createStock);

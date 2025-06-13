@@ -23,7 +23,7 @@ const createOrder = async (orderData) => {
     client_id, first_name, last_name, phone, email,
     od_sphere, od_cylinder, od_axe, od_addition,
     og_sphere, og_cylinder, og_axe, og_addition,
-    supplement, traitement, produit,
+    typeCommande, origineArticle, produit, typeCorrection,
     price, shipping_type, delivery_time, selected_file
   } = orderData;
 
@@ -32,14 +32,14 @@ const createOrder = async (orderData) => {
             client_id, first_name, last_name, phone, email,
             od_sphere, od_cylinder, od_axe, od_addition,
             og_sphere, og_cylinder, og_axe, og_addition,
-            supplement, traitement, produit,
+            typeCommande, origineArticle, produit, typeCorrection
             price, shipping_type, delivery_time, selected_file
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       client_id, first_name, last_name, phone, email,
       od_sphere, od_cylinder, od_axe, od_addition,
       og_sphere, og_cylinder, og_axe, og_addition,
-      supplement, traitement, produit,
+      typeCommande, origineArticle, produit, typeCorrection,
       price, shipping_type, delivery_time, selected_file
     ]
   );
@@ -104,7 +104,7 @@ class OrderService {
     try {
       const {
         client_id, od, og, lastName, firstName, phone, email,
-        supplement, traitement, produit, price,
+        typeCommande, origineArticle, produit, price, typeCorrection,
         shippingType, deliveryTime
       } = orderData;
       
@@ -113,14 +113,14 @@ class OrderService {
           client_id, od_sphere, od_cylinder, od_axe, od_addition,
           og_sphere, og_cylinder, og_axe, og_addition,
           last_name, first_name, phone, email,
-          supplement, traitement, produit, price,
+          typeCommande, origineArticle, produit, price, typeCorrection,
           shipping_type, delivery_time, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
         [
           client_id, od.sphere, od.cylinder, od.axe, od.addition,
           og.sphere, og.cylinder, og.axe, og.addition,
           lastName, firstName, phone, email,
-          supplement, traitement, produit, price,
+          typeCommande, origineArticle, produit, price, typeCorrection,
           shippingType, deliveryTime
         ]
       );

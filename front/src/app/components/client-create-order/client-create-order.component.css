@@ -165,11 +165,8 @@
 .supplement-option.precal input[type="radio"] {
   accent-color: #a21caf;
 }
-.supplement-option.rx input[type="radio"] {
+.supplement-option.non-precal input[type="radio"] {
   accent-color: #2563eb;
-}
-.supplement-option.simple input[type="radio"] {
-  accent-color: #16a34a;
 }
 .supplement-option span {
   font-weight: 600;
@@ -185,11 +182,8 @@
 .supplement-option.precal input[type="radio"]:checked + span {
   color: #a21caf;
 }
-.supplement-option.rx input[type="radio"]:checked + span {
+.supplement-option.non-precal input[type="radio"]:checked + span {
   color: #2563eb;
-}
-.supplement-option.simple input[type="radio"]:checked + span {
-  color: #16a34a;
 }
 
 /* Traitement */
@@ -319,8 +313,7 @@
 
 /* Remove color change on supplement label selection */
 .supplement-option.precal input[type="radio"]:checked + span,
-.supplement-option.rx input[type="radio"]:checked + span,
-.supplement-option.simple input[type="radio"]:checked + span {
+.supplement-option.non-precal input[type="radio"]:checked + span {
   color: inherit;
   text-decoration: underline;
 }
@@ -569,4 +562,62 @@
     margin: 0;
     width: 100%;
   }
+}
+
+/* Type de correction */
+.type-correction-select {
+  margin-top: 16px;
+}
+
+.type-correction-select label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.type-correction-select select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #e0e7ef;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: border-color 0.2s;
+}
+
+.type-correction-select select:focus {
+  outline: none;
+  border-color: #2953f3;
+  box-shadow: 0 0 0 3px rgba(41, 83, 243, 0.1);
+}
+
+/* Origine article */
+.origine-article-select {
+  margin-top: 16px;
+}
+
+.origine-article-select label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.origine-article-select select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #e0e7ef;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: border-color 0.2s;
+}
+
+.origine-article-select select:focus {
+  outline: none;
+  border-color: #2953f3;
+  box-shadow: 0 0 0 3px rgba(41, 83, 243, 0.1);
 } 

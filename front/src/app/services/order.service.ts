@@ -34,6 +34,17 @@ export class OrderService {
     return this.http.get(`${environment.apiUrl}/stock/matching`, { params });
   }
 
+  getMatchingProductsBySphereAndAddition(sphere: string, addition: string): Observable<any> {
+    let params = new HttpParams()
+      .set('sphere', sphere)
+      .set('addition', addition);
+
+    console.log('Making request to:', `${environment.apiUrl}/stock/matching-by-addition`);
+    console.log('With params:', { sphere, addition });
+
+    return this.http.get(`${environment.apiUrl}/stock/matching-by-addition`, { params });
+  }
+
   getStockById(id: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}/stock/${id}`);
   }

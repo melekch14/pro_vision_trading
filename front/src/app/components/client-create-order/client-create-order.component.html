@@ -58,50 +58,55 @@
     </div>
   </div>
 
-  <!-- Step 3: Suppléments -->
+  <!-- Step 3: Type de commande -->
   <div class="step-card step-3">
     <div class="step-header">
       <span class="step-number">3</span>
-      <span class="step-title">Suppléments</span>
+      <span class="step-title">Type de commande</span>
     </div>
     <div class="supplements-options">
-      <label class="supplement-option precal">
-        <input type="radio" name="supplement" value="precal" [(ngModel)]="order.supplement" (change)="onSupplementChange()">
-        <span>Précal</span>
-        <small>Calcul de précision</small>
-      </label>
-      <label class="supplement-option rx">
-        <input type="radio" name="supplement" value="rx" [(ngModel)]="order.supplement" (change)="onSupplementChange()">
-        <span>RX</span>
-        <small>Prescription standard</small>
-      </label>
-      <label class="supplement-option simple">
-        <input type="radio" name="supplement" value="simple" [(ngModel)]="order.supplement" (change)="onSupplementChange()">
-        <span>Simple</span>
-        <small>Configuration basique</small>
+      <label *ngFor="let type of typeCommandes" class="supplement-option" [class.precal]="type.value === 'precal'" [class.non-precal]="type.value === 'non_precal'">
+        <input type="radio" name="typeCommande" [value]="type.value" [(ngModel)]="order.typeCommande" (change)="onTypeCommandeChange()">
+        <span>{{ type.label }}</span>
+        <small>{{ type.description }}</small>
       </label>
     </div>
   </div>
 
-  <!-- Step 4: Traitement -->
+  <!-- Step 4: Type de correction -->
   <div class="step-card step-4">
     <div class="step-header">
       <span class="step-number">4</span>
-      <span class="step-title">Traitement</span>
+      <span class="step-title">Type de correction</span>
     </div>
-    <div class="traitement-select">
-      <label>Sélectionner un traitement</label>
-      <select [(ngModel)]="order.traitement" (change)="onTraitementChange()">
-        <option value="">Choisir un traitement...</option>
-        <option *ngFor="let t of traitements" [value]="t">{{ t }}</option>
+    <div class="type-correction-select">
+      <label>Sélectionner un type de correction</label>
+      <select [(ngModel)]="order.typeCorrection" (change)="onTypeCorrectionChange()">
+        <option value="">Choisir un type de correction...</option>
+        <option *ngFor="let type of typeCorrections" [value]="type.value">{{ type.label }}</option>
       </select>
     </div>
   </div>
 
-  <!-- Step 5: Produit -->
+  <!-- Step 5: Origine article -->
   <div class="step-card step-5">
     <div class="step-header">
       <span class="step-number">5</span>
+      <span class="step-title">Origine article</span>
+    </div>
+    <div class="origine-article-select">
+      <label>Sélectionner une origine</label>
+      <select [(ngModel)]="order.origineArticle" (change)="updatePrice()">
+        <option value="">Choisir une origine...</option>
+        <option *ngFor="let origine of origineArticles" [value]="origine.value">{{ origine.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Step 6: Produit -->
+  <div class="step-card step-6">
+    <div class="step-header">
+      <span class="step-number">6</span>
       <span class="step-title">Produit</span>
     </div>
     <div class="produit-select">
@@ -116,12 +121,12 @@
   </div>
 
   <!-- Précal File Upload (conditional) -->
-  <div class="step-card precal-file" *ngIf="order.supplement === 'precal'">
+  <div class="step-card precal-file" *ngIf="order.typeCommande === 'precal'">
     <div class="step-header orange">
       <span class="step-title">Fichier Précal Requis</span>
     </div>
     <div class="precal-info">
-      <p>Pour le supplément Précal, veuillez d'abord télécharger le template et le remplir avant de le téléverser.</p>
+      <p>Pour le type de commande Précal, veuillez d'abord télécharger le template et le remplir avant de le téléverser.</p>
       <a class="download-template" href="/assets/precal-template.docx" download>Télécharger le Template Précal</a>
     </div>
     <div class="file-upload">
@@ -131,10 +136,10 @@
     </div>
   </div>
 
-  <!-- Step 6: Prix et Délais -->
-  <div class="step-card step-6">
+  <!-- Step 7: Prix et Délais -->
+  <div class="step-card step-7">
     <div class="step-header">
-      <span class="step-number">6</span>
+      <span class="step-number">7</span>
       <span class="step-title">Prix et Délais</span>
     </div>
     <div class="prix-delais-content">
@@ -170,7 +175,7 @@
       </div>
     </div>
   </div>
-  <!-- End Step 6 -->
+  <!-- End Step 7 -->
 
   <!-- Submit Button -->
   <div class="submit-section">

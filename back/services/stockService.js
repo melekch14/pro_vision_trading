@@ -28,15 +28,15 @@ const getStockByArticleId = async (articleId) => {
 
 // Update stock entry
 const updateStock = async (id, stockData) => {
-    const { sphere, cylindre, addition, quantite, type_stock } = stockData;
-    console.log('Updating stock with data:', stockData);
+    const { article_id, sphere, cylindre, addition, quantite, type_stock } = stockData;
     await db.query(
-        'UPDATE stock SET sphere = ?, cylindre = ?, addition = ?, quantite = ? WHERE id = ?',
+        'UPDATE stock SET article_id = ?, sphere = ?, cylindre = ?, addition = ?, quantite = ? WHERE id = ?',
         [
-            sphere, 
-            type_stock === 'cylindre' ? cylindre : null, 
-            type_stock === 'addition' ? addition : null, 
-            quantite, 
+            article_id,
+            sphere,
+            type_stock === 'cylindre' ? cylindre : null,
+            type_stock === 'addition' ? addition : null,
+            quantite,
             id
         ]
     );
@@ -58,18 +58,16 @@ const getAllStockWithArticles = async () => {
     const [rows] = await db.query(`
         SELECT 
             s.*,
-            a.code as article_code,
             a.libelle as article_libelle,
-            a.type_stock,
+            a.code as article_code,
             sf.name as subfamily_name,
             sf.code as subfamily_code,
-            f.code as family_code,
-            s.addition
+            f.code as family_code
         FROM stock s
         JOIN article a ON s.article_id = a.id
         JOIN article_subfamilies sf ON a.article_subfamily_id = sf.id
         JOIN article_families f ON sf.family_id = f.id
-        ORDER BY a.code, s.cylindre, s.sphere
+        ORDER BY a.libelle
     `);
     return rows;
 };
@@ -112,6 +110,44 @@ const getMatchingProducts = async (sphere, cylinder) => {
     }
 };
 
+// Get matching products based on sphere and addition
+const getMatchingProductsBySphereAndAddition = async (sphere, addition) => {
+    try {
+        console.log('Searching for products with sphere:', sphere, 'and addition:', addition);
+        
+        const [rows] = await db.query(`
+            SELECT 
+                s.id,
+                a.libelle as article_libelle,
+                s.sphere,
+                s.cylindre as cylinder,
+                a.code as article_code,
+                a.type_stock,
+                sf.name as subfamily_name,
+                sf.code as subfamily_code,
+                f.code as family_code,
+                s.addition
+            FROM stock s
+            JOIN article a ON s.article_id = a.id
+            JOIN article_subfamilies sf ON a.article_subfamily_id = sf.id
+            JOIN article_families f ON sf.family_id = f.id
+            WHERE s.sphere = ? AND s.addition = ?
+            ORDER BY a.libelle
+        `, [sphere, addition]);
+
+        console.log('Query results:', rows);
+        
+        if (rows.length === 0) {
+            console.log('No products found matching the criteria');
+        }
+        
+        return rows;
+    } catch (error) {
+        console.error('Error in getMatchingProductsBySphereAndAddition:', error);
+        throw new Error(`Error fetching matching products: ${error.message}`);
+    }
+};
+
 module.exports = {
     createStock,
     getStockByArticleId,
@@ -119,5 +155,6 @@ module.exports = {
     deleteStock,
     getStockById,
     getAllStockWithArticles,
-    getMatchingProducts
+    getMatchingProducts,
+    getMatchingProductsBySphereAndAddition
 }; 

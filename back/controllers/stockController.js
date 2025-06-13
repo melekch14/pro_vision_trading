@@ -89,4 +89,32 @@ exports.getMatchingProducts = async (req, res) => {
         console.error('Error in getMatchingProducts controller:', error);
         res.status(500).json({ message: error.message });
     }
+};
+
+// Get matching products based on sphere and addition
+exports.getMatchingProductsBySphereAndAddition = async (req, res) => {
+    try {
+        console.log('Full request query:', req.query);
+        console.log('Request parameters:', {
+            sphere: req.query.sphere,
+            addition: req.query.addition,
+            rawQuery: req.originalUrl
+        });
+
+        const { sphere, addition } = req.query;
+        
+        if (!sphere || !addition) {
+            return res.status(400).json({ 
+                message: 'Both sphere and addition parameters are required' 
+            });
+        }
+
+        const products = await stockService.getMatchingProductsBySphereAndAddition(sphere, addition);
+        
+        // Return empty array if no products found, instead of error
+        res.json(products || []);
+    } catch (error) {
+        console.error('Error in getMatchingProductsBySphereAndAddition controller:', error);
+        res.status(500).json({ message: error.message });
+    }
 }; 

@@ -18,17 +18,26 @@ export class ClientCreateOrderComponent {
     firstName: '',
     phone: '',
     email: '',
-    supplement: '',
-    traitement: '',
+    typeCommande: '',
+    origineArticle: '',
+    typeCorrection: '',
     produit: ''
   };
 
-  traitements = [
-    'Antireflet',
-    'Durci',
-    'Photochromique',
-    'Polarisant',
-    'Blue Cut'
+  typeCommandes = [
+    { value: 'precal', label: 'Précal', description: 'Calcul de précision' },
+    { value: 'non_precal', label: 'Non Précal', description: 'Configuration standard' }
+  ];
+
+  origineArticles = [
+    { value: 'stock', label: 'Stock' },
+    { value: 'fabrication', label: 'Fabrication' }
+  ];
+
+  typeCorrections = [
+    { value: 'loin', label: 'Loin' },
+    { value: 'pres', label: 'Près' },
+    { value: 'loin_pres', label: 'Loin-Près' }
   ];
 
   produits: any[] = [];
@@ -62,28 +71,58 @@ export class ClientCreateOrderComponent {
     );
   }
 
-  onTraitementChange() {
-    if (this.areAllCorrectionsFilled() && this.order.traitement) {
-      // Get the values from OD (or OG if that's what we're using)
-      const sphere = this.order.od.sphere;
-      const cylinder = this.order.od.cylinder;
-
-      // Only make API call if we have actual values
-      if (sphere && cylinder) {
-        this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
-          next: (products) => {
-            this.filteredProducts = products;
-            console.log('Matching products:', products);
-          },
-          error: (error) => {
-            console.error('Error fetching matching products:', error);
-            this.filteredProducts = [];
-          }
-        });
+  onTypeCorrectionChange() {
+    if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
+      const { sphere, cylinder, addition } = this.order.od;
+      
+      // Apply different filtering logic based on type de correction
+      switch (this.order.typeCorrection) {
+        case 'loin':
+          // Filter based on sphere and cylinder
+          this.filterProductsBySphereAndCylinder(sphere, cylinder);
+          break;
+        case 'pres':
+          // Filter based on (sphere + addition) and cylinder
+          const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
+          this.filterProductsBySphereAndCylinder(spherePlusAddition.toString(), cylinder);
+          break;
+        case 'loin_pres':
+          // Filter based on sphere and addition
+          this.filterProductsBySphereAndAddition(sphere, addition);
+          break;
       }
     } else {
-      // If not all corrections are filled or no traitement selected, show empty list
       this.filteredProducts = [];
+    }
+  }
+
+  filterProductsBySphereAndCylinder(sphere: string, cylinder: string) {
+    if (sphere && cylinder) {
+      this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
+        next: (products) => {
+          this.filteredProducts = products;
+          console.log('Matching products:', products);
+        },
+        error: (error) => {
+          console.error('Error fetching matching products:', error);
+          this.filteredProducts = [];
+        }
+      });
+    }
+  }
+
+  filterProductsBySphereAndAddition(sphere: string, addition: string) {
+    if (sphere && addition) {
+      this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
+        next: (products) => {
+          this.filteredProducts = products;
+          console.log('Matching products:', products);
+        },
+        error: (error) => {
+          console.error('Error fetching matching products:', error);
+          this.filteredProducts = [];
+        }
+      });
     }
   }
 
@@ -134,27 +173,10 @@ export class ClientCreateOrderComponent {
       // Get the base price from the article's prix_vente
       const basePrice = this.selectedArticle.prix_vente || 0;
       
-      // Add traitement cost if applicable
+      // Add origine article cost if applicable
       let totalPrice = basePrice;
-      if (this.order.traitement) {
-        // Add treatment costs based on the selected treatment
-        switch (this.order.traitement) {
-          case 'Antireflet':
-            totalPrice += 30;
-            break;
-          case 'Durci':
-            totalPrice += 20;
-            break;
-          case 'Photochromique':
-            totalPrice += 50;
-            break;
-          case 'Polarisant':
-            totalPrice += 40;
-            break;
-          case 'Blue Cut':
-            totalPrice += 35;
-            break;
-        }
+      if (this.order.origineArticle === 'fabrication') {
+        totalPrice += 50; // Additional cost for fabrication
       }
 
       this.price = totalPrice;
@@ -191,9 +213,9 @@ export class ClientCreateOrderComponent {
     this.order.og[field] = this.order.od[field];
   }
 
-  onSupplementChange() {
-    // Reset file name if supplement changes
-    if (this.order.supplement !== 'precal') {
+  onTypeCommandeChange() {
+    // Reset file name if type de commande changes
+    if (this.order.typeCommande !== 'precal') {
       this.selectedFileName = '';
     }
   }
@@ -225,8 +247,8 @@ export class ClientCreateOrderComponent {
       // First create the order
       const orderResponse = await this.orderService.createOrder(orderData).toPromise();
       console.log('Order response:', orderResponse);
-      // If there's a file and it's a precal supplement, upload it
-      if (this.selectedFile && this.order.supplement === 'precal') {
+      // If there's a file and it's a precal type de commande, upload it
+      if (this.selectedFile && this.order.typeCommande === 'precal') {
         const orderId = orderResponse.id; // Assuming the backend returns the order ID
         await this.orderService.uploadFile(this.selectedFile, orderId).toPromise();
       }

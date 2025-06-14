@@ -97,21 +97,35 @@ export class ClientCreateOrderComponent {
   }
 
   onOrigineArticleChange() {
-    // Reapply the current correction filter with the new origineArticle
-    if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
-      const { sphere, cylinder, addition } = this.order.od;
-      
-      switch (this.order.typeCorrection) {
-        case 'loin':
-          this.filterProductsBySphereAndCylinder(sphere, cylinder);
-          break;
-        case 'pres':
-          const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
-          this.filterProductsBySphereAndCylinder(spherePlusAddition.toString(), cylinder);
-          break;
-        case 'loin_pres':
-          this.filterProductsBySphereAndAddition(sphere, addition);
-          break;
+    if (this.order.origineArticle === 'fabrication') {
+      // Get all fabrication products without filtering by corrections
+      this.orderService.getFabricationProducts().subscribe({
+        next: (products) => {
+          this.filteredProducts = products;
+          console.log('Fabrication products:', this.filteredProducts);
+        },
+        error: (error) => {
+          console.error('Error fetching fabrication products:', error);
+          this.filteredProducts = [];
+        }
+      });
+    } else {
+      // Reapply the current correction filter with the new origineArticle
+      if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
+        const { sphere, cylinder, addition } = this.order.od;
+        
+        switch (this.order.typeCorrection) {
+          case 'loin':
+            this.filterProductsBySphereAndCylinder(sphere, cylinder);
+            break;
+          case 'pres':
+            const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
+            this.filterProductsBySphereAndCylinder(spherePlusAddition.toString(), cylinder);
+            break;
+          case 'loin_pres':
+            this.filterProductsBySphereAndAddition(sphere, addition);
+            break;
+        }
       }
     }
   }
@@ -157,6 +171,9 @@ export class ClientCreateOrderComponent {
   }
 
   getProductDisplayName(product: any): string {
+    if (product.origineArticle === 'fabrication') {
+        return `${product.article_code} - ${product.article_libelle}`;
+    }
     const correctionValue = product.cylinder !== null ? product.cylinder : product.addition;
     return `${product.article_libelle} (${correctionValue}) - ${product.sphere}`;
   }

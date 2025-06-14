@@ -64,4 +64,8 @@ export class OrderService {
   getOrderById(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}`);
   }
+
+  getFabricationProducts(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/stock/fabrication`);
+  }
 } 

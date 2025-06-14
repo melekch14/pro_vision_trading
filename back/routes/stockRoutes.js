@@ -20,6 +20,12 @@ router.get('/matching-by-addition', (req, res, next) => {
     next();
 }, stockController.getMatchingProductsBySphereAndAddition);
 
+// Get all fabrication products
+router.get('/fabrication', (req, res, next) => {
+    console.log('Fabrication products route hit');
+    next();
+}, stockController.getFabricationProducts);
+
 // Stock Routes
 router.get('/all', stockController.getAllStockWithArticles);
 router.post('/', stockController.createStock);

@@ -117,4 +117,16 @@ exports.getMatchingProductsBySphereAndAddition = async (req, res) => {
         console.error('Error in getMatchingProductsBySphereAndAddition controller:', error);
         res.status(500).json({ message: error.message });
     }
+};
+
+// Get all fabrication products
+exports.getFabricationProducts = async (req, res) => {
+    try {
+        console.log('Fetching all fabrication products');
+        const products = await stockService.getFabricationProducts();
+        res.json(products || []);
+    } catch (error) {
+        console.error('Error in getFabricationProducts controller:', error);
+        res.status(500).json({ message: error.message });
+    }
 }; 

@@ -150,6 +150,31 @@ const getMatchingProductsBySphereAndAddition = async (sphere, addition) => {
     }
 };
 
+// Get all fabrication products
+const getFabricationProducts = async () => {
+    try {
+        console.log('Fetching all fabrication products');
+        
+        const [rows] = await db.query(`
+            SELECT 
+                id,
+                libelle as article_libelle,
+                code as article_code,
+                type_stock,
+                origineArticle
+            FROM article
+            WHERE origineArticle = 'fabrication'
+            ORDER BY libelle
+        `);
+
+        console.log('Fabrication products found:', rows.length);
+        return rows;
+    } catch (error) {
+        console.error('Error in getFabricationProducts:', error);
+        throw new Error(`Error fetching fabrication products: ${error.message}`);
+    }
+};
+
 module.exports = {
     createStock,
     getStockByArticleId,
@@ -158,5 +183,6 @@ module.exports = {
     getStockById,
     getAllStockWithArticles,
     getMatchingProducts,
-    getMatchingProductsBySphereAndAddition
+    getMatchingProductsBySphereAndAddition,
+    getFabricationProducts
 }; 

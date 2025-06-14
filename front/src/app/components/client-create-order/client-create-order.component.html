@@ -96,7 +96,7 @@
     </div>
     <div class="origine-article-select">
       <label>Sélectionner une origine</label>
-      <select [(ngModel)]="order.origineArticle" (change)="updatePrice()">
+      <select [(ngModel)]="order.origineArticle" (change)="onOrigineArticleChange(); updatePrice()">
         <option value="">Choisir une origine...</option>
         <option *ngFor="let origine of origineArticles" [value]="origine.value">{{ origine.label }}</option>
       </select>

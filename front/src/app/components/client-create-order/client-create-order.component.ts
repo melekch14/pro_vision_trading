@@ -96,12 +96,33 @@ export class ClientCreateOrderComponent {
     }
   }
 
+  onOrigineArticleChange() {
+    // Reapply the current correction filter with the new origineArticle
+    if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
+      const { sphere, cylinder, addition } = this.order.od;
+      
+      switch (this.order.typeCorrection) {
+        case 'loin':
+          this.filterProductsBySphereAndCylinder(sphere, cylinder);
+          break;
+        case 'pres':
+          const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
+          this.filterProductsBySphereAndCylinder(spherePlusAddition.toString(), cylinder);
+          break;
+        case 'loin_pres':
+          this.filterProductsBySphereAndAddition(sphere, addition);
+          break;
+      }
+    }
+  }
+
   filterProductsBySphereAndCylinder(sphere: string, cylinder: string) {
     if (sphere && cylinder) {
       this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
         next: (products) => {
-          this.filteredProducts = products;
-          console.log('Matching products:', products);
+          // Filter products based on origineArticle if selected
+          this.filteredProducts = this.filterByOrigineArticle(products);
+          console.log('Matching products:', this.filteredProducts);
         },
         error: (error) => {
           console.error('Error fetching matching products:', error);
@@ -115,8 +136,9 @@ export class ClientCreateOrderComponent {
     if (sphere && addition) {
       this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
         next: (products) => {
-          this.filteredProducts = products;
-          console.log('Matching products:', products);
+          // Filter products based on origineArticle if selected
+          this.filteredProducts = this.filterByOrigineArticle(products);
+          console.log('Matching products:', this.filteredProducts);
         },
         error: (error) => {
           console.error('Error fetching matching products:', error);
@@ -124,6 +146,14 @@ export class ClientCreateOrderComponent {
         }
       });
     }
+  }
+
+  filterByOrigineArticle(products: any[]): any[] {
+    if (!this.order.origineArticle) {
+      return products;
+    }
+    products.filter(product => console.log(product));
+    return products.filter(product => product.origineArticle === this.order.origineArticle);
   }
 
   getProductDisplayName(product: any): string {

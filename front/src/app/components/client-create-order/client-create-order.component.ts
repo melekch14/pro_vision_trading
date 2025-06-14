@@ -157,7 +157,8 @@ export class ClientCreateOrderComponent {
   }
 
   getProductDisplayName(product: any): string {
-    return `${product.article_libelle} (${product.cylinder}) - ${product.sphere}`;
+    const correctionValue = product.cylinder !== null ? product.cylinder : product.addition;
+    return `${product.article_libelle} (${correctionValue}) - ${product.sphere}`;
   }
 
   onProductSelect() {

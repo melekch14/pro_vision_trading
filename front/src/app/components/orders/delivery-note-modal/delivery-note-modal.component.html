@@ -62,8 +62,8 @@
           <td>{{ order.order_id }}</td>
           <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
           <td>{{ order.article_libelle || 'Chargement...' }}</td>
-          <td>{{ order.typeCommande }}</td>
-          <td>{{ order.typeCorrection || 'N/A' }}</td>
+          <td>{{ formatValue(order.typeCommande) }}</td>
+          <td>{{ formatValue(order.typeCorrection) }}</td>
           <td>{{ order.price | currency:'EUR':'symbol':'1.2-2' }}</td>
         </tr>
         <tr class="total-row">

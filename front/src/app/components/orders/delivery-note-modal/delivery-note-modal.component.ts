@@ -49,6 +49,11 @@ export class DeliveryNoteModalComponent implements OnInit {
     this.deliveryNoteNumber = this.generateDeliveryNoteNumber();
   }
 
+  formatValue(value: string): string {
+    if (!value) return 'N/A';
+    return value.replace(/_/g, ' ');
+  }
+
   ngOnInit(): void {
     if (this.data.orders && this.data.orders.length > 0) {
       console.log('Initial Orders Data:', this.data.orders);

@@ -7,19 +7,27 @@
   </div>
 
   <div class="modal-content">
-    <div class="cards-container">
-      <div class="order-card" *ngFor="let order of orders">
-        <div class="card-fournisseur-vertical">{{ order['fournisseur_code'] || order.fournisseur_id || 'N/A' }}</div>
+    <div *ngIf="loading" class="loading">
+      Loading cards...
+    </div>
+
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error" class="cards-container">
+      <div *ngFor="let order of orders" class="order-card">
+        <div class="card-fournisseur-vertical">{{ order.fournisseur_code || order.fournisseur_id || 'N/A' }}</div>
         <div class="card-row">
           <div class="verre-block">
             <span class="verre-label">Opticien:</span>
-            <span class="product">{{ order['raison_social'] | uppercase }}</span>
+            <span class="product">{{ (order.raison_social || 'Opticien Name') | uppercase }}</span>
           </div>
         </div>
         <div class="card-row">
           <div class="verre-block">
             <span class="verre-label">Porteur:</span>
-            <span class="product bold-italic">{{ order.first_name + ' ' + order.last_name | uppercase }}</span>
+            <span class="product bold-italic">{{ (order.first_name + ' ' + order.last_name) | uppercase }}</span>
           </div>
         </div>
         <div class="card-row">
@@ -50,14 +58,14 @@
                 <td>{{ getDiametre() }}</td>
                 <td>{{ order.od_sphere || '0.00' }}</td>
                 <td>{{ order.od_cylinder || '0.00' }}</td>
-                <td>{{ order['od_axe'] || '0' }}</td>
+                <td>{{ order.od_axe || '0' }}</td>
                 <td>{{ order.od_addition || '0.00' }}</td>
               </tr>
               <tr>
                 <td>{{ getDiametre() }}</td>
                 <td>{{ order.og_sphere || '0.00' }}</td>
                 <td>{{ order.og_cylinder || '0.00' }}</td>
-                <td>{{ order['og_axe'] || '0' }}</td>
+                <td>{{ order.og_axe || '0' }}</td>
                 <td>{{ order.og_addition || '0.00' }}</td>
               </tr>
             </tbody>
@@ -69,9 +77,9 @@
   </div>
 
   <div class="modal-footer">
-    <button class="print-btn" (click)="printCards()">
-      <mat-icon>print</mat-icon>
-      Print Cards
+    <button class="export-btn" (click)="exportToPDF()" [disabled]="loading || !orders.length">
+      <mat-icon>download</mat-icon>
+      Export to PDF
     </button>
     <button class="close-btn" (click)="close()">Close</button>
   </div>

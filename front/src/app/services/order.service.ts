@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Order } from '../models/order.model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +51,7 @@ export class OrderService {
   }
 
   getArticleById(id: string): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/articles/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/articles/${id}`);
   }
 
   getClientOrders(clientId: string): Observable<any> {
@@ -61,11 +62,15 @@ export class OrderService {
     return this.http.get(`${this.apiUrl}`);
   }
 
-  getOrderById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+  getOrderById(id: string): Observable<Order> {
+    return this.http.get<Order>(`${this.apiUrl}/${id}`);
   }
 
   getFabricationProducts(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/stock/fabrication`);
+  }
+
+  getOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(this.apiUrl);
   }
 } 

@@ -250,10 +250,12 @@ export class OrdersComponent implements OnInit {
 
     const dialogRef = this.dialog.open(PrintCardsModalComponent, {
       data: { orders: selectedOrders },
-      width: '100%',
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      panelClass: 'full-width-dialog'
+      width: '800px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      panelClass: 'print-cards-dialog',
+      disableClose: false,
+      autoFocus: true
     });
   }
 

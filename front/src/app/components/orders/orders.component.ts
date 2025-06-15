@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
 import { DeliveryNoteModalComponent } from './delivery-note-modal/delivery-note-modal.component';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Order {
   id: number;
@@ -38,6 +39,11 @@ export class OrdersComponent implements OnInit {
   selectedOrders: Set<number> = new Set();
   selectedClient: string | null = null;
   
+  // Pagination properties
+  pageSize: number = 10;
+  pageIndex: number = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 50];
+  
   // Filter states
   statusFilter: string = 'All';
   dateFilter: string = '';
@@ -48,9 +54,10 @@ export class OrdersComponent implements OnInit {
   
   // Table columns
   displayedColumns: string[] = [
-    'id',
+    'select',
+    'orderId',
+    'client',
     'orderDate',
-    'customer',
     'status',
     'price',
     'shipping',
@@ -95,7 +102,6 @@ export class OrdersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        // Refresh the orders list if the update was successful
         this.loadOrders();
       }
     });
@@ -104,14 +110,12 @@ export class OrdersComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.orders];
     
-    // Apply status filter
     if (this.statusFilter !== 'All') {
       filtered = filtered.filter(order => 
         order.status.toLowerCase() === this.statusFilter.toLowerCase()
       );
     }
     
-    // Apply date filter
     if (this.dateFilter) {
       const filterDate = new Date(this.dateFilter);
       filtered = filtered.filter(order => 
@@ -119,7 +123,6 @@ export class OrdersComponent implements OnInit {
       );
     }
     
-    // Apply search query
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(order =>
@@ -131,6 +134,7 @@ export class OrdersComponent implements OnInit {
     
     this.filteredOrders = filtered;
     this.filteredOrders.forEach(order => order['_selected'] = this.selectedOrders.has(order.id));
+    this.pageIndex = 0; // Reset to first page when filters change
   }
 
   resetFilters(): void {
@@ -138,6 +142,7 @@ export class OrdersComponent implements OnInit {
     this.dateFilter = '';
     this.searchQuery = '';
     this.filteredOrders = [...this.orders];
+    this.pageIndex = 0; // Reset to first page when filters are reset
   }
 
   getStatusClass(status: string): string {
@@ -157,7 +162,6 @@ export class OrdersComponent implements OnInit {
   }
 
   exportOrders(): void {
-    // Prepare CSV content
     const headers = 'Order ID,Customer,Date,Status,Total Amount,Shipping Type,Delivery Time\n';
     const rows = this.filteredOrders.map(order => {
       const date = new Date(order.order_datetime).toISOString().split('T')[0];
@@ -165,32 +169,26 @@ export class OrdersComponent implements OnInit {
     }).join('\n');
     
     const csvContent = headers + rows;
-    
-    // Create download link
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     
-    // Create temporary link and click it
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     
-    // Clean up
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
 
   toggleOrderSelection(order: Order): void {
-    // If no orders are selected, select this one and set the client
     if (this.selectedOrders.size === 0) {
       this.selectedOrders.add(order.id);
       this.selectedClient = order.raison_social;
       return;
     }
 
-    // If the clicked order is from a different client, clear selection and select only this one
     if (order.raison_social !== this.selectedClient) {
       this.selectedOrders.clear();
       this.selectedOrders.add(order.id);
@@ -198,7 +196,6 @@ export class OrdersComponent implements OnInit {
       return;
     }
 
-    // If the order is already selected, deselect it
     if (this.selectedOrders.has(order.id)) {
       this.selectedOrders.delete(order.id);
       if (this.selectedOrders.size === 0) {
@@ -207,7 +204,6 @@ export class OrdersComponent implements OnInit {
       return;
     }
 
-    // If the order is not selected and is from the same client, add it
     this.selectedOrders.add(order.id);
   }
 
@@ -246,12 +242,10 @@ export class OrdersComponent implements OnInit {
 
   onOrderCheckboxChange(order: Order, checked: boolean): void {
     if (checked) {
-      // If no orders are selected, or same client, add
       if (this.selectedOrders.size === 0 || order.raison_social === this.selectedClient) {
         this.selectedOrders.add(order.id);
         this.selectedClient = order.raison_social;
       } else {
-        // If different client, clear and select only this one
         this.selectedOrders.clear();
         this.selectedOrders.add(order.id);
         this.selectedClient = order.raison_social;
@@ -263,5 +257,17 @@ export class OrdersComponent implements OnInit {
         this.selectedClient = null;
       }
     }
+  }
+
+  // Add pagination event handler
+  onPageChange(event: PageEvent): void {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+  }
+
+  // Get current page data
+  getCurrentPageData(): Order[] {
+    const startIndex = this.pageIndex * this.pageSize;
+    return this.filteredOrders.slice(startIndex, startIndex + this.pageSize);
   }
 } 

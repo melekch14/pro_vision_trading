@@ -111,21 +111,32 @@
       </div>
     </div>
 
-    <!-- Additional Information -->
-    <div class="section">
-      <h3>Additional Information</h3>
+    <!-- Product Details -->
+    <div class="info-section">
+      <h3>Product Details</h3>
       <div class="info-grid">
         <div class="info-item">
-          <span class="label">Treatment:</span>
-          <span class="value">{{ data.traitement }}</span>
+          <label>Product:</label>
+          <span>{{ formatStockLibelle() }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Supplement:</span>
-          <span class="value">{{ data.supplement }}</span>
+          <label>Type de commande:</label>
+          <span>{{ formatText(data.typeCommande) }}</span>
+        </div>
+        <div class="info-item">
+          <label>Type de correction:</label>
+          <span>{{ formatText(data.typeCorrection) }}</span>
+        </div>
+        <div class="info-item">
+          <label>Origine article:</label>
+          <span>{{ formatText(data.origineArticle) }}</span>
         </div>
         <div class="info-item" *ngIf="data.selected_file">
-          <span class="label">Prescription File:</span>
-          <span class="value">{{ data.selected_file }}</span>
+          <label>File:</label>
+          <button class="download-btn" (click)="downloadFile()">
+            <mat-icon>download</mat-icon>
+            Download File
+          </button>
         </div>
       </div>
     </div>

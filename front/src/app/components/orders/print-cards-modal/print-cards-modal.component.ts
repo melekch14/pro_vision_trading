@@ -19,6 +19,7 @@ export class PrintCardsModalComponent implements OnInit {
   orders: Order[] = [];
   loading = true;
   error: string | null = null;
+  private articleDiameters: { [key: number]: string } = {};
 
   constructor(
     private dialogRef: MatDialogRef<PrintCardsModalComponent>,
@@ -38,16 +39,17 @@ export class PrintCardsModalComponent implements OnInit {
       this.loading = true;
       this.error = null;
 
-      // Load product details for each order
       for (const order of this.orders) {
-        if (order.article_id) {
+        if (order.produit) {
           try {
-            const product = await this.productService.getProduct(order.article_id).toPromise();
+            const product = await this.orderService.getArticleById(order.produit.toString()).toPromise();
             if (product) {
               order.article_libelle = product.libelle;
+              this.articleDiameters[order.produit] = product.diametre || 'NA';
             }
           } catch (error) {
             console.error(`Error loading product details for order ${order.order_id}:`, error);
+            this.articleDiameters[order.produit] = 'NA'; // Default diameter
           }
         }
       }
@@ -57,6 +59,14 @@ export class PrintCardsModalComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  getDiametre(order: Order): string {
+    console.log(order);
+    if (order.produit && this.articleDiameters[order.produit]) {
+      return this.articleDiameters[order.produit];
+    }
+    return 'NA'; // Default diameter if not found
   }
 
   close() {
@@ -198,14 +208,14 @@ export class PrintCardsModalComponent implements OnInit {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>65</td>
+                    <td>${this.getDiametre(order)}</td>
                     <td>${order.od_sphere || '0.00'}</td>
                     <td>${order.od_cylinder || '0.00'}</td>
                     <td>${order['od_axe'] || '0'}</td>
                     <td>${order.od_addition || '0.00'}</td>
                   </tr>
                   <tr>
-                    <td>65</td>
+                    <td>${this.getDiametre(order)}</td>
                     <td>${order.og_sphere || '0.00'}</td>
                     <td>${order.og_cylinder || '0.00'}</td>
                     <td>${order['og_axe'] || '0'}</td>
@@ -267,9 +277,5 @@ export class PrintCardsModalComponent implements OnInit {
       console.error('Error generating PDF:', error);
       this.error = 'Failed to generate PDF. Please try again.';
     }
-  }
-
-  getDiametre() {
-    return '65';
   }
 } 

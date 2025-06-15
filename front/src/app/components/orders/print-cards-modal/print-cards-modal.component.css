@@ -1,0 +1,284 @@
+.modal-container {
+  padding: 20px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.modal-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.order-card {
+  background: #fff;
+  border: 1.2px solid #bdbdbd;
+  border-radius: 6px;
+  width: 3.5in;  /* Standard business card width */
+  height: 2in;   /* Standard business card height */
+  padding: 18px;  /* Equal padding on all sides */
+  padding-left: 0px;
+  margin-top: 10px;
+  font-family: Arial, sans-serif;
+  color: #222;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  box-shadow: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  align-items: center;
+  text-align: center;
+}
+
+.card-fournisseur-vertical {
+  position: absolute;
+  top: 12px;
+  right: 6px;
+  height: 44px;
+  display: flex;
+  align-items: flex-start;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 10px;
+  font-weight: bold;
+  color: #222;
+  transform: rotate(180deg);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+
+.card-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 2px;
+  align-items: baseline;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+.verre-block {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.verre-label {
+  display: inline-block;
+  min-width: 60px;
+  max-width: 60px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.product {
+  flex: 1;
+  font-size: 11px;
+  color: #222;
+}
+
+.bold-italic {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.table-date-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.card-table {
+  width: 250px;
+  min-width: 0;
+  max-width: 300px;
+  border-collapse: collapse;
+  margin-top: 4px;
+  font-size: 10px;
+  text-align: center;
+  display: inline-table;
+}
+
+.card-table th,
+.card-table td {
+  border: none;
+  text-align: center;
+  padding: 0 3px;
+  font-size: 10px;
+  min-width: 18px;
+  max-width: 32px;
+}
+
+.card-table th {
+  font-weight: bold;
+}
+
+.card-date-vertical {
+  position: absolute;
+  top: 85px;
+  right: 6px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 10px;
+  font-weight: bold;
+  color: #222;
+  transform: rotate(180deg);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  margin-left: 0;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.print-btn,
+.close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.print-btn {
+  background-color: #1976d2;
+  color: white;
+}
+
+.close-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.print-btn:hover {
+  background-color: #1565c0;
+}
+
+.close-btn:hover {
+  background-color: #5a6268;
+}
+
+.print-btn mat-icon,
+.close-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+@media print {
+  @page {
+    size: 3.5in 2in;
+    margin: 0;
+  }
+
+  .modal-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .modal-header,
+  .modal-footer,
+  .close-button {
+    display: none !important;
+  }
+
+  .cards-container {
+    display: block;
+    position: relative;
+  }
+
+  .order-card {
+    position: relative;
+    width: 3.5in !important;
+    height: 2in !important;
+    padding: 18px !important;
+    padding-left: 0px !important;
+    margin: 0 !important;
+    border: 1.2px solid #bdbdbd !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-after: always;
+    page-break-before: always;
+    page-break-inside: avoid;
+    background: white !important;
+  }
+
+  .order-card:first-child {
+    page-break-before: avoid;
+  }
+
+  .order-card:last-child {
+    page-break-after: avoid;
+  }
+
+  .card-date-vertical {
+    right: 6px !important;
+  }
+
+  .card-fournisseur-vertical {
+    right: 6px !important;
+  }
+} 

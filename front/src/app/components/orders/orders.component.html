@@ -14,6 +14,12 @@
         <i class="material-icons">local_shipping</i>
         Générer BL
       </button>
+      <button class="print-cards-button" 
+              *ngIf="getSelectedOrdersCount() > 0"
+              (click)="openPrintCards()">
+        <i class="material-icons">print</i>
+        Print Cards
+      </button>
       <button class="export-button" (click)="exportOrders()">
         <i class="material-icons">file_download</i>
         Export to CSV

@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
 import { DeliveryNoteModalComponent } from './delivery-note-modal/delivery-note-modal.component';
+import { PrintCardsModalComponent } from './print-cards-modal/print-cards-modal.component';
 import { PageEvent } from '@angular/material/paginator';
 
 interface Order {
@@ -228,6 +229,26 @@ export class OrdersComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(DeliveryNoteModalComponent, {
+      data: { orders: selectedOrders },
+      width: '100%',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'full-width-dialog'
+    });
+  }
+
+  openPrintCards(): void {
+    const selectedOrders = this.orders.filter(order => 
+      order['_selected'] && 
+      (order['fournisseur_code'] || order['fournisseur_id']) && 
+      order.status
+    );
+    
+    if (selectedOrders.length === 0) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(PrintCardsModalComponent, {
       data: { orders: selectedOrders },
       width: '100%',
       maxWidth: '100vw',

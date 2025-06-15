@@ -79,7 +79,7 @@ export class PrintCardsModalComponent implements OnInit {
           height: 2in;
           padding: 30px;
           padding-left: 0px;
-          margin-top: 80px;
+          margin-top: 20px;
           font-family: Arial, sans-serif;
           color: #222;
           font-size: 11px;
@@ -91,22 +91,6 @@ export class PrintCardsModalComponent implements OnInit {
           overflow: hidden;
           align-items: center;
           text-align: center;
-        }
-        .card-fournisseur-vertical {
-          position: absolute;
-          top: 12px;
-          right: 2px;
-          height: 44px;
-          display: flex;
-          align-items: flex-start;
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          font-size: 10px;
-          font-weight: bold;
-          color: #222;
-          transform: rotate(180deg);
-          letter-spacing: 0.05em;
-          line-height: 1.1;
         }
         .card-row {
           display: flex;
@@ -168,57 +152,41 @@ export class PrintCardsModalComponent implements OnInit {
         .card-table th {
           font-weight: bold;
         }
-        .card-date-vertical {
-          position: absolute;
-          top: 85px;
-          right: 2px;
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          font-size: 10px;
-          font-weight: bold;
-          color: #222;
-          transform: rotate(180deg);
-          letter-spacing: 0.05em;
-          line-height: 1.1;
-          height: auto;
-          display: flex;
-          align-items: flex-start;
-          margin-left: 0;
-        }
       `;
 
       for (let i = 0; i < this.orders.length; i++) {
         const order = this.orders[i];
-        // Build the card HTML as in printCard()
+        const fournisseurText = String(order['fournisseur_code'] || order.fournisseur_id || 'N/A');
+        const dateText = order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString('fr-FR') : '';
+        // Build the card HTML for PDF (no vertical fields)
         const cardHtml = `
-          <div class="order-card">
-            <div class="card-fournisseur-vertical">${order['fournisseur_code'] || order.fournisseur_id || 'N/A'}</div>
-            <div class="card-row">
-              <div class="verre-block">
-                <span class="verre-label">Opticien:</span>
-                <span class="product">${(order['raison_social'] || 'Opticien Name').toUpperCase()}</span>
+          <div class=\"order-card\">
+            <div class=\"card-row\">
+              <div class=\"verre-block\">
+                <span class=\"verre-label\">Opticien:</span>
+                <span class=\"product\">${(order['raison_social'] || 'Opticien Name').toUpperCase()}</span>
               </div>
             </div>
-            <div class="card-row">
-              <div class="verre-block">
-                <span class="verre-label">Porteur:</span>
-                <span class="product bold-italic">${(order.first_name + ' ' + order.last_name).toUpperCase()}</span>
+            <div class=\"card-row\">
+              <div class=\"verre-block\">
+                <span class=\"verre-label\">Porteur:</span>
+                <span class=\"product bold-italic\">${(order.first_name + ' ' + order.last_name).toUpperCase()}</span>
               </div>
             </div>
-            <div class="card-row">
-              <div class="verre-block">
-                <span class="verre-label">verres:</span>
-                <span class="product">${order.article_libelle || 'Product Name'}</span>
+            <div class=\"card-row\">
+              <div class=\"verre-block\">
+                <span class=\"verre-label\">verres:</span>
+                <span class=\"product\">${order.article_libelle || 'Product Name'}</span>
               </div>
             </div>
-            <div class="card-row">
-              <div class="verre-block">
-                <span class="verre-label"></span>
-                <span class="product">${order.article_libelle || 'Product Name'}</span>
+            <div class=\"card-row\">
+              <div class=\"verre-block\">
+                <span class=\"verre-label\"></span>
+                <span class=\"product\">${order.article_libelle || 'Product Name'}</span>
               </div>
             </div>
-            <div class="table-date-row">
-              <table class="card-table">
+            <div class=\"table-date-row\">
+              <table class=\"card-table\">
                 <thead>
                   <tr>
                     <th>Ø</th>
@@ -245,7 +213,6 @@ export class PrintCardsModalComponent implements OnInit {
                   </tr>
                 </tbody>
               </table>
-              <div class="card-date-vertical">${order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString('fr-FR') : ''}</div>
             </div>
           </div>
         `;
@@ -278,6 +245,21 @@ export class PrintCardsModalComponent implements OnInit {
         // Add to PDF
         if (i > 0) pdf.addPage([3.5, 2], 'landscape');
         pdf.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, 3.5, 2);
+
+        // Draw fournisseur vertically (right edge, near top)
+        pdf.saveGraphicsState();
+        pdf.setFont('Arial', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(34, 34, 34);
+        pdf.text(fournisseurText, 3.45, 0.5, { angle: 90 });
+        pdf.restoreGraphicsState();
+        // Draw date vertically (right edge, lower)
+        pdf.saveGraphicsState();
+        pdf.setFont('Arial', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(34, 34, 34);
+        pdf.text(dateText, 3.45, 1.5, { angle: 90 });
+        pdf.restoreGraphicsState();
       }
 
       pdf.save('cards.pdf');

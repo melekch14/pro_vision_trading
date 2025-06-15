@@ -16,8 +16,8 @@ interface Order {
   shipping_type: string;
   delivery_time: string;
   produit: number;
-  supplement: string;
-  traitement: string;
+  typeCorrection: string;
+  typeCommande: string;
   email?: string;
   phone?: string;
   raison_social: string;
@@ -51,6 +51,7 @@ export class DeliveryNoteModalComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data.orders && this.data.orders.length > 0) {
+      console.log('Initial Orders Data:', this.data.orders);
       const clientId = this.data.orders[0].client_id;
       this.loadCustomerDetails(clientId);
       this.loadProductDetails();
@@ -61,6 +62,7 @@ export class DeliveryNoteModalComponent implements OnInit {
   loadCustomerDetails(clientId: number): void {
     this.customerService.getCustomerById(clientId).subscribe({
       next: (customer) => {
+        console.log('Customer Details:', customer);
         this.customerDetails = customer;
       },
       error: (error) => {
@@ -71,12 +73,15 @@ export class DeliveryNoteModalComponent implements OnInit {
 
   loadProductDetails(): void {
     this.data.orders.forEach(order => {
+      console.log('Processing Order:', order);
       if (order.produit) {
         this.orderService.getStockById(order.produit.toString()).subscribe({
           next: (stock) => {
+            console.log('Stock Details:', stock);
             if (stock.article_id) {
               this.orderService.getArticleById(stock.article_id.toString()).subscribe({
                 next: (article) => {
+                  console.log('Article Details:', article);
                   order.article_libelle = article.libelle;
                 },
                 error: (error) => {
@@ -98,6 +103,8 @@ export class DeliveryNoteModalComponent implements OnInit {
       const price = parseFloat(order.price) || 0;
       return sum + price;
     }, 0);
+    console.log('Total Amount:', this.totalAmount);
+    console.log('Final Orders with all details:', this.data.orders);
   }
 
   generateDeliveryNoteNumber(): string {

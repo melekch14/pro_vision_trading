@@ -52,8 +52,8 @@
           <th>N° Commande</th>
           <th>Date</th>
           <th>Produit</th>
-          <th>Traitement</th>
-          <th>Supplément</th>
+          <th>Type de commande</th>
+          <th>Type de correction</th>
           <th>Prix</th>
         </tr>
       </thead>
@@ -62,8 +62,8 @@
           <td>{{ order.order_id }}</td>
           <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
           <td>{{ order.article_libelle || 'Chargement...' }}</td>
-          <td>{{ order.traitement }}</td>
-          <td>{{ order.supplement || 'N/A' }}</td>
+          <td>{{ order.typeCommande }}</td>
+          <td>{{ order.typeCorrection || 'N/A' }}</td>
           <td>{{ order.price | currency:'EUR':'symbol':'1.2-2' }}</td>
         </tr>
         <tr class="total-row">

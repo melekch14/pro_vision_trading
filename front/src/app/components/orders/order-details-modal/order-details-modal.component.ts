@@ -31,9 +31,11 @@ interface Order {
   od_sphere?: string;
   od_cylinder?: string;
   od_addition?: string;
+  od_axe?: string;
   og_sphere?: string;
   og_cylinder?: string;
   og_addition?: string;
+  og_axe?: string;
   [key: string]: any;
 }
 
@@ -193,6 +195,10 @@ export class OrderDetailsModalComponent implements OnInit {
 
   formatStockLibelle(): string {
     if (!this.order.article_libelle) return `Product ID: ${this.order.produit}`;
+    
+    if (this.order.origineArticle === 'fabrication') {
+      return this.order.article_libelle;
+    }
     
     const cyl = this.order.cylindre !== null && this.order.cylindre !== undefined ? 
                this.order.cylindre.toString().padStart(4, '0') : 

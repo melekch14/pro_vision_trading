@@ -24,7 +24,7 @@
         <div class="tab-panel" [class.active]="activeTab === 'details'">
           <div class="order-info">
             <div class="info-section">
-              <h3>Customer Information</h3>
+              <h3>Porteur Information</h3>
               <div class="info-grid">
                 <div class="info-item">
                   <label>Name:</label>
@@ -105,6 +105,10 @@
                       <span>{{ order.od_cylinder || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
+                      <label>Axe:</label>
+                      <span>{{ order.od_axe || 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
                       <label>Addition:</label>
                       <span>{{ order.od_addition || 'N/A' }}</span>
                     </div>
@@ -120,6 +124,10 @@
                     <div class="info-item">
                       <label>Cylinder:</label>
                       <span>{{ order.og_cylinder || 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Axe:</label>
+                      <span>{{ order.og_axe || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
                       <label>Addition:</label>

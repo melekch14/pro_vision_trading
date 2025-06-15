@@ -69,12 +69,16 @@
                   <span>{{ formatStockLibelle() }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Treatment:</label>
-                  <span>{{ order.traitement }}</span>
+                  <label>Type de commande:</label>
+                  <span>{{ formatText(order.typeCommande) }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Supplement:</label>
-                  <span>{{ order.supplement || 'None' }}</span>
+                  <label>Type de correction:</label>
+                  <span>{{ formatText(order.typeCorrection) }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Origine article:</label>
+                  <span>{{ formatText(order.origineArticle) }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.selected_file">
                   <label>File:</label>

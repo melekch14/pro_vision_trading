@@ -18,8 +18,9 @@ interface Order {
   shipping_type: string;
   delivery_time: string;
   produit: number;
-  supplement: string;
-  traitement: string;
+  typeCommande: string;
+  typeCorrection: string;
+  origineArticle: string;
   article_libelle?: string;
   sphere?: number;
   cylindre?: number;
@@ -54,6 +55,7 @@ export class OrderDetailsModalComponent implements OnInit {
   isUpdating: boolean = false;
   orderDetails: Order | null = null;
   showCard: boolean = false;
+  productLibelle: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -70,6 +72,7 @@ export class OrderDetailsModalComponent implements OnInit {
 
   ngOnInit() {
     this.loadOrderDetails();
+    this.loadProductDetails();
   }
 
   loadOrderDetails() {
@@ -85,6 +88,28 @@ export class OrderDetailsModalComponent implements OnInit {
         console.error('Error loading order details:', error);
       }
     });
+  }
+
+  loadProductDetails() {
+    if (this.order.produit) {
+      this.orderService.getArticleById(this.order.produit.toString()).subscribe({
+        next: (response) => {
+          this.productLibelle = response.libelle || 'N/A';
+        },
+        error: (error) => {
+          console.error('Error loading product details:', error);
+          this.productLibelle = 'N/A';
+        }
+      });
+    }
+  }
+
+  formatText(text: string): string {
+    if (!text) return 'N/A';
+    return text
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 
   switchTab(tab: 'details' | 'management'): void {

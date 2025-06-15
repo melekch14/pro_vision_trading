@@ -58,6 +58,7 @@ export class OrderDetailsModalComponent implements OnInit {
   orderDetails: Order | null = null;
   showCard: boolean = false;
   productLibelle: string = '';
+  productDiametre: string = '70';
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -97,10 +98,12 @@ export class OrderDetailsModalComponent implements OnInit {
       this.orderService.getArticleById(this.order.produit.toString()).subscribe({
         next: (response) => {
           this.productLibelle = response.libelle || 'N/A';
+          this.productDiametre = response.diametre || '70';
         },
         error: (error) => {
           console.error('Error loading product details:', error);
           this.productLibelle = 'N/A';
+          this.productDiametre = '70';
         }
       });
     }
@@ -206,6 +209,10 @@ export class OrderDetailsModalComponent implements OnInit {
                this.order.addition.toString().padStart(4, '0') : '0000');
     const sph = this.order.sphere?.toString().padStart(4, '0') || '0000';
     return `${this.order.article_libelle} (${cyl}) - ${sph}`;
+  }
+
+  getDiametre(): string {
+    return this.productDiametre;
   }
 
   downloadFile(): void {

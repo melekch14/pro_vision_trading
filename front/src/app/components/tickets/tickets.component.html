@@ -55,14 +55,14 @@
                   <span>ADD</span>
                 </div>
                 <div class="ticket-table-row" *ngIf="cell.ticket.eye === 'right'">
-                  <span>70</span>
+                  <span>{{getDiametre(cell.ticket.order)| async}}</span>
                   <span>{{cell.ticket.order.od_sphere || '0.00'}}</span>
                   <span>{{cell.ticket.order.od_cylinder || '0.00'}}</span>
                   <span>{{cell.ticket.order.od_axe || '0'}}</span>
                   <span>{{cell.ticket.order.od_addition || '0.00'}}</span>
                 </div>
                 <div class="ticket-table-row" *ngIf="cell.ticket.eye === 'left'">
-                  <span>70</span>
+                  <span>{{getDiametre(cell.ticket.order)| async}}</span>
                   <span>{{cell.ticket.order.og_sphere || '0.00'}}</span>
                   <span>{{cell.ticket.order.og_cylinder || '0.00'}}</span>
                   <span>{{cell.ticket.order.og_axe || '0'}}</span>

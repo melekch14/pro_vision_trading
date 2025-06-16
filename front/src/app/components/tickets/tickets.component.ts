@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../services/order.service';
 import { Order } from '../../models/order.model';
+import { Observable, of } from 'rxjs';
+import { map, shareReplay, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tickets',
@@ -24,6 +26,8 @@ export class TicketsComponent implements OnInit {
 
   // Track which eyes are placed for each order
   placedEyes: { [orderId: number]: { right: boolean; left: boolean } } = {};
+
+  private diameterCache: { [key: string]: Observable<string> } = {};
 
   constructor(private orderService: OrderService) {}
 
@@ -139,5 +143,26 @@ export class TicketsComponent implements OnInit {
 
   printGrid() {
     window.print();
+  }
+
+  getDiametre(order: Order): Observable<string> {
+    if (!order.produit) {
+      return of('NA');
+    }
+
+    const cacheKey = order.produit.toString();
+    
+    if (!this.diameterCache[cacheKey]) {
+      this.diameterCache[cacheKey] = this.orderService.getArticleById(cacheKey).pipe(
+        map(product => product?.diametre || 'NA'),
+        catchError(error => {
+          console.error(`Error loading product details for order ${order.order_id}:`, error);
+          return of('NA');
+        }),
+        shareReplay(1)
+      );
+    }
+
+    return this.diameterCache[cacheKey];
   }
 } 

@@ -94,12 +94,12 @@
     <div class="eye-modal-buttons">
       <button 
         (click)="confirmEye('right')" 
-        [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id]?.right">
+        [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id].right">
         Right
       </button>
       <button 
         (click)="confirmEye('left')" 
-        [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id]?.left">
+        [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id].left">
         Left
       </button>
       <button (click)="cancelEyeModal()">Cancel</button>

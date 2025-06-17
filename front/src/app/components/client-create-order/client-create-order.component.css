@@ -60,12 +60,14 @@
 .corrections-table {
   width: 100%;
   margin-top: 10px;
+  overflow-x: auto;
 }
 .corrections-header, .corrections-row {
   display: grid;
   grid-template-columns: 1.2fr 1.2fr 1.2fr 1.2fr 1.2fr 1fr;
   gap: 10px;
   align-items: center;
+  min-width: 600px;
 }
 .corrections-header {
   font-weight: 600;
@@ -342,26 +344,6 @@
   transform: translateY(1px) scale(1.08);
 }
 
-@media (max-width: 700px) {
-  .create-order-container {
-    padding: 10px 2px;
-  }
-  .step-card {
-    padding: 12px 4px 10px 4px;
-  }
-  .corrections-header, .corrections-row {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 4px;
-  }
-  .porteur-form {
-    grid-template-columns: 1fr;
-  }
-  .supplements-options {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
-
 /* Prix et Délais Section */
 .step-card.step-6 {
   background: #f8f6fc;
@@ -553,16 +535,6 @@
 .resume-row > div:last-child .resume-value {
   color: #2563eb;
 }
-@media (max-width: 900px) {
-  .prix-delais-content, .resume-row {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .prix-total-block, .livraison-block, .delais-block, .resume-row > div {
-    margin: 0;
-    width: 100%;
-  }
-}
 
 /* Type de correction */
 .type-correction-select {
@@ -620,4 +592,712 @@
   outline: none;
   border-color: #2953f3;
   box-shadow: 0 0 0 3px rgba(41, 83, 243, 0.1);
+}
+
+/* Responsive Design - Enhanced for all screen sizes */
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
+  .create-order-container {
+    max-width: 95%;
+    margin: 20px auto;
+    padding: 24px 16px 16px 16px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .step-card {
+    padding: 20px 16px 16px 16px;
+  }
+  
+  .corrections-header, .corrections-row {
+    gap: 8px;
+  }
+  
+  .corrections-row input {
+    padding: 6px 8px;
+    font-size: 0.95rem;
+  }
+  
+  .supplements-options {
+    gap: 12px;
+  }
+  
+  .supplement-option {
+    padding: 12px 16px 8px 16px;
+    min-width: 100px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .prix-delais-content, .resume-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .prix-total-block, .livraison-block, .delais-block, .resume-row > div {
+    margin: 0;
+    width: 100%;
+  }
+  
+  .create-order-container {
+    margin: 16px auto;
+    padding: 20px 12px 12px 12px;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .step-card {
+    padding: 18px 14px 14px 14px;
+    margin-bottom: 20px;
+  }
+  
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  
+  .step-title {
+    font-size: 1.1rem;
+  }
+  
+  .porteur-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .supplements-options {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .supplement-option {
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+/* Large mobile phones */
+@media (max-width: 768px) {
+  .create-order-container {
+    margin: 12px auto;
+    padding: 16px 8px 8px 8px;
+    border-radius: 8px;
+  }
+  
+  .title {
+    font-size: 1.6rem;
+    margin-bottom: 0.1em;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5em;
+  }
+  
+  .step-card {
+    padding: 16px 12px 12px 12px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+  
+  .step-header {
+    margin-bottom: 16px;
+  }
+  
+  .step-number {
+    width: 26px;
+    height: 26px;
+    font-size: 0.9rem;
+    margin-right: 10px;
+  }
+  
+  .step-title {
+    font-size: 1rem;
+  }
+  
+  .corrections-table {
+    margin-top: 8px;
+  }
+  
+  .corrections-header, .corrections-row {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.8fr;
+    gap: 6px;
+    min-width: 500px;
+  }
+  
+  .corrections-header {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+  
+  .corrections-row input {
+    padding: 5px 6px;
+    font-size: 0.9rem;
+  }
+  
+  .eye-label {
+    padding: 4px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .copy-btn, .right-arrow-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .arrow-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3rem;
+  }
+  
+  .porteur-form {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .porteur-form input {
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+  
+  .supplements-options {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .supplement-option {
+    padding: 12px 16px 8px 16px;
+    min-width: auto;
+  }
+  
+  .supplement-option span {
+    font-size: 1rem;
+  }
+  
+  .supplement-option small {
+    font-size: 0.9rem;
+  }
+  
+  .type-correction-select select,
+  .origine-article-select select,
+  .produit-select select {
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+  
+  .precal-info p {
+    font-size: 0.9rem;
+  }
+  
+  .download-template {
+    font-size: 0.9rem;
+  }
+  
+  .file-upload input[type="file"] {
+    padding: 10px;
+  }
+  
+  .prix-delais-content {
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .prix-total-block, .livraison-block, .delais-block {
+    padding: 16px 12px 12px 12px;
+    margin: 0;
+  }
+  
+  .prix-label, .livraison-label, .delais-label {
+    font-size: 1rem;
+  }
+  
+  .prix-label::before, .livraison-label::before, .delais-label::before {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+  
+  .prix-value {
+    font-size: 1.3rem;
+    padding: 8px 0;
+  }
+  
+  .livraison-options label {
+    padding: 10px 14px 6px 14px;
+  }
+  
+  .livraison-options small {
+    font-size: 0.9rem;
+  }
+  
+  .delais-value {
+    font-size: 1rem;
+    padding: 8px 0;
+  }
+  
+  .resume-commande {
+    padding: 16px 8px 8px 8px;
+    margin-top: 16px;
+  }
+  
+  .resume-commande h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+  
+  .resume-row {
+    gap: 12px;
+  }
+  
+  .resume-row > div {
+    padding: 16px 0 8px 0;
+    margin: 0 4px;
+  }
+  
+  .resume-label {
+    font-size: 1rem;
+  }
+  
+  .resume-value {
+    font-size: 1.1rem;
+  }
+  
+  .submit-btn {
+    font-size: 1.1rem;
+    padding: 12px 32px;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 480px) {
+  .create-order-container {
+    margin: 8px auto;
+    padding: 12px 6px 6px 6px;
+    border-width: 1px;
+  }
+  
+  .title {
+    font-size: 1.4rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 1.2em;
+  }
+  
+  .step-card {
+    padding: 12px 8px 8px 8px;
+    margin-bottom: 12px;
+  }
+  
+  .step-header {
+    margin-bottom: 12px;
+  }
+  
+  .step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+    margin-right: 8px;
+  }
+  
+  .step-title {
+    font-size: 0.95rem;
+  }
+  
+  .corrections-header, .corrections-row {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.7fr;
+    gap: 4px;
+    min-width: 450px;
+  }
+  
+  .corrections-header {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+  }
+  
+  .corrections-row input {
+    padding: 4px 4px;
+    font-size: 0.85rem;
+  }
+  
+  .eye-label {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .copy-btn, .right-arrow-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+  
+  .arrow-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+  }
+  
+  .porteur-form input {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+  
+  .supplement-option {
+    padding: 10px 12px 6px 12px;
+  }
+  
+  .supplement-option span {
+    font-size: 0.95rem;
+  }
+  
+  .supplement-option small {
+    font-size: 0.85rem;
+  }
+  
+  .type-correction-select select,
+  .origine-article-select select,
+  .produit-select select {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+  
+  .type-correction-select label,
+  .origine-article-select label,
+  .produit-select label {
+    font-size: 0.9rem;
+  }
+  
+  .precal-info p {
+    font-size: 0.85rem;
+  }
+  
+  .download-template {
+    font-size: 0.85rem;
+  }
+  
+  .file-upload input[type="file"] {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .prix-total-block, .livraison-block, .delais-block {
+    padding: 12px 8px 8px 8px;
+  }
+  
+  .prix-label, .livraison-label, .delais-label {
+    font-size: 0.9rem;
+  }
+  
+  .prix-label::before, .livraison-label::before, .delais-label::before {
+    width: 20px;
+    height: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .prix-value {
+    font-size: 1.1rem;
+    padding: 6px 0;
+  }
+  
+  .livraison-options label {
+    padding: 8px 12px 4px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .livraison-options small {
+    font-size: 0.8rem;
+  }
+  
+  .delais-value {
+    font-size: 0.9rem;
+    padding: 6px 0;
+  }
+  
+  .resume-commande {
+    padding: 12px 6px 6px 6px;
+  }
+  
+  .resume-commande h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  
+  .resume-row {
+    gap: 8px;
+  }
+  
+  .resume-row > div {
+    padding: 12px 0 6px 0;
+    margin: 0 2px;
+  }
+  
+  .resume-label {
+    font-size: 0.9rem;
+  }
+  
+  .resume-value {
+    font-size: 1rem;
+  }
+  
+  .submit-btn {
+    font-size: 1rem;
+    padding: 10px 24px;
+  }
+}
+
+/* Extra small mobile phones */
+@media (max-width: 360px) {
+  .create-order-container {
+    margin: 4px auto;
+    padding: 8px 4px 4px 4px;
+  }
+  
+  .title {
+    font-size: 1.2rem;
+  }
+  
+  .subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .step-card {
+    padding: 8px 6px 6px 6px;
+    margin-bottom: 8px;
+  }
+  
+  .step-number {
+    width: 22px;
+    height: 22px;
+    font-size: 0.75rem;
+    margin-right: 6px;
+  }
+  
+  .step-title {
+    font-size: 0.9rem;
+  }
+  
+  .corrections-header, .corrections-row {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.6fr;
+    gap: 3px;
+    min-width: 400px;
+  }
+  
+  .corrections-header {
+    font-size: 0.75rem;
+  }
+  
+  .corrections-row input {
+    padding: 3px 3px;
+    font-size: 0.8rem;
+  }
+  
+  .eye-label {
+    padding: 2px 6px;
+    font-size: 0.75rem;
+  }
+  
+  .copy-btn, .right-arrow-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+  
+  .arrow-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  
+  .porteur-form input {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+  
+  .supplement-option {
+    padding: 8px 10px 4px 10px;
+  }
+  
+  .supplement-option span {
+    font-size: 0.9rem;
+  }
+  
+  .supplement-option small {
+    font-size: 0.8rem;
+  }
+  
+  .type-correction-select select,
+  .origine-article-select select,
+  .produit-select select {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+  
+  .type-correction-select label,
+  .origine-article-select label,
+  .produit-select label {
+    font-size: 0.85rem;
+  }
+  
+  .prix-total-block, .livraison-block, .delais-block {
+    padding: 8px 6px 6px 6px;
+  }
+  
+  .prix-label, .livraison-label, .delais-label {
+    font-size: 0.85rem;
+  }
+  
+  .prix-label::before, .livraison-label::before, .delais-label::before {
+    width: 18px;
+    height: 18px;
+    font-size: 0.8rem;
+  }
+  
+  .prix-value {
+    font-size: 1rem;
+    padding: 4px 0;
+  }
+  
+  .livraison-options label {
+    padding: 6px 10px 3px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .livraison-options small {
+    font-size: 0.75rem;
+  }
+  
+  .delais-value {
+    font-size: 0.85rem;
+    padding: 4px 0;
+  }
+  
+  .resume-commande {
+    padding: 8px 4px 4px 4px;
+  }
+  
+  .resume-commande h3 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  
+  .resume-row {
+    gap: 6px;
+  }
+  
+  .resume-row > div {
+    padding: 8px 0 4px 0;
+    margin: 0 1px;
+  }
+  
+  .resume-label {
+    font-size: 0.85rem;
+  }
+  
+  .resume-value {
+    font-size: 0.9rem;
+  }
+  
+  .submit-btn {
+    font-size: 0.9rem;
+    padding: 8px 20px;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .create-order-container {
+    margin: 8px auto;
+    padding: 12px 8px 8px 8px;
+  }
+  
+  .title {
+    font-size: 1.4rem;
+    margin-bottom: 0.1em;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 1em;
+  }
+  
+  .step-card {
+    padding: 12px 10px 10px 10px;
+    margin-bottom: 12px;
+  }
+  
+  .corrections-header, .corrections-row {
+    min-width: 600px;
+  }
+  
+  .porteur-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .supplements-options {
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+  .supplement-option {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .step-card {
+    border-width: 0.5px;
+  }
+  
+  .corrections-row input,
+  .porteur-form input,
+  .type-correction-select select,
+  .origine-article-select select,
+  .produit-select select {
+    border-width: 0.5px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .create-order-container {
+    max-width: none;
+    margin: 0;
+    padding: 20px;
+    border: none;
+    box-shadow: none;
+  }
+  
+  .step-card {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+  }
+  
+  .submit-section {
+    display: none;
+  }
+  
+  .copy-btn, .arrow-btn, .right-arrow-btn {
+    display: none;
+  }
 } 

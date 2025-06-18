@@ -1,3 +1,78 @@
-<div class="profile-container">
-  <h1>My Profile</h1>
+<div class="profile-wrapper">
+  <div class="profile-left">
+    <div class="profile-avatar">
+      <span class="avatar-icon">&#128100;</span>
+    </div>
+    <div class="profile-summary">
+      <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+      <p class="profile-email"><span class="icon">&#9993;</span> {{ user.email }}</p>
+      <p class="profile-joined"><span class="icon">&#128197;</span> Joined {{ user.joinDate }}</p>
+      <button class="reset-btn" (click)="resetPassword()">
+        <span class="icon">&#128273;</span> Reset Password
+      </button>
+    </div>
+  </div>
+  <div class="profile-right">
+    <h3>Profile Information</h3>
+    <p class="profile-desc">Edit your personal information</p>
+    <form class="profile-form" *ngIf="!editMode">
+      <div class="form-row">
+        <label>First Name</label>
+        <input type="text" [value]="user.firstName" disabled />
+      </div>
+      <div class="form-row">
+        <label>Last Name</label>
+        <input type="text" [value]="user.lastName" disabled />
+      </div>
+      <div class="form-row">
+        <label>Email Address</label>
+        <input type="email" [value]="user.email" disabled />
+      </div>
+      <div class="form-row">
+        <label>Phone Number</label>
+        <input type="text" [value]="user.phone" disabled />
+      </div>
+      <div class="form-row">
+        <label>Address</label>
+        <input type="text" [value]="user.address" disabled />
+      </div>
+      <div class="form-row">
+        <label>Bio</label>
+        <textarea [value]="user.bio" rows="2" disabled></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="edit-btn" (click)="enableEdit()">Edit</button>
+      </div>
+    </form>
+    <form class="profile-form" *ngIf="editMode">
+      <div class="form-row">
+        <label>First Name</label>
+        <input type="text" [(ngModel)]="editedUser.firstName" name="firstName" />
+      </div>
+      <div class="form-row">
+        <label>Last Name</label>
+        <input type="text" [(ngModel)]="editedUser.lastName" name="lastName" />
+      </div>
+      <div class="form-row">
+        <label>Email Address</label>
+        <input type="email" [(ngModel)]="editedUser.email" name="email" />
+      </div>
+      <div class="form-row">
+        <label>Phone Number</label>
+        <input type="text" [(ngModel)]="editedUser.phone" name="phone" />
+      </div>
+      <div class="form-row">
+        <label>Address</label>
+        <input type="text" [(ngModel)]="editedUser.address" name="address" />
+      </div>
+      <div class="form-row">
+        <label>Bio</label>
+        <textarea [(ngModel)]="editedUser.bio" name="bio" rows="2"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="save-btn" (click)="saveProfile()">Save</button>
+        <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
 </div> 

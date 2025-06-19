@@ -11,6 +11,7 @@ const articleRoutes = require('./routes/articleRoutes');
 const stockRoutes = require('./routes/stockRoutes');
 const opticienRoutes = require('./routes/opticienRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes');
 
 // Debug middleware to log all requests
 app.use((req, res, next) => {
@@ -35,6 +36,7 @@ app.use('/articles', articleRoutes);
 app.use('/stock', stockRoutes);
 app.use('/opticiens', opticienRoutes);
 app.use('/orders', orderRoutes);
+app.use('/statistics', statisticsRoutes);
 
 // Test route to verify server is working
 app.get('/test', (req, res) => {

@@ -61,9 +61,11 @@ class StatisticsService {
   async getLastFiveOrders() {
     try {
       const [rows] = await db.query(`
-        SELECT o.*, c.raison_social as client_name
+        SELECT o.*, c.raison_social as client_name, c.tel as client_tel, a.libelle as article_libelle
         FROM orders o
         LEFT JOIN client c ON o.client_id = c.id
+        LEFT JOIN stock s ON o.produit = s.id
+        LEFT JOIN article a ON s.article_id = a.id
         ORDER BY o.order_datetime DESC
         LIMIT 5
       `);

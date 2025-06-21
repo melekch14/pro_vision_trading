@@ -4,7 +4,7 @@
   <div class="dashboard-header">
     <img src="assets/logo.svg" alt="Logo" class="dashboard-logo" />
     <div class="dashboard-title-group">
-      <h1>Order Management Dashboard</h1>
+      <h1>PRO VISION TRADNING</h1>
       <p>Monitor and manage your orders efficiently</p>
     </div>
   </div>
@@ -84,8 +84,8 @@
             <b>{{ order.client_name }}</b><br>
             <span class="client-details">{{ order.client_details || '' }}</span>
           </td>
-          <td>{{ order.contact || '-' }}</td>
-          <td>{{ order.product_name || '-' }}<br><span class="product-type">{{ order.product_type || '' }}</span></td>
+          <td>{{ order.client_tel || '-' }}</td>
+          <td>{{ order.article_libelle || '-' }}<br><span class="product-type">{{ order.product_type || '' }}</span></td>
           <td><b>${{ order.price | number:'1.2-2' }}</b></td>
           <td>
             <span [ngClass]="{
@@ -102,7 +102,7 @@
             </span>
           </td>
           <td>
-            {{ order.shipping_method || '-' }}<br>
+            {{ order.shipping_type || '-' }}<br>
             <span class="shipping-desc">{{ order.shipping_desc || '' }}</span>
           </td>
           <td>{{ order.order_datetime | date:'dd MMM yyyy, HH:mm' }}</td>

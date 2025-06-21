@@ -46,6 +46,7 @@ import { ClientDashboardComponent } from './components/client-dashboard/client-d
 import { ClientCreateOrderComponent } from './components/client-create-order/client-create-order.component';
 import { ClientOrdersComponent } from './components/client-orders/client-orders.component';
 import { ClientProfileComponent } from './components/client-profile/client-profile.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
     ClientCreateOrderComponent,
     ClientOrdersComponent,
     ClientProfileComponent,
-    StockDialogComponent
+    StockDialogComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

@@ -19,6 +19,12 @@ interface MenuItem {
 export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { 
+      id: 'dashboard',
+      name: 'Dashboard',
+      icon: 'inventory_2',
+      route: '/app/dashboard'
+    },
+    { 
       id: 'article-manager',
       name: 'Article Manager',
       icon: 'inventory_2',

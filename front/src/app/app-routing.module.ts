@@ -22,6 +22,7 @@ import { ClientDashboardComponent } from './components/client-dashboard/client-d
 import { ClientCreateOrderComponent } from './components/client-create-order/client-create-order.component';
 import { ClientOrdersComponent } from './components/client-orders/client-orders.component';
 import { ClientProfileComponent } from './components/client-profile/client-profile.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
   {
@@ -54,7 +55,8 @@ const routes: Routes = [
       { path: 'article-params', component: ArticleParamsComponent },
       { path: 'fournisseurs', component: FournisseurComponent },
       { path: 'settings', component: SettingsComponent },
-      { path: 'opticiens', component: OpticienComponent }
+      { path: 'opticiens', component: OpticienComponent },
+      { path: 'dashboard', component: DashboardComponent }
     ]
   },
   {

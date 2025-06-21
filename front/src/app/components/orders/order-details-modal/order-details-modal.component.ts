@@ -6,6 +6,8 @@ import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderService } from '../../../services/order.service';
+import { StockService } from '../../../services/stock.service';
+import { ArticleService } from '../../../services/article.service';
 
 interface Order {
   id: number;
@@ -64,7 +66,9 @@ export class OrderDetailsModalComponent implements OnInit {
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public order: Order,
     private http: HttpClient,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private stockService: StockService,
+    private articleService: ArticleService
   ) {
     this.selectedFournisseur = this.order['fournisseur_code'];
     this.tempFournisseur = this.order['fournisseur_code'];
@@ -95,13 +99,23 @@ export class OrderDetailsModalComponent implements OnInit {
 
   loadProductDetails() {
     if (this.order.produit) {
-      this.orderService.getArticleById(this.order.produit.toString()).subscribe({
-        next: (response) => {
-          this.productLibelle = response.libelle || 'N/A';
-          this.productDiametre = response.diametre || '70';
+      this.stockService.getStockById(this.order.produit).subscribe({
+        next: (stock) => {
+          const articleId = stock.article_id;
+          this.articleService.getArticleById(articleId).subscribe({
+            next: (article) => {
+              this.productLibelle = article.libelle || 'N/A';
+              this.productDiametre = article.diametre?.toString() || '70';
+            },
+            error: (error) => {
+              console.error('Error loading article details:', error);
+              this.productLibelle = 'N/A';
+              this.productDiametre = '70';
+            }
+          });
         },
         error: (error) => {
-          console.error('Error loading product details:', error);
+          console.error('Error loading stock details:', error);
           this.productLibelle = 'N/A';
           this.productDiametre = '70';
         }

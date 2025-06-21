@@ -4,8 +4,9 @@ body, :host {
 
 .profile-wrapper {
   display: flex;
-  max-width: 950px;
-  margin: 48px auto;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.08);
@@ -160,7 +161,7 @@ input:disabled, textarea:disabled {
 @media (max-width: 900px) {
   .profile-wrapper {
     flex-direction: column;
-    max-width: 98vw;
+    width: 100vw;
   }
   .profile-left, .profile-right {
     max-width: 100%;

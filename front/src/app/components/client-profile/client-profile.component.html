@@ -6,9 +6,9 @@
     <div class="profile-summary">
       <h2>{{ user?.raison_social || '-' }}</h2>
       <p class="profile-email"><span class="icon">&#9993;</span> {{ user?.email || '-' }}</p>
-      <p class="profile-joined"><span class="icon">&#128100;</span> Responsable: {{ user?.responsable || '-' }}</p>
+      <p class="profile-joined"><mat-icon class="icon">person</mat-icon> Responsable: {{ user?.responsable || '-' }}</p>
       <button class="reset-btn" (click)="resetPassword()" [disabled]="!user">
-        <span class="icon">&#128273;</span> Reset Password
+        <mat-icon class="icon">lock</mat-icon> Reset Password
       </button>
     </div>
   </div>

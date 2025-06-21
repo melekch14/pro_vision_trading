@@ -7,6 +7,7 @@ import { OrderService } from '../../../services/order.service';
 import { ProductService } from '../../../services/product.service';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { StockService } from '../../../services/stock.service';
 
 @Component({
   selector: 'app-print-cards-modal',
@@ -20,12 +21,14 @@ export class PrintCardsModalComponent implements OnInit {
   loading = true;
   error: string | null = null;
   private articleDiameters: { [key: number]: string } = {};
+  private stockArticleMap: { [key: number]: number } = {}; // stockId -> articleId
 
   constructor(
     private dialogRef: MatDialogRef<PrintCardsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { orders: Order[] },
     private orderService: OrderService,
-    private productService: ProductService
+    private productService: ProductService,
+    private stockService: StockService
   ) {
     this.orders = data.orders;
   }
@@ -42,10 +45,18 @@ export class PrintCardsModalComponent implements OnInit {
       for (const order of this.orders) {
         if (order.produit) {
           try {
-            const product = await this.orderService.getArticleById(order.produit.toString()).toPromise();
-            if (product) {
-              order.article_libelle = product.libelle;
-              this.articleDiameters[order.produit] = product.diametre || 'NA';
+            // 1. Fetch stock by stock ID (order.produit)
+            const stock = await this.stockService.getStockById(order.produit).toPromise();
+            if (stock && stock.article_id) {
+              this.stockArticleMap[order.produit] = stock.article_id;
+              // 2. Fetch article by article_id
+              const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
+              if (product) {
+                order.article_libelle = product.libelle;
+                this.articleDiameters[order.produit] = product.diametre || 'NA';
+              }
+            } else {
+              this.articleDiameters[order.produit] = 'NA';
             }
           } catch (error) {
             console.error(`Error loading product details for order ${order.order_id}:`, error);
@@ -62,7 +73,7 @@ export class PrintCardsModalComponent implements OnInit {
   }
 
   getDiametre(order: Order): string {
-    console.log(order);
+    // Now articleDiameters is indexed by stockId (order.produit)
     if (order.produit && this.articleDiameters[order.produit]) {
       return this.articleDiameters[order.produit];
     }

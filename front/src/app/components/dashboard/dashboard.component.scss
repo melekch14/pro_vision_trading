@@ -1,0 +1,100 @@
+.dashboard-container {
+  padding: 2rem;
+  background: #fafbfc;
+  border-radius: 12px;
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.card {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.card-title {
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+.card-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+.card-desc {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.dashboard-charts {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.chart-box {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 1.5rem;
+}
+.chart-placeholder {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 1.2rem;
+  background: #f5f5f7;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.dashboard-table {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 1.5rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+th, td {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+th {
+  color: #444;
+  font-weight: 600;
+  background: #f7f7fa;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.status-processing { color: #4285F4; background: #e3f0fd; border-radius: 6px; padding: 0.2em 0.7em; }
+.status-pending { color: #FFA500; background: #fff5e1; border-radius: 6px; padding: 0.2em 0.7em; }
+.status-cancelled { color: #FF0000; background: #ffeaea; border-radius: 6px; padding: 0.2em 0.7em; }
+.status-delivered { color: #4CAF50; background: #e7fbe7; border-radius: 6px; padding: 0.2em 0.7em; }
+.status-shipped { color: #8E24AA; background: #f3e7fa; border-radius: 6px; padding: 0.2em 0.7em; }
+.payment-unpaid { color: #FF6F61; background: #ffeaea; border-radius: 6px; padding: 0.2em 0.7em; }
+.payment-paid { color: #4CAF50; background: #e7fbe7; border-radius: 6px; padding: 0.2em 0.7em; }
+.client-details, .product-type, .shipping-desc {
+  color: #aaa;
+  font-size: 0.85em;
+}
+.dashboard-loading, .dashboard-error {
+  text-align: center;
+  font-size: 1.2rem;
+  margin: 2rem 0;
+}

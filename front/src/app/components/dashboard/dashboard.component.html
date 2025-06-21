@@ -1,1 +1,94 @@
-<p>dashboard works!</p>
+<div *ngIf="loading" class="dashboard-loading">Loading dashboard...</div>
+<div *ngIf="error" class="dashboard-error">{{ error }}</div>
+<div *ngIf="statistics && !loading && !error" class="dashboard-container">
+  <h1>Order Management Dashboard</h1>
+  <p>Monitor and manage your orders efficiently</p>
+
+  <div class="dashboard-cards">
+    <div class="card revenue">
+      <div class="card-title">Total Revenue</div>
+      <div class="card-value">${{ statistics.totalRevenue | number:'1.2-2' }}</div>
+      <div class="card-desc">Revenue generated</div>
+    </div>
+    <div class="card orders">
+      <div class="card-title">Total Orders</div>
+      <div class="card-value">{{ statistics.totalOrders }}</div>
+      <div class="card-desc">Orders placed</div>
+    </div>
+    <div class="card pending">
+      <div class="card-title">Pending Orders</div>
+      <div class="card-value">{{ statistics.pendingOrders }}</div>
+      <div class="card-desc">Awaiting processing</div>
+    </div>
+    <div class="card completion">
+      <div class="card-title">Completion Rate</div>
+      <div class="card-value">
+        {{ ((statistics.totalOrders - statistics.pendingOrders) / (statistics.totalOrders || 1) * 100) | number:'1.0-0' }}%
+      </div>
+      <div class="card-desc">Orders completed</div>
+    </div>
+  </div>
+
+  <div class="dashboard-charts">
+    <div class="chart-box">
+      <h2>Orders by Status</h2>
+      <!-- Pie chart goes here -->
+      <div class="chart-placeholder">[Pie Chart Placeholder]</div>
+    </div>
+    <div class="chart-box">
+      <h2>Status Distribution</h2>
+      <!-- Bar chart goes here -->
+      <div class="chart-placeholder">[Bar Chart Placeholder]</div>
+    </div>
+  </div>
+
+  <div class="dashboard-table">
+    <h2>Recent Orders</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Client</th>
+          <th>Contact</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Shipping</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of statistics.lastFiveOrders">
+          <td>#{{ order.id }}</td>
+          <td>
+            <b>{{ order.client_name }}</b><br>
+            <span class="client-details">{{ order.client_details || '' }}</span>
+          </td>
+          <td>{{ order.contact || '-' }}</td>
+          <td>{{ order.product_name || '-' }}<br><span class="product-type">{{ order.product_type || '' }}</span></td>
+          <td><b>${{ order.price | number:'1.2-2' }}</b></td>
+          <td>
+            <span [ngClass]="{
+              'status-processing': order.status === 'processing',
+              'status-pending': order.status === 'pending',
+              'status-cancelled': order.status === 'cancelled',
+              'status-delivered': order.status === 'delivered',
+              'status-shipped': order.status === 'shipped'
+            }">{{ order.status }}</span>
+          </td>
+          <td>
+            <span [ngClass]="{ 'payment-unpaid': order.payment_status === 'unpaid', 'payment-paid': order.payment_status === 'paid' }">
+              {{ order.payment_status || '-' }}
+            </span>
+          </td>
+          <td>
+            {{ order.shipping_method || '-' }}<br>
+            <span class="shipping-desc">{{ order.shipping_desc || '' }}</span>
+          </td>
+          <td>{{ order.order_datetime | date:'dd MMM yyyy, HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

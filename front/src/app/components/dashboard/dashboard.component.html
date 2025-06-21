@@ -1,26 +1,35 @@
 <div *ngIf="loading" class="dashboard-loading">Loading dashboard...</div>
 <div *ngIf="error" class="dashboard-error">{{ error }}</div>
 <div *ngIf="statistics && !loading && !error" class="dashboard-container">
-  <h1>Order Management Dashboard</h1>
-  <p>Monitor and manage your orders efficiently</p>
+  <div class="dashboard-header">
+    <img src="assets/logo.svg" alt="Logo" class="dashboard-logo" />
+    <div class="dashboard-title-group">
+      <h1>Order Management Dashboard</h1>
+      <p>Monitor and manage your orders efficiently</p>
+    </div>
+  </div>
 
   <div class="dashboard-cards">
     <div class="card revenue">
+      <span class="card-icon material-icons">attach_money</span>
       <div class="card-title">Total Revenue</div>
       <div class="card-value">${{ statistics.totalRevenue | number:'1.2-2' }}</div>
       <div class="card-desc">Revenue generated</div>
     </div>
     <div class="card orders">
+      <span class="card-icon material-icons">shopping_cart</span>
       <div class="card-title">Total Orders</div>
       <div class="card-value">{{ statistics.totalOrders }}</div>
       <div class="card-desc">Orders placed</div>
     </div>
     <div class="card pending">
+      <span class="card-icon material-icons">hourglass_empty</span>
       <div class="card-title">Pending Orders</div>
       <div class="card-value">{{ statistics.pendingOrders }}</div>
       <div class="card-desc">Awaiting processing</div>
     </div>
     <div class="card completion">
+      <span class="card-icon material-icons">check_circle</span>
       <div class="card-title">Completion Rate</div>
       <div class="card-value">
         {{ ((statistics.totalOrders - statistics.pendingOrders) / (statistics.totalOrders || 1) * 100) | number:'1.0-0' }}%

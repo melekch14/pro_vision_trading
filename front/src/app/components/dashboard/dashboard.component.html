@@ -32,13 +32,23 @@
   <div class="dashboard-charts">
     <div class="chart-box">
       <h2>Orders by Status</h2>
-      <!-- Pie chart goes here -->
-      <div class="chart-placeholder">[Pie Chart Placeholder]</div>
+      <p-chart
+        type="pie"
+        [data]="ordersByStatusChartData"
+        [options]="ordersByStatusChartOptions"
+        style="width: 100%; min-height: 300px;"
+        *ngIf="ordersByStatusChartData"
+      ></p-chart>
     </div>
     <div class="chart-box">
       <h2>Status Distribution</h2>
-      <!-- Bar chart goes here -->
-      <div class="chart-placeholder">[Bar Chart Placeholder]</div>
+      <p-chart
+        type="bar"
+        [data]="statusDistributionChartData"
+        [options]="statusDistributionChartOptions"
+        style="width: 100%; min-height: 300px;"
+        *ngIf="statusDistributionChartData"
+      ></p-chart>
     </div>
   </div>
 

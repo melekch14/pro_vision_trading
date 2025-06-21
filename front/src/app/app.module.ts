@@ -19,6 +19,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { ChartModule } from 'primeng/chart';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -96,7 +97,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     MatSelectModule,
     MatSortModule,
     MatPaginatorModule,
-    TicketsComponent
+    TicketsComponent,
+    ChartModule
   ],
   providers: [
     {

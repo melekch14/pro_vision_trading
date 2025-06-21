@@ -171,4 +171,71 @@ input:disabled, textarea:disabled {
   .profile-right {
     padding: 32px 16px 24px 16px;
   }
+}
+@media (max-width: 600px) {
+  .profile-wrapper {
+    flex-direction: column;
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+  .profile-left {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 24px 8px 16px 8px;
+    align-items: center;
+  }
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+  .profile-summary h2 {
+    font-size: 1.2rem;
+  }
+  .profile-summary p, .profile-summary .icon {
+    font-size: 0.95rem;
+  }
+  .reset-btn {
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    margin-top: 12px;
+  }
+  .profile-right {
+    padding: 18px 8px 12px 8px;
+  }
+  .profile-right h3 {
+    font-size: 1.1rem;
+  }
+  .profile-desc {
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+  .profile-form {
+    gap: 10px;
+  }
+  .form-row label {
+    font-size: 0.98rem;
+  }
+  input, textarea {
+    font-size: 0.98rem;
+    padding: 8px 8px;
+  }
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .edit-btn, .save-btn, .cancel-btn {
+    width: 100%;
+    padding: 8px 0;
+    font-size: 1rem;
+  }
 } 

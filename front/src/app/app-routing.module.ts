@@ -71,7 +71,6 @@ const routes: Routes = [
     data: { role: 'client' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: ClientDashboardComponent },
       { path: 'create-order', component: ClientCreateOrderComponent },
       { path: 'orders', component: ClientOrdersComponent },
       { path: 'profile', component: ClientProfileComponent }

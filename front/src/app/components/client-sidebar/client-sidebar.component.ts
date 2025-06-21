@@ -12,12 +12,6 @@ import { MenuItem } from '../../shared/models/menu-item.model';
 export class ClientSidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { 
-      id: 1, 
-      title: 'Dashboard', 
-      icon: 'dashboard',
-      route: '/client/dashboard'
-    },
-    { 
       id: 2, 
       title: 'Create Order', 
       icon: 'add_shopping_cart',

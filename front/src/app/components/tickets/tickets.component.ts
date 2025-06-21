@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { OrderService } from '../../services/order.service';
 import { Order } from '../../models/order.model';
 import { Observable, of } from 'rxjs';
-import { map, shareReplay, catchError } from 'rxjs/operators';
+import { map, shareReplay, catchError, switchMap } from 'rxjs/operators';
+import { StockService } from '../../services/stock.service';
+import { ArticleService } from '../../services/article.service';
 
 @Component({
   selector: 'app-tickets',
@@ -29,7 +31,7 @@ export class TicketsComponent implements OnInit {
 
   private diameterCache: { [key: string]: Observable<string> } = {};
 
-  constructor(private orderService: OrderService) {}
+  constructor(private orderService: OrderService, private stockService: StockService, private articleService: ArticleService) {}
 
   ngOnInit() {
     this.loadOrders();
@@ -151,13 +153,30 @@ export class TicketsComponent implements OnInit {
     }
 
     const cacheKey = order.produit.toString();
-    
+
     if (!this.diameterCache[cacheKey]) {
-      this.diameterCache[cacheKey] = this.orderService.getArticleById(cacheKey).pipe(
-        map(product => product?.diametre || 'NA'),
+      this.diameterCache[cacheKey] = this.stockService.getStockById(Number(cacheKey)).pipe(
+        map(stock => stock?.article_id),
+        // If stock or article_id is missing, return 'NA'
         catchError(error => {
-          console.error(`Error loading product details for order ${order.order_id}:`, error);
-          return of('NA');
+          console.error(`Error loading stock details for order ${order.order_id}:`, error);
+          return of(null);
+        }),
+        // Switch to fetching the article if article_id is present
+        // Use switchMap only if article_id is present
+        // Otherwise, return 'NA'
+        switchMap(articleId => {
+          if (articleId) {
+            return this.articleService.getArticleById(articleId).pipe(
+              map(article => article?.diametre?.toString() || 'NA'),
+              catchError(error => {
+                console.error(`Error loading article details for order ${order.order_id}:`, error);
+                return of('NA');
+              })
+            );
+          } else {
+            return of('NA');
+          }
         }),
         shareReplay(1)
       );

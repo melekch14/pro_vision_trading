@@ -43,9 +43,11 @@ exports.requestPasswordReset = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
+    console.log("resetPassword endpoint called");
+    console.log("Request body:", req.body);
     const { token, newPassword } = req.body;
     try {
-        console.log(token, newPassword);
+        console.log("Token and newPassword:", token, newPassword);
         await authService.resetPassword(token, newPassword);
         res.status(200).json({ message: 'Password has been reset.' });
     } catch (err) {

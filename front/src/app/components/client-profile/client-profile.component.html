@@ -92,5 +92,20 @@
         <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
       </div>
     </form>
+    <div *ngIf="passwordResetRequested" class="reset-password-form">
+      <h4>Reset Your Password</h4>
+      <p>Check your email for a reset link. Paste the token below and enter your new password.</p>
+      <div class="form-row">
+        <label>Reset Token</label>
+        <input type="text" [(ngModel)]="resetToken" name="resetToken" />
+      </div>
+      <div class="form-row">
+        <label>New Password</label>
+        <input type="password" [(ngModel)]="newPassword" name="newPassword" />
+      </div>
+      <div class="form-actions">
+        <button type="button" (click)="submitNewPassword()">Submit New Password</button>
+      </div>
+    </div>
   </div>
 </div> 

@@ -100,4 +100,12 @@ export class AuthService {
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     return decodedToken.id;
   }
+
+  resetPassword(token: string, newPassword: string) {
+    return this.http.post<any>(`${this.baseUrl}/reset-password`, { token, newPassword });
+  }
+
+  requestPasswordReset(email: string) {
+    return this.http.post<any>(`${this.baseUrl}/request-password-reset`, { email });
+  }
 }

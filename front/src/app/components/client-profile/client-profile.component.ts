@@ -15,6 +15,9 @@ export class ClientProfileComponent implements OnInit {
   editedUser: Partial<Customer> = {};
   loading = false;
   error: string | null = null;
+  passwordResetRequested = false;
+  resetToken = '';
+  newPassword = '';
 
   constructor(
     private customerService: CustomerService,
@@ -74,8 +77,30 @@ export class ClientProfileComponent implements OnInit {
   }
 
   resetPassword() {
-    if (!this.user) return;
-    // Placeholder: In real app, call backend to send email
-    alert('A password reset email has been sent to ' + this.user.email);
+    if (!this.user || !this.user.email) return;
+    this.authService.requestPasswordReset(this.user.email).subscribe({
+      next: () => {
+        this.passwordResetRequested = true;
+        alert('A password reset link has been sent to ' + this.user!.email);
+      },
+      error: () => {
+        alert('Failed to send password reset email.');
+      }
+    });
+  }
+
+  submitNewPassword() {
+    if (!this.resetToken || !this.newPassword) return;
+    this.authService.resetPassword(this.resetToken, this.newPassword).subscribe({
+      next: () => {
+        alert('Password has been reset successfully!');
+        this.passwordResetRequested = false;
+        this.resetToken = '';
+        this.newPassword = '';
+      },
+      error: (err) => {
+        alert('Failed to reset password: ' + (err.error?.error || 'Unknown error'));
+      }
+    });
   }
 } 

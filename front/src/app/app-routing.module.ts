@@ -23,6 +23,7 @@ import { ClientCreateOrderComponent } from './components/client-create-order/cli
 import { ClientOrdersComponent } from './components/client-orders/client-orders.component';
 import { ClientProfileComponent } from './components/client-profile/client-profile.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent
   },
   {
     path: 'app',

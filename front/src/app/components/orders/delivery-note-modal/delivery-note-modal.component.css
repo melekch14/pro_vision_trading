@@ -320,6 +320,32 @@ tr:hover {
     font-size: 12pt;
     font-weight: bold;
   }
+
+  .orders-table table, .orders-table tbody, .orders-table tr, .orders-table td, .orders-table th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .total-row {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .orders-table {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  .orders-table table {
+    font-size: 8pt !important;
+  }
+  .orders-table th, .orders-table td {
+    padding: 4px 6px !important;
+    font-size: 8pt !important;
+  }
+  .total-row {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
 }
 
 .info-group.full-width {
@@ -345,4 +371,60 @@ tr:hover {
 
 .text-right {
   text-align: right;
+}
+
+.client-info.minimized, .client-info.minimized .info-grid.compact {
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 1rem !important;
+  font-size: 12px !important;
+}
+.client-info.minimized h2 {
+  font-size: 15px !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem !important;
+}
+.client-info.minimized .info-grid.compact {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem !important;
+}
+.client-info.minimized .info-group {
+  margin-bottom: 0.25rem !important;
+  display: flex;
+  align-items: center;
+}
+.client-info.minimized .info-group label {
+  font-size: 12px !important;
+  margin-right: 0.5rem !important;
+  font-weight: 600;
+}
+.client-info.minimized .info-group span {
+  font-size: 12px !important;
+  color: #2d3748;
+  display: inline;
+}
+
+.client-info.single-line .info-single-line {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.client-info.single-line .separator {
+  margin: 0 0.5rem;
+  color: #888;
+  font-weight: bold;
+}
+@media print {
+  .client-info.single-line .info-single-line {
+    font-size: 9pt;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .client-info.single-line .separator {
+    margin: 0 0.3rem;
+    color: #000;
+  }
 } 

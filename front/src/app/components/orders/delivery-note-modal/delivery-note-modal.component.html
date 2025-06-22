@@ -19,29 +19,14 @@
     </div>
   </div>
 
-  <div class="client-info">
+  <div class="client-info minimized single-line">
     <h2>Informations Client</h2>
-    <div class="info-grid">
-      <div class="info-group">
-        <label>Raison Sociale:</label>
-        <span>{{ customerDetails?.raison_social }}</span>
-      </div>
-      <div class="info-group">
-        <label>Téléphone:</label>
-        <span>{{ customerDetails?.tel }}</span>
-      </div>
-      <div class="info-group">
-        <label>Email:</label>
-        <span>{{ customerDetails?.email }}</span>
-      </div>
-      <div class="info-group">
-        <label>Responsable:</label>
-        <span>{{ customerDetails?.responsable }}</span>
-      </div>
-      <div class="info-group full-width">
-        <label>Adresse:</label>
-        <span>{{ customerDetails?.adresse }}</span>
-      </div>
+    <div class="info-single-line">
+      <span><strong>Raison Sociale:</strong> {{ customerDetails?.raison_social }}</span>
+      <span class="separator">|</span>
+      <span><strong>Téléphone:</strong> {{ customerDetails?.tel }}</span>
+      <span class="separator">|</span>
+      <span><strong>Adresse:</strong> {{ customerDetails?.adresse }}</span>
     </div>
   </div>
 

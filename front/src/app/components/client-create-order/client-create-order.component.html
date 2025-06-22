@@ -21,8 +21,10 @@
         <span class="eye-label od">OD</span>
         <input type="text" placeholder="-" [(ngModel)]="order.od.sphere">
         <input type="text" placeholder="-" [(ngModel)]="order.od.cylinder">
-        <input type="text" placeholder="°" [(ngModel)]="order.od.axe">
-        <input type="text" placeholder="+" [(ngModel)]="order.od.addition">
+        <input type="number" placeholder="°" [(ngModel)]="order.od.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <span *ngIf="errors.od.axe" class="error-msg">Axe ne doit pas être négatif</span>
+        <input type="number" placeholder="+" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <span *ngIf="errors.od.addition" class="error-msg">Addition ne doit pas être négatif</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOG()">→</button>
       </div>
       <div class="corrections-row arrows-row">
@@ -37,8 +39,10 @@
         <span class="eye-label og">OG</span>
         <input type="text" placeholder="-" [(ngModel)]="order.og.sphere">
         <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder">
-        <input type="text" placeholder="°" [(ngModel)]="order.og.axe">
-        <input type="text" placeholder="+" [(ngModel)]="order.og.addition">
+        <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <span *ngIf="errors.og.axe" class="error-msg">Axe ne doit pas être négatif</span>
+        <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <span *ngIf="errors.og.addition" class="error-msg">Addition ne doit pas être négatif</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOD()">←</button>
       </div>
     </div>
@@ -53,7 +57,8 @@
     <div class="porteur-form">
       <input type="text" placeholder="Nom de famille" [(ngModel)]="order.lastName" required>
       <input type="text" placeholder="Prénom" [(ngModel)]="order.firstName" required>
-      <input type="text" placeholder="+33 1 23 45 67 89" [(ngModel)]="order.phone">
+      <input type="text" placeholder="+221 77 123 45 67" [(ngModel)]="order.phone" (blur)="validatePhoneSenegal()">
+      <span *ngIf="errors.phone" class="error-msg">Numéro Sénégalais invalide (ex: 77XXXXXXX)</span>
       <input type="email" placeholder="exemple@email.com" [(ngModel)]="order.email">
     </div>
   </div>
@@ -81,7 +86,7 @@
     </div>
     <div class="type-correction-select">
       <label>Sélectionner un type de correction</label>
-      <select [(ngModel)]="order.typeCorrection" (change)="onTypeCorrectionChange()">
+      <select [(ngModel)]="order.typeCorrection" (change)="onTypeCorrectionChange()" [disabled]="errors.step4Disabled">
         <option value="">Choisir un type de correction...</option>
         <option *ngFor="let type of typeCorrections" [value]="type.value">{{ type.label }}</option>
       </select>
@@ -96,7 +101,7 @@
     </div>
     <div class="origine-article-select">
       <label>Sélectionner une origine</label>
-      <select [(ngModel)]="order.origineArticle" (change)="onOrigineArticleChange(); updatePrice()">
+      <select [(ngModel)]="order.origineArticle" (change)="onOrigineArticleChange(); updatePrice()" [disabled]="errors.step5Disabled">
         <option value="">Choisir une origine...</option>
         <option *ngFor="let origine of origineArticles" [value]="origine.value">{{ origine.label }}</option>
       </select>
@@ -111,7 +116,7 @@
     </div>
     <div class="produit-select">
       <label>Sélectionner un produit</label>
-      <select [(ngModel)]="order.produit" name="produit" (change)="onProductSelect()" required>
+      <select [(ngModel)]="order.produit" name="produit" (change)="onProductSelect()" required [disabled]="errors.step6Disabled">
         <option value="">Sélectionnez un produit</option>
         <option *ngFor="let product of filteredProducts" [value]="product.id">
           {{ getProductDisplayName(product) }}
@@ -179,6 +184,6 @@
 
   <!-- Submit Button -->
   <div class="submit-section">
-    <button class="submit-btn" (click)="submitOrder()">Soumettre la Commande</button>
+    <button class="submit-btn" (click)="submitOrder()" [disabled]="errors.formInvalid">Soumettre la Commande</button>
   </div>
 </div> 

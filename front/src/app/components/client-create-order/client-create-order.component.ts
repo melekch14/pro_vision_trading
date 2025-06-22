@@ -52,6 +52,17 @@ export class ClientCreateOrderComponent {
   shippingType: string = '';
   deliveryTime: string = '';
 
+  // Validation error states
+  errors = {
+    od: { axe: false, addition: false },
+    og: { axe: false, addition: false },
+    phone: false,
+    step4Disabled: true,
+    step5Disabled: true,
+    step6Disabled: true,
+    formInvalid: false
+  };
+
   constructor(
     private orderService: OrderService,
     private router: Router,
@@ -61,17 +72,56 @@ export class ClientCreateOrderComponent {
   ngOnInit() {
     // Initialize with empty product list
     this.filteredProducts = [];
+    this.updateStepEnabling();
   }
 
-  areAllCorrectionsFilled(): boolean {
-    const { od, og } = this.order;
-    return (
-      od.sphere !== '' && od.cylinder !== '' && od.axe !== '' && od.addition !== '' &&
-      og.sphere !== '' && og.cylinder !== '' && og.axe !== '' && og.addition !== ''
-    );
+  // --- VALIDATION HELPERS ---
+  validateAxeAndAddition() {
+    // Validate OD
+    this.errors.od.axe = this.isNegative(this.order.od.axe);
+    this.errors.od.addition = this.isNegative(this.order.od.addition);
+    // Validate OG
+    this.errors.og.axe = this.isNegative(this.order.og.axe);
+    this.errors.og.addition = this.isNegative(this.order.og.addition);
+  }
+
+  isNegative(value: any): boolean {
+    if (value === '' || value === null || value === undefined) return false;
+    return !isNaN(value) && parseFloat(value) < 0;
+  }
+
+  validatePhoneSenegal(): boolean {
+    // Senegal numbers: 9 digits, start with 7 (e.g., 77, 78, 76, 70, 75, 72, 73, 74)
+    const phone = this.order.phone.replace(/\D/g, '');
+    const senegalPattern = /^(7[05678]\d{7})$/;
+    this.errors.phone = !senegalPattern.test(phone);
+    return !this.errors.phone;
+  }
+
+  // --- STEP ENABLING LOGIC ---
+  updateStepEnabling() {
+    // Step 4 enabled if step 3 (typeCommande) is selected
+    this.errors.step4Disabled = !this.order.typeCommande;
+    // Step 5 enabled if step 4 (typeCorrection) is selected
+    this.errors.step5Disabled = !this.order.typeCorrection;
+    // Step 6 enabled if step 5 (origineArticle) is selected
+    this.errors.step6Disabled = !this.order.origineArticle;
+  }
+
+  // --- HOOKS FOR SELECTS ---
+  onTypeCommandeChange() {
+    // Reset file name if type de commande changes
+    if (this.order.typeCommande !== 'precal') {
+      this.selectedFileName = '';
+    }
+    this.order.typeCorrection = '';
+    this.order.origineArticle = '';
+    this.order.produit = '';
+    this.updateStepEnabling();
   }
 
   onTypeCorrectionChange() {
+    this.updateStepEnabling();
     if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
       const { sphere, cylinder, addition } = this.order.od;
       
@@ -97,6 +147,7 @@ export class ClientCreateOrderComponent {
   }
 
   onOrigineArticleChange() {
+    this.updateStepEnabling();
     if (this.order.origineArticle === 'fabrication') {
       // Get all fabrication products without filtering by corrections
       this.orderService.getFabricationProducts().subscribe({
@@ -261,13 +312,6 @@ export class ClientCreateOrderComponent {
     this.order.og[field] = this.order.od[field];
   }
 
-  onTypeCommandeChange() {
-    // Reset file name if type de commande changes
-    if (this.order.typeCommande !== 'precal') {
-      this.selectedFileName = '';
-    }
-  }
-
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -280,6 +324,13 @@ export class ClientCreateOrderComponent {
   }
 
   async submitOrder() {
+    this.validateAxeAndAddition();
+    this.validatePhoneSenegal();
+    this.errors.formInvalid = this.errors.od.axe || this.errors.od.addition || this.errors.og.axe || this.errors.og.addition || this.errors.phone;
+    if (this.errors.formInvalid) {
+      alert('Veuillez corriger les erreurs du formulaire avant de soumettre.');
+      return;
+    }
     try {
       // Prepare order data with additional fields
       const orderData = {
@@ -306,6 +357,20 @@ export class ClientCreateOrderComponent {
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('Une erreur est survenue lors de la soumission de la commande.');
+    }
+  }
+
+  areAllCorrectionsFilled(): boolean {
+    const { od, og } = this.order;
+    return (
+      od.sphere !== '' && od.cylinder !== '' && od.axe !== '' && od.addition !== '' &&
+      og.sphere !== '' && og.cylinder !== '' && og.axe !== '' && og.addition !== ''
+    );
+  }
+
+  blockNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E') {
+      event.preventDefault();
     }
   }
 } 

@@ -21,7 +21,8 @@ export class ClientCreateOrderComponent {
     typeCommande: '',
     origineArticle: '',
     typeCorrection: '',
-    produit: ''
+    produit: '',
+    produit2: ''
   };
 
   typeCommandes = [
@@ -42,17 +43,23 @@ export class ClientCreateOrderComponent {
 
   produits: any[] = [];
   filteredProducts: any[] = [];
+  filteredProducts2: any[] = [];
   selectedProduct: any = null;
+  selectedProduct2: any = null;
   selectedArticle: any = null;
+  selectedArticle2: any = null;
 
   selectedFileName: string = '';
   selectedFile: File | null = null;
 
   price: number = 0;
+  price2: number = 0;
+  totalPrice: number = 0;
   shippingType: string = '';
   deliveryTime: string = '';
 
-  // Validation error states
+  needsSecondProduct: boolean = false;
+
   errors = {
     od: { axe: false, addition: false },
     og: { axe: false, addition: false },
@@ -61,6 +68,7 @@ export class ClientCreateOrderComponent {
     step4Disabled: true,
     step5Disabled: true,
     step6Disabled: true,
+    step6bDisabled: true,
     formInvalid: false
   };
 
@@ -71,19 +79,18 @@ export class ClientCreateOrderComponent {
   ) {}
 
   ngOnInit() {
-    // Initialize with empty product list
     this.filteredProducts = [];
+    this.filteredProducts2 = [];
     this.updateStepEnabling();
   }
 
-  // --- VALIDATION HELPERS ---
   validateAxeAndAddition() {
-    // Validate OD
     this.errors.od.axe = this.isNegative(this.order.od.axe);
     this.errors.od.addition = this.isNegative(this.order.od.addition);
-    // Validate OG
     this.errors.og.axe = this.isNegative(this.order.og.axe);
     this.errors.og.addition = this.isNegative(this.order.og.addition);
+    
+    this.checkIfValuesAreDifferent();
   }
 
   isNegative(value: any): boolean {
@@ -91,8 +98,35 @@ export class ClientCreateOrderComponent {
     return !isNaN(value) && parseFloat(value) < 0;
   }
 
+  checkIfValuesAreDifferent() {
+    const od = this.order.od;
+    const og = this.order.og;
+    
+    const wasDifferent = this.needsSecondProduct;
+    this.needsSecondProduct = (
+      od.sphere !== og.sphere ||
+      od.cylinder !== og.cylinder ||
+      od.axe !== og.axe ||
+      od.addition !== og.addition
+    );
+    
+    // If values are the same, clear second product selection
+    if (!this.needsSecondProduct) {
+      this.order.produit2 = '';
+      this.selectedProduct2 = null;
+      this.selectedArticle2 = null;
+      this.price2 = 0;
+      this.filteredProducts2 = [];
+    } else if (!wasDifferent && this.needsSecondProduct) {
+      // If values just became different, trigger filtering for OG
+      this.filterProductsForOG();
+    }
+    
+    this.updateStepEnabling();
+    this.updateTotalPrice();
+  }
+
   validatePhoneSenegal(): boolean {
-    // Senegal numbers: 9 digits, start with 7 (e.g., 77, 78, 76, 70, 75, 72, 73, 74)
     const phone = this.order.phone.replace(/\D/g, '');
     const senegalPattern = /^(7[05678]\d{7})$/;
     this.errors.phone = !senegalPattern.test(phone);
@@ -100,32 +134,27 @@ export class ClientCreateOrderComponent {
   }
 
   validateEmail(): boolean {
-    // Simple email regex
     const email = this.order.email || '';
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     this.errors.email = !emailPattern.test(email);
     return !this.errors.email;
   }
 
-  // --- STEP ENABLING LOGIC ---
   updateStepEnabling() {
-    // Step 4 enabled if step 3 (typeCommande) is selected
     this.errors.step4Disabled = !this.order.typeCommande;
-    // Step 5 enabled if step 4 (typeCorrection) is selected
     this.errors.step5Disabled = !this.order.typeCorrection;
-    // Step 6 enabled if step 5 (origineArticle) is selected
     this.errors.step6Disabled = !this.order.origineArticle;
+    this.errors.step6bDisabled = !this.order.produit || !this.needsSecondProduct;
   }
 
-  // --- HOOKS FOR SELECTS ---
   onTypeCommandeChange() {
-    // Reset file name if type de commande changes
     if (this.order.typeCommande !== 'precal') {
       this.selectedFileName = '';
     }
     this.order.typeCorrection = '';
     this.order.origineArticle = '';
     this.order.produit = '';
+    this.order.produit2 = '';
     this.updateStepEnabling();
   }
 
@@ -150,8 +179,37 @@ export class ClientCreateOrderComponent {
           this.filterProductsBySphereAndAddition(sphere, addition);
           break;
       }
+      
+      // Also filter products for OG if values are different
+      if (this.needsSecondProduct) {
+        this.filterProductsForOG();
+      }
     } else {
       this.filteredProducts = [];
+      this.filteredProducts2 = [];
+    }
+  }
+
+  // New method to filter products for OG based on OG correction values
+  filterProductsForOG() {
+    if (!this.areAllCorrectionsFilled() || !this.order.typeCorrection) {
+      this.filteredProducts2 = [];
+      return;
+    }
+
+    const { sphere, cylinder, addition } = this.order.og;
+    
+    switch (this.order.typeCorrection) {
+      case 'loin':
+        this.filterProducts2BySphereAndCylinder(sphere, cylinder);
+        break;
+      case 'pres':
+        const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
+        this.filterProducts2BySphereAndCylinder(spherePlusAddition.toString(), cylinder);
+        break;
+      case 'loin_pres':
+        this.filterProducts2BySphereAndAddition(sphere, addition);
+        break;
     }
   }
 
@@ -163,10 +221,17 @@ export class ClientCreateOrderComponent {
         next: (products) => {
           this.filteredProducts = products;
           console.log('Fabrication products:', this.filteredProducts);
+          
+          // Also filter for OG if needed
+          if (this.needsSecondProduct) {
+            this.filteredProducts2 = products;
+            console.log('Fabrication products for OG:', this.filteredProducts2);
+          }
         },
         error: (error) => {
           console.error('Error fetching fabrication products:', error);
           this.filteredProducts = [];
+          this.filteredProducts2 = [];
         }
       });
     } else {
@@ -186,6 +251,11 @@ export class ClientCreateOrderComponent {
             this.filterProductsBySphereAndAddition(sphere, addition);
             break;
         }
+        
+        // Also filter for OG if needed
+        if (this.needsSecondProduct) {
+          this.filterProductsForOG();
+        }
       }
     }
   }
@@ -194,7 +264,6 @@ export class ClientCreateOrderComponent {
     if (sphere && cylinder) {
       this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
         next: (products) => {
-          // Filter products based on origineArticle if selected
           this.filteredProducts = this.filterByOrigineArticle(products);
           console.log('Matching products:', this.filteredProducts);
         },
@@ -210,13 +279,42 @@ export class ClientCreateOrderComponent {
     if (sphere && addition) {
       this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
         next: (products) => {
-          // Filter products based on origineArticle if selected
           this.filteredProducts = this.filterByOrigineArticle(products);
           console.log('Matching products:', this.filteredProducts);
         },
         error: (error) => {
           console.error('Error fetching matching products:', error);
           this.filteredProducts = [];
+        }
+      });
+    }
+  }
+
+  filterProducts2BySphereAndCylinder(sphere: string, cylinder: string) {
+    if (sphere && cylinder) {
+      this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
+        next: (products) => {
+          this.filteredProducts2 = this.filterByOrigineArticle(products);
+          console.log('Matching products for OG:', this.filteredProducts2);
+        },
+        error: (error) => {
+          console.error('Error fetching matching products for OG:', error);
+          this.filteredProducts2 = [];
+        }
+      });
+    }
+  }
+
+  filterProducts2BySphereAndAddition(sphere: string, addition: string) {
+    if (sphere && addition) {
+      this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
+        next: (products) => {
+          this.filteredProducts2 = this.filterByOrigineArticle(products);
+          console.log('Matching products for OG:', this.filteredProducts2);
+        },
+        error: (error) => {
+          console.error('Error fetching matching products for OG:', error);
+          this.filteredProducts2 = [];
         }
       });
     }
@@ -240,13 +338,11 @@ export class ClientCreateOrderComponent {
 
   onProductSelect() {
     if (this.order.produit) {
-      // First get the stock details
       this.orderService.getStockById(this.order.produit).subscribe({
         next: (stock) => {
           this.selectedProduct = stock;
           console.log('Selected stock:', stock);
           
-          // Then get the article details to get the prix_vente
           if (stock.article_id) {
             this.orderService.getArticleById(stock.article_id).subscribe({
               next: (article) => {
@@ -274,23 +370,81 @@ export class ClientCreateOrderComponent {
       this.selectedArticle = null;
       this.price = 0;
     }
+    this.updateStepEnabling();
+    this.updateTotalPrice();
+  }
+
+  onProduct2Select() {
+    if (this.order.produit2) {
+      this.orderService.getStockById(this.order.produit2).subscribe({
+        next: (stock) => {
+          this.selectedProduct2 = stock;
+          console.log('Selected stock for OG:', stock);
+          
+          if (stock.article_id) {
+            this.orderService.getArticleById(stock.article_id).subscribe({
+              next: (article) => {
+                this.selectedArticle2 = article;
+                console.log('Selected article for OG:', article);
+                this.updatePrice2();
+              },
+              error: (error) => {
+                console.error('Error fetching article details for OG:', error);
+                this.selectedArticle2 = null;
+                this.price2 = 0;
+              }
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching stock details for OG:', error);
+          this.selectedProduct2 = null;
+          this.selectedArticle2 = null;
+          this.price2 = 0;
+        }
+      });
+    } else {
+      this.selectedProduct2 = null;
+      this.selectedArticle2 = null;
+      this.price2 = 0;
+    }
+    this.updateTotalPrice();
   }
 
   updatePrice() {
     if (this.selectedArticle) {
-      // Get the base price from the article's prix_vente
       const basePrice = this.selectedArticle.prix_vente || 0;
       
-      // Add origine article cost if applicable
       let totalPrice = basePrice;
       if (this.order.origineArticle === 'fabrication') {
-        totalPrice += 50; // Additional cost for fabrication
+        totalPrice += 50;
       }
 
       this.price = totalPrice;
     } else {
       this.price = 0;
     }
+    this.updateTotalPrice();
+  }
+
+  updatePrice2() {
+    if (this.selectedArticle2) {
+      const basePrice = this.selectedArticle2.prix_vente || 0;
+      
+      let totalPrice = basePrice;
+      if (this.order.origineArticle === 'fabrication') {
+        totalPrice += 50;
+      }
+
+      this.price2 = totalPrice;
+    } else {
+      this.price2 = 0;
+    }
+    this.updateTotalPrice();
+  }
+
+  updateTotalPrice() {
+    this.totalPrice = this.price + this.price2;
   }
 
   onShippingTypeChange() {
@@ -308,6 +462,7 @@ export class ClientCreateOrderComponent {
     this.order.og.cylinder = this.order.od.cylinder;
     this.order.og.axe = this.order.od.axe;
     this.order.og.addition = this.order.od.addition;
+    this.checkIfValuesAreDifferent();
   }
 
   copyToOD() {
@@ -315,10 +470,12 @@ export class ClientCreateOrderComponent {
     this.order.od.cylinder = this.order.og.cylinder;
     this.order.od.axe = this.order.og.axe;
     this.order.od.addition = this.order.od.addition;
+    this.checkIfValuesAreDifferent();
   }
 
   copyFieldToOG(field: 'sphere' | 'cylinder' | 'axe' | 'addition') {
     this.order.og[field] = this.order.od[field];
+    this.checkIfValuesAreDifferent();
   }
 
   onFileSelected(event: any) {
@@ -336,6 +493,13 @@ export class ClientCreateOrderComponent {
     this.validateAxeAndAddition();
     this.validatePhoneSenegal();
     this.validateEmail();
+    
+    // Additional validation for second product
+    if (this.needsSecondProduct && !this.order.produit2) {
+      alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
+      return;
+    }
+    
     this.errors.formInvalid = this.errors.od.axe || this.errors.od.addition || this.errors.og.axe || this.errors.og.addition || this.errors.phone || this.errors.email;
     if (this.errors.formInvalid) {
       alert('Veuillez corriger les erreurs du formulaire avant de soumettre.');
@@ -346,10 +510,15 @@ export class ClientCreateOrderComponent {
       const orderData = {
         ...this.order,
         price: this.price,
+        price2: this.price2,
+        totalPrice: this.totalPrice,
         shippingType: this.shippingType,
         deliveryTime: this.deliveryTime,
         selectedProduct: this.selectedProduct,
+        selectedProduct2: this.selectedProduct2,
         selectedArticle: this.selectedArticle,
+        selectedArticle2: this.selectedArticle2,
+        needsSecondProduct: this.needsSecondProduct,
         client_id: this.authService.getClientId()
       };
 
@@ -358,12 +527,12 @@ export class ClientCreateOrderComponent {
       console.log('Order response:', orderResponse);
       // If there's a file and it's a precal type de commande, upload it
       if (this.selectedFile && this.order.typeCommande === 'precal') {
-        const orderId = orderResponse.id; // Assuming the backend returns the order ID
+        const orderId = orderResponse.id;
         await this.orderService.uploadFile(this.selectedFile, orderId).toPromise();
       }
 
       alert('Commande soumise avec succès!');
-      this.router.navigate(['/orders']); // Navigate to orders list or confirmation page
+      this.router.navigate(['/orders']);
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('Une erreur est survenue lors de la soumission de la commande.');

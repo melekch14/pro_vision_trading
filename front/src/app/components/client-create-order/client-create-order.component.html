@@ -37,11 +37,11 @@
       </div>
       <div class="corrections-row og-row">
         <span class="eye-label og">OG</span>
-        <input type="text" placeholder="-" [(ngModel)]="order.og.sphere">
-        <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder">
-        <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <input type="text" placeholder="-" [(ngModel)]="order.og.sphere" (input)="checkIfValuesAreDifferent()">
+        <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder" (input)="checkIfValuesAreDifferent()">
+        <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent()">
         <span *ngIf="errors.og.axe" class="error-msg">Axe ne doit pas être négatif</span>
-        <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent()">
         <span *ngIf="errors.og.addition" class="error-msg">Addition ne doit pas être négatif</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOD()">←</button>
       </div>
@@ -113,13 +113,31 @@
   <div class="step-card step-6">
     <div class="step-header">
       <span class="step-number">6</span>
-      <span class="step-title">Produit</span>
+      <span class="step-title">Produit (OD)</span>
     </div>
     <div class="produit-select">
-      <label>Sélectionner un produit</label>
+      <label>Sélectionner un produit pour l'œil droit (OD)</label>
       <select [(ngModel)]="order.produit" name="produit" (change)="onProductSelect()" required [disabled]="errors.step6Disabled">
         <option value="">Sélectionnez un produit</option>
         <option *ngFor="let product of filteredProducts" [value]="product.id">
+          {{ getProductDisplayName(product) }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Step 6b: Produit pour OG (conditional) -->
+  <div class="step-card step-6b" *ngIf="needsSecondProduct">
+    <div class="step-header">
+      <span class="step-number">6b</span>
+      <span class="step-title">Produit (OG)</span>
+    </div>
+    <div class="produit-select">
+      <label>Sélectionner un produit pour l'œil gauche (OG)</label>
+      <p class="info-message">* Requis car les valeurs de correction OD et OG sont différentes</p>
+      <select [(ngModel)]="order.produit2" name="produit2" (change)="onProduct2Select()" required [disabled]="errors.step6bDisabled">
+        <option value="">Sélectionnez un produit</option>
+        <option *ngFor="let product of filteredProducts2" [value]="product.id">
           {{ getProductDisplayName(product) }}
         </option>
       </select>
@@ -167,8 +185,16 @@
       <h3>Résumé de la Commande</h3>
       <div class="resume-row">
         <div>
-          <span class="resume-label">Prix Total</span>
+          <span class="resume-label">Prix OD</span>
           <span class="resume-value">{{ price | number:'1.2-2' }} €</span>
+        </div>
+        <div *ngIf="needsSecondProduct">
+          <span class="resume-label">Prix OG</span>
+          <span class="resume-value">{{ price2 | number:'1.2-2' }} €</span>
+        </div>
+        <div>
+          <span class="resume-label">Prix Total</span>
+          <span class="resume-value">{{ totalPrice | number:'1.2-2' }} €</span>
         </div>
         <div>
           <span class="resume-label">Type de Livraison</span>

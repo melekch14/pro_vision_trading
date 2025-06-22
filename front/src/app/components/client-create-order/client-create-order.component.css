@@ -352,6 +352,7 @@
   box-shadow: 0 4px 24px rgba(41,83,243,0.07);
   margin-bottom: 24px;
   padding: 24px 20px 18px 20px;
+  border-left: 4px solid #2953f3;
 }
 .prix-delais-content {
   display: flex;
@@ -1313,4 +1314,26 @@
   font-size: 0.98rem;
   display: inline-block;
   box-shadow: 0 2px 8px rgba(211,47,47,0.07);
+}
+
+.step-card.step-6b {
+  border-left: 4px solid #16a34a;
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+}
+
+.step-card.step-6b .step-number {
+  background: #16a34a;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.12);
+}
+
+.step-card.step-6b .step-title {
+  color: #16a34a;
+}
+
+.info-message {
+  color: #16a34a;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0;
+  padding: 4px 0;
 } 

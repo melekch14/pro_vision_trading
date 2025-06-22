@@ -109,8 +109,8 @@ class OrderService {
     try {
       const {
         client_id, od, og, lastName, firstName, phone, email,
-        typeCommande, origineArticle, produit, price, typeCorrection,
-        shippingType, deliveryTime
+        typeCommande, origineArticle, produit, produit2, price, price2, totalPrice, typeCorrection,
+        shippingType, deliveryTime, needsSecondProduct
       } = orderData;
       
       const [result] = await db.query(
@@ -118,14 +118,14 @@ class OrderService {
           client_id, od_sphere, od_cylinder, od_axe, od_addition,
           og_sphere, og_cylinder, og_axe, og_addition,
           last_name, first_name, phone, email,
-          typeCommande, origineArticle, produit, price, typeCorrection,
+          typeCommande, origineArticle, produit, produit2, price, price2, total_price, typeCorrection,
           shipping_type, delivery_time, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
         [
           client_id, od.sphere, od.cylinder, od.axe, od.addition,
           og.sphere, og.cylinder, og.axe, og.addition,
           lastName, firstName, phone, email,
-          typeCommande, origineArticle, produit, price, typeCorrection,
+          typeCommande, origineArticle, produit, produit2 || null, price, price2 || 0, totalPrice || price, typeCorrection,
           shippingType, deliveryTime
         ]
       );
@@ -170,9 +170,15 @@ class OrderService {
   async getOrdersByClientId(clientId) {
     const [rows] = await db.query(`
         SELECT o.*,
-               s.article_id as stock_article_id
+               s.article_id as stock_article_id,
+               s2.article_id as stock2_article_id,
+               a.libelle as article_libelle,
+               a2.libelle as article2_libelle
         FROM orders o
         LEFT JOIN stock s ON o.produit = s.id
+        LEFT JOIN stock s2 ON o.produit2 = s2.id
+        LEFT JOIN article a ON s.article_id = a.id
+        LEFT JOIN article a2 ON s2.article_id = a2.id
         WHERE o.client_id = ?
         ORDER BY o.order_datetime DESC
     `, [clientId]);
@@ -181,10 +187,17 @@ class OrderService {
 
   async getAllOrders() {
     const [rows] = await db.query(`
-          SELECT o.*, o.id as order_id, s.article_id as stock_article_id, c.raison_social, s.*, a.libelle as article_libelle
+          SELECT o.*, o.id as order_id, 
+                 s.article_id as stock_article_id, 
+                 s2.article_id as stock2_article_id,
+                 c.raison_social, s.*, s2.*, 
+                 a.libelle as article_libelle,
+                 a2.libelle as article2_libelle
 FROM orders o 
 LEFT JOIN stock s ON o.produit = s.id 
+LEFT JOIN stock s2 ON o.produit2 = s2.id
 LEFT JOIN article a ON s.article_id = a.id
+LEFT JOIN article a2 ON s2.article_id = a2.id
 LEFT JOIN client c on c.id = o.client_id 
 ORDER BY o.order_datetime DESC
       `);
@@ -240,9 +253,15 @@ ORDER BY o.order_datetime DESC
     async getOrderById(id){
     const [rows] = await db.query(`
           SELECT o.*,
-                s.article_id as stock_article_id
+                s.article_id as stock_article_id,
+                s2.article_id as stock2_article_id,
+                a.libelle as article_libelle,
+                a2.libelle as article2_libelle
           FROM orders o
           LEFT JOIN stock s ON o.produit = s.id
+          LEFT JOIN stock s2 ON o.produit2 = s2.id
+          LEFT JOIN article a ON s.article_id = a.id
+          LEFT JOIN article a2 ON s2.article_id = a2.id
           WHERE o.id = ?
       `, [id]);
     return rows[0];

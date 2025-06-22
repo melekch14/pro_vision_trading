@@ -151,12 +151,51 @@ const requestPasswordReset = async (email) => {
         }
     });
     const resetUrl = `http://localhost:4200/reset-password?token=${token}`;
+
     const mailOptions = {
-        from: "provisiontrading38@gmail.com",
+        from: '"Pro Vision Trading" <provisiontrading38@gmail.com>',
         to: user.email,
         subject: 'Password Reset Request',
-        text: `Hello,\n\nYou requested a password reset. Please click the link below to reset your password:\n${resetUrl}\n\nThis link will expire in 1 hour.\nIf you did not request this, please ignore this email.`
+        html: `
+        <div style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+            <div style="max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div style="background-color: #d9534f; color: white; padding: 30px 20px; text-align: center;">
+                    <img src="https://i.imgur.com/S5p6g2v.png" alt="Lock Icon" style="width: 60px; height: auto; margin-bottom: 15px; border-radius: 50%;">
+                    <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Reset Your Password</h1>
+                    <p style="margin: 10px 0 0; font-size: 16px;">Secure your account with a new password</p>
+                </div>
+                <div style="padding: 30px 25px; color: #555; line-height: 1.6;">
+                    <p style="font-size: 16px;">Hello,</p>
+                    <p style="font-size: 16px;">We received a request to reset the password for your account. If you made this request, click the button below to set a new password:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${resetUrl}" style="background-color: #d9534f; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold; display: inline-block;">Reset Password</a>
+                    </div>
+                    <div style="background-color: #fcf8e3; border-left: 5px solid #f0ad4e; padding: 15px 20px; margin-bottom: 20px; border-radius: 0 5px 5px 0;">
+                        <p style="margin: 0; font-size: 16px;"><strong>Security Notice</strong></p>
+                        <p style="margin: 5px 0 0; font-size: 14px;">This link will expire in 1 hour for security reasons. If you didn't request this password reset, please ignore this email or contact our support team.</p>
+                    </div>
+                    <div style="background-color: #d9edf7; border-left: 5px solid #5bc0de; padding: 15px 20px; margin-bottom: 20px; border-radius: 0 5px 5px 0;">
+                        <p style="margin: 0; font-size: 16px;"><strong>Security Tips:</strong></p>
+                        <ul style="margin: 10px 0 0; padding-left: 20px; font-size: 14px;">
+                            <li>Use a strong, unique password</li>
+                            <li>Include a mix of letters, numbers, and symbols</li>
+                            <li>Avoid using personal information</li>
+                            <li>Consider using a password manager</li>
+                        </ul>
+                    </div>
+                    <p style="font-size: 14px;">If the button above doesn't work, copy and paste this link into your browser:<br>
+                    <a href="${resetUrl}" style="color: #d9534f; text-decoration: none;">${resetUrl}</a></p>
+                </div>
+                <div style="background-color: #343a40; color: #ccc; padding: 20px; text-align: center; font-size: 12px;">
+                    <p style="margin: 0;">This is an automated message, please do not reply to this email.</p>
+                    <p style="margin: 10px 0 0;">Need help? Contact us at <a href="mailto:security@company.com" style="color: #fff; text-decoration: none;">security@company.com</a></p>
+                    <p style="margin: 10px 0 0;">&copy; 2024 Your Company. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+        `
     };
+
     await transporter.sendMail(mailOptions);
     return true;
 };

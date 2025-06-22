@@ -46,7 +46,7 @@ export class LoginComponent {
             const userData = this.authService.getUserData();
             if (userData?.role === 'client') {
               this.authService.decodeAndDisplayClientInfo();
-              this.router.navigate(['/client/dashboard']);
+              this.router.navigate(['/client/create-order']);
             } else {
               this.router.navigate(['/app']);
             }

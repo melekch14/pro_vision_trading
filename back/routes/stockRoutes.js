@@ -33,5 +33,6 @@ router.get('/article/:articleId', stockController.getStockByArticleId);
 router.get('/:id', stockController.getStockById);
 router.put('/:id', stockController.updateStock);
 router.delete('/:id', stockController.deleteStock);
+router.patch('/:id/decrement', stockController.decrementStock);
 
 module.exports = router; 

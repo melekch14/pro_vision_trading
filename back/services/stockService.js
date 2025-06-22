@@ -175,6 +175,11 @@ const getFabricationProducts = async () => {
     }
 };
 
+// Decrement stock quantity by 1
+const decrementStock = async (id) => {
+    await db.query('UPDATE stock SET quantite = quantite - 1 WHERE id = ? AND quantite > 0', [id]);
+};
+
 module.exports = {
     createStock,
     getStockByArticleId,
@@ -184,5 +189,6 @@ module.exports = {
     getAllStockWithArticles,
     getMatchingProducts,
     getMatchingProductsBySphereAndAddition,
-    getFabricationProducts
+    getFabricationProducts,
+    decrementStock
 }; 

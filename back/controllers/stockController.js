@@ -129,4 +129,14 @@ exports.getFabricationProducts = async (req, res) => {
         console.error('Error in getFabricationProducts controller:', error);
         res.status(500).json({ message: error.message });
     }
+};
+
+// Decrement stock quantity by 1
+exports.decrementStock = async (req, res) => {
+    try {
+        await stockService.decrementStock(req.params.id);
+        res.json({ message: 'Stock decremented successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }; 

@@ -52,4 +52,8 @@ export class StockService {
   getStockById(id: number): Observable<StockEntry> {
     return this.http.get<StockEntry>(`${this.apiUrl}/${id}`);
   }
+
+  decrementStock(id: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/decrement`, {});
+  }
 } 

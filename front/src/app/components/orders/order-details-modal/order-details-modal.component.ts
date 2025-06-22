@@ -178,9 +178,17 @@ export class OrderDetailsModalComponent implements OnInit {
         fournisseurCode: this.tempFournisseur || this.order['fournisseur_code']
       }).subscribe({
         next: (response) => {
+          const wasProcessing = this.selectedStatus === 'Processing';
           this.order.status = this.tempStatus;
           this.selectedStatus = this.tempStatus;
           this.isUpdating = false;
+          // Decrement stock if status changed to Processing
+          if (this.tempStatus === 'Processing' && !wasProcessing && this.order.produit) {
+            this.stockService.decrementStock(this.order.produit).subscribe({
+              next: () => {},
+              error: (err) => { console.error('Error decrementing stock:', err); }
+            });
+          }
           // You might want to show a success message here
         },
         error: (error) => {
@@ -255,7 +263,7 @@ export class OrderDetailsModalComponent implements OnInit {
         status: this.tempStatus,
         fournisseur_code: this.tempFournisseur
       };
-      
+      const wasProcessing = this.selectedStatus === 'Processing';
       this.http.patch(`${environment.apiUrl}/orders/${this.order.id}/status`, updates).subscribe({
         next: (response) => {
           this.order.status = this.tempStatus;
@@ -263,6 +271,13 @@ export class OrderDetailsModalComponent implements OnInit {
           this.order['fournisseur_code'] = this.tempFournisseur;
           this.selectedFournisseur = this.tempFournisseur;
           this.isUpdating = false;
+          // Decrement stock if status changed to Processing
+          if (this.tempStatus === 'Processing' && !wasProcessing && this.order.produit) {
+            this.stockService.decrementStock(this.order.produit).subscribe({
+              next: () => {},
+              error: (err) => { console.error('Error decrementing stock:', err); }
+            });
+          }
           // Close the modal and pass true to indicate successful update
           this.dialogRef.close(true);
         },

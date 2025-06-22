@@ -440,7 +440,6 @@
 }
 
 .eye-specs .info-item span {
-  font-size: 15px;
   color: #333;
   font-weight: 500;
 }
@@ -670,4 +669,43 @@
   font-size: 18px;
   width: 18px;
   height: 18px;
+}
+
+/* Eye Product Details Styles */
+.eye-product-details {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.eye-product-details h4 {
+  margin: 0 0 12px 0;
+  color: #1976d2;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.eye-product-details .info-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.eye-product-details .info-item {
+  gap: 4px;
+}
+
+.eye-product-details .info-item label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+}
+
+.eye-product-details .info-item span {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
 } 

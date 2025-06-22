@@ -73,10 +73,6 @@
               <h3>Product Details</h3>
               <div class="info-grid">
                 <div class="info-item">
-                  <label>Product:</label>
-                  <span>{{ formatStockLibelle() }}</span>
-                </div>
-                <div class="info-item">
                   <label>Type de commande:</label>
                   <span>{{ formatText(order.typeCommande) }}</span>
                 </div>
@@ -94,6 +90,44 @@
                     <mat-icon>download</mat-icon>
                     Download File
                   </button>
+                </div>
+              </div>
+              
+              <!-- OD (Right Eye) Product Details -->
+              <div class="eye-product-details">
+                <h4>Right Eye (OD) Product</h4>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Product:</label>
+                    <span>{{ formatStockLibelle('od') }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Stock ID:</label>
+                    <span>{{ order.produit || 'N/A' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Diameter:</label>
+                    <span>{{ odProductDiametre }}mm</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- OG (Left Eye) Product Details -->
+              <div class="eye-product-details" *ngIf="order.produit2">
+                <h4>Left Eye (OG) Product</h4>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Product:</label>
+                    <span>{{ formatStockLibelle('og') }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Stock ID:</label>
+                    <span>{{ order.produit2 || 'N/A' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Diameter:</label>
+                    <span>{{ ogProductDiametre }}mm</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -241,14 +275,14 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>{{ getDiametre() }}</td>
+                        <td>{{ getDiametre('od') }}</td>
                         <td>{{ order.od_sphere || '0.00' }}</td>
                         <td>{{ order.od_cylinder || '0.00' }}</td>
                         <td>{{ order['od_axe'] || '0' }}</td>
                         <td>{{ order.od_addition || '0.00' }}</td>
                       </tr>
                       <tr>
-                        <td>{{ getDiametre() }}</td>
+                        <td>{{ getDiametre('og') }}</td>
                         <td>{{ order.og_sphere || '0.00' }}</td>
                         <td>{{ order.og_cylinder || '0.00' }}</td>
                         <td>{{ order['og_axe'] || '0' }}</td>

@@ -106,6 +106,6 @@ export class AuthService {
   }
 
   requestPasswordReset(email: string) {
-    return this.http.post<any>(`${this.baseUrl}/request-password-reset`, { email });
+    return this.http.post<any>(`${this.baseUrl}/reset-password-email`, { email });
   }
 }

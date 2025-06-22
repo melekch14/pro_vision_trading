@@ -49,6 +49,7 @@ import { ClientOrdersComponent } from './components/client-orders/client-orders.
 import { ClientProfileComponent } from './components/client-profile/client-profile.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     ClientProfileComponent,
     StockDialogComponent,
     DashboardComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    ForgotPasswordComponent
   ],
   imports: [
     BrowserModule,

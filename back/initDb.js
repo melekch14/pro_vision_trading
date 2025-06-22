@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
+const bcrypt = require('bcryptjs');
 
 const dbName = process.env.DB_NAME;
 
@@ -227,6 +228,19 @@ async function initDb() {
   // Create all tables
   for (const stmt of tableStatements) {
     await db.query(stmt);
+  }
+
+  // Check if default admin opticien exists
+  const [opticiens] = await db.query('SELECT * FROM opticien WHERE email = ?', ['admin@admin.com']);
+  if (opticiens.length === 0) {
+    const hashedPassword = await bcrypt.hash('admin@password123', 10);
+    await db.query(
+      `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
+      ['admin01', 'admin', 'admin', 'admin@admin.com', hashedPassword, 'opticien']
+    );
+    console.log('Default admin opticien created: admin@admin.com / admin@password123');
+  } else {
+    console.log('Default admin opticien already exists.');
   }
   await db.end();
   console.log('All tables checked/created.');

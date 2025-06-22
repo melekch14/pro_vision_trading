@@ -57,6 +57,7 @@ export class ClientCreateOrderComponent {
     od: { axe: false, addition: false },
     og: { axe: false, addition: false },
     phone: false,
+    email: false,
     step4Disabled: true,
     step5Disabled: true,
     step6Disabled: true,
@@ -96,6 +97,14 @@ export class ClientCreateOrderComponent {
     const senegalPattern = /^(7[05678]\d{7})$/;
     this.errors.phone = !senegalPattern.test(phone);
     return !this.errors.phone;
+  }
+
+  validateEmail(): boolean {
+    // Simple email regex
+    const email = this.order.email || '';
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.errors.email = !emailPattern.test(email);
+    return !this.errors.email;
   }
 
   // --- STEP ENABLING LOGIC ---
@@ -326,7 +335,8 @@ export class ClientCreateOrderComponent {
   async submitOrder() {
     this.validateAxeAndAddition();
     this.validatePhoneSenegal();
-    this.errors.formInvalid = this.errors.od.axe || this.errors.od.addition || this.errors.og.axe || this.errors.og.addition || this.errors.phone;
+    this.validateEmail();
+    this.errors.formInvalid = this.errors.od.axe || this.errors.od.addition || this.errors.og.axe || this.errors.og.addition || this.errors.phone || this.errors.email;
     if (this.errors.formInvalid) {
       alert('Veuillez corriger les erreurs du formulaire avant de soumettre.');
       return;

@@ -373,6 +373,21 @@ tr:hover {
   text-align: right;
 }
 
+/* Second product row styling */
+.second-product-row {
+  background-color: #f8fafc;
+  border-left: 3px solid #e2e8f0;
+}
+
+.second-product-row td {
+  color: #4a5568;
+  font-style: italic;
+}
+
+.second-product-row td:first-child {
+  padding-left: 2rem;
+}
+
 .client-info.minimized, .client-info.minimized .info-grid.compact {
   padding: 0.5rem 0.75rem !important;
   margin-bottom: 1rem !important;

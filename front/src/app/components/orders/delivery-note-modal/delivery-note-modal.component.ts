@@ -11,11 +11,13 @@ interface Order {
   order_datetime: string;
   status: string;
   price: string;
+  price2?: string;
   first_name: string;
   last_name: string;
   shipping_type: string;
   delivery_time: string;
   produit: number;
+  produit2?: number;
   typeCorrection: string;
   typeCommande: string;
   email?: string;
@@ -23,6 +25,7 @@ interface Order {
   raison_social: string;
   client_id: number;
   article_libelle?: string;
+  article_libelle2?: string;
   [key: string]: any;
 }
 
@@ -79,6 +82,8 @@ export class DeliveryNoteModalComponent implements OnInit {
   loadProductDetails(): void {
     this.data.orders.forEach(order => {
       console.log('Processing Order:', order);
+      
+      // Load first product details
       if (order.produit) {
         this.orderService.getStockById(order.produit.toString()).subscribe({
           next: (stock) => {
@@ -100,13 +105,37 @@ export class DeliveryNoteModalComponent implements OnInit {
           }
         });
       }
+
+      // Load second product details if it exists
+      if (order.produit2) {
+        this.orderService.getStockById(order.produit2.toString()).subscribe({
+          next: (stock) => {
+            console.log('Stock Details for produit2:', stock);
+            if (stock.article_id) {
+              this.orderService.getArticleById(stock.article_id.toString()).subscribe({
+                next: (article) => {
+                  console.log('Article Details for produit2:', article);
+                  order.article_libelle2 = article.libelle;
+                },
+                error: (error) => {
+                  console.error('Error loading article details for produit2:', error);
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error loading stock details for produit2:', error);
+          }
+        });
+      }
     });
   }
 
   calculateTotal(): void {
     this.totalAmount = this.data.orders.reduce((sum, order) => {
       const price = parseFloat(order.price) || 0;
-      return sum + price;
+      const price2 = parseFloat(order.price2 || '0') || 0;
+      return sum + price + price2;
     }, 0);
     console.log('Total Amount:', this.totalAmount);
     console.log('Final Orders with all details:', this.data.orders);

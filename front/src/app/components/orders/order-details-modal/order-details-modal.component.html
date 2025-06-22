@@ -30,6 +30,14 @@
                   <label>Name:</label>
                   <span>{{ order.first_name }} {{ order.last_name }}</span>
                 </div>
+                <div class="info-item">
+                  <label>Phone:</label>
+                  <span>{{ order['phone'] || 'N/A' }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Email:</label>
+                  <span>{{ order['email'] || 'N/A' }}</span>
+                </div>
               </div>
             </div>
 

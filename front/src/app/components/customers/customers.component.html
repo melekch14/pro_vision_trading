@@ -45,69 +45,71 @@
       </button>
     </div>
 
-    <table class="stock-table">
-      <thead>
-        <tr>
-          <th (click)="setSortBy('id')" class="sortable">
-            ID
-            <span class="material-icons">{{ getSortIcon('id') }}</span>
-          </th>
-          <th (click)="setSortBy('codee')" class="sortable">
-            Code
-            <span class="material-icons">{{ getSortIcon('codee') }}</span>
-          </th>
-          <th (click)="setSortBy('raison_social')" class="sortable">
-            Raison Social
-            <span class="material-icons">{{ getSortIcon('raison_social') }}</span>
-          </th>
-          <th (click)="setSortBy('email')" class="sortable">
-            Email
-            <span class="material-icons">{{ getSortIcon('email') }}</span>
-          </th>
-          <th (click)="setSortBy('responsable')" class="sortable">
-            Responsable
-            <span class="material-icons">{{ getSortIcon('responsable') }}</span>
-          </th>
-          <th>Tel</th>
-          <th (click)="setSortBy('status')" class="sortable">
-            Status
-            <span class="material-icons">{{ getSortIcon('status') }}</span>
-          </th>
-          <th>Adresse</th>
-          <th>RCCM</th>
-          <th>NINEA</th>
-          <th>Customs Code</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let customer of filteredCustomers">
-          <td>{{ customer.id }}</td>
-          <td>{{ customer.codee }}</td>
-          <td>{{ customer.raison_social }}</td>
-          <td>{{ customer.email }}</td>
-          <td>{{ customer.responsable }}</td>
-          <td>{{ customer.tel }}</td>
-          <td>
-            <span class="status-badge" [ngClass]="'status-' + customer.status">
-              {{ customer.status | titlecase }}
-            </span>
-          </td>
-          <td>{{ customer.adresse }}</td>
-          <td>{{ customer.rccm }}</td>
-          <td>{{ customer.ninea }}</td>
-          <td>{{ customer.code_douane }}</td>
-          <td class="actions-cell">
-            <button class="edit-btn" (click)="editCustomer(customer)">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="delete-btn" (click)="deleteCustomer(customer.id)">
-              <span class="material-icons">delete</span>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="stock-table">
+        <thead>
+          <tr>
+            <th (click)="setSortBy('id')" class="sortable">
+              ID
+              <span class="material-icons">{{ getSortIcon('id') }}</span>
+            </th>
+            <th (click)="setSortBy('codee')" class="sortable">
+              Code
+              <span class="material-icons">{{ getSortIcon('codee') }}</span>
+            </th>
+            <th (click)="setSortBy('raison_social')" class="sortable">
+              Raison Social
+              <span class="material-icons">{{ getSortIcon('raison_social') }}</span>
+            </th>
+            <th (click)="setSortBy('email')" class="sortable">
+              Email
+              <span class="material-icons">{{ getSortIcon('email') }}</span>
+            </th>
+            <th (click)="setSortBy('responsable')" class="sortable">
+              Responsable
+              <span class="material-icons">{{ getSortIcon('responsable') }}</span>
+            </th>
+            <th>Tel</th>
+            <th (click)="setSortBy('status')" class="sortable">
+              Status
+              <span class="material-icons">{{ getSortIcon('status') }}</span>
+            </th>
+            <th>Adresse</th>
+            <th>RCCM</th>
+            <th>NINEA</th>
+            <th>Customs Code</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of filteredCustomers">
+            <td>{{ customer.id }}</td>
+            <td>{{ customer.codee }}</td>
+            <td>{{ customer.raison_social }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.responsable }}</td>
+            <td>{{ customer.tel }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="'status-' + customer.status">
+                {{ customer.status | titlecase }}
+              </span>
+            </td>
+            <td>{{ customer.adresse }}</td>
+            <td>{{ customer.rccm }}</td>
+            <td>{{ customer.ninea }}</td>
+            <td>{{ customer.code_douane }}</td>
+            <td class="actions-cell">
+              <button class="edit-btn" (click)="editCustomer(customer)">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="delete-btn" (click)="deleteCustomer(customer.id)">
+                <span class="material-icons">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- No Results Message -->

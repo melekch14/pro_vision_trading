@@ -300,6 +300,30 @@
   .customers-table {
     min-width: 800px;
   }
+
+  .stock-table th:nth-child(8), /* Adresse */
+  .stock-table td:nth-child(8),
+  .stock-table th:nth-child(9), /* RCCM */
+  .stock-table td:nth-child(9),
+  .stock-table th:nth-child(10), /* NINEA */
+  .stock-table td:nth-child(10),
+  .stock-table th:nth-child(11), /* Customs Code */
+  .stock-table td:nth-child(11) {
+    display: none;
+  }
+  .stock-table th,
+  .stock-table td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  .stock-actions,
+  .stock-filters {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stock-header h2 {
+    font-size: 1.1rem;
+  }
 }
 
 .page-container {
@@ -566,4 +590,41 @@
   text-align: center;
   color: #94a3b8;
   padding: 24px 0;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.stock-table {
+  min-width: 900px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+  .stock-table th:nth-child(8), /* Adresse */
+  .stock-table td:nth-child(8),
+  .stock-table th:nth-child(9), /* RCCM */
+  .stock-table td:nth-child(9),
+  .stock-table th:nth-child(10), /* NINEA */
+  .stock-table td:nth-child(10),
+  .stock-table th:nth-child(11), /* Customs Code */
+  .stock-table td:nth-child(11) {
+    display: none;
+  }
+  .stock-table th,
+  .stock-table td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  .stock-actions,
+  .stock-filters {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stock-header h2 {
+    font-size: 1.1rem;
+  }
 } 

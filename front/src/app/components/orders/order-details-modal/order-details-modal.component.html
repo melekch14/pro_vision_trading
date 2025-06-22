@@ -253,13 +253,13 @@
                 <div class="card-row">
                   <div class="verre-block">
                     <span class="verre-label">verres:</span>
-                    <span class="product">{{ order.article_libelle || 'Product Name' }}</span>
+                    <span class="product">{{ formatStockLibelle('od') }}</span>
                   </div>
                 </div>
                 <div class="card-row">
                   <div class="verre-block">
                     <span class="verre-label"></span>
-                    <span class="product">{{ order.article_libelle || 'Product Name' }}</span>
+                    <span class="product">{{ formatStockLibelle('og') }}</span>
                   </div>
                 </div>
                 <div class="table-date-row">

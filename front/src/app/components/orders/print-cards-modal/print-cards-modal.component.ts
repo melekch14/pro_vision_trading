@@ -22,6 +22,10 @@ export class PrintCardsModalComponent implements OnInit {
   error: string | null = null;
   private articleDiameters: { [key: number]: string } = {};
   private stockArticleMap: { [key: number]: number } = {}; // stockId -> articleId
+  private odProductLibelle: { [key: number]: string } = {}; // orderId -> OD product name
+  private ogProductLibelle: { [key: number]: string } = {}; // orderId -> OG product name
+  private odProductDiametre: { [key: number]: string } = {}; // orderId -> OD diameter
+  private ogProductDiametre: { [key: number]: string } = {}; // orderId -> OG diameter
 
   constructor(
     private dialogRef: MatDialogRef<PrintCardsModalComponent>,
@@ -43,25 +47,57 @@ export class PrintCardsModalComponent implements OnInit {
       this.error = null;
 
       for (const order of this.orders) {
+        // Load OD (Right Eye) product details
         if (order.produit) {
           try {
-            // 1. Fetch stock by stock ID (order.produit)
             const stock = await this.stockService.getStockById(order.produit).toPromise();
             if (stock && stock.article_id) {
               this.stockArticleMap[order.produit] = stock.article_id;
-              // 2. Fetch article by article_id
               const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
               if (product) {
-                order.article_libelle = product.libelle;
-                this.articleDiameters[order.produit] = product.diametre || 'NA';
+                this.odProductLibelle[order.id] = product.libelle || 'N/A';
+                this.odProductDiametre[order.id] = product.diametre?.toString() || '70';
+                // Keep legacy properties for backward compatibility
+                order.article_libelle = this.odProductLibelle[order.id];
+                this.articleDiameters[order.produit] = this.odProductDiametre[order.id];
               }
             } else {
-              this.articleDiameters[order.produit] = 'NA';
+              this.odProductLibelle[order.id] = 'N/A';
+              this.odProductDiametre[order.id] = '70';
+              this.articleDiameters[order.produit] = '70';
             }
           } catch (error) {
-            console.error(`Error loading product details for order ${order.order_id}:`, error);
-            this.articleDiameters[order.produit] = 'NA'; // Default diameter
+            console.error(`Error loading OD product details for order ${order.order_id}:`, error);
+            this.odProductLibelle[order.id] = 'N/A';
+            this.odProductDiametre[order.id] = '70';
+            this.articleDiameters[order.produit] = '70';
           }
+        }
+
+        // Load OG (Left Eye) product details
+        if (order['produit2']) {
+          try {
+            const stock = await this.stockService.getStockById(order['produit2']).toPromise();
+            if (stock && stock.article_id) {
+              this.stockArticleMap[order['produit2']] = stock.article_id;
+              const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
+              if (product) {
+                this.ogProductLibelle[order.id] = product.libelle || 'N/A';
+                this.ogProductDiametre[order.id] = product.diametre?.toString() || '70';
+              }
+            } else {
+              this.ogProductLibelle[order.id] = 'N/A';
+              this.ogProductDiametre[order.id] = '70';
+            }
+          } catch (error) {
+            console.error(`Error loading OG product details for order ${order.order_id}:`, error);
+            this.ogProductLibelle[order.id] = 'N/A';
+            this.ogProductDiametre[order.id] = '70';
+          }
+        } else {
+          // If no separate OG product, use OD product for both
+          this.ogProductLibelle[order.id] = this.odProductLibelle[order.id] || 'N/A';
+          this.ogProductDiametre[order.id] = this.odProductDiametre[order.id] || '70';
         }
       }
     } catch (error) {
@@ -72,12 +108,18 @@ export class PrintCardsModalComponent implements OnInit {
     }
   }
 
-  getDiametre(order: Order): string {
-    // Now articleDiameters is indexed by stockId (order.produit)
-    if (order.produit && this.articleDiameters[order.produit]) {
-      return this.articleDiameters[order.produit];
+  getDiametre(order: Order, eye: 'od' | 'og' = 'od'): string {
+    if (eye === 'og' && order['produit2']) {
+      return this.ogProductDiametre[order.id] || '70';
     }
-    return 'NA'; // Default diameter if not found
+    return this.odProductDiametre[order.id] || '70';
+  }
+
+  getProductLibelle(order: Order, eye: 'od' | 'og' = 'od'): string {
+    if (eye === 'og' && order['produit2']) {
+      return this.ogProductLibelle[order.id] || 'N/A';
+    }
+    return this.odProductLibelle[order.id] || 'N/A';
   }
 
   close() {
@@ -179,7 +221,8 @@ export class PrintCardsModalComponent implements OnInit {
         const order = this.orders[i];
         const fournisseurText = String(order['fournisseur_code'] || order.fournisseur_id || 'N/A');
         const dateText = order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString('fr-FR') : '';
-        // Build the card HTML for PDF (no vertical fields)
+        
+        // Build the card HTML for PDF with separate OD and OG product names
         const cardHtml = `
           <div class=\"order-card\">
             <div class=\"card-row\">
@@ -197,13 +240,13 @@ export class PrintCardsModalComponent implements OnInit {
             <div class=\"card-row\">
               <div class=\"verre-block\">
                 <span class=\"verre-label\">verres:</span>
-                <span class=\"product\">${order.article_libelle || 'Product Name'}</span>
+                <span class=\"product\">${this.getProductLibelle(order, 'od')}</span>
               </div>
             </div>
             <div class=\"card-row\">
               <div class=\"verre-block\">
                 <span class=\"verre-label\"></span>
-                <span class=\"product\">${order.article_libelle || 'Product Name'}</span>
+                <span class=\"product\">${this.getProductLibelle(order, 'og')}</span>
               </div>
             </div>
             <div class=\"table-date-row\">
@@ -219,14 +262,14 @@ export class PrintCardsModalComponent implements OnInit {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>${this.getDiametre(order)}</td>
+                    <td>${this.getDiametre(order, 'od')}</td>
                     <td>${order.od_sphere || '0.00'}</td>
                     <td>${order.od_cylinder || '0.00'}</td>
                     <td>${order['od_axe'] || '0'}</td>
                     <td>${order.od_addition || '0.00'}</td>
                   </tr>
                   <tr>
-                    <td>${this.getDiametre(order)}</td>
+                    <td>${this.getDiametre(order, 'og')}</td>
                     <td>${order.og_sphere || '0.00'}</td>
                     <td>${order.og_cylinder || '0.00'}</td>
                     <td>${order['og_axe'] || '0'}</td>

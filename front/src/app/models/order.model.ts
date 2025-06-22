@@ -9,6 +9,7 @@ export interface Order {
   shipping_type: string;
   delivery_time: string;
   produit: number;
+  produit2?: number;
   typeCommande: string;
   typeCorrection: string;
   origineArticle: string;

@@ -31,7 +31,7 @@ export class LoginComponent {
         console.log(userData);
         this.router.navigate(['/client/create-order']);
       } else {
-        this.router.navigate(['/app']);
+        this.router.navigate(['/app/dashboard']);
       }
     }
   }
@@ -48,7 +48,7 @@ export class LoginComponent {
               this.authService.decodeAndDisplayClientInfo();
               this.router.navigate(['/client/create-order']);
             } else {
-              this.router.navigate(['/app']);
+              this.router.navigate(['/app/dashboard']);
             }
           });
         },

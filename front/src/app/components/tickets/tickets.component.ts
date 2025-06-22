@@ -16,6 +16,8 @@ import { ArticleService } from '../../services/article.service';
 })
 export class TicketsComponent implements OnInit {
   orders: Order[] = [];
+  printedOrders: Order[] = [];
+  printedTicketsCollapsed: boolean = true;
   gridCells: any[] = [];
   draggedOrder: Order | null = null;
   draggedFromCell: number | null = null;
@@ -42,6 +44,10 @@ export class TicketsComponent implements OnInit {
     this.orderService.getAllOrders().subscribe({
       next: (orders) => {
         this.orders = orders.filter((order: Order) => order.status?.toLowerCase() === 'processing');
+        this.printedOrders = orders.filter((order: Order) => {
+          const status = order.status?.toLowerCase();
+          return status === 'shipped' || status === 'delivered';
+        });
       },
       error: (error) => {
         console.error('Error loading orders:', error);
@@ -183,5 +189,53 @@ export class TicketsComponent implements OnInit {
     }
 
     return this.diameterCache[cacheKey];
+  }
+
+  printSingleTicket(order: Order) {
+    // Open a new window and print the ticket for the given order
+    const printContents = this.generateTicketHtml(order);
+    const printWindow = window.open('', '', 'height=600,width=800');
+    if (printWindow) {
+      printWindow.document.write('<html><head><title>Print Ticket</title>');
+      printWindow.document.write('<style>body{font-family:sans-serif;} .ticket-card{border:1px solid #ccc;padding:16px;margin:16px;} .ticket-header{font-weight:bold;} .ticket-table{margin-top:8px;} .ticket-table-header, .ticket-table-row{display:flex;gap:8px;} .ticket-table-header{font-weight:bold;}</style>');
+      printWindow.document.write('</head><body >');
+      printWindow.document.write(printContents);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => printWindow.print(), 500);
+    }
+  }
+
+  generateTicketHtml(order: Order): string {
+    // Simple HTML for ticket, you can expand as needed
+    return `
+      <div class="ticket-card">
+        <div class="ticket-header">Opticien: <span class="bold">${order.raison_social || ''}</span></div>
+        <div>Porteur: <span class="bold italic">${order.first_name} ${order.last_name}</span></div>
+        <div>Article: <span class="bold">${order.article_libelle || ''}</span></div>
+        <div>Date: ${order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString() : ''}</div>
+        <div class="ticket-table">
+          <div class="ticket-table-header">
+            <span>Ø</span><span>SPH</span><span>CYL</span><span>AXE</span><span>ADD</span>
+          </div>
+          <div class="ticket-table-row">
+            <span>?</span>
+            <span>${order.od_sphere || '0.00'}</span>
+            <span>${order.od_cylinder || '0.00'}</span>
+            <span>${order.od_axe || '0'}</span>
+            <span>${order.od_addition || '0.00'}</span>
+          </div>
+          <div class="ticket-table-row">
+            <span>?</span>
+            <span>${order.og_sphere || '0.00'}</span>
+            <span>${order.og_cylinder || '0.00'}</span>
+            <span>${order.og_axe || '0'}</span>
+            <span>${order.og_addition || '0.00'}</span>
+          </div>
+        </div>
+        <div>Fournisseur: ${order.fournisseur_code || ''}</div>
+      </div>
+    `;
   }
 } 

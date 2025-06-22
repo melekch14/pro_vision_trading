@@ -110,13 +110,13 @@ const sendPasswordByEmail = async (email) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail', // or your email provider
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
+            user: "provisiontrading38@gmail.com",
+            pass: "bxoiuulfoyfsrcrl"
         }
     });
 
     const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: "provisiontrading38@gmail.com",
         to: user.email,
         subject: 'Password Reset Request',
         text: `Hello,\n\nYou requested your password. For security, we cannot send your current password. Please use the password reset feature to set a new password.\n\nIf you did not request this, please ignore this email.`

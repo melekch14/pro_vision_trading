@@ -8,8 +8,8 @@
         </span>
         Printed Tickets ({{printedOrders.length}})
       </button>
-      <div *ngIf="!printedTicketsCollapsed" class="printed-tickets-list">
-        <div class="draggable-item" *ngFor="let order of printedOrders" draggable="true" (dragstart)="onDragStart(order, $event)">
+      <div *ngIf="!printedTicketsCollapsed" class="printed-tickets-list" style="margin-top: 16px;">
+        <div class="draggable-item" *ngFor="let order of printedOrders" draggable="true" (dragstart)="onDragStart(order, $event)" style="margin-bottom: 16px;">
           <div class="order-card">
             <div class="order-header">
               <span class="order-id">#{{order.order_id}}</span>

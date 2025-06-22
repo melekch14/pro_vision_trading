@@ -52,7 +52,7 @@ const authenticateDynamicUser = async (email, password) => {
 
     if (role === 'client') {
         tokenPayload.raison_social = user.raison_social;
-    } else if (role === 'opticien') {
+    } else if (role === 'opticien' || role === 'technicien') {
         tokenPayload.nom = user.nom;
         tokenPayload.prenom = user.prenom;
     }

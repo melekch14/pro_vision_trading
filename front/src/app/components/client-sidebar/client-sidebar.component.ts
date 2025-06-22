@@ -49,12 +49,10 @@ export class ClientSidebarComponent implements OnInit {
   }
 
   getUserName(): string {
+    console.log(this.userData);
     if (!this.userData) return '';
-    const { nom, prenom } = this.userData;
-    const fullName = `${prenom || ''} ${nom || ''}`.trim();
-    return fullName.split(' ').map(name => 
-      name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
-    ).join(' ');
+    const { raison_social } = this.userData;
+    return raison_social;
   }
 
   getUserRole(): string {

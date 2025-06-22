@@ -100,6 +100,7 @@ export class SidebarComponent implements OnInit {
   }
 
   getUserName(): string {
+    console.log(this.userData);
     if (!this.userData) return '';
     const { nom, prenom } = this.userData;
     const fullName = `${prenom || ''} ${nom || ''}`.trim();

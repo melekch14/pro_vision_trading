@@ -28,6 +28,7 @@ export class LoginComponent {
     if (this.authService.isAuthenticated()) {
       const userData = this.authService.getUserData();
       if (userData?.role === 'client') {
+        console.log(userData);
         this.router.navigate(['/client/create-order']);
       } else {
         this.router.navigate(['/app']);

@@ -44,12 +44,15 @@ export class OpticienComponent implements OnInit {
   showPermissionsPanel = false;
   selectedOpticien: Opticien | null = null;
   availableComponents: DisplayPermission[] = [
+    { componentId: 'dashboard', componentName: 'Dashboard', hasAccess: false },
     { componentId: 'article-manager', componentName: 'Article Manager', hasAccess: false },
     { componentId: 'article-hierarchy', componentName: 'Article Hierarchy', hasAccess: false },
     { componentId: 'article-params', componentName: 'Article Parameters', hasAccess: false },
+    { componentId: 'tickets', componentName: 'Tickets', hasAccess: false },
     { componentId: 'orders', componentName: 'Orders', hasAccess: false },
     { componentId: 'customers', componentName: 'Customers', hasAccess: false },
-    { componentId: 'fournisseurs', componentName: 'Suppliers', hasAccess: false }
+    { componentId: 'fournisseurs', componentName: 'Suppliers', hasAccess: false },
+    { componentId: 'opticiens', componentName: 'Opticien Management', hasAccess: false }
   ];
 
   constructor(

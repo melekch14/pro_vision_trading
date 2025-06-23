@@ -78,14 +78,25 @@ export class OrderDetailsModalComponent implements OnInit {
   loadProductDetails() {
     // Load OD (Right Eye) product details
     if (this.data.produit) {
-      this.orderService.getArticleById(this.data.produit.toString()).subscribe({
-        next: (response) => {
-          this.odProductLibelle = response.libelle || 'N/A';
-          // Keep legacy property for backward compatibility
-          this.productLibelle = this.odProductLibelle;
+      this.orderService.getStockById(this.data.produit.toString()).subscribe({
+        next: (stockResponse) => {
+          if (stockResponse && stockResponse.article_id) {
+            this.orderService.getArticleById(stockResponse.article_id.toString()).subscribe({
+              next: (articleResponse) => {
+                this.odProductLibelle = articleResponse.libelle || 'N/A';
+                this.productLibelle = this.odProductLibelle;
+              },
+              error: () => {
+                this.odProductLibelle = 'N/A';
+                this.productLibelle = 'N/A';
+              }
+            });
+          } else {
+            this.odProductLibelle = 'N/A';
+            this.productLibelle = 'N/A';
+          }
         },
-        error: (error) => {
-          console.error('Error loading OD product details:', error);
+        error: () => {
           this.odProductLibelle = 'N/A';
           this.productLibelle = 'N/A';
         }
@@ -94,12 +105,22 @@ export class OrderDetailsModalComponent implements OnInit {
 
     // Load OG (Left Eye) product details
     if (this.data.produit2) {
-      this.orderService.getArticleById(this.data.produit2.toString()).subscribe({
-        next: (response) => {
-          this.ogProductLibelle = response.libelle || 'N/A';
+      this.orderService.getStockById(this.data.produit2.toString()).subscribe({
+        next: (stockResponse) => {
+          if (stockResponse && stockResponse.article_id) {
+            this.orderService.getArticleById(stockResponse.article_id.toString()).subscribe({
+              next: (articleResponse) => {
+                this.ogProductLibelle = articleResponse.libelle || 'N/A';
+              },
+              error: () => {
+                this.ogProductLibelle = 'N/A';
+              }
+            });
+          } else {
+            this.ogProductLibelle = 'N/A';
+          }
         },
-        error: (error) => {
-          console.error('Error loading OG product details:', error);
+        error: () => {
           this.ogProductLibelle = 'N/A';
         }
       });

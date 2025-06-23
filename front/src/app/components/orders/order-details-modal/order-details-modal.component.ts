@@ -230,11 +230,21 @@ export class OrderDetailsModalComponent implements OnInit {
           this.selectedStatus = this.tempStatus;
           this.isUpdating = false;
           // Decrement stock if status changed to Processing
-          if (this.tempStatus === 'Processing' && !wasProcessing && this.order.produit) {
-            this.stockService.decrementStock(this.order.produit).subscribe({
-              next: () => {},
-              error: (err) => { console.error('Error decrementing stock:', err); }
-            });
+          if (this.tempStatus === 'Processing' && !wasProcessing) {
+            // Decrement stock for produit (OD - Right Eye)
+            if (this.order.produit) {
+              this.stockService.decrementStock(this.order.produit).subscribe({
+                next: () => {},
+                error: (err) => { console.error('Error decrementing stock for produit:', err); }
+              });
+            }
+            // Decrement stock for produit2 (OG - Left Eye)
+            if (this.order.produit2) {
+              this.stockService.decrementStock(this.order.produit2).subscribe({
+                next: () => {},
+                error: (err) => { console.error('Error decrementing stock for produit2:', err); }
+              });
+            }
           }
           // You might want to show a success message here
         },
@@ -346,11 +356,21 @@ export class OrderDetailsModalComponent implements OnInit {
           this.selectedFournisseur = this.tempFournisseur;
           this.isUpdating = false;
           // Decrement stock if status changed to Processing
-          if (this.tempStatus === 'Processing' && !wasProcessing && this.order.produit) {
-            this.stockService.decrementStock(this.order.produit).subscribe({
-              next: () => {},
-              error: (err) => { console.error('Error decrementing stock:', err); }
-            });
+          if (this.tempStatus === 'Processing' && !wasProcessing) {
+            // Decrement stock for produit (OD - Right Eye)
+            if (this.order.produit) {
+              this.stockService.decrementStock(this.order.produit).subscribe({
+                next: () => {},
+                error: (err) => { console.error('Error decrementing stock for produit:', err); }
+              });
+            }
+            // Decrement stock for produit2 (OG - Left Eye)
+            if (this.order.produit2) {
+              this.stockService.decrementStock(this.order.produit2).subscribe({
+                next: () => {},
+                error: (err) => { console.error('Error decrementing stock for produit2:', err); }
+              });
+            }
           }
           // Close the modal and pass true to indicate successful update
           this.dialogRef.close(true);

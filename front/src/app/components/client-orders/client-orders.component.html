@@ -91,7 +91,12 @@
         <ng-container matColumnDef="price">
           <th mat-header-cell *matHeaderCellDef>Total</th>
           <td mat-cell *matCellDef="let order">
-            {{order.price | currency}}
+            <div class="price-display">
+              <div class="total-price">${{ calculateTotalPrice(order) }}</div>
+              <div class="price-breakdown" *ngIf="hasSecondPrice(order)">
+                <small>OD: ${{ order.price }} | OG: ${{ order.price2 }}</small>
+              </div>
+            </div>
           </td>
         </ng-container>
 

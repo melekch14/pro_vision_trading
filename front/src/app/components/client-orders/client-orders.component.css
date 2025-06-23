@@ -201,6 +201,25 @@
   margin-top: 0.25rem;
 }
 
+/* Price Display */
+.price-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.total-price {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.price-breakdown {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  line-height: 1.2;
+}
+
 /* Empty State */
 .empty-state {
   text-align: center;

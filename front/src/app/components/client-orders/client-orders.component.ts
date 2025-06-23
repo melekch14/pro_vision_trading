@@ -9,6 +9,7 @@ interface Order {
   order_datetime: string;
   status: string;
   price: string;
+  price2?: string;
   first_name: string;
   last_name: string;
   shipping_type: string;
@@ -138,5 +139,18 @@ export class ClientOrdersComponent implements OnInit {
   // Helper method to normalize status display
   getDisplayStatus(status: string): string {
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  }
+
+  // Helper method to calculate total price
+  calculateTotalPrice(order: Order): string {
+    const price1 = parseFloat(order.price) || 0;
+    const price2 = parseFloat(order.price2 || '0') || 0;
+    const total = price1 + price2;
+    return total.toFixed(2);
+  }
+
+  // Helper method to check if order has second price
+  hasSecondPrice(order: Order): boolean {
+    return !!(order.price2 && order.price2 !== null && order.price2 !== undefined && parseFloat(order.price2) > 0);
   }
 } 

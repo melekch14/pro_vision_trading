@@ -116,8 +116,12 @@
       <h3>Product Details</h3>
       <div class="info-grid">
         <div class="info-item">
-          <label>Product:</label>
-          <span>{{ formatStockLibelle() }}</span>
+          <label>{{ needsSecondProduct() ? 'Product (OD):' : 'Product:' }}</label>
+          <span>{{ formatStockLibelleForEye('od') }}</span>
+        </div>
+        <div class="info-item" *ngIf="needsSecondProduct()">
+          <label>Product (OG):</label>
+          <span>{{ formatStockLibelleForEye('og') }}</span>
         </div>
         <div class="info-item">
           <label>Type de commande:</label>

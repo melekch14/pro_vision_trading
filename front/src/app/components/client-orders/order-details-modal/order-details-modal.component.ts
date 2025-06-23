@@ -14,9 +14,11 @@ interface OrderDetails {
   order_datetime: string;
   status: string;
   price: string;
+  price2?: string;
   shipping_type: string;
   delivery_time: string;
   produit: number;
+  produit2?: number;
   typeCommande: string;
   typeCorrection: string;
   origineArticle: string;
@@ -42,6 +44,8 @@ interface OrderDetails {
 })
 export class OrderDetailsModalComponent implements OnInit {
   productLibelle: string = '';
+  odProductLibelle: string = '';
+  ogProductLibelle: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -62,6 +66,8 @@ export class OrderDetailsModalComponent implements OnInit {
         console.log(response);
         // Merge the details with the existing order data
         this.data = { ...this.data, ...response };
+        // Reload product details after order details are loaded
+        this.loadProductDetails();
       },
       error: (error) => {
         console.error('Error loading order details:', error);
@@ -70,14 +76,31 @@ export class OrderDetailsModalComponent implements OnInit {
   }
 
   loadProductDetails() {
+    // Load OD (Right Eye) product details
     if (this.data.produit) {
       this.orderService.getArticleById(this.data.produit.toString()).subscribe({
         next: (response) => {
-          this.productLibelle = response.libelle || 'N/A';
+          this.odProductLibelle = response.libelle || 'N/A';
+          // Keep legacy property for backward compatibility
+          this.productLibelle = this.odProductLibelle;
         },
         error: (error) => {
-          console.error('Error loading product details:', error);
+          console.error('Error loading OD product details:', error);
+          this.odProductLibelle = 'N/A';
           this.productLibelle = 'N/A';
+        }
+      });
+    }
+
+    // Load OG (Left Eye) product details
+    if (this.data.produit2) {
+      this.orderService.getArticleById(this.data.produit2.toString()).subscribe({
+        next: (response) => {
+          this.ogProductLibelle = response.libelle || 'N/A';
+        },
+        error: (error) => {
+          console.error('Error loading OG product details:', error);
+          this.ogProductLibelle = 'N/A';
         }
       });
     }
@@ -101,6 +124,19 @@ export class OrderDetailsModalComponent implements OnInit {
 
   formatStockLibelle(): string {
     return this.productLibelle;
+  }
+
+  formatStockLibelleForEye(eye: 'od' | 'og'): string {
+    if (eye === 'od') {
+      return this.odProductLibelle;
+    } else if (eye === 'og') {
+      return this.ogProductLibelle;
+    }
+    return 'N/A';
+  }
+
+  needsSecondProduct(): boolean {
+    return !!(this.data.produit2 && this.data.produit2 !== null && this.data.produit2 !== undefined);
   }
 
   downloadFile(): void {

@@ -102,7 +102,7 @@
               
               <!-- OD (Right Eye) Product Details -->
               <div class="eye-product-details">
-                <h4>Right Eye (OD) Product</h4>
+                <h4>{{ needsSecondProduct() ? 'Right Eye (OD) Product' : 'Product' }}</h4>
                 <div class="info-grid">
                   <div class="info-item">
                     <label>Product:</label>
@@ -120,7 +120,7 @@
               </div>
 
               <!-- OG (Left Eye) Product Details -->
-              <div class="eye-product-details" *ngIf="order.produit2">
+              <div class="eye-product-details" *ngIf="needsSecondProduct()">
                 <h4>Left Eye (OG) Product</h4>
                 <div class="info-grid">
                   <div class="info-item">

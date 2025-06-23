@@ -128,9 +128,8 @@ export class OrdersComponent implements OnInit {
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(order =>
-        order.id.toString().includes(query) ||
-        `${order.first_name} ${order.last_name}`.toLowerCase().includes(query) ||
-        order.traitement.toLowerCase().includes(query)
+        order.order_id.toString().includes(query) ||
+        (order.raison_social && order.raison_social.toLowerCase().includes(query))
       );
     }
     

@@ -270,8 +270,13 @@ export class ArticleManagerComponent implements OnInit {
 
   onSubmit(): void {
     if (this.articleForm.valid) {
-      const articleData = this.articleForm.value;
-      
+      const articleData = { ...this.articleForm.value };
+
+      // Ensure expiration is just YYYY-MM-DD
+      if (articleData.expiration) {
+        articleData.expiration = articleData.expiration.substring(0, 10);
+      }
+
       if (this.editingArticle) {
         this.articleService.updateArticle(this.editingArticle.id!, articleData).subscribe({
           next: () => {
@@ -306,8 +311,17 @@ export class ArticleManagerComponent implements OnInit {
 
   editArticle(article: Article): void {
     this.editingArticle = article;
-    this.articleForm.patchValue(article);
-    // Ensure TVA is set to 18 even when editing
+    // Fix: Add one day to expiration if present, to compensate for backend timezone issue
+    let formattedExpiration = '';
+    if (article.expiration) {
+      const d = new Date(article.expiration);
+      d.setUTCDate(d.getUTCDate() + 1);
+      formattedExpiration = d.toISOString().substring(0, 10);
+    }
+    this.articleForm.patchValue({
+      ...article,
+      expiration: formattedExpiration
+    });
     this.setTvaValue();
     this.setTab('add');
   }

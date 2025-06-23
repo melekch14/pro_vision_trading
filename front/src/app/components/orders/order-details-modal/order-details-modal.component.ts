@@ -275,7 +275,7 @@ export class OrderDetailsModalComponent implements OnInit {
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   }
 
-  formatStockLibelle(eye: 'od' | 'og' = 'od'): string {
+  formatStockLibelle(eye: 'od' | 'og' = 'od', nameOnly: boolean = false): string {
     const article = eye === 'og' ? this.ogArticle : this.odArticle;
     const stockId = eye === 'og' ? this.order.produit2 : this.order.produit;
     
@@ -285,6 +285,9 @@ export class OrderDetailsModalComponent implements OnInit {
       return article.libelle;
     }
     
+    if (nameOnly) {
+      return article.libelle;
+    }
     // Use the appropriate sphere/cylinder/addition values for each eye
     let cyl: string;
     let sph: string;

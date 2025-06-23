@@ -220,12 +220,10 @@ export class ClientCreateOrderComponent {
       this.orderService.getFabricationProducts().subscribe({
         next: (products) => {
           this.filteredProducts = products;
-          console.log('Fabrication products:', this.filteredProducts);
           
           // Also filter for OG if needed
           if (this.needsSecondProduct) {
             this.filteredProducts2 = products;
-            console.log('Fabrication products for OG:', this.filteredProducts2);
           }
         },
         error: (error) => {
@@ -258,6 +256,10 @@ export class ClientCreateOrderComponent {
         }
       }
     }
+    
+    // Update prices for both products when origineArticle changes
+    this.updatePrice();
+    this.updatePrice2();
   }
 
   filterProductsBySphereAndCylinder(sphere: string, cylinder: string) {
@@ -265,7 +267,6 @@ export class ClientCreateOrderComponent {
       this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
         next: (products) => {
           this.filteredProducts = this.filterByOrigineArticle(products);
-          console.log('Matching products:', this.filteredProducts);
         },
         error: (error) => {
           console.error('Error fetching matching products:', error);
@@ -280,7 +281,6 @@ export class ClientCreateOrderComponent {
       this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
         next: (products) => {
           this.filteredProducts = this.filterByOrigineArticle(products);
-          console.log('Matching products:', this.filteredProducts);
         },
         error: (error) => {
           console.error('Error fetching matching products:', error);
@@ -295,7 +295,6 @@ export class ClientCreateOrderComponent {
       this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
         next: (products) => {
           this.filteredProducts2 = this.filterByOrigineArticle(products);
-          console.log('Matching products for OG:', this.filteredProducts2);
         },
         error: (error) => {
           console.error('Error fetching matching products for OG:', error);
@@ -310,7 +309,6 @@ export class ClientCreateOrderComponent {
       this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
         next: (products) => {
           this.filteredProducts2 = this.filterByOrigineArticle(products);
-          console.log('Matching products for OG:', this.filteredProducts2);
         },
         error: (error) => {
           console.error('Error fetching matching products for OG:', error);
@@ -324,7 +322,6 @@ export class ClientCreateOrderComponent {
     if (!this.order.origineArticle) {
       return products;
     }
-    products.filter(product => console.log(product));
     return products.filter(product => product.origineArticle === this.order.origineArticle);
   }
 
@@ -341,19 +338,18 @@ export class ClientCreateOrderComponent {
       this.orderService.getStockById(this.order.produit).subscribe({
         next: (stock) => {
           this.selectedProduct = stock;
-          console.log('Selected stock:', stock);
           
           if (stock.article_id) {
             this.orderService.getArticleById(stock.article_id).subscribe({
               next: (article) => {
                 this.selectedArticle = article;
-                console.log('Selected article:', article);
                 this.updatePrice();
               },
               error: (error) => {
                 console.error('Error fetching article details:', error);
                 this.selectedArticle = null;
                 this.price = 0;
+                this.updateTotalPrice();
               }
             });
           }
@@ -363,15 +359,16 @@ export class ClientCreateOrderComponent {
           this.selectedProduct = null;
           this.selectedArticle = null;
           this.price = 0;
+          this.updateTotalPrice();
         }
       });
     } else {
       this.selectedProduct = null;
       this.selectedArticle = null;
       this.price = 0;
+      this.updateTotalPrice();
     }
     this.updateStepEnabling();
-    this.updateTotalPrice();
   }
 
   onProduct2Select() {
@@ -379,19 +376,18 @@ export class ClientCreateOrderComponent {
       this.orderService.getStockById(this.order.produit2).subscribe({
         next: (stock) => {
           this.selectedProduct2 = stock;
-          console.log('Selected stock for OG:', stock);
           
           if (stock.article_id) {
             this.orderService.getArticleById(stock.article_id).subscribe({
               next: (article) => {
                 this.selectedArticle2 = article;
-                console.log('Selected article for OG:', article);
                 this.updatePrice2();
               },
               error: (error) => {
                 console.error('Error fetching article details for OG:', error);
                 this.selectedArticle2 = null;
                 this.price2 = 0;
+                this.updateTotalPrice();
               }
             });
           }
@@ -401,26 +397,27 @@ export class ClientCreateOrderComponent {
           this.selectedProduct2 = null;
           this.selectedArticle2 = null;
           this.price2 = 0;
+          this.updateTotalPrice();
         }
       });
     } else {
       this.selectedProduct2 = null;
       this.selectedArticle2 = null;
       this.price2 = 0;
+      this.updateTotalPrice();
     }
-    this.updateTotalPrice();
   }
 
   updatePrice() {
     if (this.selectedArticle) {
-      const basePrice = this.selectedArticle.prix_vente || 0;
+      const basePrice = parseFloat(this.selectedArticle.prix_vente) || 0;
       
-      let totalPrice = basePrice;
+      let finalPrice = basePrice;
       if (this.order.origineArticle === 'fabrication') {
-        totalPrice += 50;
+        finalPrice += 50;
       }
 
-      this.price = totalPrice;
+      this.price = finalPrice;
     } else {
       this.price = 0;
     }
@@ -429,14 +426,14 @@ export class ClientCreateOrderComponent {
 
   updatePrice2() {
     if (this.selectedArticle2) {
-      const basePrice = this.selectedArticle2.prix_vente || 0;
+      const basePrice = parseFloat(this.selectedArticle2.prix_vente) || 0;
       
-      let totalPrice = basePrice;
+      let finalPrice = basePrice;
       if (this.order.origineArticle === 'fabrication') {
-        totalPrice += 50;
+        finalPrice += 50;
       }
 
-      this.price2 = totalPrice;
+      this.price2 = finalPrice;
     } else {
       this.price2 = 0;
     }
@@ -444,7 +441,7 @@ export class ClientCreateOrderComponent {
   }
 
   updateTotalPrice() {
-    this.totalPrice = this.price + this.price2;
+    this.totalPrice = (this.price || 0) + (this.price2 || 0);
   }
 
   onShippingTypeChange() {
@@ -524,7 +521,7 @@ export class ClientCreateOrderComponent {
 
       // First create the order
       const orderResponse = await this.orderService.createOrder(orderData).toPromise();
-      console.log('Order response:', orderResponse);
+      
       // If there's a file and it's a precal type de commande, upload it
       if (this.selectedFile && this.order.typeCommande === 'precal') {
         const orderId = orderResponse.id;

@@ -19,11 +19,11 @@
       </div>
       <div class="corrections-row od-row">
         <span class="eye-label od">OD</span>
-        <input type="text" placeholder="-" [(ngModel)]="order.od.sphere">
-        <input type="text" placeholder="-" [(ngModel)]="order.od.cylinder">
-        <input type="number" placeholder="°" [(ngModel)]="order.od.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <input type="text" placeholder="-" [(ngModel)]="order.od.sphere" (input)="checkCorrectionsForStep3()">
+        <input type="text" placeholder="-" [(ngModel)]="order.od.cylinder" (input)="checkCorrectionsForStep3()">
+        <input type="number" placeholder="°" [(ngModel)]="order.od.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
         <span *ngIf="errors.od.axe" class="error-msg">Axe ne doit pas être négatif</span>
-        <input type="number" placeholder="+" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)">
+        <input type="number" placeholder="+" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
         <span *ngIf="errors.od.addition" class="error-msg">Addition ne doit pas être négatif</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOG()">→</button>
       </div>
@@ -37,11 +37,11 @@
       </div>
       <div class="corrections-row og-row">
         <span class="eye-label og">OG</span>
-        <input type="text" placeholder="-" [(ngModel)]="order.og.sphere" (input)="checkIfValuesAreDifferent()">
-        <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder" (input)="checkIfValuesAreDifferent()">
-        <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent()">
+        <input type="text" placeholder="-" [(ngModel)]="order.og.sphere" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+        <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+        <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
         <span *ngIf="errors.og.axe" class="error-msg">Axe ne doit pas être négatif</span>
-        <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent()">
+        <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
         <span *ngIf="errors.og.addition" class="error-msg">Addition ne doit pas être négatif</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOD()">←</button>
       </div>
@@ -71,8 +71,11 @@
       <span class="step-title">Type de commande</span>
     </div>
     <div class="supplements-options">
+      <div *ngIf="errors.step3Disabled" class="disabled-message">
+        <p>Veuillez remplir toutes les valeurs de correction (OD et OG) pour activer cette section.</p>
+      </div>
       <label *ngFor="let type of typeCommandes" class="supplement-option" [class.precal]="type.value === 'precal'" [class.non-precal]="type.value === 'non_precal'">
-        <input type="radio" name="typeCommande" [value]="type.value" [(ngModel)]="order.typeCommande" (change)="onTypeCommandeChange()">
+        <input type="radio" name="typeCommande" [value]="type.value" [(ngModel)]="order.typeCommande" (change)="onTypeCommandeChange()" [disabled]="errors.step3Disabled">
         <span>{{ type.label }}</span>
         <small>{{ type.description }}</small>
       </label>

@@ -65,6 +65,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     og: { axe: false, addition: false },
     phone: false,
     email: false,
+    step3Disabled: true,
     step4Disabled: true,
     step5Disabled: true,
     step6Disabled: true,
@@ -85,6 +86,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.filteredProducts2 = [];
     this.updateStepEnabling();
     this.updateFormValidity();
+    this.checkCorrectionsForStep3();
   }
 
   validateAxeAndAddition() {
@@ -94,6 +96,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.errors.og.addition = this.isNegative(this.order.og.addition);
     
     this.checkIfValuesAreDifferent();
+    this.checkCorrectionsForStep3();
     this.updateFormValidity();
   }
 
@@ -160,6 +163,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   updateStepEnabling() {
+    this.errors.step3Disabled = !this.areAllCorrectionsFilled();
     this.errors.step4Disabled = !this.order.typeCommande;
     this.errors.step5Disabled = !this.order.typeCorrection;
     this.errors.step6Disabled = !this.order.origineArticle;
@@ -169,11 +173,32 @@ export class ClientCreateOrderComponent implements OnDestroy {
   onTypeCommandeChange() {
     if (this.order.typeCommande !== 'precal') {
       this.selectedFileName = '';
+      this.selectedFile = null;
     }
+    
+    // Reset all fields below Type de commande
     this.order.typeCorrection = '';
     this.order.origineArticle = '';
     this.order.produit = '';
     this.order.produit2 = '';
+    
+    // Reset product selections and prices
+    this.selectedProduct = null;
+    this.selectedProduct2 = null;
+    this.selectedArticle = null;
+    this.selectedArticle2 = null;
+    this.price = 0;
+    this.price2 = 0;
+    this.totalPrice = 0;
+    
+    // Reset filtered products
+    this.filteredProducts = [];
+    this.filteredProducts2 = [];
+    
+    // Reset shipping and delivery
+    this.shippingType = '';
+    this.deliveryTime = '';
+    
     this.updateStepEnabling();
   }
 
@@ -479,6 +504,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.order.og.axe = this.order.od.axe;
     this.order.og.addition = this.order.od.addition;
     this.checkIfValuesAreDifferent();
+    this.checkCorrectionsForStep3();
   }
 
   copyToOD() {
@@ -487,11 +513,13 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.order.od.axe = this.order.og.axe;
     this.order.od.addition = this.order.od.addition;
     this.checkIfValuesAreDifferent();
+    this.checkCorrectionsForStep3();
   }
 
   copyFieldToOG(field: 'sphere' | 'cylinder' | 'axe' | 'addition') {
     this.order.og[field] = this.order.od[field];
     this.checkIfValuesAreDifferent();
+    this.checkCorrectionsForStep3();
   }
 
   onFileSelected(event: any) {
@@ -582,5 +610,9 @@ export class ClientCreateOrderComponent implements OnDestroy {
     if (this.validationTimeout) {
       clearTimeout(this.validationTimeout);
     }
+  }
+
+  checkCorrectionsForStep3() {
+    this.errors.step3Disabled = !this.areAllCorrectionsFilled();
   }
 } 

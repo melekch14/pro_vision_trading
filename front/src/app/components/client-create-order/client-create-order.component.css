@@ -536,6 +536,7 @@
   display: flex;
   justify-content: space-between;
   gap: 18px;
+  flex-wrap: wrap;
 }
 .resume-row > div {
   flex: 1;
@@ -546,16 +547,22 @@
   flex-direction: column;
   align-items: center;
   margin: 0 8px;
+  min-width: 120px;
+  text-align: center;
 }
 .resume-label {
   color: #888;
   font-size: 1.05rem;
   margin-bottom: 6px;
+  text-align: center;
+  width: 100%;
 }
 .resume-value {
   font-size: 1.25rem;
   font-weight: 700;
   color: #2953f3;
+  text-align: center;
+  width: 100%;
 }
 .resume-row > div:first-child .resume-value {
   color: #16a34a;
@@ -565,6 +572,30 @@
 }
 .resume-row > div:last-child .resume-value {
   color: #2563eb;
+}
+
+/* Ensure proper centering when there are 5 items (2 products selected) */
+.resume-row.five-items {
+  justify-content: center;
+}
+
+.resume-row.five-items > div {
+  flex: 0 1 calc(20% - 16px);
+  margin: 0 8px;
+}
+
+/* Responsive adjustments for 5 items */
+@media (max-width: 900px) {
+  .resume-row.five-items {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .resume-row.five-items > div {
+    flex: 1;
+    margin: 0;
+    width: 100%;
+  }
 }
 
 /* Type de correction */
@@ -670,6 +701,17 @@
   }
   
   .prix-total-block, .livraison-block, .delais-block, .resume-row > div {
+    margin: 0;
+    width: 100%;
+  }
+  
+  .resume-row.five-items {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .resume-row.five-items > div {
+    flex: 1;
     margin: 0;
     width: 100%;
   }
@@ -898,6 +940,15 @@
     margin: 0 4px;
   }
   
+  .resume-row.five-items {
+    gap: 12px;
+  }
+  
+  .resume-row.five-items > div {
+    padding: 16px 0 8px 0;
+    margin: 0;
+  }
+  
   .resume-label {
     font-size: 1rem;
   }
@@ -1078,6 +1129,15 @@
     margin: 0 2px;
   }
   
+  .resume-row.five-items {
+    gap: 8px;
+  }
+  
+  .resume-row.five-items > div {
+    padding: 12px 0 6px 0;
+    margin: 0;
+  }
+  
   .resume-label {
     font-size: 0.9rem;
   }
@@ -1234,6 +1294,15 @@
   .resume-row > div {
     padding: 8px 0 4px 0;
     margin: 0 1px;
+  }
+  
+  .resume-row.five-items {
+    gap: 6px;
+  }
+  
+  .resume-row.five-items > div {
+    padding: 8px 0 4px 0;
+    margin: 0;
   }
   
   .resume-label {

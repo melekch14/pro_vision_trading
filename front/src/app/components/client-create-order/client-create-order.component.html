@@ -186,7 +186,7 @@
     </div>
     <div class="resume-commande">
       <h3>Résumé de la Commande</h3>
-      <div class="resume-row">
+      <div class="resume-row" [class.five-items]="needsSecondProduct">
         <div>
           <span class="resume-label">Prix OD</span>
           <span class="resume-value">{{ price | number:'1.2-2' }} €</span>

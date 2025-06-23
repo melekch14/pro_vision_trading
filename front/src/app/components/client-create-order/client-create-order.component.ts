@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./client-create-order.component.css'],
   standalone: false
 })
-export class ClientCreateOrderComponent {
+export class ClientCreateOrderComponent implements OnDestroy {
   order = {
     od: { sphere: '', cylinder: '', axe: '', addition: '' },
     og: { sphere: '', cylinder: '', axe: '', addition: '' },
@@ -72,6 +72,8 @@ export class ClientCreateOrderComponent {
     formInvalid: false
   };
 
+  private validationTimeout: any;
+
   constructor(
     private orderService: OrderService,
     private router: Router,
@@ -82,6 +84,7 @@ export class ClientCreateOrderComponent {
     this.filteredProducts = [];
     this.filteredProducts2 = [];
     this.updateStepEnabling();
+    this.updateFormValidity();
   }
 
   validateAxeAndAddition() {
@@ -91,6 +94,7 @@ export class ClientCreateOrderComponent {
     this.errors.og.addition = this.isNegative(this.order.og.addition);
     
     this.checkIfValuesAreDifferent();
+    this.updateFormValidity();
   }
 
   isNegative(value: any): boolean {
@@ -124,12 +128,14 @@ export class ClientCreateOrderComponent {
     
     this.updateStepEnabling();
     this.updateTotalPrice();
+    this.updateFormValidity();
   }
 
   validatePhoneSenegal(): boolean {
     const phone = this.order.phone.replace(/\D/g, '');
     const senegalPattern = /^(7[05678]\d{7})$/;
     this.errors.phone = !senegalPattern.test(phone);
+    this.updateFormValidity();
     return !this.errors.phone;
   }
 
@@ -137,7 +143,20 @@ export class ClientCreateOrderComponent {
     const email = this.order.email || '';
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     this.errors.email = !emailPattern.test(email);
+    this.updateFormValidity();
     return !this.errors.email;
+  }
+
+  // Debounced validation for real-time input validation
+  validateInputField(field: 'phone' | 'email') {
+    clearTimeout(this.validationTimeout);
+    this.validationTimeout = setTimeout(() => {
+      if (field === 'phone') {
+        this.validatePhoneSenegal();
+      } else if (field === 'email') {
+        this.validateEmail();
+      }
+    }, 300); // 300ms delay
   }
 
   updateStepEnabling() {
@@ -486,6 +505,16 @@ export class ClientCreateOrderComponent {
     }
   }
 
+  updateFormValidity() {
+    this.errors.formInvalid = 
+      this.errors.od.axe || 
+      this.errors.od.addition || 
+      this.errors.og.axe || 
+      this.errors.og.addition || 
+      this.errors.phone || 
+      this.errors.email;
+  }
+
   async submitOrder() {
     this.validateAxeAndAddition();
     this.validatePhoneSenegal();
@@ -497,7 +526,6 @@ export class ClientCreateOrderComponent {
       return;
     }
     
-    this.errors.formInvalid = this.errors.od.axe || this.errors.od.addition || this.errors.og.axe || this.errors.og.addition || this.errors.phone || this.errors.email;
     if (this.errors.formInvalid) {
       alert('Veuillez corriger les erreurs du formulaire avant de soumettre.');
       return;
@@ -547,6 +575,12 @@ export class ClientCreateOrderComponent {
   blockNegative(event: KeyboardEvent) {
     if (event.key === '-' || event.key === 'e' || event.key === 'E') {
       event.preventDefault();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.validationTimeout) {
+      clearTimeout(this.validationTimeout);
     }
   }
 } 

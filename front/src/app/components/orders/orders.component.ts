@@ -13,6 +13,7 @@ interface Order {
   order_datetime: string;
   status: string;
   price: string;
+  price2?: string;
   first_name: string;
   last_name: string;
   shipping_type: string;
@@ -162,11 +163,19 @@ export class OrdersComponent implements OnInit {
     }
   }
 
+  getTotalPrice(order: Order): string {
+    const basePrice = parseFloat(order.price) || 0;
+    const price2 = parseFloat(order.price2 || '0') || 0;
+    const total = basePrice + price2;
+    return total.toFixed(2) + ' €';
+  }
+
   exportOrders(): void {
     const headers = 'Order ID,Customer,Date,Status,Total Amount,Shipping Type,Delivery Time\n';
     const rows = this.filteredOrders.map(order => {
       const date = new Date(order.order_datetime).toISOString().split('T')[0];
-      return `${order.id},"${order.first_name} ${order.last_name}",${date},${order.status},${order.price},${order.shipping_type},${order.delivery_time}`;
+      const totalPrice = this.getTotalPrice(order);
+      return `${order.id},"${order.first_name} ${order.last_name}",${date},${order.status},${totalPrice},${order.shipping_type},${order.delivery_time}`;
     }).join('\n');
     
     const csvContent = headers + rows;

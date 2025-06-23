@@ -40,9 +40,21 @@
             {{ data.status }}
           </span>
         </div>
-        <div class="info-item">
+        <div class="info-item" *ngIf="!hasSecondPrice()">
           <span class="label">Total Amount:</span>
           <span class="value">${{ data.price }}</span>
+        </div>
+        <div class="info-item" *ngIf="hasSecondPrice()">
+          <span class="label">Price (OD):</span>
+          <span class="value">${{ data.price }}</span>
+        </div>
+        <div class="info-item" *ngIf="hasSecondPrice()">
+          <span class="label">Price (OG):</span>
+          <span class="value">${{ data.price2 }}</span>
+        </div>
+        <div class="info-item" *ngIf="hasSecondPrice()">
+          <span class="label">Total Amount:</span>
+          <span class="value total-price">${{ calculateTotalPrice() }}</span>
         </div>
       </div>
     </div>

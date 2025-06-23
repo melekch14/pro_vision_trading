@@ -144,4 +144,15 @@ export class OrderDetailsModalComponent implements OnInit {
       window.open(this.data.selected_file, '_blank');
     }
   }
+
+  calculateTotalPrice(): string {
+    const price1 = parseFloat(this.data.price) || 0;
+    const price2 = parseFloat(this.data.price2 || '0') || 0;
+    const total = price1 + price2;
+    return total.toFixed(2);
+  }
+
+  hasSecondPrice(): boolean {
+    return !!(this.data.price2 && this.data.price2 !== null && this.data.price2 !== undefined && parseFloat(this.data.price2) > 0);
+  }
 } 

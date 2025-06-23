@@ -144,6 +144,26 @@
   color: #333;
 }
 
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.price-breakdown span {
+  color: #666;
+  font-weight: 500;
+}
+
+.price-breakdown span:first-child {
+  color: #1976d2;
+}
+
+.price-breakdown span:last-child {
+  color: #28a745;
+}
+
 .status-badge {
   display: inline-block;
   padding: 4px 8px;

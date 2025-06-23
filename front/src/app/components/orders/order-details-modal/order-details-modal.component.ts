@@ -15,6 +15,7 @@ interface Order {
   order_datetime: string;
   status: string;
   price: string;
+  price2?: string;
   first_name: string;
   last_name: string;
   shipping_type: string;
@@ -302,6 +303,12 @@ export class OrderDetailsModalComponent implements OnInit {
       return this.ogProductDiametre;
     }
     return this.odProductDiametre;
+  }
+
+  getTotalPrice(): number {
+    const price = parseFloat(this.order.price) || 0;
+    const price2 = parseFloat(this.order.price2 || '0') || 0;
+    return price + price2;
   }
 
   downloadFile(): void {

@@ -116,10 +116,10 @@
   <div class="step-card step-6">
     <div class="step-header">
       <span class="step-number">6</span>
-      <span class="step-title">Produit (OD)</span>
+      <span class="step-title">{{ needsSecondProduct ? 'Produit (OD)' : 'Produit' }}</span>
     </div>
     <div class="produit-select">
-      <label>Sélectionner un produit pour l'œil droit (OD)</label>
+      <label>{{ needsSecondProduct ? 'Sélectionner un produit pour l\'œil droit (OD)' : 'Sélectionner un produit' }}</label>
       <select [(ngModel)]="order.produit" name="produit" (change)="onProductSelect()" required [disabled]="errors.step6Disabled">
         <option value="">Sélectionnez un produit</option>
         <option *ngFor="let product of filteredProducts" [value]="product.id">

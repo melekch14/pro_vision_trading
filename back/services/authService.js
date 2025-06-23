@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const clientService = require('./clientService');
 
 const findUserByEmail = async (email) => {
     const [clients] = await db.query('SELECT * FROM client WHERE email = ?', [email]);
@@ -19,19 +20,16 @@ const findUserByEmail = async (email) => {
 };
 
 const registerUser = async (user, table) => {
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-
     if (table === 'opticien') {
+        const hashedPassword = await bcrypt.hash(user.password, 10);
         await db.query(
             `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
             [user.codee, user.nom, user.prenom, user.email, hashedPassword, user.role]
         );
+        return null;
     } else {
-        await db.query(
-            `INSERT INTO client (codee, raison_social, email, password, responsable, tel, adresse, rccm, ninea, code_douane) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [user.codee, user.raison_social, user.email, hashedPassword, user.responsable, user.tel, user.adresse, user.rccm, user.ninea, user.code_douane]
-        );
+        // Use clientService for client registration to ensure unique code generation
+        return await clientService.createClient(user);
     }
 };
 

@@ -12,20 +12,28 @@
       {{ errorMessage }}
     </div>
 
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+
     <form (ngSubmit)="onSubmit()" #customerForm="ngForm">
       <div class="form-grid">
         <div class="form-group">
-          <label for="codee">Code</label>
+          <label for="codee">Code {{ !isEditMode ? '(Auto-generated)' : '' }}</label>
           <input
             type="text"
             id="codee"
             name="codee"
             [(ngModel)]="customer.codee"
-            required
+            [required]="isEditMode"
+            [readonly]="!isEditMode"
             #codee="ngModel"
           />
           <div *ngIf="codee.invalid && (codee.dirty || codee.touched)" class="validation-error">
             Code is required
+          </div>
+          <div *ngIf="!isEditMode" class="field-hint">
+            A unique code will be automatically generated when you create the customer.
           </div>
         </div>
 

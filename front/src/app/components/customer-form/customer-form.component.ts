@@ -16,6 +16,7 @@ export class CustomerFormComponent implements OnInit {
   formTitle: string = 'Add New Customer';
   isLoading: boolean = false;
   errorMessage: string = '';
+  successMessage: string = '';
   customerStatuses = Object.values(CustomerStatus);
   
   constructor(
@@ -70,19 +71,27 @@ export class CustomerFormComponent implements OnInit {
     if (this.validateForm()) {
       this.isLoading = true;
       this.errorMessage = '';
+      this.successMessage = '';
 
       const request = this.isEditMode
         ? this.http.put(`${environment.apiUrl}/clients/${this.customer.id}`, this.customer)
         : this.http.post(`${environment.apiUrl}/clients`, this.customer);
 
       request.subscribe({
-        next: () => {
+        next: (response: any) => {
           this.isLoading = false;
-          this.router.navigate(['/app/customers']);
+          if (!this.isEditMode && response.codee) {
+            this.successMessage = `Customer created successfully! Generated code: ${response.codee}`;
+            setTimeout(() => {
+              this.router.navigate(['/app/customers']);
+            }, 2000);
+          } else {
+            this.router.navigate(['/app/customers']);
+          }
         },
         error: (error) => {
           console.error('Error saving customer:', error);
-          this.errorMessage = 'Failed to save customer data';
+          this.errorMessage = error.error?.message || 'Failed to save customer data';
           this.isLoading = false;
         }
       });
@@ -90,8 +99,7 @@ export class CustomerFormComponent implements OnInit {
   }
   
   validateForm(): boolean {
-    return (
-      this.customer.codee.trim() !== '' &&
+    const baseValidation = (
       this.customer.raison_social.trim() !== '' &&
       this.customer.email.trim() !== '' &&
       this.customer.password.trim() !== '' &&
@@ -101,6 +109,13 @@ export class CustomerFormComponent implements OnInit {
       this.customer.status.trim() !== '' &&
       this.customer.adresse.trim() !== ''
     );
+
+    // For edit mode, code is required. For new customers, it's optional (will be auto-generated)
+    if (this.isEditMode) {
+      return baseValidation && this.customer.codee.trim() !== '';
+    } else {
+      return baseValidation;
+    }
   }
   
   cancel(): void {

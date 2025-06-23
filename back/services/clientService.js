@@ -1,6 +1,33 @@
 const db = require('../models/db');
 const bcrypt = require('bcryptjs');
 
+// Generate unique client code
+const generateUniqueClientCode = async () => {
+    let code;
+    let isUnique = false;
+    let attempts = 0;
+    const maxAttempts = 100; // Prevent infinite loop
+    
+    while (!isUnique && attempts < maxAttempts) {
+        // Generate a random 4-digit number
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        code = `C${randomNum}`;
+        
+        // Check if code already exists
+        const [existingClients] = await db.query('SELECT id FROM client WHERE codee = ?', [code]);
+        if (existingClients.length === 0) {
+            isUnique = true;
+        }
+        attempts++;
+    }
+    
+    if (!isUnique) {
+        throw new Error('Unable to generate unique client code after maximum attempts');
+    }
+    
+    return code;
+};
+
 // Get all clients
 const getAllClients = async () => {
     const [clients] = await db.query('SELECT * FROM client');
@@ -16,11 +43,18 @@ const getClientById = async (id) => {
 // Create new client
 const createClient = async (clientData) => {
     const hashedPassword = await bcrypt.hash(clientData.password, 10);
+    
+    // Generate unique client code if not provided
+    let clientCode = clientData.codee;
+    if (!clientCode) {
+        clientCode = await generateUniqueClientCode();
+    }
+    
     const [result] = await db.query(
         `INSERT INTO client (codee, raison_social, email, password, responsable, tel, status, adresse, rccm, ninea, code_douane) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-            clientData.codee,
+            clientCode,
             clientData.raison_social,
             clientData.email,
             hashedPassword,
@@ -33,13 +67,24 @@ const createClient = async (clientData) => {
             clientData.code_douane
         ]
     );
-    return result.insertId;
+    return { insertId: result.insertId, codee: clientCode };
 };
 
 // Update client
 const updateClient = async (id, clientData) => {
     const updates = [];
     const values = [];
+    
+    // Handle client code update with uniqueness check
+    if (clientData.codee) {
+        // Check if the new code already exists for another client
+        const [existingClients] = await db.query('SELECT id FROM client WHERE codee = ? AND id != ?', [clientData.codee, id]);
+        if (existingClients.length > 0) {
+            throw new Error('Client code already exists');
+        }
+        updates.push('codee = ?');
+        values.push(clientData.codee);
+    }
     
     if (clientData.raison_social) {
         updates.push('raison_social = ?');
@@ -107,5 +152,6 @@ module.exports = {
     getClientById,
     createClient,
     updateClient,
-    deleteClient
+    deleteClient,
+    generateUniqueClientCode
 }; 

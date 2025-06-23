@@ -209,6 +209,10 @@
         {{ registrationError }}
       </div>
 
+      <div *ngIf="registrationSuccess" class="alert alert-success">
+        {{ registrationSuccess }}
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="register-button">Create Account</button>
       </div>

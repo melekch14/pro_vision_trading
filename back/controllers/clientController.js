@@ -26,10 +26,18 @@ const getClientById = async (req, res) => {
 // Create new client
 const createClient = async (req, res) => {
     try {
-        const clientId = await clientService.createClient(req.body);
-        res.status(201).json({ id: clientId, message: 'Client created successfully' });
+        const result = await clientService.createClient(req.body);
+        res.status(201).json({ 
+            id: result.insertId, 
+            codee: result.codee,
+            message: 'Client created successfully' 
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        if (error.message === 'Unable to generate unique client code after maximum attempts') {
+            res.status(500).json({ message: 'Unable to generate unique client code. Please try again.' });
+        } else {
+            res.status(500).json({ message: error.message });
+        }
     }
 };
 
@@ -42,7 +50,11 @@ const updateClient = async (req, res) => {
         }
         res.json({ message: 'Client updated successfully' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        if (error.message === 'Client code already exists') {
+            res.status(400).json({ message: 'Client code already exists. Please choose a different code.' });
+        } else {
+            res.status(500).json({ message: error.message });
+        }
     }
 };
 

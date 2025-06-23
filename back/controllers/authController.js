@@ -3,10 +3,22 @@ const authService = require('../services/authService');
 exports.register = async (req, res) => {
     const { type } = req.params;
     try {
-        await authService.registerUser(req.body, type);
-        res.status(201).json({ message: 'Registered successfully' });
+        if (type === 'client') {
+            const result = await authService.registerUser(req.body, type);
+            res.status(201).json({ 
+                message: 'Registered successfully',
+                codee: result.codee 
+            });
+        } else {
+            await authService.registerUser(req.body, type);
+            res.status(201).json({ message: 'Registered successfully' });
+        }
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        if (err.message === 'Unable to generate unique client code after maximum attempts') {
+            res.status(500).json({ error: 'Unable to generate unique client code. Please try again.' });
+        } else {
+            res.status(500).json({ error: err.message });
+        }
     }
 };
 

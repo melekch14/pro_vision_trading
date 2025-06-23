@@ -24,11 +24,16 @@ export class RegisterComponent {
 
   submitted = false;
   registrationError = '';
+  registrationSuccess = '';
+  generatedCode = '';
 
   constructor(private router: Router, private authService: AuthService) {}
 
   onSubmit(form: NgForm) {
     this.submitted = true;
+    this.registrationError = '';
+    this.registrationSuccess = '';
+    this.generatedCode = '';
 
     if (form.valid) {
       const payload = {
@@ -44,7 +49,17 @@ export class RegisterComponent {
       };
 
       this.authService.registerClient(payload).subscribe({
-        next: () => this.router.navigate(['/login']),
+        next: (response: any) => {
+          if (response.codee) {
+            this.generatedCode = response.codee;
+            this.registrationSuccess = `Registration successful! Your client code is: ${response.codee}`;
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 3000);
+          } else {
+            this.router.navigate(['/login']);
+          }
+        },
         error: (err) => {
           this.registrationError = err.error?.message || 'Registration failed';
         }

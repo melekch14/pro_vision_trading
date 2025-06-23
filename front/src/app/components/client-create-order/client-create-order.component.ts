@@ -554,6 +554,12 @@ export class ClientCreateOrderComponent implements OnDestroy {
       return;
     }
     
+    // Validation for precal file requirement
+    if (this.order.typeCommande === 'precal' && !this.selectedFile) {
+      alert('Veuillez sélectionner un fichier pour les commandes de type Précal.');
+      return;
+    }
+    
     if (this.errors.formInvalid) {
       alert('Veuillez corriger les erreurs du formulaire avant de soumettre.');
       return;

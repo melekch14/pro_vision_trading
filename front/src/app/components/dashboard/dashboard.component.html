@@ -81,12 +81,11 @@
         <tr *ngFor="let order of statistics.lastFiveOrders">
           <td>#{{ order.id }}</td>
           <td>
-            <b>{{ order.client_name }}</b><br>
-            <span class="client-details">{{ order.client_details || '' }}</span>
+            <b>{{ order.client_name }}</b>
           </td>
           <td>{{ order.client_tel || '-' }}</td>
-          <td>{{ order.article_libelle || '-' }}<br><span class="product-type">{{ order.product_type || '' }}</span></td>
-          <td><b>${{ order.price | number:'1.2-2' }}</b></td>
+          <td>{{ order.products_display || order.article_libelle || '-' }}<br><span class="product-type">{{ order.product_type || '' }}</span></td>
+          <td><b>${{ order.total_price | number:'1.2-2' }}</b></td>
           <td>
             <span [ngClass]="{
               'status-processing': order.status === 'processing',

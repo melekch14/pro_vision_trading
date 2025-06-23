@@ -61,11 +61,25 @@ class StatisticsService {
   async getLastFiveOrders() {
     try {
       const [rows] = await db.query(`
-        SELECT o.*, c.raison_social as client_name, c.tel as client_tel, a.libelle as article_libelle
+        SELECT o.*, 
+               c.raison_social as client_name, 
+               c.tel as client_tel, 
+               c.adresse as client_details,
+               a.libelle as article_libelle,
+               a2.libelle as article2_libelle,
+               CASE 
+                 WHEN o.produit2 IS NOT NULL AND o.produit2 != 0 THEN 
+                   CONCAT(COALESCE(a.libelle, ''), ' + ', COALESCE(a2.libelle, ''))
+                 ELSE 
+                   COALESCE(a.libelle, '')
+               END as products_display,
+               COALESCE(o.total_price, o.price) as total_price
         FROM orders o
         LEFT JOIN client c ON o.client_id = c.id
         LEFT JOIN stock s ON o.produit = s.id
+        LEFT JOIN stock s2 ON o.produit2 = s2.id
         LEFT JOIN article a ON s.article_id = a.id
+        LEFT JOIN article a2 ON s2.article_id = a2.id
         ORDER BY o.order_datetime DESC
         LIMIT 5
       `);

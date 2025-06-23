@@ -8,7 +8,23 @@ export interface DashboardStatistics {
   totalOrders: number;
   pendingOrders: number;
   ordersByStatus: { status: string; count: number }[];
-  lastFiveOrders: any[];
+  lastFiveOrders: {
+    id: number;
+    client_name: string;
+    client_tel: string;
+    client_details: string;
+    article_libelle: string;
+    article2_libelle: string;
+    products_display: string;
+    price: number;
+    total_price: number;
+    status: string;
+    payment_status: string;
+    shipping_type: string;
+    shipping_desc: string;
+    order_datetime: string;
+    product_type: string;
+  }[];
 }
 
 @Injectable({

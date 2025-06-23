@@ -74,7 +74,7 @@
                 <span>Porteur: <span class="bold italic">{{cell.ticket.order.first_name}} {{cell.ticket.order.last_name}}</span></span>
               </div>
               <div class="ticket-row">
-                <span>verre {{cell.ticket.eye === 'right' ? 'D' : 'G'}}: <span class="bold">{{cell.ticket.order.article_libelle}}</span></span>
+                <span>verre {{cell.ticket.eye === 'right' ? 'D' : 'G'}}: <span class="bold">{{getArticleName(cell.ticket.order, cell.ticket.eye) | async}}</span></span>
               </div>
               <div class="ticket-table">
                 <div class="ticket-table-header">
@@ -85,18 +85,18 @@
                   <span>ADD</span>
                 </div>
                 <div class="ticket-table-row" *ngIf="cell.ticket.eye === 'right'">
-                  <span>{{getDiametre(cell.ticket.order)| async}}</span>
+                  <span>{{getDiametre(cell.ticket.order, 'right')| async}}</span>
                   <span>{{cell.ticket.order.od_sphere || '0.00'}}</span>
                   <span>{{cell.ticket.order.od_cylinder || '0.00'}}</span>
                   <span>{{cell.ticket.order.od_axe || '0'}}</span>
                   <span>{{cell.ticket.order.od_addition || '0.00'}}</span>
                 </div>
                 <div class="ticket-table-row" *ngIf="cell.ticket.eye === 'left'">
-                  <span>{{getDiametre(cell.ticket.order)| async}}</span>
-                  <span>{{cell.ticket.order.og_sphere || '0.00'}}</span>
-                  <span>{{cell.ticket.order.og_cylinder || '0.00'}}</span>
-                  <span>{{cell.ticket.order.og_axe || '0'}}</span>
-                  <span>{{cell.ticket.order.og_addition || '0.00'}}</span>
+                  <span>{{getDiametre(cell.ticket.order, 'left')| async}}</span>
+                  <span>{{cell.ticket.order.og_sphere || cell.ticket.order.od_sphere || '0.00'}}</span>
+                  <span>{{cell.ticket.order.og_cylinder || cell.ticket.order.od_cylinder || '0.00'}}</span>
+                  <span>{{cell.ticket.order.og_axe || cell.ticket.order.od_axe || '0'}}</span>
+                  <span>{{cell.ticket.order.og_addition || cell.ticket.order.od_addition || '0.00'}}</span>
                 </div>
               </div>
             </div>

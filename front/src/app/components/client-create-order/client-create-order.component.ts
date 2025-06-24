@@ -260,7 +260,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   filterProductsBySphereAndCylinder(sphere: string, cylinder: string) {
-    if (sphere && cylinder) {
+    if (sphere !== '' && cylinder !== '') {
       this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
         next: (products) => {
           this.filteredProducts = this.filterByOrigineArticle(products);
@@ -274,7 +274,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   filterProductsBySphereAndAddition(sphere: string, addition: string) {
-    if (sphere && addition) {
+    if (sphere !== '' && addition !== '') {
       this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
         next: (products) => {
           this.filteredProducts = this.filterByOrigineArticle(products);
@@ -288,7 +288,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   filterProducts2BySphereAndCylinder(sphere: string, cylinder: string) {
-    if (sphere && cylinder) {
+    if (sphere !== '' && cylinder !== '') {
       this.orderService.getMatchingProducts(sphere, cylinder).subscribe({
         next: (products) => {
           this.filteredProducts2 = this.filterByOrigineArticle(products);
@@ -302,7 +302,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   filterProducts2BySphereAndAddition(sphere: string, addition: string) {
-    if (sphere && addition) {
+    if (sphere !== '' && addition !== '') {
       this.orderService.getMatchingProductsBySphereAndAddition(sphere, addition).subscribe({
         next: (products) => {
           this.filteredProducts2 = this.filterByOrigineArticle(products);

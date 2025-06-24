@@ -19,6 +19,8 @@ interface OrderDetails {
   delivery_time: string;
   produit: number;
   produit2?: number;
+  fabrication1?: number;
+  fabrication2?: number;
   typeCommande: string;
   typeCorrection: string;
   origineArticle: string;
@@ -46,6 +48,8 @@ export class OrderDetailsModalComponent implements OnInit {
   productLibelle: string = '';
   odProductLibelle: string = '';
   ogProductLibelle: string = '';
+  fabricationOdLibelle: string = '';
+  fabricationOgLibelle: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -57,6 +61,7 @@ export class OrderDetailsModalComponent implements OnInit {
   ngOnInit() {
     this.loadOrderDetails();
     this.loadProductDetails();
+    this.loadFabricationDetails();
   }
 
   loadOrderDetails() {
@@ -127,6 +132,37 @@ export class OrderDetailsModalComponent implements OnInit {
     }
   }
 
+  loadFabricationDetails() {
+    if (this.data.origineArticle === 'fabrication') {
+      // OD (Right Eye)
+      if (this.data.fabrication1) {
+        this.orderService.getArticleById(this.data.fabrication1.toString()).subscribe({
+          next: (articleResponse) => {
+            this.fabricationOdLibelle = articleResponse.libelle || 'N/A';
+          },
+          error: () => {
+            this.fabricationOdLibelle = 'N/A';
+          }
+        });
+      } else {
+        this.fabricationOdLibelle = 'N/A';
+      }
+      // OG (Left Eye)
+      if (this.data.fabrication2) {
+        this.orderService.getArticleById(this.data.fabrication2.toString()).subscribe({
+          next: (articleResponse) => {
+            this.fabricationOgLibelle = articleResponse.libelle || 'N/A';
+          },
+          error: () => {
+            this.fabricationOgLibelle = 'N/A';
+          }
+        });
+      } else {
+        this.fabricationOgLibelle = 'N/A';
+      }
+    }
+  }
+
   formatText(text: string): string {
     if (!text) return 'N/A';
     return text
@@ -152,6 +188,15 @@ export class OrderDetailsModalComponent implements OnInit {
       return this.odProductLibelle;
     } else if (eye === 'og') {
       return this.ogProductLibelle;
+    }
+    return 'N/A';
+  }
+
+  formatFabricationLibelleForEye(eye: 'od' | 'og'): string {
+    if (eye === 'od') {
+      return this.fabricationOdLibelle;
+    } else if (eye === 'og') {
+      return this.fabricationOgLibelle;
     }
     return 'N/A';
   }

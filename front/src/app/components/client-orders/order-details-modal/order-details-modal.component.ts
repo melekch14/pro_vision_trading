@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DatePipe, CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderService } from '../../../services/order.service';
+import { environment } from '../../../../environments/environment';
 
 interface OrderDetails {
   id: number;
@@ -206,8 +207,9 @@ export class OrderDetailsModalComponent implements OnInit {
   }
 
   downloadFile(): void {
-    if (this.data.selected_file) {
-      window.open(this.data.selected_file, '_blank');
+    if (this.data.id) {
+      const downloadUrl = `${environment.apiUrl}/orders/download/${this.data.id}`;
+      window.open(downloadUrl, '_blank');
     }
   }
 

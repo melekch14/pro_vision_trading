@@ -204,57 +204,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   onTypeCorrectionChange() {
     this.updateStepEnabling();
-    if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
-      const { sphere, cylinder, addition } = this.order.od;
-      
-      // Apply different filtering logic based on type de correction
-      switch (this.order.typeCorrection) {
-        case 'loin':
-          // Filter based on sphere and cylinder
-          this.filterProductsBySphereAndCylinder(sphere, cylinder);
-          break;
-        case 'pres':
-          // Filter based on (sphere + addition) and cylinder
-          const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
-          this.filterProductsBySphereAndCylinder(spherePlusAddition.toString(), cylinder);
-          break;
-        case 'loin_pres':
-          // Filter based on sphere and addition
-          this.filterProductsBySphereAndAddition(sphere, addition);
-          break;
-      }
-      
-      // Also filter products for OG if values are different
-      if (this.needsSecondProduct) {
-        this.filterProductsForOG();
-      }
-    } else {
-      this.filteredProducts = [];
-      this.filteredProducts2 = [];
-    }
-  }
-
-  // New method to filter products for OG based on OG correction values
-  filterProductsForOG() {
-    if (!this.areAllCorrectionsFilled() || !this.order.typeCorrection) {
-      this.filteredProducts2 = [];
-      return;
-    }
-
-    const { sphere, cylinder, addition } = this.order.og;
-    
-    switch (this.order.typeCorrection) {
-      case 'loin':
-        this.filterProducts2BySphereAndCylinder(sphere, cylinder);
-        break;
-      case 'pres':
-        const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
-        this.filterProducts2BySphereAndCylinder(spherePlusAddition.toString(), cylinder);
-        break;
-      case 'loin_pres':
-        this.filterProducts2BySphereAndAddition(sphere, addition);
-        break;
-    }
+    // Filtering is now only handled in onOrigineArticleChange
   }
 
   onOrigineArticleChange() {
@@ -264,8 +214,6 @@ export class ClientCreateOrderComponent implements OnDestroy {
       this.orderService.getFabricationProducts().subscribe({
         next: (products) => {
           this.filteredProducts = products;
-          
-          // Also filter for OG if needed
           if (this.needsSecondProduct) {
             this.filteredProducts2 = products;
           }
@@ -276,11 +224,10 @@ export class ClientCreateOrderComponent implements OnDestroy {
           this.filteredProducts2 = [];
         }
       });
-    } else {
-      // Reapply the current correction filter with the new origineArticle
+    } else if (this.order.origineArticle === 'stock') {
+      // Only filter if all corrections are filled and typeCorrection is selected
       if (this.areAllCorrectionsFilled() && this.order.typeCorrection) {
         const { sphere, cylinder, addition } = this.order.od;
-        
         switch (this.order.typeCorrection) {
           case 'loin':
             this.filterProductsBySphereAndCylinder(sphere, cylinder);
@@ -293,14 +240,18 @@ export class ClientCreateOrderComponent implements OnDestroy {
             this.filterProductsBySphereAndAddition(sphere, addition);
             break;
         }
-        
         // Also filter for OG if needed
         if (this.needsSecondProduct) {
           this.filterProductsForOG();
         }
+      } else {
+        this.filteredProducts = [];
+        this.filteredProducts2 = [];
       }
+    } else {
+      this.filteredProducts = [];
+      this.filteredProducts2 = [];
     }
-    
     // Update prices for both products when origineArticle changes
     this.updatePrice();
     this.updatePrice2();
@@ -620,5 +571,27 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   checkCorrectionsForStep3() {
     this.errors.step3Disabled = !this.areAllCorrectionsFilled();
+  }
+
+  // Restore method to filter products for OG based on OG correction values
+  filterProductsForOG() {
+    if (!this.areAllCorrectionsFilled() || !this.order.typeCorrection) {
+      this.filteredProducts2 = [];
+      return;
+    }
+
+    const { sphere, cylinder, addition } = this.order.og;
+    switch (this.order.typeCorrection) {
+      case 'loin':
+        this.filterProducts2BySphereAndCylinder(sphere, cylinder);
+        break;
+      case 'pres':
+        const spherePlusAddition = parseFloat(sphere) + parseFloat(addition);
+        this.filterProducts2BySphereAndCylinder(spherePlusAddition.toString(), cylinder);
+        break;
+      case 'loin_pres':
+        this.filterProducts2BySphereAndAddition(sphere, addition);
+        break;
+    }
   }
 } 

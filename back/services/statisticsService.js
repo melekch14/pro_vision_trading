@@ -5,7 +5,7 @@ class StatisticsService {
   async getTotalRevenue() {
     try {
       const [rows] = await db.query(`
-        SELECT COALESCE(SUM(price), 0) as total_revenue
+        SELECT COALESCE(SUM(COALESCE(total_price, price)), 0) as total_revenue
         FROM orders
         WHERE status != 'cancelled'
       `);

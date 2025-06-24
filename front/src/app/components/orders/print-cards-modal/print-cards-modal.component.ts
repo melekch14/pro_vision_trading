@@ -47,57 +47,95 @@ export class PrintCardsModalComponent implements OnInit {
       this.error = null;
 
       for (const order of this.orders) {
-        // Load OD (Right Eye) product details
-        if (order.produit) {
-          try {
-            const stock = await this.stockService.getStockById(order.produit).toPromise();
-            if (stock && stock.article_id) {
-              this.stockArticleMap[order.produit] = stock.article_id;
-              const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
+        if (order.origineArticle === 'fabrication') {
+          // Fabrication logic
+          // OD (Right Eye)
+          if (order.fabrication1) {
+            try {
+              const product = await this.orderService.getArticleById(order.fabrication1.toString()).toPromise();
               if (product) {
                 this.odProductLibelle[order.id] = product.libelle || 'N/A';
                 this.odProductDiametre[order.id] = product.diametre?.toString() || '70';
-                // Keep legacy properties for backward compatibility
-                order.article_libelle = this.odProductLibelle[order.id];
-                this.articleDiameters[order.produit] = this.odProductDiametre[order.id];
+              } else {
+                this.odProductLibelle[order.id] = 'N/A';
+                this.odProductDiametre[order.id] = '70';
               }
-            } else {
+            } catch (error) {
+              this.odProductLibelle[order.id] = 'N/A';
+              this.odProductDiametre[order.id] = '70';
+            }
+          } else {
+            this.odProductLibelle[order.id] = 'N/A';
+            this.odProductDiametre[order.id] = '70';
+          }
+          // OG (Left Eye)
+          if (order.fabrication2) {
+            try {
+              const product = await this.orderService.getArticleById(order.fabrication2.toString()).toPromise();
+              if (product) {
+                this.ogProductLibelle[order.id] = product.libelle || 'N/A';
+                this.ogProductDiametre[order.id] = product.diametre?.toString() || '70';
+              } else {
+                this.ogProductLibelle[order.id] = 'N/A';
+                this.ogProductDiametre[order.id] = '70';
+              }
+            } catch (error) {
+              this.ogProductLibelle[order.id] = 'N/A';
+              this.ogProductDiametre[order.id] = '70';
+            }
+          } else {
+            // If no separate OG, use OD for both
+            this.ogProductLibelle[order.id] = this.odProductLibelle[order.id] || 'N/A';
+            this.ogProductDiametre[order.id] = this.odProductDiametre[order.id] || '70';
+          }
+        } else {
+          // Stock logic (current)
+          // OD (Right Eye)
+          if (order.produit) {
+            try {
+              const stock = await this.stockService.getStockById(order.produit).toPromise();
+              if (stock && stock.article_id) {
+                this.stockArticleMap[order.produit] = stock.article_id;
+                const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
+                if (product) {
+                  this.odProductLibelle[order.id] = product.libelle || 'N/A';
+                  this.odProductDiametre[order.id] = product.diametre?.toString() || '70';
+                  order.article_libelle = this.odProductLibelle[order.id];
+                  this.articleDiameters[order.produit] = this.odProductDiametre[order.id];
+                }
+              } else {
+                this.odProductLibelle[order.id] = 'N/A';
+                this.odProductDiametre[order.id] = '70';
+                this.articleDiameters[order.produit] = '70';
+              }
+            } catch (error) {
               this.odProductLibelle[order.id] = 'N/A';
               this.odProductDiametre[order.id] = '70';
               this.articleDiameters[order.produit] = '70';
             }
-          } catch (error) {
-            console.error(`Error loading OD product details for order ${order.order_id}:`, error);
-            this.odProductLibelle[order.id] = 'N/A';
-            this.odProductDiametre[order.id] = '70';
-            this.articleDiameters[order.produit] = '70';
           }
-        }
-
-        // Load OG (Left Eye) product details
-        if (order['produit2']) {
-          try {
-            const stock = await this.stockService.getStockById(order['produit2']).toPromise();
-            if (stock && stock.article_id) {
-              this.stockArticleMap[order['produit2']] = stock.article_id;
-              const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
-              if (product) {
-                this.ogProductLibelle[order.id] = product.libelle || 'N/A';
-                this.ogProductDiametre[order.id] = product.diametre?.toString() || '70';
+          if (order['produit2']) {
+            try {
+              const stock = await this.stockService.getStockById(order['produit2']).toPromise();
+              if (stock && stock.article_id) {
+                this.stockArticleMap[order['produit2']] = stock.article_id;
+                const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
+                if (product) {
+                  this.ogProductLibelle[order.id] = product.libelle || 'N/A';
+                  this.ogProductDiametre[order.id] = product.diametre?.toString() || '70';
+                }
+              } else {
+                this.ogProductLibelle[order.id] = 'N/A';
+                this.ogProductDiametre[order.id] = '70';
               }
-            } else {
+            } catch (error) {
               this.ogProductLibelle[order.id] = 'N/A';
               this.ogProductDiametre[order.id] = '70';
             }
-          } catch (error) {
-            console.error(`Error loading OG product details for order ${order.order_id}:`, error);
-            this.ogProductLibelle[order.id] = 'N/A';
-            this.ogProductDiametre[order.id] = '70';
+          } else {
+            this.ogProductLibelle[order.id] = this.odProductLibelle[order.id] || 'N/A';
+            this.ogProductDiametre[order.id] = this.odProductDiametre[order.id] || '70';
           }
-        } else {
-          // If no separate OG product, use OD product for both
-          this.ogProductLibelle[order.id] = this.odProductLibelle[order.id] || 'N/A';
-          this.ogProductDiametre[order.id] = this.odProductDiametre[order.id] || '70';
         }
       }
     } catch (error) {
@@ -109,14 +147,14 @@ export class PrintCardsModalComponent implements OnInit {
   }
 
   getDiametre(order: Order, eye: 'od' | 'og' = 'od'): string {
-    if (eye === 'og' && order['produit2']) {
+    if (eye === 'og') {
       return this.ogProductDiametre[order.id] || '70';
     }
     return this.odProductDiametre[order.id] || '70';
   }
 
   getProductLibelle(order: Order, eye: 'od' | 'og' = 'od'): string {
-    if (eye === 'og' && order['produit2']) {
+    if (eye === 'og') {
       return this.ogProductLibelle[order.id] || 'N/A';
     }
     return this.odProductLibelle[order.id] || 'N/A';

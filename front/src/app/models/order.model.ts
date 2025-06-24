@@ -31,5 +31,7 @@ export interface Order {
   raison_social?: string;
   fournisseur_code?: string;
   article_id?: number;
+  fabrication1?: number;
+  fabrication2?: number;
   [key: string]: any;
 } 

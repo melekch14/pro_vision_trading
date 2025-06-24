@@ -373,11 +373,11 @@ INSERT INTO `traitement` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `typearticle`
+-- Structure de la table `typeArticle`
 --
 
-DROP TABLE IF EXISTS `typearticle`;
-CREATE TABLE IF NOT EXISTS `typearticle` (
+DROP TABLE IF EXISTS `typeArticle`;
+CREATE TABLE IF NOT EXISTS `typeArticle` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `description` text,
@@ -385,10 +385,10 @@ CREATE TABLE IF NOT EXISTS `typearticle` (
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Déchargement des données de la table `typearticle`
+-- Déchargement des données de la table `typeArticle`
 --
 
-INSERT INTO `typearticle` (`id`, `name`, `description`) VALUES
+INSERT INTO `typeArticle` (`id`, `name`, `description`) VALUES
 (1, 'eee', 'eee');
 COMMIT;
 

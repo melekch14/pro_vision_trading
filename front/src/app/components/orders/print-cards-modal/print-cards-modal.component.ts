@@ -47,6 +47,7 @@ export class PrintCardsModalComponent implements OnInit {
       this.error = null;
 
       for (const order of this.orders) {
+        const key = order.order_id;
         if (order.origineArticle === 'fabrication') {
           // Fabrication logic
           // OD (Right Eye)
@@ -54,39 +55,39 @@ export class PrintCardsModalComponent implements OnInit {
             try {
               const product = await this.orderService.getArticleById(order.fabrication1.toString()).toPromise();
               if (product) {
-                this.odProductLibelle[order.id] = product.libelle || 'N/A';
-                this.odProductDiametre[order.id] = product.diametre?.toString() || '70';
+                this.odProductLibelle[key] = product.libelle || 'N/A';
+                this.odProductDiametre[key] = product.diametre?.toString() || '70';
               } else {
-                this.odProductLibelle[order.id] = 'N/A';
-                this.odProductDiametre[order.id] = '70';
+                this.odProductLibelle[key] = 'N/A';
+                this.odProductDiametre[key] = '70';
               }
             } catch (error) {
-              this.odProductLibelle[order.id] = 'N/A';
-              this.odProductDiametre[order.id] = '70';
+              this.odProductLibelle[key] = 'N/A';
+              this.odProductDiametre[key] = '70';
             }
           } else {
-            this.odProductLibelle[order.id] = 'N/A';
-            this.odProductDiametre[order.id] = '70';
+            this.odProductLibelle[key] = 'N/A';
+            this.odProductDiametre[key] = '70';
           }
           // OG (Left Eye)
           if (order.fabrication2) {
             try {
               const product = await this.orderService.getArticleById(order.fabrication2.toString()).toPromise();
               if (product) {
-                this.ogProductLibelle[order.id] = product.libelle || 'N/A';
-                this.ogProductDiametre[order.id] = product.diametre?.toString() || '70';
+                this.ogProductLibelle[key] = product.libelle || 'N/A';
+                this.ogProductDiametre[key] = product.diametre?.toString() || '70';
               } else {
-                this.ogProductLibelle[order.id] = 'N/A';
-                this.ogProductDiametre[order.id] = '70';
+                this.ogProductLibelle[key] = 'N/A';
+                this.ogProductDiametre[key] = '70';
               }
             } catch (error) {
-              this.ogProductLibelle[order.id] = 'N/A';
-              this.ogProductDiametre[order.id] = '70';
+              this.ogProductLibelle[key] = 'N/A';
+              this.ogProductDiametre[key] = '70';
             }
           } else {
             // If no separate OG, use OD for both
-            this.ogProductLibelle[order.id] = this.odProductLibelle[order.id] || 'N/A';
-            this.ogProductDiametre[order.id] = this.odProductDiametre[order.id] || '70';
+            this.ogProductLibelle[key] = this.odProductLibelle[key] || 'N/A';
+            this.ogProductDiametre[key] = this.odProductDiametre[key] || '70';
           }
         } else {
           // Stock logic (current)
@@ -98,19 +99,19 @@ export class PrintCardsModalComponent implements OnInit {
                 this.stockArticleMap[order.produit] = stock.article_id;
                 const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
                 if (product) {
-                  this.odProductLibelle[order.id] = product.libelle || 'N/A';
-                  this.odProductDiametre[order.id] = product.diametre?.toString() || '70';
-                  order.article_libelle = this.odProductLibelle[order.id];
-                  this.articleDiameters[order.produit] = this.odProductDiametre[order.id];
+                  this.odProductLibelle[key] = product.libelle || 'N/A';
+                  this.odProductDiametre[key] = product.diametre?.toString() || '70';
+                  order.article_libelle = this.odProductLibelle[key];
+                  this.articleDiameters[order.produit] = this.odProductDiametre[key];
                 }
               } else {
-                this.odProductLibelle[order.id] = 'N/A';
-                this.odProductDiametre[order.id] = '70';
+                this.odProductLibelle[key] = 'N/A';
+                this.odProductDiametre[key] = '70';
                 this.articleDiameters[order.produit] = '70';
               }
             } catch (error) {
-              this.odProductLibelle[order.id] = 'N/A';
-              this.odProductDiametre[order.id] = '70';
+              this.odProductLibelle[key] = 'N/A';
+              this.odProductDiametre[key] = '70';
               this.articleDiameters[order.produit] = '70';
             }
           }
@@ -121,20 +122,20 @@ export class PrintCardsModalComponent implements OnInit {
                 this.stockArticleMap[order['produit2']] = stock.article_id;
                 const product = await this.orderService.getArticleById(stock.article_id.toString()).toPromise();
                 if (product) {
-                  this.ogProductLibelle[order.id] = product.libelle || 'N/A';
-                  this.ogProductDiametre[order.id] = product.diametre?.toString() || '70';
+                  this.ogProductLibelle[key] = product.libelle || 'N/A';
+                  this.ogProductDiametre[key] = product.diametre?.toString() || '70';
                 }
               } else {
-                this.ogProductLibelle[order.id] = 'N/A';
-                this.ogProductDiametre[order.id] = '70';
+                this.ogProductLibelle[key] = 'N/A';
+                this.ogProductDiametre[key] = '70';
               }
             } catch (error) {
-              this.ogProductLibelle[order.id] = 'N/A';
-              this.ogProductDiametre[order.id] = '70';
+              this.ogProductLibelle[key] = 'N/A';
+              this.ogProductDiametre[key] = '70';
             }
           } else {
-            this.ogProductLibelle[order.id] = this.odProductLibelle[order.id] || 'N/A';
-            this.ogProductDiametre[order.id] = this.odProductDiametre[order.id] || '70';
+            this.ogProductLibelle[key] = this.odProductLibelle[key] || 'N/A';
+            this.ogProductDiametre[key] = this.odProductDiametre[key] || '70';
           }
         }
       }
@@ -147,17 +148,19 @@ export class PrintCardsModalComponent implements OnInit {
   }
 
   getDiametre(order: Order, eye: 'od' | 'og' = 'od'): string {
+    const key = order.order_id;
     if (eye === 'og') {
-      return this.ogProductDiametre[order.id] || '70';
+      return this.ogProductDiametre[key] || '70';
     }
-    return this.odProductDiametre[order.id] || '70';
+    return this.odProductDiametre[key] || '70';
   }
 
   getProductLibelle(order: Order, eye: 'od' | 'og' = 'od'): string {
+    const key = order.order_id;
     if (eye === 'og') {
-      return this.ogProductLibelle[order.id] || 'N/A';
+      return this.ogProductLibelle[key] || 'N/A';
     }
-    return this.odProductLibelle[order.id] || 'N/A';
+    return this.odProductLibelle[key] || 'N/A';
   }
 
   close() {
@@ -257,6 +260,7 @@ export class PrintCardsModalComponent implements OnInit {
 
       for (let i = 0; i < this.orders.length; i++) {
         const order = this.orders[i];
+        const key = order.order_id;
         const fournisseurText = String(order['fournisseur_code'] || order.fournisseur_id || 'N/A');
         const dateText = order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString('fr-FR') : '';
         

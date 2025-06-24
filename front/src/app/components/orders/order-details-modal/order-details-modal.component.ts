@@ -40,6 +40,8 @@ interface Order {
   og_cylinder?: string;
   og_addition?: string;
   og_axe?: string;
+  fabrication1?: number;
+  fabrication2?: number;
   [key: string]: any;
 }
 
@@ -106,67 +108,114 @@ export class OrderDetailsModalComponent implements OnInit {
   }
 
   loadProductDetails() {
-    // Load OD (Right Eye) product details
-    if (this.order.produit) {
-      this.stockService.getStockById(this.order.produit).subscribe({
-        next: (stock) => {
-          const articleId = stock.article_id;
-          this.articleService.getArticleById(articleId).subscribe({
-            next: (article) => {
-              this.odProductLibelle = article.libelle || 'N/A';
-              this.odProductDiametre = article.diametre?.toString() || '70';
-              // Keep legacy properties for backward compatibility
-              this.productLibelle = this.odProductLibelle;
-              this.productDiametre = this.odProductDiametre;
-              this.odArticle = article;
-            },
-            error: (error) => {
-              console.error('Error loading OD article details:', error);
-              this.odProductLibelle = 'N/A';
-              this.odProductDiametre = '70';
-              this.productLibelle = 'N/A';
-              this.productDiametre = '70';
-              this.odArticle = null;
-            }
-          });
-        },
-        error: (error) => {
-          console.error('Error loading OD stock details:', error);
-          this.odProductLibelle = 'N/A';
-          this.odProductDiametre = '70';
-          this.productLibelle = 'N/A';
-          this.productDiametre = '70';
-          this.odArticle = null;
-        }
-      });
-    }
-
-    // Load OG (Left Eye) product details
-    if (this.order.produit2) {
-      this.stockService.getStockById(this.order.produit2).subscribe({
-        next: (stock) => {
-          const articleId = stock.article_id;
-          this.articleService.getArticleById(articleId).subscribe({
-            next: (article) => {
-              this.ogProductLibelle = article.libelle || 'N/A';
-              this.ogProductDiametre = article.diametre?.toString() || '70';
-              this.ogArticle = article;
-            },
-            error: (error) => {
-              console.error('Error loading OG article details:', error);
-              this.ogProductLibelle = 'N/A';
-              this.ogProductDiametre = '70';
-              this.ogArticle = null;
-            }
-          });
-        },
-        error: (error) => {
-          console.error('Error loading OG stock details:', error);
-          this.ogProductLibelle = 'N/A';
-          this.ogProductDiametre = '70';
-          this.ogArticle = null;
-        }
-      });
+    if (this.order.origineArticle === 'fabrication') {
+      // Fabrication logic
+      // OD (Right Eye)
+      if (this.order.fabrication1) {
+        this.articleService.getArticleById(this.order.fabrication1).subscribe({
+          next: (article) => {
+            this.odProductLibelle = article.libelle || 'N/A';
+            this.odProductDiametre = article.diametre?.toString() || '70';
+            this.productLibelle = this.odProductLibelle;
+            this.productDiametre = this.odProductDiametre;
+            this.odArticle = article;
+          },
+          error: () => {
+            this.odProductLibelle = 'N/A';
+            this.odProductDiametre = '70';
+            this.productLibelle = 'N/A';
+            this.productDiametre = '70';
+            this.odArticle = null;
+          }
+        });
+      } else {
+        this.odProductLibelle = 'N/A';
+        this.odProductDiametre = '70';
+        this.productLibelle = 'N/A';
+        this.productDiametre = '70';
+        this.odArticle = null;
+      }
+      // OG (Left Eye)
+      if (this.order.fabrication2) {
+        this.articleService.getArticleById(this.order.fabrication2).subscribe({
+          next: (article) => {
+            this.ogProductLibelle = article.libelle || 'N/A';
+            this.ogProductDiametre = article.diametre?.toString() || '70';
+            this.ogArticle = article;
+          },
+          error: () => {
+            this.ogProductLibelle = 'N/A';
+            this.ogProductDiametre = '70';
+            this.ogArticle = null;
+          }
+        });
+      } else {
+        this.ogProductLibelle = this.odProductLibelle || 'N/A';
+        this.ogProductDiametre = this.odProductDiametre || '70';
+        this.ogArticle = this.odArticle;
+      }
+    } else {
+      // Stock logic (current)
+      // OD (Right Eye)
+      if (this.order.produit) {
+        this.stockService.getStockById(this.order.produit).subscribe({
+          next: (stock) => {
+            const articleId = stock.article_id;
+            this.articleService.getArticleById(articleId).subscribe({
+              next: (article) => {
+                this.odProductLibelle = article.libelle || 'N/A';
+                this.odProductDiametre = article.diametre?.toString() || '70';
+                this.productLibelle = this.odProductLibelle;
+                this.productDiametre = this.odProductDiametre;
+                this.odArticle = article;
+              },
+              error: () => {
+                this.odProductLibelle = 'N/A';
+                this.odProductDiametre = '70';
+                this.productLibelle = 'N/A';
+                this.productDiametre = '70';
+                this.odArticle = null;
+              }
+            });
+          },
+          error: () => {
+            this.odProductLibelle = 'N/A';
+            this.odProductDiametre = '70';
+            this.productLibelle = 'N/A';
+            this.productDiametre = '70';
+            this.odArticle = null;
+          }
+        });
+      }
+      // OG (Left Eye)
+      if (this.order.produit2) {
+        this.stockService.getStockById(this.order.produit2).subscribe({
+          next: (stock) => {
+            const articleId = stock.article_id;
+            this.articleService.getArticleById(articleId).subscribe({
+              next: (article) => {
+                this.ogProductLibelle = article.libelle || 'N/A';
+                this.ogProductDiametre = article.diametre?.toString() || '70';
+                this.ogArticle = article;
+              },
+              error: () => {
+                this.ogProductLibelle = 'N/A';
+                this.ogProductDiametre = '70';
+                this.ogArticle = null;
+              }
+            });
+          },
+          error: () => {
+            this.ogProductLibelle = 'N/A';
+            this.ogProductDiametre = '70';
+            this.ogArticle = null;
+          }
+        });
+      } else {
+        this.ogProductLibelle = this.odProductLibelle || 'N/A';
+        this.ogProductDiametre = this.odProductDiametre || '70';
+        this.ogArticle = this.odArticle;
+      }
     }
   }
 
@@ -276,44 +325,13 @@ export class OrderDetailsModalComponent implements OnInit {
   }
 
   formatStockLibelle(eye: 'od' | 'og' = 'od', nameOnly: boolean = false): string {
-    // For OG, if ogArticle is not available (same product for both eyes), fall back to odArticle
     const article = eye === 'og' ? (this.ogArticle || this.odArticle) : this.odArticle;
-    const stockId = eye === 'og' ? (this.order.produit2 || this.order.produit) : this.order.produit;
-    
-    if (!article?.libelle) return `Product ID: ${stockId}`;
-    
-    if (this.order.origineArticle === 'fabrication') {
-      return article.libelle;
-    }
-    
-    if (nameOnly) {
-      return article.libelle;
-    }
-    // Use the appropriate sphere/cylinder/addition values for each eye
-    let cyl: string;
-    let sph: string;
-    
-    if (eye === 'og') {
-      // For OG (Left Eye), use og_* values if available, otherwise fall back to general values
-      cyl = (this.order.og_cylinder !== null && this.order.og_cylinder !== undefined) ? 
-            this.order.og_cylinder.toString() : 
-            (this.order.og_addition !== null && this.order.og_addition !== undefined ? 
-            this.order.og_addition.toString() : '0');
-      sph = this.order.og_sphere?.toString() || '0';
-    } else {
-      // For OD (Right Eye), use od_* values if available, otherwise fall back to general values
-      cyl = (this.order.od_cylinder !== null && this.order.od_cylinder !== undefined) ? 
-            this.order.od_cylinder.toString() : 
-            (this.order.od_addition !== null && this.order.od_addition !== undefined ? 
-            this.order.od_addition.toString() : '0');
-      sph = this.order.od_sphere?.toString() || '0';
-    }
-    
-    return `${article.libelle} (${cyl}) - ${sph}`;
+    if (!article?.libelle) return 'N/A';
+    return article.libelle;
   }
 
   getDiametre(eye: 'od' | 'og' = 'od'): string {
-    if (eye === 'og' && this.order.produit2) {
+    if (eye === 'og') {
       return this.ogProductDiametre;
     }
     return this.odProductDiametre;

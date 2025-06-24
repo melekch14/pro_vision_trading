@@ -55,11 +55,13 @@
       <span class="step-title">Porteur</span>
     </div>
     <div class="porteur-form">
-      <input type="text" placeholder="Nom de famille" [(ngModel)]="order.lastName" required>
-      <input type="text" placeholder="Prénom" [(ngModel)]="order.firstName" required>
-      <input type="text" placeholder="+221 77 123 45 67" [(ngModel)]="order.phone" (blur)="validatePhoneSenegal()" (input)="validateInputField('phone')">
+      <input type="text" placeholder="Nom de famille *" [(ngModel)]="order.lastName" (blur)="validateLastName()" (input)="validateLastName()" required>
+      <span *ngIf="errors.lastName" class="error-msg">Le nom de famille est requis</span>
+      <input type="text" placeholder="Prénom *" [(ngModel)]="order.firstName" (blur)="validateFirstName()" (input)="validateFirstName()" required>
+      <span *ngIf="errors.firstName" class="error-msg">Le prénom est requis</span>
+      <input type="text" placeholder="+221 77 123 45 67 *" [(ngModel)]="order.phone" (blur)="validatePhoneSenegal()" (input)="validateInputField('phone')" required>
       <span *ngIf="errors.phone" class="error-msg">Format Sénégal: 77XXXXXXX, 78XXXXXXX, etc. (9 chiffres, commence par 7)</span>
-      <input type="email" placeholder="exemple@email.com" [(ngModel)]="order.email" (blur)="validateEmail()" (input)="validateInputField('email')">
+      <input type="email" placeholder="exemple@email.com *" [(ngModel)]="order.email" (blur)="validateEmail()" (input)="validateInputField('email')" required>
       <span *ngIf="errors.email" class="error-msg">Email invalide</span>
     </div>
   </div>

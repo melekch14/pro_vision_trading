@@ -67,6 +67,8 @@ export class ClientCreateOrderComponent implements OnDestroy {
     og: { axe: false, addition: false },
     phone: false,
     email: false,
+    lastName: false,
+    firstName: false,
     step3Disabled: true,
     step4Disabled: true,
     step5Disabled: true,
@@ -136,20 +138,32 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.updateFormValidity();
   }
 
-  validatePhoneSenegal(): boolean {
-    const phone = this.order.phone.replace(/\D/g, '');
-    const senegalPattern = /^(7[05678]\d{7})$/;
-    this.errors.phone = !senegalPattern.test(phone);
-    this.updateFormValidity();
-    return !this.errors.phone;
-  }
-
   validateEmail(): boolean {
     const email = this.order.email || '';
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     this.errors.email = !emailPattern.test(email);
     this.updateFormValidity();
     return !this.errors.email;
+  }
+
+  validateLastName(): boolean {
+    this.errors.lastName = !this.order.lastName || this.order.lastName.trim() === '';
+    this.updateFormValidity();
+    return !this.errors.lastName;
+  }
+
+  validateFirstName(): boolean {
+    this.errors.firstName = !this.order.firstName || this.order.firstName.trim() === '';
+    this.updateFormValidity();
+    return !this.errors.firstName;
+  }
+
+  validatePhoneSenegal(): boolean {
+    const phone = this.order.phone.replace(/\D/g, '');
+    const senegalPattern = /^(7[05678]\d{7})$/;
+    this.errors.phone = !senegalPattern.test(phone);
+    this.updateFormValidity();
+    return !this.errors.phone;
   }
 
   // Debounced validation for real-time input validation
@@ -527,13 +541,38 @@ export class ClientCreateOrderComponent implements OnDestroy {
       this.errors.og.axe || 
       this.errors.og.addition || 
       this.errors.phone || 
-      this.errors.email;
+      this.errors.email ||
+      this.errors.lastName ||
+      this.errors.firstName;
   }
 
   async submitOrder() {
     this.validateAxeAndAddition();
     this.validatePhoneSenegal();
     this.validateEmail();
+    this.validateLastName();
+    this.validateFirstName();
+    
+    // Check if all required Porteur fields are filled
+    if (!this.order.lastName || this.order.lastName.trim() === '') {
+      alert('Veuillez remplir le nom de famille.');
+      return;
+    }
+    
+    if (!this.order.firstName || this.order.firstName.trim() === '') {
+      alert('Veuillez remplir le prénom.');
+      return;
+    }
+    
+    if (!this.order.phone || this.order.phone.trim() === '') {
+      alert('Veuillez remplir le numéro de téléphone.');
+      return;
+    }
+    
+    if (!this.order.email || this.order.email.trim() === '') {
+      alert('Veuillez remplir l\'adresse email.');
+      return;
+    }
     
     // Additional validation for second product
     if (this.needsSecondProduct && !this.order.produit2 && !(this.order.origineArticle === 'fabrication' && !this.order.fabrication2)) {

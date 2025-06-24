@@ -155,32 +155,36 @@ export class TicketsComponent implements OnInit {
   }
 
   getDiametre(order: Order, eye: 'right' | 'left' = 'right'): Observable<string> {
-    // Use produit for right eye (OD), produit2 for left eye (OG)
-    // If produit2 is not available for left eye, fall back to produit (same as OD)
+    // Fabrication logic
+    if (order.origineArticle === 'fabrication') {
+      let fabricationId = eye === 'right' ? order.fabrication1 : order.fabrication2;
+      if (!fabricationId && eye === 'left') fabricationId = order.fabrication1; // fallback to OD if OG missing
+      if (!fabricationId) return of('NA');
+      const cacheKey = `fab_diam_${order.order_id}_${eye}`;
+      if (!this.diameterCache[cacheKey]) {
+        this.diameterCache[cacheKey] = this.articleService.getArticleById(fabricationId).pipe(
+          map(article => article?.diametre?.toString() || 'NA'),
+          catchError(error => {
+            console.error(`Error loading fabrication article diametre for order ${order.order_id} (${eye} eye):`, error);
+            return of('NA');
+          }),
+          shareReplay(1)
+        );
+      }
+      return this.diameterCache[cacheKey];
+    }
+    // Stock logic (current)
     let productId = eye === 'right' ? order.produit : order.produit2;
-    
-    // If left eye and produit2 is not available, use produit (same as OD)
-    if (eye === 'left' && !productId) {
-      productId = order.produit;
-    }
-    
-    if (!productId) {
-      return of('NA');
-    }
-
+    if (eye === 'left' && !productId) productId = order.produit;
+    if (!productId) return of('NA');
     const cacheKey = `${productId}_${eye}`;
-
     if (!this.diameterCache[cacheKey]) {
       this.diameterCache[cacheKey] = this.stockService.getStockById(Number(productId)).pipe(
         map(stock => stock?.article_id),
-        // If stock or article_id is missing, return 'NA'
         catchError(error => {
           console.error(`Error loading stock details for order ${order.order_id} (${eye} eye):`, error);
           return of(null);
         }),
-        // Switch to fetching the article if article_id is present
-        // Use switchMap only if article_id is present
-        // Otherwise, return 'NA'
         switchMap(articleId => {
           if (articleId) {
             return this.articleService.getArticleById(articleId).pipe(
@@ -197,35 +201,40 @@ export class TicketsComponent implements OnInit {
         shareReplay(1)
       );
     }
-
     return this.diameterCache[cacheKey];
   }
 
   getArticleName(order: Order, eye: 'right' | 'left' = 'right'): Observable<string> {
-    // Use produit for right eye (OD), produit2 for left eye (OG)
-    // If produit2 is not available for left eye, fall back to produit (same as OD)
+    // Fabrication logic
+    if (order.origineArticle === 'fabrication') {
+      let fabricationId = eye === 'right' ? order.fabrication1 : order.fabrication2;
+      if (!fabricationId && eye === 'left') fabricationId = order.fabrication1; // fallback to OD if OG missing
+      if (!fabricationId) return of('NA');
+      const cacheKey = `fab_name_${order.order_id}_${eye}`;
+      if (!this.articleNameCache[cacheKey]) {
+        this.articleNameCache[cacheKey] = this.articleService.getArticleById(fabricationId).pipe(
+          map(article => article?.libelle || 'NA'),
+          catchError(error => {
+            console.error(`Error loading fabrication article name for order ${order.order_id} (${eye} eye):`, error);
+            return of('NA');
+          }),
+          shareReplay(1)
+        );
+      }
+      return this.articleNameCache[cacheKey];
+    }
+    // Stock logic (current)
     let productId = eye === 'right' ? order.produit : order.produit2;
-    
-    // If left eye and produit2 is not available, use produit (same as OD)
-    if (eye === 'left' && !productId) {
-      productId = order.produit;
-    }
-    
-    if (!productId) {
-      return of('NA');
-    }
-
+    if (eye === 'left' && !productId) productId = order.produit;
+    if (!productId) return of('NA');
     const cacheKey = `article_${productId}_${eye}`;
-
     if (!this.articleNameCache[cacheKey]) {
       this.articleNameCache[cacheKey] = this.stockService.getStockById(Number(productId)).pipe(
         map(stock => stock?.article_id),
-        // If stock or article_id is missing, return 'NA'
         catchError(error => {
           console.error(`Error loading stock details for article name (${eye} eye):`, error);
           return of(null);
         }),
-        // Switch to fetching the article if article_id is present
         switchMap(articleId => {
           if (articleId) {
             return this.articleService.getArticleById(articleId).pipe(
@@ -242,7 +251,6 @@ export class TicketsComponent implements OnInit {
         shareReplay(1)
       );
     }
-
     return this.articleNameCache[cacheKey];
   }
 

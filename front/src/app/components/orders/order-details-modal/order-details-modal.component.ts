@@ -71,6 +71,8 @@ export class OrderDetailsModalComponent implements OnInit {
   ogProductDiametre: string = '70';
   odArticle: any = null;
   ogArticle: any = null;
+  fabricationOdLibelle: string = '';
+  fabricationOgLibelle: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -119,6 +121,7 @@ export class OrderDetailsModalComponent implements OnInit {
             this.productLibelle = this.odProductLibelle;
             this.productDiametre = this.odProductDiametre;
             this.odArticle = article;
+            this.fabricationOdLibelle = article.libelle || 'N/A';
           },
           error: () => {
             this.odProductLibelle = 'N/A';
@@ -126,6 +129,7 @@ export class OrderDetailsModalComponent implements OnInit {
             this.productLibelle = 'N/A';
             this.productDiametre = '70';
             this.odArticle = null;
+            this.fabricationOdLibelle = 'N/A';
           }
         });
       } else {
@@ -134,6 +138,7 @@ export class OrderDetailsModalComponent implements OnInit {
         this.productLibelle = 'N/A';
         this.productDiametre = '70';
         this.odArticle = null;
+        this.fabricationOdLibelle = 'N/A';
       }
       // OG (Left Eye)
       if (this.order.fabrication2) {
@@ -142,17 +147,20 @@ export class OrderDetailsModalComponent implements OnInit {
             this.ogProductLibelle = article.libelle || 'N/A';
             this.ogProductDiametre = article.diametre?.toString() || '70';
             this.ogArticle = article;
+            this.fabricationOgLibelle = article.libelle || 'N/A';
           },
           error: () => {
             this.ogProductLibelle = 'N/A';
             this.ogProductDiametre = '70';
             this.ogArticle = null;
+            this.fabricationOgLibelle = 'N/A';
           }
         });
       } else {
         this.ogProductLibelle = this.odProductLibelle || 'N/A';
         this.ogProductDiametre = this.odProductDiametre || '70';
         this.ogArticle = this.odArticle;
+        this.fabricationOgLibelle = this.fabricationOdLibelle || 'N/A';
       }
     } else {
       // Stock logic (current)
@@ -578,5 +586,32 @@ export class OrderDetailsModalComponent implements OnInit {
       printWindow.print();
       printWindow.close();
     };
+  }
+
+  areFabricationArticlesSame(): boolean {
+    return (
+      this.order.origineArticle === 'fabrication' &&
+      this.order.fabrication1 != null &&
+      this.order.fabrication2 != null &&
+      this.order.fabrication1 === this.order.fabrication2
+    );
+  }
+
+  hasTwoFabricationArticles(): boolean {
+    return (
+      this.order.origineArticle === 'fabrication' &&
+      this.order.fabrication1 != null &&
+      this.order.fabrication2 != null &&
+      this.order.fabrication1 !== this.order.fabrication2
+    );
+  }
+
+  formatFabricationLibelleForEye(eye: 'od' | 'og'): string {
+    if (eye === 'od') {
+      return this.fabricationOdLibelle;
+    } else if (eye === 'og') {
+      return this.fabricationOgLibelle;
+    }
+    return 'N/A';
   }
 } 

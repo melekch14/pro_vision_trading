@@ -79,6 +79,29 @@
             <div class="info-section">
               <h3>Product Details</h3>
               <div class="info-grid">
+                <!-- Fabrication: both articles same -->
+                <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && areFabricationArticlesSame()">
+                  <label>Product:</label>
+                  <span>{{ formatFabricationLibelleForEye('od') }}</span>
+                </div>
+                <!-- Fabrication: two different articles -->
+                <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && hasTwoFabricationArticles()">
+                  <label>Product (OD):</label>
+                  <span>{{ formatFabricationLibelleForEye('od') }}</span>
+                </div>
+                <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && hasTwoFabricationArticles()">
+                  <label>Product (OG):</label>
+                  <span>{{ formatFabricationLibelleForEye('og') }}</span>
+                </div>
+                <!-- Stock or fallback -->
+                <div class="info-item" *ngIf="order.origineArticle !== 'fabrication'">
+                  <label>{{ needsSecondProduct() ? 'Product (OD):' : 'Product:' }}</label>
+                  <span>{{ formatStockLibelle('od') }}</span>
+                </div>
+                <div class="info-item" *ngIf="order.origineArticle !== 'fabrication' && needsSecondProduct()">
+                  <label>Product (OG):</label>
+                  <span>{{ formatStockLibelle('og') }}</span>
+                </div>
                 <div class="info-item">
                   <label>Type de commande:</label>
                   <span>{{ formatText(order.typeCommande) }}</span>
@@ -100,40 +123,43 @@
                 </div>
               </div>
               
-              <!-- OD (Right Eye) Product Details -->
-              <div class="eye-product-details">
-                <h4>{{ needsSecondProduct() ? 'Right Eye (OD) Product' : 'Product' }}</h4>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <label>Product:</label>
-                    <span>{{ formatStockLibelle('od') }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Stock ID:</label>
-                    <span>{{ order.produit || 'N/A' }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Diameter:</label>
-                    <span>{{ odProductDiametre }}mm</span>
+              <!-- Stock OD/OG Product Details: only show if not fabrication -->
+              <div *ngIf="order.origineArticle !== 'fabrication'">
+                <!-- OD (Right Eye) Product Details -->
+                <div class="eye-product-details">
+                  <h4>{{ needsSecondProduct() ? 'Right Eye (OD) Product' : 'Product' }}</h4>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <label>Product:</label>
+                      <span>{{ formatStockLibelle('od') }}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Stock ID:</label>
+                      <span>{{ order.produit || 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Diameter:</label>
+                      <span>{{ odProductDiametre }}mm</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- OG (Left Eye) Product Details -->
-              <div class="eye-product-details" *ngIf="needsSecondProduct()">
-                <h4>Left Eye (OG) Product</h4>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <label>Product:</label>
-                    <span>{{ formatStockLibelle('og') }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Stock ID:</label>
-                    <span>{{ order.produit2 || 'N/A' }}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Diameter:</label>
-                    <span>{{ ogProductDiametre }}mm</span>
+                <!-- OG (Left Eye) Product Details -->
+                <div class="eye-product-details" *ngIf="needsSecondProduct()">
+                  <h4>Left Eye (OG) Product</h4>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <label>Product:</label>
+                      <span>{{ formatStockLibelle('og') }}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Stock ID:</label>
+                      <span>{{ order.produit2 || 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Diameter:</label>
+                      <span>{{ ogProductDiametre }}mm</span>
+                    </div>
                   </div>
                 </div>
               </div>

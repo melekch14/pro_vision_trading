@@ -22,7 +22,9 @@ export class ClientCreateOrderComponent implements OnDestroy {
     origineArticle: '',
     typeCorrection: '',
     produit: '',
-    produit2: ''
+    produit2: '',
+    fabrication1: '',
+    fabrication2: ''
   };
 
   typeCommandes = [
@@ -500,7 +502,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.validateEmail();
     
     // Additional validation for second product
-    if (this.needsSecondProduct && !this.order.produit2) {
+    if (this.needsSecondProduct && !this.order.produit2 && !(this.order.origineArticle === 'fabrication' && !this.order.fabrication2)) {
       alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
       return;
     }
@@ -517,7 +519,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     }
     try {
       // Prepare order data with additional fields
-      const orderData = {
+      let orderData: any = {
         ...this.order,
         price: this.price,
         price2: this.price2,
@@ -531,6 +533,19 @@ export class ClientCreateOrderComponent implements OnDestroy {
         needsSecondProduct: this.needsSecondProduct,
         client_id: this.authService.getClientId()
       };
+
+      // Handle fabrication/stock logic
+      if (this.order.origineArticle === 'fabrication') {
+        orderData.fabrication1 = this.order.produit || '';
+        orderData.fabrication2 = this.needsSecondProduct ? (this.order.produit2 || '') : '';
+        orderData.produit = '';
+        orderData.produit2 = '';
+      } else {
+        orderData.produit = this.order.produit;
+        orderData.produit2 = this.needsSecondProduct ? this.order.produit2 : '';
+        orderData.fabrication1 = '';
+        orderData.fabrication2 = '';
+      }
 
       // First create the order
       const orderResponse = await this.orderService.createOrder(orderData).toPromise();

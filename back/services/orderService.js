@@ -109,23 +109,33 @@ class OrderService {
     try {
       const {
         client_id, od, og, lastName, firstName, phone, email,
-        typeCommande, origineArticle, produit, produit2, price, price2, totalPrice, typeCorrection,
+        typeCommande, origineArticle, produit, produit2, fabrication1, fabrication2, price, price2, totalPrice, typeCorrection,
         shippingType, deliveryTime, needsSecondProduct
       } = orderData;
+      
+      // Determine which fields to use based on origineArticle
+      let _produit = null, _produit2 = null, _fabrication1 = null, _fabrication2 = null;
+      if (origineArticle === 'fabrication') {
+        _fabrication1 = fabrication1 || null;
+        _fabrication2 = needsSecondProduct ? (fabrication2 || null) : null;
+      } else {
+        _produit = produit || null;
+        _produit2 = needsSecondProduct ? (produit2 || null) : null;
+      }
       
       const [result] = await db.query(
         `INSERT INTO orders (
           client_id, od_sphere, od_cylinder, od_axe, od_addition,
           og_sphere, og_cylinder, og_axe, og_addition,
           last_name, first_name, phone, email,
-          typeCommande, origineArticle, produit, produit2, price, price2, total_price, typeCorrection,
+          typeCommande, origineArticle, produit, produit2, fabrication1, fabrication2, price, price2, total_price, typeCorrection,
           shipping_type, delivery_time, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
         [
           client_id, od.sphere, od.cylinder, od.axe, od.addition,
           og.sphere, og.cylinder, og.axe, og.addition,
           lastName, firstName, phone, email,
-          typeCommande, origineArticle, produit, produit2 || null, price, price2 || 0, totalPrice || price, typeCorrection,
+          typeCommande, origineArticle, _produit, _produit2, _fabrication1, _fabrication2, price, price2 || 0, totalPrice || price, typeCorrection,
           shippingType, deliveryTime
         ]
       );

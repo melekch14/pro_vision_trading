@@ -187,6 +187,8 @@ const tableStatements = [
     origineArticle varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
     produit int DEFAULT NULL,
     produit2 int DEFAULT NULL,
+    fabrication1 int DEFAULT NULL,
+    fabrication2 int DEFAULT NULL,
     price decimal(10,2) DEFAULT NULL,
     price2 decimal(10,2) DEFAULT NULL,
     shipping_type varchar(50) DEFAULT NULL,

@@ -127,8 +127,8 @@
     <div class="info-section">
       <h3>Product Details</h3>
       <div class="info-grid">
-        <!-- Fabrication: both articles same -->
-        <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame()">
+        <!-- Fabrication: only fabrication1 filled -->
+        <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && data.fabrication1 && !data.fabrication2">
           <label>Product:</label>
           <span>{{ formatFabricationLibelleForEye('od') }}</span>
         </div>

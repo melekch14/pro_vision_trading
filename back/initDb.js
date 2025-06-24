@@ -142,7 +142,7 @@ const tableStatements = [
     tva decimal(5,2) DEFAULT NULL,
     prix_vente decimal(10,2) DEFAULT NULL,
     code_a_barre varchar(255) DEFAULT NULL,
-    expiration date DEFAULT NULL,
+    expiration varchar(100) DEFAULT NULL,
     fournisseur_id varchar(100) DEFAULT NULL,
     typeArticle_id int DEFAULT NULL,
     article_subfamily_id int DEFAULT NULL,

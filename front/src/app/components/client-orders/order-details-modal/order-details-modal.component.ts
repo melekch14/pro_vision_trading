@@ -221,4 +221,22 @@ export class OrderDetailsModalComponent implements OnInit {
   hasSecondPrice(): boolean {
     return !!(this.data.price2 && this.data.price2 !== null && this.data.price2 !== undefined && parseFloat(this.data.price2) > 0);
   }
+
+  areFabricationArticlesSame(): boolean {
+    return (
+      this.data.origineArticle === 'fabrication' &&
+      this.data.fabrication1 != null &&
+      this.data.fabrication2 != null &&
+      this.data.fabrication1 === this.data.fabrication2
+    );
+  }
+
+  hasTwoFabricationArticles(): boolean {
+    return (
+      this.data.origineArticle === 'fabrication' &&
+      this.data.fabrication1 != null &&
+      this.data.fabrication2 != null &&
+      this.data.fabrication1 !== this.data.fabrication2
+    );
+  }
 } 

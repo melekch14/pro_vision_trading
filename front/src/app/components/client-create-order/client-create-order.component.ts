@@ -332,33 +332,50 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   onProductSelect() {
     if (this.order.produit) {
-      this.orderService.getStockById(this.order.produit).subscribe({
-        next: (stock) => {
-          this.selectedProduct = stock;
-          
-          if (stock.article_id) {
-            this.orderService.getArticleById(stock.article_id).subscribe({
-              next: (article) => {
-                this.selectedArticle = article;
-                this.updatePrice();
-              },
-              error: (error) => {
-                console.error('Error fetching article details:', error);
-                this.selectedArticle = null;
-                this.price = 0;
-                this.updateTotalPrice();
-              }
-            });
+      if (this.order.origineArticle === 'fabrication') {
+        // For fabrication, produit is the article id
+        this.orderService.getArticleById(this.order.produit).subscribe({
+          next: (article) => {
+            this.selectedArticle = article;
+            this.selectedProduct = null;
+            this.updatePrice();
+          },
+          error: (error) => {
+            console.error('Error fetching article details:', error);
+            this.selectedArticle = null;
+            this.price = 0;
+            this.updateTotalPrice();
           }
-        },
-        error: (error) => {
-          console.error('Error fetching stock details:', error);
-          this.selectedProduct = null;
-          this.selectedArticle = null;
-          this.price = 0;
-          this.updateTotalPrice();
-        }
-      });
+        });
+      } else {
+        // For stock, produit is the stock id
+        this.orderService.getStockById(this.order.produit).subscribe({
+          next: (stock) => {
+            this.selectedProduct = stock;
+            if (stock.article_id) {
+              this.orderService.getArticleById(stock.article_id).subscribe({
+                next: (article) => {
+                  this.selectedArticle = article;
+                  this.updatePrice();
+                },
+                error: (error) => {
+                  console.error('Error fetching article details:', error);
+                  this.selectedArticle = null;
+                  this.price = 0;
+                  this.updateTotalPrice();
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching stock details:', error);
+            this.selectedProduct = null;
+            this.selectedArticle = null;
+            this.price = 0;
+            this.updateTotalPrice();
+          }
+        });
+      }
     } else {
       this.selectedProduct = null;
       this.selectedArticle = null;
@@ -370,33 +387,50 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   onProduct2Select() {
     if (this.order.produit2) {
-      this.orderService.getStockById(this.order.produit2).subscribe({
-        next: (stock) => {
-          this.selectedProduct2 = stock;
-          
-          if (stock.article_id) {
-            this.orderService.getArticleById(stock.article_id).subscribe({
-              next: (article) => {
-                this.selectedArticle2 = article;
-                this.updatePrice2();
-              },
-              error: (error) => {
-                console.error('Error fetching article details for OG:', error);
-                this.selectedArticle2 = null;
-                this.price2 = 0;
-                this.updateTotalPrice();
-              }
-            });
+      if (this.order.origineArticle === 'fabrication') {
+        // For fabrication, produit2 is the article id
+        this.orderService.getArticleById(this.order.produit2).subscribe({
+          next: (article) => {
+            this.selectedArticle2 = article;
+            this.selectedProduct2 = null;
+            this.updatePrice2();
+          },
+          error: (error) => {
+            console.error('Error fetching article details for OG:', error);
+            this.selectedArticle2 = null;
+            this.price2 = 0;
+            this.updateTotalPrice();
           }
-        },
-        error: (error) => {
-          console.error('Error fetching stock details for OG:', error);
-          this.selectedProduct2 = null;
-          this.selectedArticle2 = null;
-          this.price2 = 0;
-          this.updateTotalPrice();
-        }
-      });
+        });
+      } else {
+        // For stock, produit2 is the stock id
+        this.orderService.getStockById(this.order.produit2).subscribe({
+          next: (stock) => {
+            this.selectedProduct2 = stock;
+            if (stock.article_id) {
+              this.orderService.getArticleById(stock.article_id).subscribe({
+                next: (article) => {
+                  this.selectedArticle2 = article;
+                  this.updatePrice2();
+                },
+                error: (error) => {
+                  console.error('Error fetching article details for OG:', error);
+                  this.selectedArticle2 = null;
+                  this.price2 = 0;
+                  this.updateTotalPrice();
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching stock details for OG:', error);
+            this.selectedProduct2 = null;
+            this.selectedArticle2 = null;
+            this.price2 = 0;
+            this.updateTotalPrice();
+          }
+        });
+      }
     } else {
       this.selectedProduct2 = null;
       this.selectedArticle2 = null;
@@ -411,7 +445,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
       
       let finalPrice = basePrice;
       if (this.order.origineArticle === 'fabrication') {
-        finalPrice += 50;
+        finalPrice += 0;
       }
 
       this.price = finalPrice;
@@ -427,7 +461,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
       
       let finalPrice = basePrice;
       if (this.order.origineArticle === 'fabrication') {
-        finalPrice += 50;
+        finalPrice += 0;
       }
 
       this.price2 = finalPrice;

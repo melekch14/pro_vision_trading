@@ -58,7 +58,7 @@
                   <label>Price:</label>
                   <span>{{ getTotalPrice() | currency:'EUR':'symbol':'1.2-2' }}</span>
                 </div>
-                <div class="info-item" *ngIf="order.produit2">
+                <div class="info-item" *ngIf="order.price2">
                   <label>Price Breakdown:</label>
                   <div class="price-breakdown">
                     <span>OD: {{ order.price | currency:'EUR':'symbol':'1.2-2' }}</span>

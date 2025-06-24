@@ -26,6 +26,8 @@ interface Order {
   client_id: number;
   article_libelle?: string;
   article_libelle2?: string;
+  isFabrication1?: boolean;
+  isFabrication2?: boolean;
   [key: string]: any;
 }
 
@@ -81,18 +83,25 @@ export class DeliveryNoteModalComponent implements OnInit {
 
   loadProductDetails(): void {
     this.data.orders.forEach(order => {
-      console.log('Processing Order:', order);
-      
-      // Load first product details
-      if (order.produit) {
+      // First product: check fabrication1, otherwise use stock
+      if (order['fabrication1']) {
+        this.orderService.getArticleById(order['fabrication1'].toString()).subscribe({
+          next: (article) => {
+            order.article_libelle = article.libelle;
+            order.isFabrication1 = article.origineArticle === 'fabrication';
+          },
+          error: (error) => {
+            console.error('Error loading fabrication article details:', error);
+          }
+        });
+      } else if (order.produit) {
         this.orderService.getStockById(order.produit.toString()).subscribe({
           next: (stock) => {
-            console.log('Stock Details:', stock);
             if (stock.article_id) {
               this.orderService.getArticleById(stock.article_id.toString()).subscribe({
                 next: (article) => {
-                  console.log('Article Details:', article);
                   order.article_libelle = article.libelle;
+                  order.isFabrication1 = article.origineArticle === 'fabrication';
                 },
                 error: (error) => {
                   console.error('Error loading article details:', error);
@@ -105,17 +114,25 @@ export class DeliveryNoteModalComponent implements OnInit {
           }
         });
       }
-
-      // Load second product details if it exists
-      if (order.produit2) {
+      // Second product: check fabrication2, otherwise use stock
+      if (order['fabrication2']) {
+        this.orderService.getArticleById(order['fabrication2'].toString()).subscribe({
+          next: (article) => {
+            order.article_libelle2 = article.libelle;
+            order.isFabrication2 = article.origineArticle === 'fabrication';
+          },
+          error: (error) => {
+            console.error('Error loading fabrication2 article details:', error);
+          }
+        });
+      } else if (order.produit2) {
         this.orderService.getStockById(order.produit2.toString()).subscribe({
           next: (stock) => {
-            console.log('Stock Details for produit2:', stock);
             if (stock.article_id) {
               this.orderService.getArticleById(stock.article_id.toString()).subscribe({
                 next: (article) => {
-                  console.log('Article Details for produit2:', article);
                   order.article_libelle2 = article.libelle;
+                  order.isFabrication2 = article.origineArticle === 'fabrication';
                 },
                 error: (error) => {
                   console.error('Error loading article details for produit2:', error);
@@ -156,5 +173,12 @@ export class DeliveryNoteModalComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  // Helper to sum two price values as numbers
+  sumPrices(price1: string | number | null | undefined, price2: string | number | null | undefined): number {
+    const p1 = typeof price1 === 'string' ? parseFloat(price1) : (price1 || 0);
+    const p2 = typeof price2 === 'string' ? parseFloat(price2) : (price2 || 0);
+    return p1 + p2;
   }
 } 

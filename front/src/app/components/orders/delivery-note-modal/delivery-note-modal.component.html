@@ -44,20 +44,37 @@
       </thead>
       <tbody>
         <ng-container *ngFor="let order of data.orders">
-          <!-- First product row -->
-          <tr>
+          <!-- If both articles are the same, show one line with x2 -->
+          <tr *ngIf="order.article_libelle && order.article_libelle2 && order.article_libelle === order.article_libelle2">
             <td>{{ order.order_id }}</td>
             <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
-            <td>{{ order.article_libelle || 'Chargement...' }}</td>
+            <td>
+              {{ order.article_libelle }} <span style="font-weight:bold;">x2</span>
+              <span *ngIf="order.isFabrication1 || order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+            </td>
+            <td>{{ formatValue(order.typeCommande) }}</td>
+            <td>{{ formatValue(order.typeCorrection) }}</td>
+            <td>{{ sumPrices(order.price, order.price2) | currency:'EUR':'symbol':'1.2-2' }}</td>
+          </tr>
+          <!-- If articles are different, show two lines -->
+          <tr *ngIf="!order.article_libelle2 || order.article_libelle !== order.article_libelle2">
+            <td>{{ order.order_id }}</td>
+            <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
+            <td>
+              {{ order.article_libelle || 'Chargement...' }}
+              <span *ngIf="order.isFabrication1" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+            </td>
             <td>{{ formatValue(order.typeCommande) }}</td>
             <td>{{ formatValue(order.typeCorrection) }}</td>
             <td>{{ order.price | currency:'EUR':'symbol':'1.2-2' }}</td>
           </tr>
-          <!-- Second product row (if exists) -->
-          <tr *ngIf="order.produit2" class="second-product-row">
+          <tr *ngIf="order.article_libelle2 && order.article_libelle !== order.article_libelle2" class="second-product-row">
             <td></td>
             <td></td>
-            <td>+ {{ order.article_libelle2 || 'Chargement...' }}</td>
+            <td>
+              + {{ order.article_libelle2 || 'Chargement...' }}
+              <span *ngIf="order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+            </td>
             <td></td>
             <td></td>
             <td>{{ (order.price2 || 0) | currency:'EUR':'symbol':'1.2-2' }}</td>

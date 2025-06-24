@@ -96,8 +96,8 @@ const tableStatements = [
     rccm varchar(100) DEFAULT NULL,
     ninea varchar(100) DEFAULT NULL,
     code_douane varchar(100) DEFAULT NULL,
-    password_reset_token varchar(250) NOT NULL,
-    password_reset_expires varchar(255) NOT NULL,
+    password_reset_token varchar(250) NULL,
+    password_reset_expires varchar(255) NULL,
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,

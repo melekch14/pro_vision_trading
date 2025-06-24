@@ -276,8 +276,9 @@ export class OrderDetailsModalComponent implements OnInit {
   }
 
   formatStockLibelle(eye: 'od' | 'og' = 'od', nameOnly: boolean = false): string {
-    const article = eye === 'og' ? this.ogArticle : this.odArticle;
-    const stockId = eye === 'og' ? this.order.produit2 : this.order.produit;
+    // For OG, if ogArticle is not available (same product for both eyes), fall back to odArticle
+    const article = eye === 'og' ? (this.ogArticle || this.odArticle) : this.odArticle;
+    const stockId = eye === 'og' ? (this.order.produit2 || this.order.produit) : this.order.produit;
     
     if (!article?.libelle) return `Product ID: ${stockId}`;
     

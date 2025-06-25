@@ -80,6 +80,15 @@ export class ArticleManagerComponent implements OnInit {
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
 
+  // Computed property to check for zero quantity stocks
+  get hasZeroQuantityStocks(): boolean {
+    return this.stockEntries.some(entry => entry.quantite === 0);
+  }
+
+  get zeroQuantityStocksCount(): number {
+    return this.stockEntries.filter(entry => entry.quantite === 0).length;
+  }
+
   constructor(
     private fb: FormBuilder,
     private articleService: ArticleService,

@@ -318,6 +318,12 @@
           </div>
         </div>
 
+        <!-- Zero Quantity Alert -->
+        <div *ngIf="hasZeroQuantityStocks" class="zero-quantity-alert">
+          <mat-icon>warning</mat-icon>
+          <span>⚠️ Alert: {{ zeroQuantityStocksCount }} stock item(s) have zero quantity. Please restock these items.</span>
+        </div>
+
         <div class="stock-filters">
           <div class="filter-group">
             <input type="text" class="filter-input" [ngModel]="stockFilters.code" (ngModelChange)="stockFilters.code = $event; applyStockFilters()" placeholder="Filter by code...">

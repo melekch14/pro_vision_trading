@@ -390,6 +390,28 @@ button {
   margin-bottom: 1rem;
 }
 
+// Zero Quantity Alert
+.zero-quantity-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #ffcdd2;
+  font-weight: 500;
+
+  mat-icon {
+    color: #d32f2f;
+  }
+
+  span {
+    color: #d32f2f;
+  }
+}
+
 // Stock panel
 .stock-panel {
   background-color: var(--card-background);

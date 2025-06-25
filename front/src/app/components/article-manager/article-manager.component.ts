@@ -526,21 +526,15 @@ export class ArticleManagerComponent implements OnInit {
       const matchesSphere = !this.stockFilters.sphere || 
         entry.sphere.toString().includes(this.stockFilters.sphere);
 
-      // If addition filter is active, only show addition type articles
-      if (this.stockFilters.addition) {
-        if (entry.type_stock !== 'addition') return false;
-        return entry.addition !== null && 
-               entry.addition.toString().includes(this.stockFilters.addition);
-      }
+      // Only filter addition if type_stock is 'addition'
+      const matchesAddition = !this.stockFilters.addition ||
+        (entry.type_stock === 'addition' && entry.addition !== null && entry.addition.toString().includes(this.stockFilters.addition));
 
-      // If cylindre filter is active, only show cylindre type articles
-      if (this.stockFilters.cylindre) {
-        if (entry.type_stock !== 'cylindre') return false;
-        return entry.cylindre !== null && 
-               entry.cylindre.toString().includes(this.stockFilters.cylindre);
-      }
+      // Only filter cylindre if type_stock is 'cylindre'
+      const matchesCylindre = !this.stockFilters.cylindre ||
+        (entry.type_stock === 'cylindre' && entry.cylindre !== null && entry.cylindre.toString().includes(this.stockFilters.cylindre));
 
-      return matchesCode && matchesLibelle && matchesQuantity && matchesSphere;
+      return matchesCode && matchesLibelle && matchesQuantity && matchesSphere && matchesAddition && matchesCylindre;
     });
   }
 

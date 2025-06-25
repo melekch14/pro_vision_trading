@@ -60,6 +60,7 @@ const getAllStockWithArticles = async () => {
             s.*,
             a.libelle as article_libelle,
             a.code as article_code,
+            a.type_stock,
             sf.name as subfamily_name,
             sf.code as subfamily_code,
             f.code as family_code

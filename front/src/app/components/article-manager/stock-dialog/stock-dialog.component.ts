@@ -23,7 +23,7 @@ interface DialogStockEntry {
 })
 export class StockDialogComponent implements OnInit {
   sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
-  cylindreValues: number[] = Array.from({length: 9}, (_, i) => -2 + (i * 0.25));
+  cylindreValues: number[] = [];
   stockEntries: DialogStockEntry[] = [];
   existingStock: ApiStockEntry[] = [];
 
@@ -35,8 +35,19 @@ export class StockDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.setCylindreValues();
     this.initializeStockEntries();
     this.loadExistingStock();
+  }
+
+  private setCylindreValues(): void {
+    if (this.data.article.type_stock === 'addition') {
+      // Only positive values, 0 to 5, step 0.25
+      this.cylindreValues = Array.from({length: 21}, (_, i) => 0 + (i * 0.25));
+    } else {
+      // Range: -5 to 5, step 0.25
+      this.cylindreValues = Array.from({length: 41}, (_, i) => -5 + (i * 0.25));
+    }
   }
 
   private initializeStockEntries(): void {

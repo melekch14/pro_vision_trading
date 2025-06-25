@@ -2,13 +2,12 @@
   <h2 mat-dialog-title>Stock Management - {{data.article.libelle}}</h2>
   
   <mat-dialog-content>
-    <!-- First Stock Grid -->
     <div class="stock-grid">
       <table>
         <thead>
           <tr>
             <th></th>
-            <th *ngFor="let sphere of sphereValues.slice(0, 17)" class="sphere-header">
+            <th *ngFor="let sphere of sphereValues" class="sphere-header">
               {{sphere}}
             </th>
           </tr>
@@ -16,36 +15,7 @@
         <tbody>
           <tr *ngFor="let cylindre of cylindreValues">
             <td class="cylindre-header">{{cylindre}}</td>
-            <td *ngFor="let sphere of sphereValues.slice(0, 17)" 
-                class="quantity-cell"
-                [class.has-stock]="hasExistingStock(sphere, cylindre)"
-                [class.non-zero]="hasNonZeroValue(sphere, cylindre)">
-              <input type="number" 
-                     min="0"
-                     [ngModel]="getQuantity(sphere, cylindre)"
-                     (ngModelChange)="onQuantityChange(sphere, cylindre, $event)"
-                     class="quantity-input">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Second Stock Grid -->
-    <div class="stock-grid">
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th *ngFor="let sphere of sphereValues.slice(17)" class="sphere-header">
-              {{sphere}}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let cylindre of cylindreValues">
-            <td class="cylindre-header">{{cylindre}}</td>
-            <td *ngFor="let sphere of sphereValues.slice(17)" 
+            <td *ngFor="let sphere of sphereValues" 
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
                 [class.non-zero]="hasNonZeroValue(sphere, cylindre)">

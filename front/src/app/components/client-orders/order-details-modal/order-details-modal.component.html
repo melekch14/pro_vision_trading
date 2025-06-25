@@ -141,6 +141,20 @@
           <label>Product (OG):</label>
           <span>{{ formatFabricationLibelleForEye('og') }}</span>
         </div>
+        <!-- Fabrication: same article but different corrections -->
+        <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame() && needsSecondProduct()">
+          <label>Product (OD):</label>
+          <span>{{ formatFabricationLibelleForEye('od') }}</span>
+        </div>
+        <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame() && needsSecondProduct()">
+          <label>Product (OG):</label>
+          <span>{{ formatFabricationLibelleForEye('og') }}</span>
+        </div>
+        <!-- Fabrication: same article, same corrections -->
+        <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame() && !needsSecondProduct()">
+          <label>Product:</label>
+          <span>{{ formatFabricationLibelleForEye('od') }}</span>
+        </div>
         <!-- Stock or fallback -->
         <div class="info-item" *ngIf="data.origineArticle !== 'fabrication'">
           <label>{{ needsSecondProduct() ? 'Product (OD):' : 'Product:' }}</label>

@@ -15,6 +15,8 @@ export interface DashboardStatistics {
     client_details: string;
     article_libelle: string;
     article2_libelle: string;
+    fabrication1_libelle: string;
+    fabrication2_libelle: string;
     products_display: string;
     price: number;
     total_price: number;

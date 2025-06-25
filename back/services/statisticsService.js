@@ -67,7 +67,17 @@ class StatisticsService {
                c.adresse as client_details,
                a.libelle as article_libelle,
                a2.libelle as article2_libelle,
+               fab1.libelle as fabrication1_libelle,
+               fab2.libelle as fabrication2_libelle,
+               o.origineArticle as product_type,
                CASE 
+                 WHEN o.origineArticle = 'fabrication' THEN
+                   CASE 
+                     WHEN o.fabrication1 = o.fabrication2 OR o.fabrication2 IS NULL THEN
+                       COALESCE(fab1.libelle, '')
+                     ELSE
+                       CONCAT(COALESCE(fab1.libelle, ''), ' + ', COALESCE(fab2.libelle, ''))
+                   END
                  WHEN o.produit2 IS NOT NULL AND o.produit2 != 0 THEN 
                    CONCAT(COALESCE(a.libelle, ''), ' + ', COALESCE(a2.libelle, ''))
                  ELSE 
@@ -80,6 +90,8 @@ class StatisticsService {
         LEFT JOIN stock s2 ON o.produit2 = s2.id
         LEFT JOIN article a ON s.article_id = a.id
         LEFT JOIN article a2 ON s2.article_id = a2.id
+        LEFT JOIN article fab1 ON o.fabrication1 = fab1.id
+        LEFT JOIN article fab2 ON o.fabrication2 = fab2.id
         ORDER BY o.order_datetime DESC
         LIMIT 5
       `);

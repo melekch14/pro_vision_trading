@@ -78,6 +78,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   };
 
   private validationTimeout: any;
+  private previousCorrections: any = null; // Track previous correction values
 
   constructor(
     private orderService: OrderService,
@@ -91,6 +92,12 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.updateStepEnabling();
     this.updateFormValidity();
     this.checkCorrectionsForStep3();
+    
+    // Initialize previous corrections tracking
+    this.previousCorrections = {
+      od: { ...this.order.od },
+      og: { ...this.order.og }
+    };
   }
 
   validateAxeAndAddition() {
@@ -575,9 +582,25 @@ export class ClientCreateOrderComponent implements OnDestroy {
     }
     
     // Additional validation for second product
-    if (this.needsSecondProduct && !this.order.produit2 && !(this.order.origineArticle === 'fabrication' && !this.order.fabrication2)) {
-      alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
-      return;
+    console.log('Debug - needsSecondProduct:', this.needsSecondProduct);
+    console.log('Debug - produit2:', this.order.produit2);
+    console.log('Debug - origineArticle:', this.order.origineArticle);
+    console.log('Debug - selectedProduct2:', this.selectedProduct2);
+    
+    if (this.needsSecondProduct) {
+      if (this.order.origineArticle === 'fabrication') {
+        // For fabrication, check if produit2 is selected
+        if (!this.order.produit2) {
+          alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
+          return;
+        }
+      } else {
+        // For stock, check if produit2 is selected
+        if (!this.order.produit2) {
+          alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
+          return;
+        }
+      }
     }
     
     // Validation for precal file requirement
@@ -659,6 +682,25 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   checkCorrectionsForStep3() {
     this.errors.step3Disabled = !this.areAllCorrectionsFilled();
+    
+    // Check if corrections have actually changed
+    const currentCorrections = {
+      od: { ...this.order.od },
+      og: { ...this.order.og }
+    };
+    
+    if (this.previousCorrections && this.order.typeCommande) {
+      const hasChanged = 
+        JSON.stringify(this.previousCorrections) !== JSON.stringify(currentCorrections);
+      
+      if (hasChanged) {
+        // Reset fields below Type de commande if corrections actually changed
+        this.resetFieldsBelowTypeCommande();
+      }
+    }
+    
+    // Update previous corrections
+    this.previousCorrections = currentCorrections;
   }
 
   // Restore method to filter products for OG based on OG correction values
@@ -680,6 +722,44 @@ export class ClientCreateOrderComponent implements OnDestroy {
       case 'loin_pres':
         this.filterProducts2BySphereAndAddition(sphere, addition);
         break;
+    }
+  }
+
+  // Reset all fields below Type de commande when corrections change
+  resetFieldsBelowTypeCommande() {
+    // Only reset if a type de commande was previously selected
+    if (this.order.typeCommande) {
+      // Reset type de commande
+      this.order.typeCommande = '';
+      
+      // Reset all fields below Type de commande
+      this.order.typeCorrection = '';
+      this.order.origineArticle = '';
+      this.order.produit = '';
+      this.order.produit2 = '';
+      
+      // Reset product selections and prices
+      this.selectedProduct = null;
+      this.selectedProduct2 = null;
+      this.selectedArticle = null;
+      this.selectedArticle2 = null;
+      this.price = 0;
+      this.price2 = 0;
+      this.totalPrice = 0;
+      
+      // Reset filtered products
+      this.filteredProducts = [];
+      this.filteredProducts2 = [];
+      
+      // Reset shipping and delivery
+      this.shippingType = '';
+      this.deliveryTime = '';
+      
+      // Reset file selection
+      this.selectedFileName = '';
+      this.selectedFile = null;
+      
+      this.updateStepEnabling();
     }
   }
 } 

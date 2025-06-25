@@ -26,6 +26,8 @@ export class StockDialogComponent implements OnInit {
   cylindreValues: number[] = [];
   stockEntries: DialogStockEntry[] = [];
   existingStock: ApiStockEntry[] = [];
+  filterSphere: number | null = null;
+  filterCylindre: number | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<StockDialogComponent>,
@@ -184,5 +186,19 @@ export class StockDialogComponent implements OnInit {
       insertions,
       deletions
     });
+  }
+
+  get filteredSphereValues(): number[] {
+    if (this.filterSphere !== null && !isNaN(this.filterSphere)) {
+      return this.sphereValues.filter(s => Math.abs(s - this.filterSphere!) < 0.001);
+    }
+    return this.sphereValues;
+  }
+
+  get filteredCylindreValues(): number[] {
+    if (this.filterCylindre !== null && !isNaN(this.filterCylindre)) {
+      return this.cylindreValues.filter(c => Math.abs(c - this.filterCylindre!) < 0.001);
+    }
+    return this.cylindreValues;
   }
 }

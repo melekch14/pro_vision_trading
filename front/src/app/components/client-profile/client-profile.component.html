@@ -1,111 +1,112 @@
-<div class="profile-wrapper">
-  <div class="profile-left">
-    <div class="profile-avatar">
+<!-- Modernized and Translated Profile Component -->
+<div class="profile-wrapper modern-profile">
+  <div class="profile-left modern-profile-left">
+    <div class="profile-avatar modern-avatar">
       <span class="avatar-icon">&#128100;</span>
     </div>
-    <div class="profile-summary">
+    <div class="profile-summary modern-summary">
       <h2>{{ user?.raison_social || '-' }}</h2>
       <p class="profile-email"><span class="icon">&#9993;</span> {{ user?.email || '-' }}</p>
-      <p class="profile-joined"><mat-icon class="icon">person</mat-icon> Responsable: {{ user?.responsable || '-' }}</p>
-      <button class="reset-btn" (click)="resetPassword()" [disabled]="!user">
-        <mat-icon class="icon">lock</mat-icon> Reset Password
+      <p class="profile-joined"><mat-icon class="icon">person</mat-icon> Responsable : {{ user?.responsable || '-' }}</p>
+      <button class="reset-btn modern-btn" (click)="resetPassword()" [disabled]="!user">
+        <mat-icon class="icon">lock</mat-icon> Réinitialiser le mot de passe
       </button>
     </div>
   </div>
-  <div class="profile-right">
-    <h3>Profile Information</h3>
-    <p class="profile-desc">Edit your personal information</p>
-    <div *ngIf="loading" class="loading">Loading...</div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-    <form class="profile-form" *ngIf="!editMode && user">
-      <div class="form-row">
-        <label>Raison Social</label>
+  <div class="profile-right modern-profile-right">
+    <h3>Informations du profil</h3>
+    <p class="profile-desc">Modifiez vos informations personnelles</p>
+    <div *ngIf="loading" class="loading modern-loading">Chargement...</div>
+    <div *ngIf="error" class="error modern-error">{{ error }}</div>
+    <form class="profile-form modern-form" *ngIf="!editMode && user">
+      <div class="form-row modern-row">
+        <label>Raison Sociale</label>
         <input type="text" [value]="user.raison_social" disabled />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>Responsable</label>
         <input type="text" [value]="user.responsable" disabled />
       </div>
-      <div class="form-row">
-        <label>Email Address</label>
+      <div class="form-row modern-row">
+        <label>Email</label>
         <input type="email" [value]="user.email" disabled />
       </div>
-      <div class="form-row">
-        <label>Phone Number</label>
+      <div class="form-row modern-row">
+        <label>Téléphone</label>
         <input type="text" [value]="user.tel" disabled />
       </div>
-      <div class="form-row">
-        <label>Address</label>
+      <div class="form-row modern-row">
+        <label>Adresse</label>
         <input type="text" [value]="user.adresse" disabled />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>RCCM</label>
         <input type="text" [value]="user.rccm" disabled />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>NINEA</label>
         <input type="text" [value]="user.ninea" disabled />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>Code Douane</label>
         <input type="text" [value]="user.code_douane" disabled />
       </div>
-      <div class="form-actions">
-        <button type="button" class="edit-btn" (click)="enableEdit()">Edit</button>
+      <div class="form-actions modern-actions">
+        <button type="button" class="edit-btn modern-btn" (click)="enableEdit()">Modifier</button>
       </div>
     </form>
-    <form class="profile-form" *ngIf="editMode && user">
-      <div class="form-row">
-        <label>Raison Social</label>
+    <form class="profile-form modern-form" *ngIf="editMode && user">
+      <div class="form-row modern-row">
+        <label>Raison Sociale</label>
         <input type="text" [(ngModel)]="editedUser.raison_social" name="raison_social" />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>Responsable</label>
         <input type="text" [(ngModel)]="editedUser.responsable" name="responsable" />
       </div>
-      <div class="form-row">
-        <label>Email Address</label>
+      <div class="form-row modern-row">
+        <label>Email</label>
         <input type="email" [(ngModel)]="editedUser.email" name="email" />
       </div>
-      <div class="form-row">
-        <label>Phone Number</label>
+      <div class="form-row modern-row">
+        <label>Téléphone</label>
         <input type="text" [(ngModel)]="editedUser.tel" name="tel" />
       </div>
-      <div class="form-row">
-        <label>Address</label>
+      <div class="form-row modern-row">
+        <label>Adresse</label>
         <input type="text" [(ngModel)]="editedUser.adresse" name="adresse" />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>RCCM</label>
         <input type="text" [(ngModel)]="editedUser.rccm" name="rccm" />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>NINEA</label>
         <input type="text" [(ngModel)]="editedUser.ninea" name="ninea" />
       </div>
-      <div class="form-row">
+      <div class="form-row modern-row">
         <label>Code Douane</label>
         <input type="text" [(ngModel)]="editedUser.code_douane" name="code_douane" />
       </div>
-      <div class="form-actions">
-        <button type="button" class="save-btn" (click)="saveProfile()">Save</button>
-        <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+      <div class="form-actions modern-actions">
+        <button type="button" class="save-btn modern-btn" (click)="saveProfile()">Enregistrer</button>
+        <button type="button" class="cancel-btn modern-btn" (click)="cancelEdit()">Annuler</button>
       </div>
     </form>
-    <div *ngIf="passwordResetRequested" class="reset-password-form">
-      <h4>Reset Your Password</h4>
-      <p>Check your email for a reset link. Paste the token below and enter your new password.</p>
-      <div class="form-row">
-        <label>Reset Token</label>
+    <div *ngIf="passwordResetRequested" class="reset-password-form modern-reset-form">
+      <h4>Réinitialisez votre mot de passe</h4>
+      <p>Vérifiez votre email pour un lien de réinitialisation. Collez le jeton ci-dessous et entrez votre nouveau mot de passe.</p>
+      <div class="form-row modern-row">
+        <label>Jeton de réinitialisation</label>
         <input type="text" [(ngModel)]="resetToken" name="resetToken" />
       </div>
-      <div class="form-row">
-        <label>New Password</label>
+      <div class="form-row modern-row">
+        <label>Nouveau mot de passe</label>
         <input type="password" [(ngModel)]="newPassword" name="newPassword" />
       </div>
-      <div class="form-actions">
-        <button type="button" (click)="submitNewPassword()">Submit New Password</button>
+      <div class="form-actions modern-actions">
+        <button type="button" class="modern-btn" (click)="submitNewPassword()">Valider le nouveau mot de passe</button>
       </div>
     </div>
   </div>
-</div> 
+</div>

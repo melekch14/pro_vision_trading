@@ -1,6 +1,6 @@
 <div class="page-container">
   <div class="page-header">
-    <h1>Opticiens Management</h1>
+    <h1>Gestion des Administrateurs</h1>
   </div>
 
   <div class="content-container">
@@ -19,26 +19,26 @@
     <div class="customers-container">
       <div class="stock-panel">
         <div class="stock-header">
-          <h2>Opticiens Management</h2>
+          <h2>Gestion des Administrateurs</h2>
           <div class="stock-actions">
             <button class="export-btn" (click)="exportToCSV()">
               <span class="material-icons">file_download</span>
-              Export CSV
+              Exporter CSV
             </button>
             <button class="export-btn" (click)="exportToPDF()">
               <span class="material-icons">picture_as_pdf</span>
-              Export PDF
+              Exporter PDF
             </button>
             <button class="export-btn" (click)="toggleForm()">
               <span class="material-icons">{{ showForm ? 'close' : 'add' }}</span>
-              {{ showForm ? 'Close Form' : 'Add New Opticien' }}
+              {{ showForm ? 'Fermer le formulaire' : 'Ajouter un nouvel opticien' }}
             </button>
           </div>
         </div>
 
         <!-- Add/Edit Form -->
         <div *ngIf="showForm" class="form-container">
-          <h3>{{ isEditing ? 'Edit Opticien' : 'Add New Opticien' }}</h3>
+          <h3>{{ isEditing ? 'Modifier l\'admin' : 'Ajouter un nouvel admin' }}</h3>
           <form [formGroup]="opticienForm" (ngSubmit)="onSubmit()" class="mb-4">
             <div class="row">
               <div class="col-md-4 mb-3">
@@ -46,11 +46,11 @@
                 <input type="text" class="form-control" id="codee" formControlName="codee" [readonly]="isEditing">
               </div>
               <div class="col-md-4 mb-3">
-                <label for="nom">Last Name</label>
+                <label for="nom">Nom</label>
                 <input type="text" class="form-control" id="nom" formControlName="nom">
               </div>
               <div class="col-md-4 mb-3">
-                <label for="prenom">First Name</label>
+                <label for="prenom">Prénom</label>
                 <input type="text" class="form-control" id="prenom" formControlName="prenom">
               </div>
             </div>
@@ -61,9 +61,9 @@
                 <input type="email" class="form-control" id="email" formControlName="email">
               </div>
               <div class="col-md-6 mb-3">
-                <label for="role">Role</label>
+                <label for="role">Rôle</label>
                 <select class="form-control" id="role" formControlName="role">
-                  <option value="">Select Role</option>
+                  <option value="">Sélectionner un rôle</option>
                   <option *ngFor="let role of roles" [value]="role">
                     {{role | titlecase}}
                   </option>
@@ -73,39 +73,39 @@
 
             <div class="row" *ngIf="!isEditing">
               <div class="col-md-12 mb-3">
-                <label for="password">Password</label>
+                <label for="password">Mot de passe</label>
                 <input type="password" class="form-control" id="password" formControlName="password">
               </div>
             </div>
 
             <div class="form-group">
               <button type="submit" class="btn btn-primary mr-2" [disabled]="!opticienForm.valid">
-                {{ isEditing ? 'Update' : 'Add' }} Opticien
+                {{ isEditing ? 'Mettre à jour' : 'Ajouter' }} Admin
               </button>
-              <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">Annuler</button>
             </div>
           </form>
         </div>
 
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Search by code...">
+            <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Rechercher par code...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="searchName" (input)="applyFilters()" placeholder="Search by name...">
+            <input type="text" class="filter-input" [(ngModel)]="searchName" (input)="applyFilters()" placeholder="Rechercher par nom...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Search by email...">
+            <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Rechercher par email...">
           </div>
           <div class="filter-group">
             <select class="filter-input" [(ngModel)]="filterRole" (change)="applyFilters()">
-              <option value="">All Roles</option>
+              <option value="">Tous les rôles</option>
               <option *ngFor="let role of roles" [value]="role">{{ role | titlecase }}</option>
             </select>
           </div>
           <button class="clear-filters-btn" (click)="resetFilters()">
             <span class="material-icons">clear</span>
-            Clear Filters
+            Réinitialiser les filtres
           </button>
         </div>
 
@@ -117,11 +117,11 @@
                 <span class="material-icons">{{ getSortIcon('codee') }}</span>
               </th>
               <th class="sortable" (click)="sortData('nom')">
-                Last Name
+                Nom
                 <span class="material-icons">{{ getSortIcon('nom') }}</span>
               </th>
               <th class="sortable" (click)="sortData('prenom')">
-                First Name
+                Prénom
                 <span class="material-icons">{{ getSortIcon('prenom') }}</span>
               </th>
               <th class="sortable" (click)="sortData('email')">
@@ -129,7 +129,7 @@
                 <span class="material-icons">{{ getSortIcon('email') }}</span>
               </th>
               <th class="sortable" (click)="sortData('role')">
-                Role
+                Rôle
                 <span class="material-icons">{{ getSortIcon('role') }}</span>
               </th>
               <th>Actions</th>
@@ -165,7 +165,7 @@
       <!-- No Results Message -->
       <div *ngIf="filteredOpticiens.length === 0 && !isLoading" class="no-results">
         <mat-icon>search_off</mat-icon>
-        <p>No opticiens found matching your search criteria</p>
+        <p>Aucun admin trouvé correspondant à vos critères de recherche</p>
       </div>
     </div>
   </div>
@@ -174,12 +174,12 @@
 <!-- Permissions Panel -->
 <div class="permissions-panel" [class.active]="showPermissionsPanel">
   <div class="panel-header">
-    <h2>Manage Permissions for {{ selectedOpticien?.prenom }} {{ selectedOpticien?.nom }}</h2>
+    <h2>Gérer les permissions pour {{ selectedOpticien?.prenom }} {{ selectedOpticien?.nom }}</h2>
     <button class="close-button" (click)="closePermissionsPanel()">
       <i class="material-icons">close</i>
     </button>
   </div>
-  
+
   <div class="panel-body">
     <div class="permissions-list">
       <div class="permission-item" *ngFor="let component of availableComponents">
@@ -188,7 +188,7 @@
         </div>
         <div class="permission-toggle">
           <label class="switch">
-            <input type="checkbox" 
+            <input type="checkbox"
                    [checked]="component.hasAccess"
                    (change)="toggleComponentAccess(component)">
             <span class="slider round"></span>
@@ -197,10 +197,10 @@
       </div>
     </div>
   </div>
-  
+
   <div class="panel-footer">
-    <button class="secondary-button" (click)="closePermissionsPanel()">Cancel</button>
-    <button class="primary-button" (click)="savePermissions()">Save Permissions</button>
+    <button class="secondary-button" (click)="closePermissionsPanel()">Annuler</button>
+    <button class="primary-button" (click)="savePermissions()">Enregistrer les permissions</button>
   </div>
 </div>
 
@@ -420,4 +420,4 @@ input:checked + .slider:before {
 .permissions-panel.active::before {
   display: none;
 }
-</style> 
+</style>

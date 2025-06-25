@@ -60,7 +60,7 @@
       <input type="text" placeholder="Prénom *" [(ngModel)]="order.firstName" (blur)="validateFirstName()" (input)="validateFirstName()" required>
       <span *ngIf="errors.firstName" class="error-msg">Le prénom est requis</span>
       <input type="text" placeholder="+221 77 123 45 67 *" [(ngModel)]="order.phone" (blur)="validatePhoneSenegal()" (input)="validateInputField('phone')" required>
-      <span *ngIf="errors.phone" class="error-msg">Format Sénégal: 77XXXXXXX, 78XXXXXXX, etc. (9 chiffres, commence par 7)</span>
+      <span *ngIf="errors.phone" class="error-msg">Format Sénégal : 77XXXXXXX, 78XXXXXXX, etc. (9 chiffres, commence par 7)</span>
       <input type="email" placeholder="exemple@email.com *" [(ngModel)]="order.email" (blur)="validateEmail()" (input)="validateInputField('email')" required>
       <span *ngIf="errors.email" class="error-msg">Email invalide</span>
     </div>
@@ -191,15 +191,15 @@
       <div class="resume-row" [class.five-items]="needsSecondProduct">
         <div>
           <span class="resume-label">Prix OD</span>
-          <span class="resume-value">{{ price | number:'1.2-2' }} €</span>
+          <span class="resume-value">{{ price | number:'1.2-2' }} CFA</span>
         </div>
         <div *ngIf="needsSecondProduct">
           <span class="resume-label">Prix OG</span>
-          <span class="resume-value">{{ price2 | number:'1.2-2' }} €</span>
+          <span class="resume-value">{{ price2 | number:'1.2-2' }} CFA</span>
         </div>
         <div>
           <span class="resume-label">Prix Total</span>
-          <span class="resume-value">{{ totalPrice | number:'1.2-2' }} €</span>
+          <span class="resume-value">{{ totalPrice | number:'1.2-2' }} CFA</span>
         </div>
         <div>
           <span class="resume-label">Type de Livraison</span>
@@ -218,4 +218,4 @@
   <div class="submit-section">
     <button class="submit-btn" (click)="submitOrder()" [disabled]="errors.formInvalid">Soumettre la Commande</button>
   </div>
-</div> 
+</div>

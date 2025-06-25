@@ -2,7 +2,7 @@
   <div class="header-row">
     <h1 class="page-title">{{ formTitle }}</h1>
   </div>
-  
+
   <div class="form-container">
     <div class="form-header">
       <h2>{{ formTitle }}</h2>
@@ -19,7 +19,7 @@
     <form (ngSubmit)="onSubmit()" #customerForm="ngForm">
       <div class="form-grid">
         <div class="form-group">
-          <label for="codee">Code {{ !isEditMode ? '(Auto-generated)' : '' }}</label>
+          <label for="codee">Code {{ !isEditMode ? '(Généré automatiquement)' : '' }}</label>
           <input
             type="text"
             id="codee"
@@ -30,15 +30,15 @@
             #codee="ngModel"
           />
           <div *ngIf="codee.invalid && (codee.dirty || codee.touched)" class="validation-error">
-            Code is required
+            Code est requis
           </div>
           <div *ngIf="!isEditMode" class="field-hint">
-            A unique code will be automatically generated when you create the customer.
+            Un code unique sera généré automatiquement lors de la création du client.
           </div>
         </div>
 
         <div class="form-group">
-          <label for="raison_social">Raison Social</label>
+          <label for="raison_social">Raison Sociale</label>
           <input
             type="text"
             id="raison_social"
@@ -48,7 +48,7 @@
             #raison_social="ngModel"
           />
           <div *ngIf="raison_social.invalid && (raison_social.dirty || raison_social.touched)" class="validation-error">
-            Raison Social is required
+            Raison Sociale est requise
           </div>
         </div>
 
@@ -64,13 +64,13 @@
             #email="ngModel"
           />
           <div *ngIf="email.invalid && (email.dirty || email.touched)" class="validation-error">
-            <div *ngIf="email.errors?.['required']">Email is required</div>
-            <div *ngIf="email.errors?.['email']">Please enter a valid email</div>
+            <div *ngIf="email.errors?.['required']">L'email est requis</div>
+            <div *ngIf="email.errors?.['email']">Veuillez entrer un email valide</div>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">Mot de passe</label>
           <input
             type="password"
             id="password"
@@ -81,8 +81,8 @@
             #password="ngModel"
           />
           <div *ngIf="password.invalid && (password.dirty || password.touched)" class="validation-error">
-            <div *ngIf="password.errors?.['required']">Password is required</div>
-            <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</div>
+            <div *ngIf="password.errors?.['required']">Le mot de passe est requis</div>
+            <div *ngIf="password.errors?.['minlength']">Le mot de passe doit comporter au moins 6 caractères</div>
           </div>
         </div>
 
@@ -97,7 +97,7 @@
             #responsable="ngModel"
           />
           <div *ngIf="responsable.invalid && (responsable.dirty || responsable.touched)" class="validation-error">
-            Responsable is required
+            Responsable est requis
           </div>
         </div>
 
@@ -206,4 +206,4 @@
       </div>
     </form>
   </div>
-</div> 
+</div>

@@ -52,7 +52,7 @@ export class RegisterComponent {
         next: (response: any) => {
           if (response.codee) {
             this.generatedCode = response.codee;
-            this.registrationSuccess = `Registration successful! Your client code is: ${response.codee}`;
+            this.registrationSuccess = `Inscription réussie ! Votre code client est : ${response.codee}`;
             setTimeout(() => {
               this.router.navigate(['/login']);
             }, 3000);
@@ -61,7 +61,7 @@ export class RegisterComponent {
           }
         },
         error: (err) => {
-          this.registrationError = err.error?.message || 'Registration failed';
+          this.registrationError = err.error?.message || "Échec de l'inscription";
         }
       });
     }

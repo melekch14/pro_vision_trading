@@ -11,21 +11,21 @@ import { MenuItem } from '../../shared/models/menu-item.model';
 })
 export class ClientSidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
-    { 
-      id: 2, 
-      title: 'Create Order', 
+    {
+      id: 2,
+      title: 'Créer une commande',
       icon: 'add_shopping_cart',
       route: '/client/create-order'
     },
-    { 
-      id: 3, 
-      title: 'My Orders', 
+    {
+      id: 3,
+      title: 'Mes Commandes',
       icon: 'shopping_cart',
       route: '/client/orders'
     },
-    { 
-      id: 4, 
-      title: 'Profile', 
+    {
+      id: 4,
+      title: 'Profil',
       icon: 'person',
       route: '/client/profile'
     }
@@ -65,4 +65,4 @@ export class ClientSidebarComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-} 
+}

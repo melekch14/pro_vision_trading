@@ -263,25 +263,25 @@ export class PrintCardsModalComponent implements OnInit {
         const key = order.order_id;
         const fournisseurText = String(order['fournisseur_code'] || order.fournisseur_id || 'N/A');
         const dateText = order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString('fr-FR') : '';
-        
+
         // Build the card HTML for PDF with separate OD and OG product names
         const cardHtml = `
           <div class=\"order-card\">
             <div class=\"card-row\">
               <div class=\"verre-block\">
-                <span class=\"verre-label\">Opticien:</span>
+                <span class=\"verre-label\">Opticien :</span>
                 <span class=\"product\">${(order['raison_social'] || 'Opticien Name').toUpperCase()}</span>
               </div>
             </div>
             <div class=\"card-row\">
               <div class=\"verre-block\">
-                <span class=\"verre-label\">Porteur:</span>
+                <span class=\"verre-label\">Porteur :</span>
                 <span class=\"product bold-italic\">${(order.first_name + ' ' + order.last_name).toUpperCase()}</span>
               </div>
             </div>
             <div class=\"card-row\">
               <div class=\"verre-block\">
-                <span class=\"verre-label\">verres:</span>
+                <span class=\"verre-label\">verres :</span>
                 <span class=\"product\">${this.getProductLibelle(order, 'od')}</span>
               </div>
             </div>
@@ -374,4 +374,4 @@ export class PrintCardsModalComponent implements OnInit {
       this.error = 'Failed to generate PDF. Please try again.';
     }
   }
-} 
+}

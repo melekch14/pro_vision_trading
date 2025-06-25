@@ -18,63 +18,63 @@ interface MenuItem {
 })
 export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
-    { 
+    {
       id: 'dashboard',
-      name: 'Dashboard',
+      name: 'Tableau de bord',
       icon: 'inventory_2',
       route: '/app/dashboard'
     },
-    { 
+    {
       id: 'article-manager',
-      name: 'Article Manager',
+      name: 'Gestion des articles',
       icon: 'inventory_2',
       route: '/app/article-manager'
     },
-    { 
+    {
       id: 'article-hierarchy',
-      name: 'Article Hierarchy',
+      name: 'Hiérarchie des articles',
       icon: 'account_tree',
       route: '/app/article-hierarchy'
     },
-    { 
+    {
       id: 'article-params',
-      name: 'Article Parameters',
+      name: 'Paramètres des articles',
       icon: 'settings',
       route: '/app/article-params'
     },
-    { 
+    {
       id: 'orders',
-      name: 'Orders',
+      name: 'Commandes',
       icon: 'shopping_cart',
       route: '/app/orders'
     },
-    { 
+    {
       id: 'tickets',
       name: 'Tickets',
       icon: 'confirmation_number',
       route: '/app/tickets'
     },
-    { 
+    {
       id: 'customers',
-      name: 'Customers',
+      name: 'Clients',
       icon: 'people',
       route: '/app/customers'
     },
-    { 
+    {
       id: 'fournisseurs',
-      name: 'Suppliers',
+      name: 'Fournisseurs',
       icon: 'local_shipping',
       route: '/app/fournisseurs'
     },
-    { 
+    {
       id: 'opticiens',
-      name: 'Opticians',
+      name: 'Opticiens',
       icon: 'person',
       route: '/app/opticiens'
     },
-    { 
+    {
       id: 'settings',
-      name: 'Settings',
+      name: 'Paramètres',
       icon: 'settings_applications',
       route: '/app/settings'
     }
@@ -104,7 +104,7 @@ export class SidebarComponent implements OnInit {
     if (!this.userData) return '';
     const { nom, prenom } = this.userData;
     const fullName = `${prenom || ''} ${nom || ''}`.trim();
-    return fullName.split(' ').map(name => 
+    return fullName.split(' ').map(name =>
       name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
     ).join(' ');
   }

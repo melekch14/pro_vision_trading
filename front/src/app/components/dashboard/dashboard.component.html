@@ -1,46 +1,46 @@
-<div *ngIf="loading" class="dashboard-loading">Loading dashboard...</div>
+<div *ngIf="loading" class="dashboard-loading">Chargement du tableau de bord...</div>
 <div *ngIf="error" class="dashboard-error">{{ error }}</div>
 <div *ngIf="statistics && !loading && !error" class="dashboard-container">
   <div class="dashboard-header">
     <img src="assets/logo.png" alt="Logo" class="dashboard-logo" />
     <div class="dashboard-title-group">
       <h1>PRO VISION TRADNING</h1>
-      <p>Monitor and manage your orders efficiently</p>
+      <p>Surveillez et gérez vos commandes efficacement</p>
     </div>
   </div>
 
   <div class="dashboard-cards">
     <div class="card revenue">
       <span class="card-icon material-icons">attach_money</span>
-      <div class="card-title">Total Revenue</div>
-      <div class="card-value">${{ statistics.totalRevenue | number:'1.2-2' }}</div>
-      <div class="card-desc">Revenue generated</div>
+      <div class="card-title">Revenu total</div>
+      <div class="card-value">{{ statistics.totalRevenue | number:'1.2-2' }} CFA</div>
+      <div class="card-desc">Revenu généré</div>
     </div>
     <div class="card orders">
       <span class="card-icon material-icons">shopping_cart</span>
-      <div class="card-title">Total Orders</div>
+      <div class="card-title">Total des commandes</div>
       <div class="card-value">{{ statistics.totalOrders }}</div>
-      <div class="card-desc">Orders placed</div>
+      <div class="card-desc">Commandes passées</div>
     </div>
     <div class="card pending">
       <span class="card-icon material-icons">hourglass_empty</span>
-      <div class="card-title">Pending Orders</div>
+      <div class="card-title">Commandes en attente</div>
       <div class="card-value">{{ statistics.pendingOrders }}</div>
-      <div class="card-desc">Awaiting processing</div>
+      <div class="card-desc">En attente de traitement</div>
     </div>
     <div class="card completion">
       <span class="card-icon material-icons">check_circle</span>
-      <div class="card-title">Completion Rate</div>
+      <div class="card-title">Taux d'achèvement</div>
       <div class="card-value">
         {{ ((statistics.totalOrders - statistics.pendingOrders) / (statistics.totalOrders || 1) * 100) | number:'1.0-0' }}%
       </div>
-      <div class="card-desc">Orders completed</div>
+      <div class="card-desc">Commandes terminées</div>
     </div>
   </div>
 
   <div class="dashboard-charts">
     <div class="chart-box">
-      <h2>Orders by Status</h2>
+      <h2>Commandes par statut</h2>
       <p-chart
         type="pie"
         [data]="ordersByStatusChartData"
@@ -50,7 +50,7 @@
       ></p-chart>
     </div>
     <div class="chart-box">
-      <h2>Status Distribution</h2>
+      <h2>Répartition des statuts</h2>
       <p-chart
         type="bar"
         [data]="statusDistributionChartData"
@@ -62,18 +62,18 @@
   </div>
 
   <div class="dashboard-table">
-    <h2>Recent Orders</h2>
+    <h2>Commandes récentes</h2>
     <table>
       <thead>
         <tr>
-          <th>Order ID</th>
+          <th>ID Commande</th>
           <th>Client</th>
           <th>Contact</th>
-          <th>Product</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Payment</th>
-          <th>Shipping</th>
+          <th>Produit</th>
+          <th>Prix</th>
+          <th>Statut</th>
+          <th>Paiement</th>
+          <th>Livraison</th>
           <th>Date</th>
         </tr>
       </thead>
@@ -97,7 +97,7 @@
           </td>
           <td>
             <span [ngClass]="{ 'payment-unpaid': order.payment_status === 'unpaid', 'payment-paid': order.payment_status === 'paid' }">
-              {{ order.payment_status || '-' }}
+              {{ order.payment_status === 'paid' ? 'Payé' : (order.payment_status === 'unpaid' ? 'Non payé' : (order.payment_status || '-')) }}
             </span>
           </td>
           <td>

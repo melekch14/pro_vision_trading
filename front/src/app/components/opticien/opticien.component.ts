@@ -25,17 +25,17 @@ export class OpticienComponent implements OnInit {
   showForm = false;
   selectedOpticienId: number | null = null;
   roles = ['opticien', 'technicien'];
-  
+
   // Loading and error states
   isLoading = false;
   errorMessage = '';
-  
+
   // Search and filter properties
   searchCode = '';
   searchName = '';
   searchEmail = '';
   filterRole = '';
-  
+
   // Sorting
   sortColumn = '';
   sortDirection: 'asc' | 'desc' = 'asc';
@@ -86,9 +86,9 @@ export class OpticienComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.errorMessage = 'Error loading opticiens';
+        this.errorMessage = 'Erreur lors de la chargement des opticiens';
         this.isLoading = false;
-        this.showMessage('Error loading opticiens');
+        this.showMessage('Erreur lors de la chargement des opticiens');
       }
     });
   }
@@ -102,15 +102,15 @@ export class OpticienComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredOpticiens = this.opticiens.filter(opticien => {
-      const matchesCode = !this.searchCode || 
+      const matchesCode = !this.searchCode ||
         opticien.codee.toLowerCase().includes(this.searchCode.toLowerCase());
-      const matchesName = !this.searchName || 
+      const matchesName = !this.searchName ||
         (opticien.nom.toLowerCase().includes(this.searchName.toLowerCase()) ||
          opticien.prenom.toLowerCase().includes(this.searchName.toLowerCase()));
-      const matchesEmail = !this.searchEmail || 
+      const matchesEmail = !this.searchEmail ||
         opticien.email.toLowerCase().includes(this.searchEmail.toLowerCase());
       const matchesRole = !this.filterRole || opticien.role === this.filterRole;
-      
+
       return matchesCode && matchesName && matchesEmail && matchesRole;
     });
   }
@@ -134,14 +134,14 @@ export class OpticienComponent implements OnInit {
     this.filteredOpticiens.sort((a, b) => {
       const aValue = (a as any)[column];
       const bValue = (b as any)[column];
-      
+
       let comparison = 0;
       if (aValue > bValue) {
         comparison = 1;
       } else if (aValue < bValue) {
         comparison = -1;
       }
-      
+
       return this.sortDirection === 'asc' ? comparison : -comparison;
     });
   }
@@ -177,7 +177,7 @@ export class OpticienComponent implements OnInit {
     const headers = Object.keys(data[0]);
     const csvRows = [
       headers.join(','),
-      ...data.map(row => 
+      ...data.map(row =>
         headers.map(header => {
           const value = row[header];
           return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
@@ -201,27 +201,27 @@ export class OpticienComponent implements OnInit {
   onSubmit(): void {
     if (this.opticienForm.valid) {
       const opticienData = this.opticienForm.value;
-      
+
       if (this.isEditing && this.selectedOpticienId) {
         this.opticienService.updateOpticien(this.selectedOpticienId, opticienData).subscribe({
           next: () => {
-            this.showMessage('Opticien updated successfully');
+            this.showMessage('Opticien mis à jour avec succès');
             this.resetForm();
             this.loadOpticiens();
           },
           error: (error) => {
-            this.showMessage('Error updating opticien');
+            this.showMessage('Erreur lors de la mise à jour de l\'opticien');
           }
         });
       } else {
         this.opticienService.createOpticien(opticienData).subscribe({
           next: () => {
-            this.showMessage('Opticien created successfully');
+            this.showMessage('Opticien créé avec succès');
             this.resetForm();
             this.loadOpticiens();
           },
           error: (error) => {
-            this.showMessage('Error creating opticien');
+            this.showMessage('Erreur lors de la création de l\'opticien');
           }
         });
       }
@@ -248,11 +248,11 @@ export class OpticienComponent implements OnInit {
     if (confirm('Are you sure you want to delete this opticien?')) {
       this.opticienService.deleteOpticien(id).subscribe({
         next: () => {
-          this.showMessage('Opticien deleted successfully');
+          this.showMessage('Opticien supprimé avec succès');
           this.loadOpticiens();
         },
         error: (error) => {
-          this.showMessage('Error deleting opticien');
+          this.showMessage('Erreur lors de la suppression de l\'opticien');
         }
       });
     }
@@ -277,12 +277,12 @@ export class OpticienComponent implements OnInit {
 
   openPermissionsPanel(opticien: Opticien): void {
     if (this.authService.getUserData()?.role !== 'opticien') {
-      this.showMessage('Only opticiens can manage permissions');
+      this.showMessage('Seuls les opticiens peuvent gérer les permissions');
       return;
     }
 
     if (opticien.role !== 'technicien') {
-      this.showMessage('Permissions can only be managed for technicians');
+      this.showMessage('Les permissions ne peuvent être gérées que pour les techniciens');
       return;
     }
 
@@ -307,7 +307,7 @@ export class OpticienComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading permissions:', error);
-        this.showMessage('Error loading permissions');
+        this.showMessage('Erreur lors de la chargement des permissions');
       }
     });
   }
@@ -327,12 +327,12 @@ export class OpticienComponent implements OnInit {
       permissionsToSave
     ).subscribe({
       next: () => {
-        this.showMessage('Permissions updated successfully');
+        this.showMessage('Permissions mises à jour avec succès');
         this.closePermissionsPanel();
       },
       error: (error) => {
         console.error('Error updating permissions:', error);
-        this.showMessage('Error updating permissions');
+        this.showMessage('Erreur lors de la mise à jour des permissions');
       }
     });
   }
@@ -349,4 +349,4 @@ export class OpticienComponent implements OnInit {
   toggleComponentAccess(component: DisplayPermission): void {
     component.hasAccess = !component.hasAccess;
   }
-} 
+}

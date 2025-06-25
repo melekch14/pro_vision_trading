@@ -40,20 +40,20 @@ export class OrdersComponent implements OnInit {
   error: string | null = null;
   selectedOrders: Set<number> = new Set();
   selectedClient: string | null = null;
-  
+
   // Pagination properties
   pageSize: number = 10;
   pageIndex: number = 0;
   pageSizeOptions: number[] = [5, 10, 25, 50];
-  
+
   // Filter states
   statusFilter: string = 'All';
   dateFilter: string = '';
   searchQuery: string = '';
-  
+
   // Status options
   statuses: string[] = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
-  
+
   // Table columns
   displayedColumns: string[] = [
     'select',
@@ -111,20 +111,20 @@ export class OrdersComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.orders];
-    
+
     if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         order.status.toLowerCase() === this.statusFilter.toLowerCase()
       );
     }
-    
+
     if (this.dateFilter) {
       const filterDate = new Date(this.dateFilter);
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         new Date(order.order_datetime).toDateString() === filterDate.toDateString()
       );
     }
-    
+
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(order =>
@@ -132,7 +132,7 @@ export class OrdersComponent implements OnInit {
         (order.raison_social && order.raison_social.toLowerCase().includes(query))
       );
     }
-    
+
     this.filteredOrders = filtered;
     this.filteredOrders.forEach(order => order['_selected'] = this.selectedOrders.has(order.id));
     this.pageIndex = 0; // Reset to first page when filters change
@@ -166,7 +166,7 @@ export class OrdersComponent implements OnInit {
     const basePrice = parseFloat(order.price) || 0;
     const price2 = parseFloat(order.price2 || '0') || 0;
     const total = basePrice + price2;
-    return total.toFixed(2) + ' €';
+    return total.toFixed(2) + ' CFA';
   }
 
   exportOrders(): void {
@@ -176,17 +176,17 @@ export class OrdersComponent implements OnInit {
       const totalPrice = this.getTotalPrice(order);
       return `${order.id},"${order.first_name} ${order.last_name}",${date},${order.status},${totalPrice},${order.shipping_type},${order.delivery_time}`;
     }).join('\n');
-    
+
     const csvContent = headers + rows;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
-    
+
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
@@ -231,7 +231,7 @@ export class OrdersComponent implements OnInit {
 
   openDeliveryNote(): void {
     const selectedOrders = this.orders.filter(order => order['_selected']);
-    
+
     if (selectedOrders.length === 0) {
       return;
     }
@@ -246,12 +246,12 @@ export class OrdersComponent implements OnInit {
   }
 
   openPrintCards(): void {
-    const selectedOrders = this.orders.filter(order => 
-      order['_selected'] && 
-      (order['fournisseur_code'] || order['fournisseur_id']) && 
+    const selectedOrders = this.orders.filter(order =>
+      order['_selected'] &&
+      (order['fournisseur_code'] || order['fournisseur_id']) &&
       order.status
     );
-    
+
     if (selectedOrders.length === 0) {
       return;
     }
@@ -301,4 +301,4 @@ export class OrdersComponent implements OnInit {
     const startIndex = this.pageIndex * this.pageSize;
     return this.filteredOrders.slice(startIndex, startIndex + this.pageSize);
   }
-} 
+}

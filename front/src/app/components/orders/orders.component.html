@@ -1,28 +1,28 @@
 <div class="page-container">
   <div class="header-row">
-    <h1 class="page-title">Orders</h1>
+    <h1 class="page-title">Commandes</h1>
     <div class="action-buttons">
       <span class="selected-count" *ngIf="getSelectedOrdersCount() > 0">
-        {{ getSelectedOrdersCount() }} orders selected
+        {{ getSelectedOrdersCount() }} commandes sélectionnées
         <span *ngIf="getSelectedClient()" class="selected-client">
-          from {{ getSelectedClient() }}
+          de {{ getSelectedClient() }}
         </span>
       </span>
-      <button class="delivery-note-button" 
+      <button class="delivery-note-button"
               *ngIf="getSelectedOrdersCount() > 0"
               (click)="openDeliveryNote()">
         <i class="material-icons">local_shipping</i>
         Générer BL
       </button>
-      <button class="print-cards-button" 
+      <button class="print-cards-button"
               *ngIf="getSelectedOrdersCount() > 0"
               (click)="openPrintCards()">
         <i class="material-icons">print</i>
-        Print Cards
+        Imprimer les cartes
       </button>
       <button class="export-button" (click)="exportOrders()">
         <i class="material-icons">file_download</i>
-        Export to CSV
+        Exporter en CSV
       </button>
     </div>
   </div>
@@ -30,23 +30,23 @@
   <div class="filters-container">
     <div class="filter-group">
       <div class="filter-item search-container">
-        <input type="text" placeholder="Search by customer or order ID" [(ngModel)]="searchQuery" (input)="applyFilters()">
+        <input type="text" placeholder="Rechercher par client ou ID de commande" [(ngModel)]="searchQuery" (input)="applyFilters()">
         <i class="material-icons">search</i>
       </div>
       <div class="filter-item">
-        <label>Status:</label>
+        <label>Statut :</label>
         <select [(ngModel)]="statusFilter" (change)="applyFilters()">
-          <option value="All">All Statuses</option>
+          <option value="All">Tous les statuts</option>
           <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
         </select>
       </div>
       <div class="filter-item">
-        <label>Date:</label>
+        <label>Date :</label>
         <input type="date" [(ngModel)]="dateFilter" (change)="applyFilters()">
       </div>
       <button class="reset-button" (click)="resetFilters()">
         <i class="material-icons">refresh</i>
-        Reset
+        Réinitialiser
       </button>
     </div>
   </div>
@@ -55,9 +55,9 @@
     <table mat-table [dataSource]="getCurrentPageData()" class="mat-elevation-z8">
       <!-- Select Column -->
       <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>Select</th>
+        <th mat-header-cell *matHeaderCellDef>Sélectionner</th>
         <td mat-cell *matCellDef="let order">
-          <input type="checkbox" 
+          <input type="checkbox"
                  [(ngModel)]="order['_selected']"
                  (ngModelChange)="onOrderCheckboxChange(order, $event)"
                  class="order-checkbox"
@@ -67,7 +67,7 @@
 
       <!-- Order ID Column -->
       <ng-container matColumnDef="orderId">
-        <th mat-header-cell *matHeaderCellDef>Order ID</th>
+        <th mat-header-cell *matHeaderCellDef>ID Commande</th>
         <td mat-cell *matCellDef="let order">{{ order['order_id'] }}</td>
       </ng-container>
 
@@ -83,13 +83,13 @@
 
       <!-- Order Date Column -->
       <ng-container matColumnDef="orderDate">
-        <th mat-header-cell *matHeaderCellDef>Order Date</th>
+        <th mat-header-cell *matHeaderCellDef>Date de commande</th>
         <td mat-cell *matCellDef="let order">{{ order.order_datetime | date:'MMM d, y' }}</td>
       </ng-container>
 
       <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
         <td mat-cell *matCellDef="let order">
           <span class="status-badge" [ngClass]="getStatusClass(order.status)">
             {{ getDisplayStatus(order.status) }}
@@ -99,13 +99,13 @@
 
       <!-- Price Column -->
       <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef>Total Price</th>
+        <th mat-header-cell *matHeaderCellDef>Prix total</th>
         <td mat-cell *matCellDef="let order" class="amount">{{ getTotalPrice(order) }}</td>
       </ng-container>
 
       <!-- Shipping Type Column -->
       <ng-container matColumnDef="shipping">
-        <th mat-header-cell *matHeaderCellDef>Shipping Type</th>
+        <th mat-header-cell *matHeaderCellDef>Type de livraison</th>
         <td mat-cell *matCellDef="let order">
           <span class="shipping-badge" [ngClass]="getShippingClass(order.shipping_type)">
             {{ order.shipping_type }}
@@ -128,7 +128,7 @@
 
       <!-- No Data Row -->
       <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="8">No orders found matching your criteria</td>
+        <td class="mat-cell" colspan="8">Aucune commande trouvée correspondant à vos critères</td>
       </tr>
     </table>
 
@@ -149,4 +149,4 @@
   <div *ngIf="error" class="error-message">
     {{ error }}
   </div>
-</div> 
+</div>

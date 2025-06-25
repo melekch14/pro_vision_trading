@@ -12,15 +12,15 @@
 <!-- Main Content -->
 <div class="article-manager-bg">
   <div class="container">
-    <h1 class="main-title">Article Management</h1>
+    <h1 class="main-title">Gestion des articles</h1>
 
     <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn" [class.active]="activeTab === 'browse'" (click)="setTab('browse')">
-        Browse Articles
+        Parcourir les articles
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'add'" (click)="setTab('add')">
-        {{ editingArticle ? 'Edit Article' : 'Add Article' }}
+        {{ editingArticle ? 'Modifier l\'article' : 'Ajouter un article' }}
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'stock'" (click)="setTab('stock')">
         Stock
@@ -31,39 +31,39 @@
     <ng-container *ngIf="activeTab === 'browse'">
       <div class="stock-panel">
         <div class="stock-header">
-          <h2>Articles Management</h2>
+          <h2>Gestion des articles</h2>
           <div class="stock-actions">
             <button class="export-btn" (click)="exportToCSV()">
               <span class="material-icons">file_download</span>
-              Export CSV
+              Exporter CSV
             </button>
             <button class="export-btn" (click)="exportToPDF()">
               <span class="material-icons">picture_as_pdf</span>
-              Export PDF
+              Exporter PDF
             </button>
             <button class="export-btn" (click)="setTab('add')">
               <span class="material-icons">add</span>
-              Add New Article
+              Ajouter un nouvel article
             </button>
           </div>
         </div>
 
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="filterForm.get('code')?.value" (ngModelChange)="filterForm.get('code')?.setValue($event); applyFilters()" placeholder="Search by code...">
+            <input type="text" class="filter-input" [ngModel]="filterForm.get('code')?.value" (ngModelChange)="filterForm.get('code')?.setValue($event); applyFilters()" placeholder="Rechercher par code...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="filterForm.get('libelle')?.value" (ngModelChange)="filterForm.get('libelle')?.setValue($event); applyFilters()" placeholder="Search by libelle...">
+            <input type="text" class="filter-input" [ngModel]="filterForm.get('libelle')?.value" (ngModelChange)="filterForm.get('libelle')?.setValue($event); applyFilters()" placeholder="Rechercher par libellé...">
           </div>
           <div class="filter-group">
             <select class="filter-input" [ngModel]="filterForm.get('fournisseur')?.value" (ngModelChange)="filterForm.get('fournisseur')?.setValue($event); applyFilters()">
-              <option value="">All Fournisseurs</option>
+              <option value="">Tous les fournisseurs</option>
               <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
             </select>
           </div>
           <button class="clear-filters-btn" (click)="resetFilters()">
             <span class="material-icons">clear</span>
-            Clear Filters
+            Réinitialiser les filtres
           </button>
         </div>
 
@@ -75,11 +75,11 @@
                 <span class="material-icons">{{ getSortIcon('code') }}</span>
               </th>
               <th (click)="onSort('libelle')" class="sortable">
-                Libelle
+                Libellé
                 <span class="material-icons">{{ getSortIcon('libelle') }}</span>
               </th>
               <th (click)="onSort('diametre')" class="sortable">
-                Diametre
+                Diamètre
                 <span class="material-icons">{{ getSortIcon('diametre') }}</span>
               </th>
               <th (click)="onSort('foyer_name')" class="sortable">
@@ -133,7 +133,7 @@
         <!-- No Results Message -->
         <div *ngIf="filteredArticles.length === 0" class="no-results">
           <mat-icon>search_off</mat-icon>
-          <p>No articles found matching your search criteria</p>
+          <p>Aucun article trouvé correspondant à vos critères de recherche</p>
         </div>
       </div>
     </ng-container>
@@ -141,18 +141,18 @@
     <!-- Add/Edit Tab -->
     <ng-container *ngIf="activeTab === 'add'">
       <div class="card article-form-card">
-        <h2 class="section-title">{{ editingArticle ? 'Edit Article' : 'Add New Article' }}</h2>
+        <h2 class="section-title">{{ editingArticle ? 'Modifier l\'article' : 'Ajouter un nouvel article' }}</h2>
         <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="article-form">
           <div class="form-grid">
             <!-- Left Column -->
             <div class="form-column">
               <!-- Basic Information -->
               <div class="form-section">
-                <h3 class="section-subtitle">Basic Information</h3>
+                <h3 class="section-subtitle">Informations de base</h3>
                 <div class="form-group full-width">
                   <label for="subfamily">Sous-famille</label>
                   <select id="subfamily" formControlName="article_subfamily_id" class="form-control">
-                    <option value="">Select Sous-famille</option>
+                    <option value="">Sélectionner une sous-famille</option>
                     <option *ngFor="let option of subfamilyOptions" [value]="option.id">{{option.name}}</option>
                   </select>
                 </div>
@@ -162,26 +162,26 @@
                     <input type="text" id="code" formControlName="code" class="form-control" readonly>
                   </div>
                   <div class="form-group">
-                    <label for="libelle">Libelle</label>
+                    <label for="libelle">Libellé</label>
                     <input type="text" id="libelle" formControlName="libelle" class="form-control" readonly>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="diametre">Diametre</label>
+                    <label for="diametre">Diamètre</label>
                     <input type="number" id="diametre" formControlName="diametre" class="form-control">
                   </div>
                   <div class="form-group">
-                    <label for="typeArticle">Type Article</label>
+                    <label for="typeArticle">Type d'article</label>
                     <select id="typeArticle" formControlName="typeArticle_id" class="form-control">
-                      <option value="">Select Type Article</option>
+                      <option value="">Sélectionner un type d'article</option>
                       <option *ngFor="let option of typeArticleOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="origineArticle">Origine Article</label>
+                    <label for="origineArticle">Origine de l'article</label>
                     <select id="origineArticle" formControlName="origineArticle" class="form-control">
                       <option value="stock">Stock</option>
                       <option value="fabrication">Fabrication</option>
@@ -192,19 +192,19 @@
 
               <!-- Specifications -->
               <div class="form-section">
-                <h3 class="section-subtitle">Specifications</h3>
+                <h3 class="section-subtitle">Spécifications</h3>
                 <div class="form-row">
                   <div class="form-group">
                     <label for="foyer">Foyer</label>
                     <select id="foyer" formControlName="foyer_id" class="form-control">
-                      <option value="">Select Foyer</option>
+                      <option value="">Sélectionner un foyer</option>
                       <option *ngFor="let option of foyerOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label for="indice">Indice</label>
                     <select id="indice" formControlName="indice_id" class="form-control">
-                      <option value="">Select Indice</option>
+                      <option value="">Sélectionner un indice</option>
                       <option *ngFor="let option of indiceOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
@@ -213,14 +213,14 @@
                   <div class="form-group">
                     <label for="design">Design</label>
                     <select id="design" formControlName="design_id" class="form-control">
-                      <option value="">Select Design</option>
+                      <option value="">Sélectionner un design</option>
                       <option *ngFor="let option of designOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="typeStock">Type Stock</label>
+                    <label for="typeStock">Type de stock</label>
                     <select id="typeStock" formControlName="type_stock" class="form-control">
-                      <option value="">Select Type Stock</option>
+                      <option value="">Sélectionner un type de stock</option>
                       <option value="addition">Addition</option>
                       <option value="cylindre">Cylindre</option>
                     </select>
@@ -233,19 +233,19 @@
             <div class="form-column">
               <!-- Additional Details -->
               <div class="form-section">
-                <h3 class="section-subtitle">Additional Details</h3>
+                <h3 class="section-subtitle">Détails supplémentaires</h3>
                 <div class="form-row">
                   <div class="form-group">
                     <label for="couleurPhoto">Couleur Photo</label>
                     <select id="couleurPhoto" formControlName="couleur_photo_id" class="form-control">
-                      <option value="">Select Couleur Photo</option>
+                      <option value="">Sélectionner une couleur photo</option>
                       <option *ngFor="let option of couleurPhotoOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label for="traitement">Traitement</label>
                     <select id="traitement" formControlName="traitement_id" class="form-control">
-                      <option value="">Select Traitement</option>
+                      <option value="">Sélectionner un traitement</option>
                       <option *ngFor="let option of traitementOptions" [value]="option.id">{{option.name}}</option>
                     </select>
                   </div>
@@ -254,12 +254,12 @@
                   <div class="form-group">
                     <label for="fournisseur">Fournisseur</label>
                     <select id="fournisseur" formControlName="fournisseur_id" class="form-control">
-                      <option value="">Select Fournisseur</option>
+                      <option value="">Sélectionner un fournisseur</option>
                       <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="codeBarre">Code à Barre</label>
+                    <label for="codeBarre">Code-barres</label>
                     <input type="text" id="codeBarre" formControlName="code_a_barre" class="form-control">
                   </div>
                 </div>
@@ -267,10 +267,10 @@
 
               <!-- Pricing -->
               <div class="form-section">
-                <h3 class="section-subtitle">Pricing Information</h3>
+                <h3 class="section-subtitle">Informations sur les prix</h3>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="prixAchat">Prix Achat</label>
+                    <label for="prixAchat">Prix d'achat</label>
                     <input type="number" id="prixAchat" formControlName="prix_achat" class="form-control">
                   </div>
                   <div class="form-group">
@@ -280,7 +280,7 @@
                 </div>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="prixVente">Prix Vente</label>
+                    <label for="prixVente">Prix de vente</label>
                     <input type="number" id="prixVente" formControlName="prix_vente" class="form-control">
                   </div>
                   <div class="form-group">
@@ -294,8 +294,8 @@
 
           <!-- Form Actions -->
           <div class="form-actions">
-            <button type="button" class="btn btn-secondary" (click)="setTab('browse')">Cancel</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid">Save Article</button>
+            <button type="button" class="btn btn-secondary" (click)="setTab('browse')">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid">Enregistrer l'article</button>
           </div>
         </form>
       </div>
@@ -305,15 +305,15 @@
     <ng-container *ngIf="activeTab === 'stock'">
       <div class="stock-panel">
         <div class="stock-header">
-          <h2>Stock Management</h2>
+          <h2>Gestion du stock</h2>
           <div class="stock-actions">
             <button class="export-btn" (click)="exportToCSV()">
               <span class="material-icons">file_download</span>
-              Export CSV
+              Exporter CSV
             </button>
             <button class="export-btn" (click)="exportToPDF()">
               <span class="material-icons">picture_as_pdf</span>
-              Export PDF
+              Exporter PDF
             </button>
           </div>
         </div>
@@ -321,31 +321,31 @@
         <!-- Zero Quantity Alert -->
         <div *ngIf="hasZeroQuantityStocks" class="zero-quantity-alert">
           <mat-icon>warning</mat-icon>
-          <span>⚠️ Alert: {{ zeroQuantityStocksCount }} stock item(s) have zero quantity. Please restock these items.</span>
+          <span>⚠️ Alerte : {{ zeroQuantityStocksCount }} article(s) en stock ont une quantité nulle. Veuillez réapprovisionner ces articles.</span>
         </div>
 
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.code" (ngModelChange)="stockFilters.code = $event; applyStockFilters()" placeholder="Filter by code...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.code" (ngModelChange)="stockFilters.code = $event; applyStockFilters()" placeholder="Filtrer par code...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.libelle" (ngModelChange)="stockFilters.libelle = $event; applyStockFilters()" placeholder="Filter by libellé...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.libelle" (ngModelChange)="stockFilters.libelle = $event; applyStockFilters()" placeholder="Filtrer par libellé...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.quantity" (ngModelChange)="stockFilters.quantity = $event; applyStockFilters()" placeholder="Filter by quantity...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.quantity" (ngModelChange)="stockFilters.quantity = $event; applyStockFilters()" placeholder="Filtrer par quantité...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.sphere" (ngModelChange)="stockFilters.sphere = $event; applyStockFilters()" placeholder="Filter by sphere...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.sphere" (ngModelChange)="stockFilters.sphere = $event; applyStockFilters()" placeholder="Filtrer par sphère...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.cylindre" (ngModelChange)="stockFilters.cylindre = $event; applyStockFilters()" placeholder="Filter by cylindre...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.cylindre" (ngModelChange)="stockFilters.cylindre = $event; applyStockFilters()" placeholder="Filtrer par cylindre...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.addition" (ngModelChange)="stockFilters.addition = $event; applyStockFilters()" placeholder="Filter by addition...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.addition" (ngModelChange)="stockFilters.addition = $event; applyStockFilters()" placeholder="Filtrer par addition...">
           </div>
           <button class="clear-filters-btn" (click)="clearStockFilters()">
             <span class="material-icons">clear</span>
-            Clear Filters
+            Réinitialiser les filtres
           </button>
         </div>
 
@@ -354,8 +354,8 @@
             <tr>
               <th>Code</th>
               <th>Libellé</th>
-              <th>Qte</th>
-              <th>Sphere</th>
+              <th>Qté</th>
+              <th>Sphère</th>
               <th>Cylindre</th>
               <th>Addition</th>
             </tr>

@@ -1,17 +1,17 @@
 <div class="stock-dialog">
-  <h2 mat-dialog-title>Stock Management - {{data.article.libelle}}</h2>
-  
+  <h2 mat-dialog-title>Gestion du stock - {{data.article.libelle}}</h2>
+
   <mat-dialog-content>
     <div class="filter-row" style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px; justify-content: center;">
-      <label>Filter Sphere:
+      <label>Filtrer Sphère :
         <select [(ngModel)]="filterSphere">
-          <option [ngValue]="null">All</option>
+          <option [ngValue]="null">Toutes</option>
           <option *ngFor="let s of sphereValues" [ngValue]="s">{{s}}</option>
         </select>
       </label>
-      <label>Filter Cylindre:
+      <label>Filtrer Cylindre :
         <select [(ngModel)]="filterCylindre">
-          <option [ngValue]="null">All</option>
+          <option [ngValue]="null">Tous</option>
           <option *ngFor="let c of cylindreValues" [ngValue]="c">{{c}}</option>
         </select>
       </label>
@@ -29,11 +29,11 @@
         <tbody>
           <tr *ngFor="let cylindre of filteredCylindreValues">
             <td class="cylindre-header">{{cylindre}}</td>
-            <td *ngFor="let sphere of filteredSphereValues" 
+            <td *ngFor="let sphere of filteredSphereValues"
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
                 [class.non-zero]="hasNonZeroValue(sphere, cylindre)">
-              <input type="number" 
+              <input type="number"
                      min="0"
                      [ngModel]="getQuantity(sphere, cylindre)"
                      (ngModelChange)="onQuantityChange(sphere, cylindre, $event)"
@@ -46,7 +46,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+    <button mat-button (click)="onCancel()">Annuler</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Enregistrer</button>
   </mat-dialog-actions>
 </div>

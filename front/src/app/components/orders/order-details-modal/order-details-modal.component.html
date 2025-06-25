@@ -1,6 +1,6 @@
 <div class="modal-container">
   <div class="modal-header">
-    <h2>Order Details #{{ order['order_id'] }}</h2>
+    <h2>Détails de la commande #{{ order['order_id'] }}</h2>
     <button class="close-button" (click)="close()">
       <mat-icon>close</mat-icon>
     </button>
@@ -11,11 +11,11 @@
       <div class="tabs-header">
         <button class="tab-button" [class.active]="activeTab === 'details'" (click)="switchTab('details')">
           <mat-icon>receipt_long</mat-icon>
-          Order Details
+          Détails de la commande
         </button>
         <button class="tab-button" [class.active]="activeTab === 'management'" (click)="switchTab('management')">
           <mat-icon>settings</mat-icon>
-          Order Management
+          Gestion de la commande
         </button>
       </div>
 
@@ -24,96 +24,96 @@
         <div class="tab-panel" [class.active]="activeTab === 'details'">
           <div class="order-info">
             <div class="info-section">
-              <h3>Porteur Information</h3>
+              <h3>Informations du porteur</h3>
               <div class="info-grid">
                 <div class="info-item">
-                  <label>Name:</label>
+                  <label>Nom :</label>
                   <span>{{ order.first_name }} {{ order.last_name }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Phone:</label>
+                  <label>Téléphone :</label>
                   <span>{{ order['phone'] || 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Email:</label>
+                  <label>Email :</label>
                   <span>{{ order['email'] || 'N/A' }}</span>
                 </div>
               </div>
             </div>
 
             <div class="info-section">
-              <h3>Order Information</h3>
+              <h3>Informations sur la commande</h3>
               <div class="info-grid">
                 <div class="info-item">
-                  <label>Order Date:</label>
+                  <label>Date de commande :</label>
                   <span>{{ order.order_datetime | date:'medium' }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Status:</label>
+                  <label>Statut :</label>
                   <span class="status-badge" [ngClass]="getStatusClass(order.status)">
                     {{ getDisplayStatus(order.status) }}
                   </span>
                 </div>
                 <div class="info-item">
-                  <label>Price:</label>
+                  <label>Prix :</label>
                   <span>{{ getTotalPrice() | currency:'EUR':'symbol':'1.2-2' }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.price2">
-                  <label>Price Breakdown:</label>
+                  <label>Détail du prix :</label>
                   <div class="price-breakdown">
-                    <span>OD: {{ order.price | currency:'EUR':'symbol':'1.2-2' }}</span>
-                    <span>OG: {{ order.price2 | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    <span>OD : {{ order.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    <span>OG : {{ order.price2 | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </div>
                 </div>
                 <div class="info-item">
-                  <label>Shipping Type:</label>
+                  <label>Type de livraison :</label>
                   <span>{{ order.shipping_type }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Delivery Time:</label>
+                  <label>Délai de livraison :</label>
                   <span>{{ order.delivery_time }}</span>
                 </div>
               </div>
             </div>
 
             <div class="info-section">
-              <h3>Product Details</h3>
+              <h3>Détails du produit</h3>
               <div class="info-grid">
                 <!-- Fabrication: only fabrication1 filled -->
                 <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && order.fabrication1 && !order.fabrication2">
-                  <label>Product:</label>
+                  <label>Produit :</label>
                   <span>{{ formatFabricationLibelleForEye('od') }}</span>
                 </div>
                 <!-- Fabrication: two different articles -->
                 <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && hasTwoFabricationArticles()">
-                  <label>Product (OD):</label>
+                  <label>Produit (OD) :</label>
                   <span>{{ formatFabricationLibelleForEye('od') }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && hasTwoFabricationArticles()">
-                  <label>Product (OG):</label>
+                  <label>Produit (OG) :</label>
                   <span>{{ formatFabricationLibelleForEye('og') }}</span>
                 </div>
                 <!-- Fabrication: same article but different corrections -->
                 <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && areFabricationArticlesSame() && needsSecondProduct()">
-                  <label>Product (OD):</label>
+                  <label>Produit (OD) :</label>
                   <span>{{ formatFabricationLibelleForEye('od') }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && areFabricationArticlesSame() && needsSecondProduct()">
-                  <label>Product (OG):</label>
+                  <label>Produit (OG) :</label>
                   <span>{{ formatFabricationLibelleForEye('og') }}</span>
                 </div>
                 <!-- Fabrication: same article, same corrections -->
                 <div class="info-item" *ngIf="order.origineArticle === 'fabrication' && areFabricationArticlesSame() && !needsSecondProduct()">
-                  <label>Product:</label>
+                  <label>Produit :</label>
                   <span>{{ formatFabricationLibelleForEye('od') }}</span>
                 </div>
                 <!-- Stock or fallback -->
                 <div class="info-item" *ngIf="order.origineArticle !== 'fabrication'">
-                  <label>{{ needsSecondProduct() ? 'Product (OD):' : 'Product:' }}</label>
+                  <label>{{ needsSecondProduct() ? 'Produit œil droit (OD)' : 'Produit:' }}</label>
                   <span>{{ formatStockLibelle('od') }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.origineArticle !== 'fabrication' && needsSecondProduct()">
-                  <label>Product (OG):</label>
+                  <label>Produit (OG):</label>
                   <span>{{ formatStockLibelle('og') }}</span>
                 </div>
                 <div class="info-item">
@@ -129,30 +129,30 @@
                   <span>{{ formatText(order.origineArticle) }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.selected_file">
-                  <label>File:</label>
+                  <label>Fichier :</label>
                   <button class="download-btn" (click)="downloadFile()">
                     <mat-icon>download</mat-icon>
-                    Download File
+                    Télécharger le fichier
                   </button>
                 </div>
               </div>
-              
+
               <!-- Stock OD/OG Product Details: only show if not fabrication -->
               <div *ngIf="order.origineArticle !== 'fabrication'">
                 <!-- OD (Right Eye) Product Details -->
                 <div class="eye-product-details">
-                  <h4>{{ needsSecondProduct() ? 'Right Eye (OD) Product' : 'Product' }}</h4>
+                  <h4>{{ needsSecondProduct() ? 'Produit œil droit (OD)' : 'Produit' }}</h4>
                   <div class="info-grid">
                     <div class="info-item">
-                      <label>Product:</label>
+                      <label>Produit :</label>
                       <span>{{ formatStockLibelle('od') }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Stock ID:</label>
+                      <label>ID Stock :</label>
                       <span>{{ order.produit || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Diameter:</label>
+                      <label>Diamètre :</label>
                       <span>{{ odProductDiametre }}mm</span>
                     </div>
                   </div>
@@ -160,18 +160,18 @@
 
                 <!-- OG (Left Eye) Product Details -->
                 <div class="eye-product-details" *ngIf="needsSecondProduct()">
-                  <h4>Left Eye (OG) Product</h4>
+                  <h4>Produit œil gauche (OG)</h4>
                   <div class="info-grid">
                     <div class="info-item">
-                      <label>Product:</label>
+                      <label>Produit :</label>
                       <span>{{ formatStockLibelle('og') }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Stock ID:</label>
+                      <label>ID Stock :</label>
                       <span>{{ order.produit2 || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Diameter:</label>
+                      <label>Diamètre :</label>
                       <span>{{ ogProductDiametre }}mm</span>
                     </div>
                   </div>
@@ -180,46 +180,46 @@
             </div>
 
             <div class="info-section">
-              <h3>Lens Specifications</h3>
+              <h3>Spécifications des verres</h3>
               <div class="lens-specs">
                 <div class="eye-specs">
-                  <h4>Right Eye</h4>
+                  <h4>Œil droit</h4>
                   <div class="info-grid">
                     <div class="info-item">
-                      <label>Sphere:</label>
+                      <label>Sphère :</label>
                       <span>{{ order.od_sphere || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Cylinder:</label>
+                      <label>Cylindre :</label>
                       <span>{{ order.od_cylinder || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Axe:</label>
+                      <label>Axe :</label>
                       <span>{{ order.od_axe || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Addition:</label>
+                      <label>Addition :</label>
                       <span>{{ order.od_addition || 'N/A' }}</span>
                     </div>
                   </div>
                 </div>
                 <div class="eye-specs">
-                  <h4>Left Eye</h4>
+                  <h4>Œil gauche</h4>
                   <div class="info-grid">
                     <div class="info-item">
-                      <label>Sphere:</label>
+                      <label>Sphère :</label>
                       <span>{{ order.og_sphere || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Cylinder:</label>
+                      <label>Cylindre :</label>
                       <span>{{ order.og_cylinder || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Axe:</label>
+                      <label>Axe :</label>
                       <span>{{ order.og_axe || 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                      <label>Addition:</label>
+                      <label>Addition :</label>
                       <span>{{ order.og_addition || 'N/A' }}</span>
                     </div>
                   </div>
@@ -263,12 +263,12 @@
                 </div>
                 <div class="info-item full-width">
                   <div class="action-buttons">
-                    <button class="confirm-btn" (click)="updateAll()" 
+                    <button class="confirm-btn" (click)="updateAll()"
                             [disabled]="isUpdating || (tempStatus === selectedStatus && tempFournisseur === selectedFournisseur)">
                       <mat-icon>check</mat-icon>
                       Confirm All Changes
                     </button>
-                    <button class="cancel-btn" (click)="cancelChanges()" 
+                    <button class="cancel-btn" (click)="cancelChanges()"
                             [disabled]="isUpdating || (tempStatus === selectedStatus && tempFournisseur === selectedFournisseur)">
                       <mat-icon>close</mat-icon>
                       Cancel Changes
@@ -281,25 +281,25 @@
             <div class="info-section">
               <button class="confirm-btn" (click)="showCard = true">
                 <mat-icon>credit_card</mat-icon>
-                Generate Card
+                Générer la carte
               </button>
               <div *ngIf="showCard" class="order-card">
                 <div class="card-fournisseur-vertical">{{ order['fournisseur_code'] || order.fournisseur_id || 'N/A' }}</div>
                 <div class="card-row">
                   <div class="verre-block">
-                    <span class="verre-label">Opticien:</span>
+                    <span class="verre-label">Opticien :</span>
                     <span class="product">{{ (order['raison_social'] || 'Opticien Name') | uppercase }}</span>
                   </div>
                 </div>
                 <div class="card-row">
                   <div class="verre-block">
-                    <span class="verre-label">Porteur:</span>
+                    <span class="verre-label">Porteur :</span>
                     <span class="product bold-italic">{{ (order.first_name + ' ' + order.last_name) | uppercase }}</span>
                   </div>
                 </div>
                 <div class="card-row">
                   <div class="verre-block">
-                    <span class="verre-label">verres:</span>
+                    <span class="verre-label">verres :</span>
                     <span class="product">{{ formatStockLibelle('od', true) }}</span>
                   </div>
                 </div>
@@ -354,4 +354,4 @@
     </button>
     <button class="close-btn" (click)="close()">Close</button>
   </div>
-</div> 
+</div>

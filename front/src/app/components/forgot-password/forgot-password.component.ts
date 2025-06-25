@@ -30,12 +30,12 @@ export class ForgotPasswordComponent {
       this.loading = true;
       this.authService.requestPasswordReset(this.email).subscribe({
         next: () => {
-          this.message = 'If an account with this email exists, a password reset link has been sent to your email address.';
+          this.message = "Si un compte avec cet email existe, un lien de réinitialisation du mot de passe a été envoyé à votre adresse email.";
           this.loading = false;
         },
         error: (err) => {
           // Don't reveal if email exists or not for security reasons
-          this.message = 'If an account with this email exists, a password reset link has been sent to your email address.';
+          this.message = "Si un compte avec cet email existe, un lien de réinitialisation du mot de passe a été envoyé à votre adresse email.";
           this.loading = false;
         }
       });
@@ -45,4 +45,4 @@ export class ForgotPasswordComponent {
   backToLogin() {
     this.router.navigate(['/login']);
   }
-} 
+}

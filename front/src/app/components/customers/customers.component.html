@@ -13,35 +13,35 @@
 <div class="customers-container">
   <div class="stock-panel">
     <div class="stock-header">
-      <h2>Customers Management</h2>
+      <h2>Gestion des clients</h2>
       <div class="stock-actions">
         <button class="export-btn" (click)="exportToCSV()">
           <span class="material-icons">file_download</span>
-          Export CSV
+          Exporter CSV
         </button>
         <button class="export-btn" (click)="exportToPDF()">
           <span class="material-icons">picture_as_pdf</span>
-          Export PDF
+          Exporter PDF
         </button>
       </div>
     </div>
 
     <div class="stock-filters">
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Search by code...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Rechercher par code...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()" placeholder="Search by company name...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()" placeholder="Rechercher par raison sociale...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Search by email...">
+        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Rechercher par email...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchResponsable" (input)="applyFilters()" placeholder="Search by responsable...">
+        <input type="text" class="filter-input" [(ngModel)]="searchResponsable" (input)="applyFilters()" placeholder="Rechercher par responsable...">
       </div>
       <button class="clear-filters-btn" (click)="resetFilters()">
         <span class="material-icons">clear</span>
-        Clear Filters
+        Réinitialiser les filtres
       </button>
     </div>
 
@@ -58,7 +58,7 @@
               <span class="material-icons">{{ getSortIcon('codee') }}</span>
             </th>
             <th (click)="setSortBy('raison_social')" class="sortable">
-              Raison Social
+              Raison Sociale
               <span class="material-icons">{{ getSortIcon('raison_social') }}</span>
             </th>
             <th (click)="setSortBy('email')" class="sortable">
@@ -71,13 +71,13 @@
             </th>
             <th>Tel</th>
             <th (click)="setSortBy('status')" class="sortable">
-              Status
+              Statut
               <span class="material-icons">{{ getSortIcon('status') }}</span>
             </th>
             <th>Adresse</th>
             <th>RCCM</th>
             <th>NINEA</th>
-            <th>Customs Code</th>
+            <th>Code Douane</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -115,6 +115,6 @@
   <!-- No Results Message -->
   <div *ngIf="filteredCustomers.length === 0" class="no-results">
     <mat-icon>search_off</mat-icon>
-    <p>No customers found matching your search criteria</p>
+    <p>Aucun client trouvé correspondant à vos critères de recherche</p>
   </div>
-</div> 
+</div>

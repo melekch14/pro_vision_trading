@@ -1,6 +1,6 @@
 <div class="modal-container">
   <div class="modal-header">
-    <h2>Print Cards</h2>
+    <h2>Imprimer les cartes</h2>
     <button class="close-button" (click)="close()">
       <mat-icon>close</mat-icon>
     </button>
@@ -8,7 +8,7 @@
 
   <div class="modal-content">
     <div *ngIf="loading" class="loading">
-      Loading cards...
+      Chargement des cartes...
     </div>
 
     <div *ngIf="error" class="error">
@@ -20,19 +20,19 @@
         <div class="card-fournisseur-vertical">{{ order.fournisseur_code || order.fournisseur_id || 'N/A' }}</div>
         <div class="card-row">
           <div class="verre-block">
-            <span class="verre-label">Opticien:</span>
+            <span class="verre-label">Opticien :</span>
             <span class="product">{{ (order.raison_social || 'Opticien Name') | uppercase }}</span>
           </div>
         </div>
         <div class="card-row">
           <div class="verre-block">
-            <span class="verre-label">Porteur:</span>
+            <span class="verre-label">Porteur :</span>
             <span class="product bold-italic">{{ (order.first_name + ' ' + order.last_name) | uppercase }}</span>
           </div>
         </div>
         <div class="card-row">
           <div class="verre-block">
-            <span class="verre-label">verres:</span>
+            <span class="verre-label">verres :</span>
             <span class="product">{{ getProductLibelle(order, 'od') }}</span>
           </div>
         </div>
@@ -79,8 +79,8 @@
   <div class="modal-footer">
     <button class="export-btn" (click)="exportToPDF()" [disabled]="loading || !orders.length">
       <mat-icon>download</mat-icon>
-      Export to PDF
+      Exporter en PDF
     </button>
-    <button class="close-btn" (click)="close()">Close</button>
+    <button class="close-btn" (click)="close()">Fermer</button>
   </div>
-</div> 
+</div>

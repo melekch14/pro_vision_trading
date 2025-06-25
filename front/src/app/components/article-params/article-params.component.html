@@ -1,12 +1,12 @@
 <div class="article-params-bg">
-  <h1 class="main-title">Article Parameters Management</h1>
+  <h1 class="main-title">Gestion des paramètres d'article</h1>
 
   <!-- Tabs -->
   <div class="tabs">
-    <button 
+    <button
       *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles']"
-      [class.active]="activePanel === type" 
-      class="tab-btn" 
+      [class.active]="activePanel === type"
+      class="tab-btn"
       (click)="setPanel(type)">
       {{type | titlecase}}
     </button>
@@ -16,22 +16,22 @@
     <div *ngIf="activePanel === type" class="panel-container">
       <!-- Add Parameter Form (left card) -->
       <div class="card form-card">
-        <h2 class="section-title">Add New {{type | titlecase}}</h2>
+        <h2 class="section-title">Ajouter un(e) {{type | titlecase}}</h2>
         <form [formGroup]="paramForms[type]" (ngSubmit)="onSubmit(type)" class="param-form">
           <div class="form-row">
             <div class="form-group">
-              <label for="name">Name:</label>
-              <input type="text" id="name" formControlName="name" class="form-control" placeholder="Enter name">
+              <label for="name">Nom :</label>
+              <input type="text" id="name" formControlName="name" class="form-control" placeholder="Entrer le nom">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group full-width">
-              <label for="description">Description:</label>
-              <textarea id="description" formControlName="description" class="form-control" placeholder="Enter description"></textarea>
+              <label for="description">Description :</label>
+              <textarea id="description" formControlName="description" class="form-control" placeholder="Entrer la description"></textarea>
             </div>
           </div>
           <div class="form-actions">
-            <button type="submit" [disabled]="!paramForms[type].valid" class="save-btn">Add {{type | titlecase}}</button>
+            <button type="submit" [disabled]="!paramForms[type].valid" class="save-btn">Ajouter {{type | titlecase}}</button>
           </div>
         </form>
       </div>
@@ -40,21 +40,21 @@
       <div class="card params-card">
         <div class="params-header">
           <h2 class="section-title">{{type | titlecase}}s</h2>
-          <span class="params-count">{{params[type].length}} items found</span>
+          <span class="params-count">{{params[type].length}} éléments trouvés</span>
         </div>
         <form [formGroup]="filterForms[type]" class="filter-form-table">
           <div class="filter-row">
-            <input type="text" id="search" formControlName="search" class="form-control" placeholder="Search by name...">
+            <input type="text" id="search" formControlName="search" class="form-control" placeholder="Rechercher par nom...">
             <button type="button" class="filter-btn" (click)="applyFilter(type)">
-              <span class="icon-search"></span> Filter
+              <span class="icon-search"></span> Filtrer
             </button>
-            <button type="button" class="reset-btn" (click)="resetFilter(type)">Reset</button>
+            <button type="button" class="reset-btn" (click)="resetFilter(type)">Réinitialiser</button>
           </div>
         </form>
         <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Nom</th>
               <th>Description</th>
               <th>Actions</th>
             </tr>
@@ -64,7 +64,7 @@
               <td><b>{{param.name}}</b></td>
               <td>{{param.description}}</td>
               <td>
-                <button (click)="deleteParam(type, param.id)" class="delete-btn">Delete</button>
+                <button (click)="deleteParam(type, param.id)" class="delete-btn">Supprimer</button>
               </td>
             </tr>
           </tbody>
@@ -72,4 +72,4 @@
       </div>
     </div>
   </ng-container>
-</div> 
+</div>

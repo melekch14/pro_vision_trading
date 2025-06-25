@@ -18,23 +18,23 @@ export class CustomerFormComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   customerStatuses = Object.values(CustomerStatus);
-  
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient
   ) {}
-  
+
   ngOnInit(): void {
     const customerId = this.route.snapshot.paramMap.get('id');
-    
+
     if (customerId && customerId !== 'new') {
       this.isEditMode = true;
       this.formTitle = 'Edit Customer';
       this.loadCustomer(+customerId);
     }
   }
-  
+
   getEmptyCustomer(): Customer {
     return {
       id: 0,
@@ -51,7 +51,7 @@ export class CustomerFormComponent implements OnInit {
       code_douane: ''
     };
   }
-  
+
   loadCustomer(id: number): void {
     this.isLoading = true;
     this.http.get<Customer>(`${environment.apiUrl}/clients/${id}`).subscribe({
@@ -66,7 +66,7 @@ export class CustomerFormComponent implements OnInit {
       }
     });
   }
-  
+
   onSubmit(): void {
     if (this.validateForm()) {
       this.isLoading = true;
@@ -97,7 +97,7 @@ export class CustomerFormComponent implements OnInit {
       });
     }
   }
-  
+
   validateForm(): boolean {
     const baseValidation = (
       this.customer.raison_social.trim() !== '' &&
@@ -117,8 +117,8 @@ export class CustomerFormComponent implements OnInit {
       return baseValidation;
     }
   }
-  
+
   cancel(): void {
     this.router.navigate(['/app/customers']);
   }
-} 
+}

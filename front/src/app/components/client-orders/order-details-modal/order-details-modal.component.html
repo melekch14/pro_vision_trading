@@ -1,6 +1,6 @@
 <div class="modal-container">
   <div class="modal-header">
-    <h2>Order Details #{{ data.id }}</h2>
+    <h2>Détails de la commande #{{ data.id }}</h2>
     <button class="close-button" (click)="close()">
       <i class="material-icons">close</i>
     </button>
@@ -9,18 +9,18 @@
   <div class="modal-content">
     <!-- Customer Information -->
     <div class="section">
-      <h3>Customer Information</h3>
+      <h3>Informations du client</h3>
       <div class="info-grid">
         <div class="info-item">
-          <span class="label">Name:</span>
+          <span class="label">Nom :</span>
           <span class="value">{{ data.first_name }} {{ data.last_name }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Email:</span>
+          <span class="label">Email :</span>
           <span class="value">{{ data.email }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Phone:</span>
+          <span class="label">Téléphone :</span>
           <span class="value">{{ data.phone }}</span>
         </div>
       </div>
@@ -28,47 +28,47 @@
 
     <!-- Order Information -->
     <div class="section">
-      <h3>Order Information</h3>
+      <h3>Informations sur la commande</h3>
       <div class="info-grid">
         <div class="info-item">
-          <span class="label">Order Date:</span>
+          <span class="label">Date de commande :</span>
           <span class="value">{{ formatDate(data.order_datetime) }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Status:</span>
+          <span class="label">Statut :</span>
           <span class="value status-badge" [ngClass]="'status-' + data.status.toLowerCase()">
             {{ data.status }}
           </span>
         </div>
         <div class="info-item" *ngIf="!hasSecondPrice()">
-          <span class="label">Total Amount:</span>
-          <span class="value">${{ data.price }}</span>
+          <span class="label">Montant total :</span>
+          <span class="value">{{ data.price }} CFA</span>
         </div>
         <div class="info-item" *ngIf="hasSecondPrice()">
-          <span class="label">Price (OD):</span>
-          <span class="value">${{ data.price }}</span>
+          <span class="label">Prix (OD) :</span>
+          <span class="value">{{ data.price }} CFA</span>
         </div>
         <div class="info-item" *ngIf="hasSecondPrice()">
-          <span class="label">Price (OG):</span>
-          <span class="value">${{ data.price2 }}</span>
+          <span class="label">Prix (OG) :</span>
+          <span class="value">{{ data.price2 }} CFA</span>
         </div>
         <div class="info-item" *ngIf="hasSecondPrice()">
-          <span class="label">Total Amount:</span>
-          <span class="value total-price">${{ calculateTotalPrice() }}</span>
+          <span class="label">Montant total :</span>
+          <span class="value total-price">{{ calculateTotalPrice() }} CFA</span>
         </div>
       </div>
     </div>
 
     <!-- Shipping Information -->
     <div class="section">
-      <h3>Shipping Information</h3>
+      <h3>Informations de livraison</h3>
       <div class="info-grid">
         <div class="info-item">
-          <span class="label">Shipping Type:</span>
+          <span class="label">Type de livraison :</span>
           <span class="value">{{ data.shipping_type }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Delivery Time:</span>
+          <span class="label">Délai de livraison :</span>
           <span class="value">{{ data.delivery_time }}</span>
         </div>
       </div>
@@ -76,46 +76,46 @@
 
     <!-- Lens Specifications -->
     <div class="section">
-      <h3>Lens Specifications</h3>
+      <h3>Spécifications des verres</h3>
       <div class="lens-specs">
         <div class="lens-side">
-          <h4>Right Eye (OD)</h4>
+          <h4>Œil droit (OD)</h4>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Sphere:</span>
+              <span class="label">Sphère :</span>
               <span class="value">{{ data.od_sphere }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Cylinder:</span>
+              <span class="label">Cylindre :</span>
               <span class="value">{{ data.od_cylinder }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Axis:</span>
+              <span class="label">Axe :</span>
               <span class="value">{{ data.od_axe }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Addition:</span>
+              <span class="label">Addition :</span>
               <span class="value">{{ data.od_addition }}</span>
             </div>
           </div>
         </div>
         <div class="lens-side">
-          <h4>Left Eye (OG)</h4>
+          <h4>Œil gauche (OG)</h4>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Sphere:</span>
+              <span class="label">Sphère :</span>
               <span class="value">{{ data.og_sphere }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Cylinder:</span>
+              <span class="label">Cylindre :</span>
               <span class="value">{{ data.og_cylinder }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Axis:</span>
+              <span class="label">Axe :</span>
               <span class="value">{{ data.og_axe }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Addition:</span>
+              <span class="label">Addition :</span>
               <span class="value">{{ data.og_addition }}</span>
             </div>
           </div>
@@ -125,62 +125,62 @@
 
     <!-- Product Details -->
     <div class="info-section">
-      <h3>Product Details</h3>
+      <h3>Détails du produit</h3>
       <div class="info-grid">
         <!-- Fabrication: only fabrication1 filled -->
         <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && data.fabrication1 && !data.fabrication2">
-          <label>Product:</label>
+          <label>Produit :</label>
           <span>{{ formatFabricationLibelleForEye('od') }}</span>
         </div>
         <!-- Fabrication: two different articles -->
         <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && hasTwoFabricationArticles()">
-          <label>Product (OD):</label>
+          <label>Produit (OD) :</label>
           <span>{{ formatFabricationLibelleForEye('od') }}</span>
         </div>
         <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && hasTwoFabricationArticles()">
-          <label>Product (OG):</label>
+          <label>Produit (OG) :</label>
           <span>{{ formatFabricationLibelleForEye('og') }}</span>
         </div>
         <!-- Fabrication: same article but different corrections -->
         <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame() && needsSecondProduct()">
-          <label>Product (OD):</label>
+          <label>Produit (OD) :</label>
           <span>{{ formatFabricationLibelleForEye('od') }}</span>
         </div>
         <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame() && needsSecondProduct()">
-          <label>Product (OG):</label>
+          <label>Produit (OG) :</label>
           <span>{{ formatFabricationLibelleForEye('og') }}</span>
         </div>
         <!-- Fabrication: same article, same corrections -->
         <div class="info-item" *ngIf="data.origineArticle === 'fabrication' && areFabricationArticlesSame() && !needsSecondProduct()">
-          <label>Product:</label>
+          <label>Produit :</label>
           <span>{{ formatFabricationLibelleForEye('od') }}</span>
         </div>
         <!-- Stock or fallback -->
         <div class="info-item" *ngIf="data.origineArticle !== 'fabrication'">
-          <label>{{ needsSecondProduct() ? 'Product (OD):' : 'Product:' }}</label>
+          <label>{{ needsSecondProduct() ? 'Produit (OD) :' : 'Produit :' }}</label>
           <span>{{ formatStockLibelleForEye('od') }}</span>
         </div>
         <div class="info-item" *ngIf="data.origineArticle !== 'fabrication' && needsSecondProduct()">
-          <label>Product (OG):</label>
+          <label>Produit (OG) :</label>
           <span>{{ formatStockLibelleForEye('og') }}</span>
         </div>
         <div class="info-item">
-          <label>Type de commande:</label>
+          <label>Type de commande :</label>
           <span>{{ formatText(data.typeCommande) }}</span>
         </div>
         <div class="info-item">
-          <label>Type de correction:</label>
+          <label>Type de correction :</label>
           <span>{{ formatText(data.typeCorrection) }}</span>
         </div>
         <div class="info-item">
-          <label>Origine article:</label>
+          <label>Origine article :</label>
           <span>{{ formatText(data.origineArticle) }}</span>
         </div>
         <div class="info-item" *ngIf="data.selected_file">
-          <label>File:</label>
+          <label>Fichier :</label>
           <button class="download-btn" (click)="downloadFile()">
             <mat-icon>download</mat-icon>
-            Download File
+            Télécharger le fichier
           </button>
         </div>
       </div>
@@ -188,6 +188,6 @@
   </div>
 
   <div class="modal-footer">
-    <button class="close-btn" (click)="close()">Close</button>
+    <button class="close-btn" (click)="close()">Fermer</button>
   </div>
-</div> 
+</div>

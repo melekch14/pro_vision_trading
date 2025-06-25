@@ -277,7 +277,7 @@ export class TicketsComponent implements OnInit {
     // Get the correct values based on the eye
     // For left eye, if OG values are not available, fall back to OD values
     let sphere, cylinder, axe, addition;
-    
+
     if (eye === 'right') {
       sphere = order.od_sphere;
       cylinder = order.od_cylinder;
@@ -290,12 +290,12 @@ export class TicketsComponent implements OnInit {
       axe = order.og_axe || order.od_axe;
       addition = order.og_addition || order.od_addition;
     }
-    
+
     const eyeLabel = eye === 'right' ? 'D' : 'G';
-    
+
     // Use the provided article name or fallback to static article_libelle
     const displayArticleName = articleName || order.article_libelle || 'NA';
-    
+
     // Simple HTML for ticket, you can expand as needed
     return `
       <div class="ticket-card">
@@ -319,4 +319,4 @@ export class TicketsComponent implements OnInit {
       </div>
     `;
   }
-} 
+}

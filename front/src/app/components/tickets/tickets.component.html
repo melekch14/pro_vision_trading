@@ -1,12 +1,12 @@
 <div class="container">
   <div class="left-panel">
-    <h2>Orders</h2>
+    <h2>Commandes</h2>
     <div class="printed-tickets-folder">
       <button (click)="printedTicketsCollapsed = !printedTicketsCollapsed" class="folder-toggle">
         <span [ngClass]="{'folder-closed': printedTicketsCollapsed, 'folder-open': !printedTicketsCollapsed}">
           {{ printedTicketsCollapsed ? '▶' : '▼' }}
         </span>
-        Printed Tickets ({{printedOrders.length}})
+        Tickets imprimés ({{printedOrders.length}})
       </button>
       <div *ngIf="!printedTicketsCollapsed" class="printed-tickets-list" style="margin-top: 16px;">
         <div class="draggable-item" *ngFor="let order of printedOrders" draggable="true" (dragstart)="onDragStart(order, $event)" style="margin-bottom: 16px;">
@@ -26,13 +26,13 @@
             </div>
           </div>
         </div>
-        <div *ngIf="printedOrders.length === 0" class="empty-folder">No printed tickets.</div>
+        <div *ngIf="printedOrders.length === 0" class="empty-folder">Aucun ticket imprimé.</div>
       </div>
     </div>
     <hr class="orders-separator" style="margin: 16px 0; border: 0; border-top: 2px solid #bbb;">
-    <div class="orders-list-label" style="font-weight: bold; margin-bottom: 8px;">Processing Orders</div>
-    <div class="draggable-item" 
-         *ngFor="let order of orders" 
+    <div class="orders-list-label" style="font-weight: bold; margin-bottom: 8px;">Commandes en cours</div>
+    <div class="draggable-item"
+         *ngFor="let order of orders"
          draggable="true"
          (dragstart)="onDragStart(order, $event)">
       <div class="order-card">
@@ -55,7 +55,7 @@
 
   <div class="right-panel">
     <div class="a4-sheet">
-      <div class="grid-cell" 
+      <div class="grid-cell"
            *ngFor="let cell of gridCells"
            [class.drag-over]="cell.dragOver"
            [class.has-order]="cell.ticket"
@@ -111,7 +111,7 @@
     </div>
     <div class="print-bar print-bar-bottom">
       <button class="print-btn" (click)="printGrid()">
-        <span class="material-icons">print</span> Print
+        <span class="material-icons">print</span> Imprimer
       </button>
     </div>
   </div>
@@ -120,19 +120,19 @@
 <!-- Eye Selection Modal -->
 <div *ngIf="showEyeModal" class="eye-modal-backdrop">
   <div class="eye-modal">
-    <p>Do you want to put the ticket for eyes right or left?</p>
+    <p>Voulez-vous placer le ticket pour l'œil droit ou gauche ?</p>
     <div class="eye-modal-buttons">
-      <button 
-        (click)="confirmEye('right')" 
+      <button
+        (click)="confirmEye('right')"
         [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id].right">
-        Right
+        Droit
       </button>
-      <button 
-        (click)="confirmEye('left')" 
+      <button
+        (click)="confirmEye('left')"
         [disabled]="pendingDropOrder && placedEyes[pendingDropOrder.order_id].left">
-        Left
+        Gauche
       </button>
-      <button (click)="cancelEyeModal()">Cancel</button>
+      <button (click)="cancelEyeModal()">Annuler</button>
     </div>
   </div>
-</div> 
+</div>

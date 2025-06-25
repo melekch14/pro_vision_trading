@@ -73,6 +73,10 @@ export class OrderDetailsModalComponent implements OnInit {
   ogArticle: any = null;
   fabricationOdLibelle: string = '';
   fabricationOgLibelle: string = '';
+  
+  // Stock correction values
+  odStock: any = null;
+  ogStock: any = null;
 
   constructor(
     public dialogRef: MatDialogRef<OrderDetailsModalComponent>,
@@ -171,6 +175,7 @@ export class OrderDetailsModalComponent implements OnInit {
       if (this.order.produit) {
         this.stockService.getStockById(this.order.produit).subscribe({
           next: (stock) => {
+            this.odStock = stock; // Store the stock data
             const articleId = stock.article_id;
             this.articleService.getArticleById(articleId).subscribe({
               next: (article) => {
@@ -180,12 +185,14 @@ export class OrderDetailsModalComponent implements OnInit {
                 this.productDiametre = this.odProductDiametre;
                 this.odArticle = article;
                 console.log('OD Article:', article);
+                console.log('OD Stock:', stock);
                 console.log('OD Diametre:', this.odProductDiametre);
                 // If only produit is set, use OD values for both eyes
                 if (!this.order.produit2 && this.order.produit) {
                   this.ogProductLibelle = this.odProductLibelle;
                   this.ogProductDiametre = this.odProductDiametre;
                   this.ogArticle = this.odArticle;
+                  this.ogStock = this.odStock; // Copy stock data for OG
                   console.log('OG (copied from OD):', this.ogProductLibelle, this.ogProductDiametre);
                 }
                 // If both eyes use the same article (shouldn't happen if produit2 is null, but for safety)
@@ -193,6 +200,7 @@ export class OrderDetailsModalComponent implements OnInit {
                   this.ogProductLibelle = this.odProductLibelle;
                   this.ogProductDiametre = this.odProductDiametre;
                   this.ogArticle = this.odArticle;
+                  this.ogStock = this.odStock; // Copy stock data for OG
                   console.log('OG set from OD:', this.ogProductDiametre);
                 }
               },
@@ -202,6 +210,7 @@ export class OrderDetailsModalComponent implements OnInit {
                 this.productLibelle = 'N/A';
                 this.productDiametre = '70';
                 this.odArticle = null;
+                this.odStock = null;
               }
             });
           },
@@ -211,6 +220,7 @@ export class OrderDetailsModalComponent implements OnInit {
             this.productLibelle = 'N/A';
             this.productDiametre = '70';
             this.odArticle = null;
+            this.odStock = null;
           }
         });
       }
@@ -218,6 +228,7 @@ export class OrderDetailsModalComponent implements OnInit {
       if (this.order.produit2 && this.order.produit2 !== this.order.produit) {
         this.stockService.getStockById(this.order.produit2).subscribe({
           next: (stock) => {
+            this.ogStock = stock; // Store the stock data
             const articleId = stock.article_id;
             this.articleService.getArticleById(articleId).subscribe({
               next: (article) => {
@@ -225,12 +236,14 @@ export class OrderDetailsModalComponent implements OnInit {
                 this.ogProductDiametre = article.diametre?.toString() || '70';
                 this.ogArticle = article;
                 console.log('OG Article:', article);
+                console.log('OG Stock:', stock);
                 console.log('OG Diametre:', this.ogProductDiametre);
               },
               error: () => {
                 this.ogProductLibelle = 'N/A';
                 this.ogProductDiametre = '70';
                 this.ogArticle = null;
+                this.ogStock = null;
               }
             });
           },
@@ -238,6 +251,7 @@ export class OrderDetailsModalComponent implements OnInit {
             this.ogProductLibelle = 'N/A';
             this.ogProductDiametre = '70';
             this.ogArticle = null;
+            this.ogStock = null;
           }
         });
       }
@@ -351,7 +365,27 @@ export class OrderDetailsModalComponent implements OnInit {
 
   formatStockLibelle(eye: 'od' | 'og' = 'od', nameOnly: boolean = false): string {
     const article = eye === 'og' ? (this.ogArticle || this.odArticle) : this.odArticle;
+    const stock = eye === 'og' ? (this.ogStock || this.odStock) : this.odStock;
+    
     if (!article?.libelle) return 'N/A';
+    
+    if (nameOnly) {
+      return article.libelle;
+    }
+    
+    // Use the same format as in create order component
+    if (stock) {
+      console.log(`Stock data for ${eye}:`, stock);
+      console.log(`Stock cylindre:`, stock.cylindre);
+      console.log(`Stock addition:`, stock.addition);
+      console.log(`Stock sphere:`, stock.sphere);
+      
+      const correctionValue = stock.cylindre !== null ? stock.cylindre : stock.addition;
+      console.log(`Calculated correctionValue:`, correctionValue);
+      
+      return `${article.libelle} (${correctionValue}) - ${stock.sphere}`;
+    }
+    
     return article.libelle;
   }
 

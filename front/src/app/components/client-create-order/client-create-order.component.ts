@@ -128,12 +128,12 @@ export class ClientCreateOrderComponent implements OnDestroy {
       od.addition !== og.addition
     );
     
-    // If values are the same, clear second product selection
+    // If values are the same, clear second product selection and set price2 = price1
     if (!this.needsSecondProduct) {
       this.order.produit2 = '';
       this.selectedProduct2 = null;
       this.selectedArticle2 = null;
-      this.price2 = 0;
+      this.price2 = this.price; // Set price2 equal to price1 when values are the same
       this.filteredProducts2 = [];
     } else if (!wasDifferent && this.needsSecondProduct) {
       // If values just became different, trigger filtering for OG
@@ -470,8 +470,17 @@ export class ClientCreateOrderComponent implements OnDestroy {
       }
 
       this.price = finalPrice;
+      
+      // If correction values are the same, set price2 equal to price1
+      if (!this.needsSecondProduct) {
+        this.price2 = this.price;
+      }
     } else {
       this.price = 0;
+      // If correction values are the same, set price2 equal to price1
+      if (!this.needsSecondProduct) {
+        this.price2 = this.price;
+      }
     }
     this.updateTotalPrice();
   }

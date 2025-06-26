@@ -101,6 +101,23 @@ const tableStatements = [
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+
+  // New table for profile update requests
+  `CREATE TABLE IF NOT EXISTS profile_update_requests (
+    id int NOT NULL AUTO_INCREMENT,
+    client_id int NOT NULL,
+    requested_data JSON NOT NULL,
+    status enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    admin_notes text,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    reviewed_by int DEFAULT NULL,
+    reviewed_at timestamp NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    KEY client_id (client_id),
+    KEY status (status),
+    KEY reviewed_by (reviewed_by)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   
   // Tables with foreign keys (dependencies)
   `CREATE TABLE IF NOT EXISTS article_families (

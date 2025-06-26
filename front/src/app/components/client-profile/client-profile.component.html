@@ -16,6 +16,27 @@
   <div class="profile-right modern-profile-right">
     <h3>Informations du profil</h3>
     <p class="profile-desc">Modifiez vos informations personnelles</p>
+    
+    <!-- Pending Requests Section -->
+    <div *ngIf="pendingRequests.length > 0" class="pending-requests-section">
+      <h4>Demandes de modification en attente</h4>
+      <div class="pending-request" *ngFor="let request of pendingRequests">
+        <div class="request-header">
+          <span class="request-date">{{ request.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span class="request-status pending">En attente d'approbation</span>
+        </div>
+        <div class="request-details">
+          <p><strong>Données demandées:</strong></p>
+          <div class="requested-data">
+            <div *ngFor="let key of getRequestedDataKeys(request.requested_data)" class="data-item">
+              <span class="data-label">{{ getFieldLabel(key) }}:</span>
+              <span class="data-value">{{ getRequestedValue(request, key) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="loading" class="loading modern-loading">Chargement...</div>
     <div *ngIf="error" class="error modern-error">{{ error }}</div>
     <form class="profile-form modern-form" *ngIf="!editMode && user">
@@ -89,7 +110,7 @@
         <input type="text" [(ngModel)]="editedUser.code_douane" name="code_douane" />
       </div>
       <div class="form-actions modern-actions">
-        <button type="button" class="save-btn modern-btn" (click)="saveProfile()">Enregistrer</button>
+        <button type="button" class="save-btn modern-btn" (click)="saveProfile()">Soumettre pour approbation</button>
         <button type="button" class="cancel-btn modern-btn" (click)="cancelEdit()">Annuler</button>
       </div>
     </form>

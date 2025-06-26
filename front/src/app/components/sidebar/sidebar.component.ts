@@ -61,6 +61,12 @@ export class SidebarComponent implements OnInit {
       route: '/app/customers'
     },
     {
+      id: 'profile-update-requests',
+      name: 'Demandes de modification',
+      icon: 'pending_actions',
+      route: '/app/profile-update-requests'
+    },
+    {
       id: 'fournisseurs',
       name: 'Fournisseurs',
       icon: 'local_shipping',

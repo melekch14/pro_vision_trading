@@ -51,6 +51,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { CustomerDetailsModalComponent } from './components/customers/customer-details-modal.component';
+import { ProfileUpdateRequestsComponent } from './components/profile-update-requests/profile-update-requests.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { CustomerDetailsModalComponent } from './components/customers/customer-d
     DashboardComponent,
     ResetPasswordComponent,
     ForgotPasswordComponent,
-    CustomerDetailsModalComponent
+    CustomerDetailsModalComponent,
+    ProfileUpdateRequestsComponent
   ],
   imports: [
     BrowserModule,

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Customer } from '../../shared/models/customer.model';
 import { CustomerService } from '../../services/customer.service';
 import { AuthService } from '../../services/auth.service';
+import { ProfileUpdateRequestService } from '../../services/profile-update-request.service';
 
 @Component({
   selector: 'app-client-profile',
@@ -18,14 +19,17 @@ export class ClientProfileComponent implements OnInit {
   passwordResetRequested = false;
   resetToken = '';
   newPassword = '';
+  pendingRequests: any[] = [];
 
   constructor(
     private customerService: CustomerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private profileUpdateRequestService: ProfileUpdateRequestService
   ) {}
 
   ngOnInit() {
     this.fetchUser();
+    this.fetchPendingRequests();
   }
 
   fetchUser() {
@@ -49,6 +53,20 @@ export class ClientProfileComponent implements OnInit {
     });
   }
 
+  fetchPendingRequests() {
+    const clientId = this.authService.getClientId();
+    if (!clientId) return;
+
+    this.profileUpdateRequestService.getPendingRequestsByClientId(clientId).subscribe({
+      next: (requests) => {
+        this.pendingRequests = requests;
+      },
+      error: (err) => {
+        console.error('Failed to fetch pending requests:', err);
+      }
+    });
+  }
+
   enableEdit() {
     if (!this.user) return;
     this.editMode = true;
@@ -58,14 +76,18 @@ export class ClientProfileComponent implements OnInit {
   saveProfile() {
     if (!this.user) return;
     this.loading = true;
-    this.customerService.updateCustomer(this.user.id, this.editedUser as Customer).subscribe({
-      next: () => {
+    this.error = null;
+
+    // Submit profile update request instead of direct update
+    this.profileUpdateRequestService.createProfileUpdateRequest(this.user.id, this.editedUser).subscribe({
+      next: (response) => {
         this.editMode = false;
-        this.fetchUser();
-        alert('Profile updated successfully!');
+        this.fetchPendingRequests();
+        alert('Profile update request submitted successfully! Waiting for admin approval.');
+        this.loading = false;
       },
-      error: () => {
-        this.error = 'Failed to update profile.';
+      error: (err) => {
+        this.error = 'Failed to submit profile update request.';
         this.loading = false;
       }
     });
@@ -102,5 +124,33 @@ export class ClientProfileComponent implements OnInit {
         alert('Failed to reset password: ' + (err.error?.error || 'Unknown error'));
       }
     });
+  }
+
+  getRequestedDataKeys(requestedData: any): string[] {
+    if (!requestedData || !requestedData.requested_data) {
+      return [];
+    }
+    return Object.keys(requestedData.requested_data || {});
+  }
+
+  getFieldLabel(key: string): string {
+    const labels: { [key: string]: string } = {
+      'raison_social': 'Raison Sociale',
+      'responsable': 'Responsable',
+      'email': 'Email',
+      'tel': 'Téléphone',
+      'adresse': 'Adresse',
+      'rccm': 'RCCM',
+      'ninea': 'NINEA',
+      'code_douane': 'Code Douane'
+    };
+    return labels[key] || key;
+  }
+
+  getRequestedValue(request: any, key: string): string {
+    if (!request.requested_data || !request.requested_data.requested_data) {
+      return '';
+    }
+    return request.requested_data.requested_data[key] || '';
   }
 } 

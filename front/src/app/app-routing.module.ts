@@ -15,6 +15,7 @@ import { RoleGuard } from './guards/role.guard';
 import { SettingsComponent } from './components/settings/settings.component';
 import { OpticienComponent } from './components/opticien/opticien.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
+import { ProfileUpdateRequestsComponent } from './components/profile-update-requests/profile-update-requests.component';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -66,7 +67,8 @@ const routes: Routes = [
       { path: 'fournisseurs', component: FournisseurComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'opticiens', component: OpticienComponent },
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent }
     ]
   },
   {

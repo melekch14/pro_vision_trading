@@ -586,6 +586,12 @@ export class ClientCreateOrderComponent implements OnDestroy {
       alert('Veuillez sélectionner un fichier pour les commandes de type Précal.');
       return;
     }
+
+    // Validation for shipping type (Type de Livraison)
+    if (!this.shippingType) {
+      alert('Veuillez sélectionner un type de livraison avant de soumettre la commande.');
+      return;
+    }
     
     if (this.errors.formInvalid) {
       alert('Veuillez corriger les erreurs du formulaire avant de soumettre.');

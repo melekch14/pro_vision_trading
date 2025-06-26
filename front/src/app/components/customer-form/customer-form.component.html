@@ -82,7 +82,7 @@
         </div>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" *ngIf="!readonly">
       <button type="submit" class="btn btn-primary mr-2" [disabled]="customerForm.invalid || isLoading">
         <span *ngIf="isLoading" class="spinner"></span>
         Mettre à jour Client

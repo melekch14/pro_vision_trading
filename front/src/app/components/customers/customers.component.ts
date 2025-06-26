@@ -61,6 +61,8 @@ export class CustomersComponent implements OnInit {
     
     if (this.showPendingOnly) {
       filtered = filtered.filter(customer => customer.status === 'pending');
+    } else {
+      filtered = filtered.filter(customer => customer.status === 'active');
     }
     
     // Apply code filter

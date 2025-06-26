@@ -18,14 +18,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   background-color: #e9f5ff;
   background-image: linear-gradient(rgba(255, 255, 255, 0.9) 1px, transparent 1px),
                     linear-gradient(90deg, rgba(255, 255, 255, 0.9) 1px, transparent 1px);
   background-size: 20px 20px;
   position: relative;
-  overflow: hidden;
 }
 
 .register-container::before {
@@ -259,5 +258,47 @@ label {
     padding: 0;
     margin-bottom: 0;
     display: block;
+  }
+}
+
+@media (max-width: 1024px) {
+  .register-card {
+    padding: 20px 20px 30px 20px;
+    max-width: 80vw;
+  }
+  .register-logo {
+    height: 90px;
+  }
+  .register-title {
+    font-size: 22px;
+  }
+  .register-subtitle {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .register-card {
+    padding: 15px 5px 20px 5px;
+    max-width: 95vw;
+  }
+  .register-logo {
+    height: 60px;
+  }
+  .register-title {
+    font-size: 18px;
+  }
+  .register-subtitle {
+    font-size: 12px;
+  }
+  .form-control {
+    font-size: 12px;
+    padding: 8px 8px;
+  }
+  .form-actions {
+    margin-top: 12px;
+  }
+  .auth-links {
+    font-size: 12px;
   }
 }

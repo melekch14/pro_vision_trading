@@ -55,6 +55,7 @@ export class DeliveryNoteModalComponent implements OnInit {
   maxRowsPerPage: number = 5; // Set to 5 rows per page as requested
   isPrintView: boolean = false; // Track current view mode
   isGeneratingPDF: boolean = false; // Track PDF generation state
+  pdfGenerationMethod: string = ''; // Track which method is being used
 
   constructor(
     public dialogRef: MatDialogRef<DeliveryNoteModalComponent>,
@@ -377,10 +378,25 @@ export class DeliveryNoteModalComponent implements OnInit {
   }
 
   private async generatePDFFromPrintView(): Promise<void> {
+    try {
+      await this.generatePDFWithRetry();
+    } catch (error) {
+      console.error('Primary PDF generation failed, trying fallback method:', error);
+      try {
+        await this.generatePDFFallback();
+      } catch (fallbackError) {
+        console.error('All PDF generation methods failed:', fallbackError);
+        this.handlePDFError(fallbackError);
+      }
+    }
+  }
+
+  private async generatePDFWithRetry(): Promise<void> {
     this.isGeneratingPDF = true;
+    this.pdfGenerationMethod = 'High-quality rendering';
     
     try {
-      console.log('Starting PDF generation...');
+      console.log('Starting PDF generation with retry logic...');
       
       const printPagesElement = document.querySelector('.print-pages') as HTMLElement;
       if (!printPagesElement) {
@@ -394,6 +410,9 @@ export class DeliveryNoteModalComponent implements OnInit {
       if (controlsElement) {
         controlsElement.style.display = 'none';
       }
+
+      // Prepare DOM for PDF generation
+      await this.prepareDOMForPDF(printPagesElement);
 
       // Create PDF with A5 landscape format
       console.log('Creating PDF document...');
@@ -413,6 +432,7 @@ export class DeliveryNoteModalComponent implements OnInit {
         throw new Error('No pages found to convert to PDF');
       }
 
+      // Process pages with retry logic
       for (let i = 0; i < totalPages; i++) {
         const pageElement = pageElements[i] as HTMLElement;
         
@@ -425,29 +445,81 @@ export class DeliveryNoteModalComponent implements OnInit {
           continue;
         }
         
-        try {
-          // Convert page to canvas
-          console.log(`Converting page ${i + 1} to canvas...`);
-          const canvas = await html2canvas(pageElement, {
-            scale: 2, // Higher quality
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            width: pageElement.offsetWidth,
-            height: pageElement.offsetHeight,
-            logging: false, // Disable html2canvas logging
-            onclone: (clonedDoc) => {
-              // Ensure the cloned element is visible
-              const clonedElement = clonedDoc.querySelector('.page') as HTMLElement;
-              if (clonedElement) {
-                clonedElement.style.display = 'block';
-                clonedElement.style.visibility = 'visible';
+        // Retry logic for page conversion
+        let canvas: HTMLCanvasElement | null = null;
+        let retryCount = 0;
+        const maxRetries = 3;
+        
+        while (!canvas && retryCount < maxRetries) {
+          try {
+            retryCount++;
+            console.log(`Attempt ${retryCount} to convert page ${i + 1} to canvas...`);
+            
+            // Ensure the page is visible and properly rendered
+            pageElement.style.display = 'block';
+            pageElement.style.visibility = 'visible';
+            pageElement.style.opacity = '1';
+            
+            // Force a reflow to ensure all content is rendered
+            pageElement.offsetHeight;
+            
+            // Wait a bit for any animations or rendering to complete
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Convert page to canvas with more conservative settings
+            canvas = await html2canvas(pageElement, {
+              scale: 1.5, // Reduced scale for better stability
+              useCORS: true,
+              allowTaint: true,
+              backgroundColor: '#ffffff',
+              width: pageElement.offsetWidth,
+              height: pageElement.offsetHeight,
+              logging: false,
+              foreignObjectRendering: false, // Disable for better compatibility
+              removeContainer: true, // Clean up after conversion
+              onclone: (clonedDoc) => {
+                // Ensure the cloned element is properly set up
+                const clonedElement = clonedDoc.querySelector('.page') as HTMLElement;
+                if (clonedElement) {
+                  clonedElement.style.display = 'block';
+                  clonedElement.style.visibility = 'visible';
+                  clonedElement.style.opacity = '1';
+                  clonedElement.style.position = 'relative';
+                  clonedElement.style.overflow = 'visible';
+                }
               }
+            });
+
+            console.log(`Canvas created for page ${i + 1}: ${canvas.width}px x ${canvas.height}px`);
+            
+            // Validate canvas data
+            if (canvas.width === 0 || canvas.height === 0) {
+              throw new Error('Canvas has zero dimensions');
             }
-          });
+            
+            // Test if canvas data is valid by trying to get image data
+            const testData = canvas.toDataURL('image/png');
+            if (!testData || testData === 'data:,') {
+              throw new Error('Canvas data is invalid');
+            }
+            
+          } catch (pageError: any) {
+            console.error(`Attempt ${retryCount} failed for page ${i + 1}:`, pageError);
+            
+            if (retryCount >= maxRetries) {
+              throw new Error(`Failed to convert page ${i + 1} after ${maxRetries} attempts: ${pageError.message || 'Unknown error'}`);
+            }
+            
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
 
-          console.log(`Canvas created for page ${i + 1}: ${canvas.width}px x ${canvas.height}px`);
+        if (!canvas) {
+          throw new Error(`Failed to create canvas for page ${i + 1}`);
+        }
 
+        try {
           // Add page to PDF
           if (i > 0) {
             pdf.addPage();
@@ -459,15 +531,20 @@ export class DeliveryNoteModalComponent implements OnInit {
           
           console.log(`Adding image to PDF: ${imgWidth}mm x ${imgHeight}mm`);
           
-          // Add image to PDF
-          const imgData = canvas.toDataURL('image/png');
+          // Add image to PDF with error handling
+          const imgData = canvas.toDataURL('image/png', 0.9); // Slightly reduced quality for stability
+          
+          if (!imgData || imgData === 'data:,') {
+            throw new Error('Invalid image data generated');
+          }
+          
           pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
           
           console.log(`Page ${i + 1} added to PDF successfully`);
           
-        } catch (pageError: any) {
-          console.error(`Error processing page ${i + 1}:`, pageError);
-          throw new Error(`Failed to process page ${i + 1}: ${pageError.message || 'Unknown error'}`);
+        } catch (pdfError: any) {
+          console.error(`Error adding page ${i + 1} to PDF:`, pdfError);
+          throw new Error(`Failed to add page ${i + 1} to PDF: ${pdfError.message || 'Unknown error'}`);
         }
       }
 
@@ -485,26 +562,218 @@ export class DeliveryNoteModalComponent implements OnInit {
 
     } catch (error: any) {
       console.error('Error generating PDF:', error);
-      
-      // Provide more specific error messages
-      let errorMessage = 'Error generating PDF. Please try again.';
-      
-      if (error.message && error.message.includes('Print pages element not found')) {
-        errorMessage = 'PDF generation failed: Could not find the document content. Please refresh and try again.';
-      } else if (error.message && error.message.includes('No pages found')) {
-        errorMessage = 'PDF generation failed: No content to convert. Please check if the delivery note has data.';
-      } else if (error.message && error.message.includes('Failed to process page')) {
-        errorMessage = 'PDF generation failed: Error processing document pages. Please try again.';
-      } else if (error.message && error.message.includes('html2canvas')) {
-        errorMessage = 'PDF generation failed: Error converting document to image. Please try again.';
-      } else if (error.message && error.message.includes('jsPDF')) {
-        errorMessage = 'PDF generation failed: Error creating PDF document. Please try again.';
-      }
-      
-      alert(errorMessage);
+      throw error; // Re-throw to trigger fallback
     } finally {
       this.isGeneratingPDF = false;
+      this.pdfGenerationMethod = '';
     }
+  }
+
+  private async prepareDOMForPDF(printPagesElement: HTMLElement): Promise<void> {
+    console.log('Preparing DOM for PDF generation...');
+    
+    // Ensure all pages are visible and properly styled
+    const pageElements = printPagesElement.querySelectorAll('.page');
+    
+    for (let i = 0; i < pageElements.length; i++) {
+      const pageElement = pageElements[i] as HTMLElement;
+      
+      // Set explicit styles for PDF generation
+      pageElement.style.display = 'block';
+      pageElement.style.visibility = 'visible';
+      pageElement.style.opacity = '1';
+      pageElement.style.position = 'relative';
+      pageElement.style.overflow = 'visible';
+      pageElement.style.backgroundColor = '#ffffff';
+      pageElement.style.color = '#000000';
+      pageElement.style.fontFamily = 'Arial, sans-serif';
+      pageElement.style.fontSize = '12px';
+      pageElement.style.lineHeight = '1.4';
+      pageElement.style.margin = '0';
+      pageElement.style.padding = '10px';
+      pageElement.style.border = 'none';
+      pageElement.style.boxShadow = 'none';
+      
+      // Ensure all child elements are visible
+      const allElements = pageElement.querySelectorAll('*');
+      allElements.forEach((element: Element) => {
+        const el = element as HTMLElement;
+        if (el.style.display === 'none') {
+          el.style.display = 'block';
+        }
+        if (el.style.visibility === 'hidden') {
+          el.style.visibility = 'visible';
+        }
+        if (el.style.opacity === '0') {
+          el.style.opacity = '1';
+        }
+      });
+    }
+    
+    // Force a reflow
+    printPagesElement.offsetHeight;
+    
+    // Wait for any remaining rendering
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    console.log('DOM preparation completed');
+  }
+
+  private async generatePDFFallback(): Promise<void> {
+    this.isGeneratingPDF = true;
+    this.pdfGenerationMethod = 'Standard rendering';
+    
+    try {
+      console.log('Starting fallback PDF generation...');
+      
+      const printPagesElement = document.querySelector('.print-pages') as HTMLElement;
+      if (!printPagesElement) {
+        throw new Error('Print pages element not found in DOM');
+      }
+
+      // Create PDF with A5 landscape format
+      const pdf = new jsPDF('landscape', 'mm', 'a5');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Get all pages
+      const pageElements = printPagesElement.querySelectorAll('.page');
+      const totalPages = pageElements.length;
+      
+      console.log(`Found ${totalPages} pages to process in fallback mode`);
+      
+      if (totalPages === 0) {
+        throw new Error('No pages found to convert to PDF');
+      }
+
+      // Process pages one by one with minimal settings
+      for (let i = 0; i < totalPages; i++) {
+        const pageElement = pageElements[i] as HTMLElement;
+        
+        console.log(`Processing page ${i + 1}/${totalPages} in fallback mode`);
+        
+        if (!pageElement.innerHTML.trim()) {
+          console.warn(`Page ${i + 1} is empty, skipping...`);
+          continue;
+        }
+        
+        try {
+          // Ensure page is visible and properly styled
+          pageElement.style.display = 'block';
+          pageElement.style.visibility = 'visible';
+          pageElement.style.opacity = '1';
+          pageElement.style.backgroundColor = '#ffffff';
+          pageElement.style.color = '#000000';
+          pageElement.style.position = 'relative';
+          pageElement.style.overflow = 'visible';
+          
+          // Wait for rendering
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // Check if element has dimensions
+          if (pageElement.offsetWidth === 0 || pageElement.offsetHeight === 0) {
+            console.warn(`Page ${i + 1} has zero dimensions, skipping...`);
+            continue;
+          }
+          
+          console.log(`Converting page ${i + 1} with dimensions: ${pageElement.offsetWidth}x${pageElement.offsetHeight}`);
+          
+          // Convert with minimal settings
+          const canvas = await html2canvas(pageElement, {
+            scale: 1, // Minimal scale
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            foreignObjectRendering: false,
+            removeContainer: true,
+            width: pageElement.offsetWidth,
+            height: pageElement.offsetHeight
+          });
+
+          // Validate canvas
+          if (canvas.width === 0 || canvas.height === 0) {
+            throw new Error('Canvas has zero dimensions');
+          }
+
+          console.log(`Canvas created for page ${i + 1}: ${canvas.width}x${canvas.height}`);
+
+          // Add page to PDF
+          if (i > 0) {
+            pdf.addPage();
+          }
+
+          const imgWidth = pageWidth;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          const imgData = canvas.toDataURL('image/jpeg', 0.8); // Use JPEG instead of PNG
+          
+          if (!imgData || imgData === 'data:,') {
+            throw new Error('Invalid image data generated');
+          }
+          
+          pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+          console.log(`Page ${i + 1} added successfully to PDF`);
+          
+        } catch (pageError: any) {
+          console.error(`Fallback: Error processing page ${i + 1}:`, pageError);
+          
+          // Add page to PDF even if conversion failed
+          if (i > 0) {
+            pdf.addPage();
+          }
+          
+          // Add a more informative placeholder page
+          pdf.setFontSize(16);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`Page ${i + 1}`, 10, 20);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text('Content could not be rendered due to technical issues.', 10, 35);
+          pdf.text('The system will try alternative rendering methods.', 10, 45);
+          pdf.text(`Error details: ${pageError.message || 'Unknown error'}`, 10, 55);
+          pdf.text('Please contact support if this issue persists.', 10, 65);
+          
+          console.log(`Added informative placeholder for page ${i + 1}`);
+        }
+      }
+
+      // Download the PDF
+      const fileName = `delivery-note-${this.deliveryNoteNumber}-${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+      
+      console.log('Fallback PDF generation completed');
+
+    } catch (error: any) {
+      console.error('Fallback PDF generation failed:', error);
+      throw error;
+    } finally {
+      this.isGeneratingPDF = false;
+      this.pdfGenerationMethod = '';
+    }
+  }
+
+  private handlePDFError(error: any): void {
+    // Provide more specific error messages
+    let errorMessage = 'Error generating PDF. Please try again.';
+    
+    if (error.message && error.message.includes('Print pages element not found')) {
+      errorMessage = 'PDF generation failed: Could not find the document content. Please refresh and try again.';
+    } else if (error.message && error.message.includes('No pages found')) {
+      errorMessage = 'PDF generation failed: No content to convert. Please check if the delivery note has data.';
+    } else if (error.message && error.message.includes('Failed to convert page')) {
+      errorMessage = 'PDF generation failed: Error converting document pages. Please try again or refresh the page.';
+    } else if (error.message && error.message.includes('Invalid image data')) {
+      errorMessage = 'PDF generation failed: Error processing document images. Please try again.';
+    } else if (error.message && error.message.includes('html2canvas')) {
+      errorMessage = 'PDF generation failed: Error converting document to image. Please try again.';
+    } else if (error.message && error.message.includes('jsPDF')) {
+      errorMessage = 'PDF generation failed: Error creating PDF document. Please try again.';
+    } else if (error.message && error.message.includes('PNG')) {
+      errorMessage = 'PDF generation failed: Error processing document images. Please refresh the page and try again.';
+    }
+    
+    alert(errorMessage);
   }
 
   printDeliveryNote(): void {
@@ -516,10 +785,10 @@ export class DeliveryNoteModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  // Helper to sum two price values as numbers
+  // Helper method to sum prices
   sumPrices(price1: string | number | null | undefined, price2: string | number | null | undefined): number {
-    const p1 = typeof price1 === 'string' ? parseFloat(price1) : (price1 || 0);
-    const p2 = typeof price2 === 'string' ? parseFloat(price2) : (price2 || 0);
+    const p1 = typeof price1 === 'string' ? parseFloat(price1) || 0 : (price1 || 0);
+    const p2 = typeof price2 === 'string' ? parseFloat(price2) || 0 : (price2 || 0);
     return p1 + p2;
   }
 } 

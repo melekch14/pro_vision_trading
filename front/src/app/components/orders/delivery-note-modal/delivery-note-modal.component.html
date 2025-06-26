@@ -11,6 +11,9 @@
       <button (click)="togglePrintView()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px;">
         Back to Screen View
       </button>
+      <div *ngIf="isGeneratingPDF && pdfGenerationMethod" style="margin-top: 10px; font-size: 12px; color: #666;">
+        Using: {{ pdfGenerationMethod }}
+      </div>
     </div>
     
     <div *ngFor="let page of pages" class="page" [class.last-page]="page.isLastPage">
@@ -128,9 +131,6 @@
       <button (click)="togglePrintView()" style="margin-top: 10px; padding: 5px 10px; margin-right: 10px;">
         {{ isPrintView ? 'Show Screen View' : 'Show Print View' }}
       </button>
-      <button (click)="exportToPDF()" style="margin-top: 10px; padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 3px;" [disabled]="isGeneratingPDF">
-        {{ isGeneratingPDF ? 'Generating PDF...' : 'Export ' + (isPrintView ? 'Current View' : 'Paginated') + ' as PDF' }}
-      </button>
     </div>
 
     <div class="delivery-note-header">
@@ -224,14 +224,14 @@
 
     <div class="delivery-note-footer">
       <div class="action-buttons">
-        <button class="print-button" (click)="exportToPDF()" [disabled]="isGeneratingPDF">
-          <i class="material-icons">{{ isGeneratingPDF ? 'hourglass_empty' : 'picture_as_pdf' }}</i>
-          {{ isGeneratingPDF ? 'Generating...' : 'Export PDF' }}
-        </button>
+        
         <button class="close-button" (click)="close()">
           <i class="material-icons">close</i>
           Fermer
         </button>
+      </div>
+      <div *ngIf="isGeneratingPDF && pdfGenerationMethod" style="text-align: center; margin-top: 10px; font-size: 12px; color: #666;">
+        Using: {{ pdfGenerationMethod }}
       </div>
     </div>
   </div>

@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../shared/models/customer.model';
 import { OrderService } from '../../../services/order.service';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface Order {
   id: number;
@@ -31,6 +33,12 @@ interface Order {
   [key: string]: any;
 }
 
+interface Page {
+  orders: Order[];
+  pageNumber: number;
+  isLastPage: boolean;
+}
+
 @Component({
   selector: 'app-delivery-note-modal',
   templateUrl: './delivery-note-modal.component.html',
@@ -43,6 +51,10 @@ export class DeliveryNoteModalComponent implements OnInit {
   deliveryNoteNumber: string;
   customerDetails: Customer | null = null;
   totalAmount: number = 0;
+  pages: Page[] = [];
+  maxRowsPerPage: number = 5; // Set to 5 rows per page as requested
+  isPrintView: boolean = false; // Track current view mode
+  isGeneratingPDF: boolean = false; // Track PDF generation state
 
   constructor(
     public dialogRef: MatDialogRef<DeliveryNoteModalComponent>,
@@ -65,7 +77,6 @@ export class DeliveryNoteModalComponent implements OnInit {
       const clientId = this.data.orders[0].client_id;
       this.loadCustomerDetails(clientId);
       this.loadProductDetails();
-      this.calculateTotal();
     }
   }
 
@@ -82,70 +93,82 @@ export class DeliveryNoteModalComponent implements OnInit {
   }
 
   loadProductDetails(): void {
+    const promises: Promise<void>[] = [];
+    
     this.data.orders.forEach(order => {
       // First product: check fabrication1, otherwise use stock
       if (order['fabrication1']) {
-        this.orderService.getArticleById(order['fabrication1'].toString()).subscribe({
-          next: (article) => {
+        const promise = this.orderService.getArticleById(order['fabrication1'].toString()).toPromise()
+          .then(article => {
             order.article_libelle = article.libelle;
             order.isFabrication1 = article.origineArticle === 'fabrication';
-          },
-          error: (error) => {
+          })
+          .catch(error => {
             console.error('Error loading fabrication article details:', error);
-          }
-        });
+          });
+        promises.push(promise);
       } else if (order.produit) {
-        this.orderService.getStockById(order.produit.toString()).subscribe({
-          next: (stock) => {
+        const promise = this.orderService.getStockById(order.produit.toString()).toPromise()
+          .then(stock => {
             if (stock.article_id) {
-              this.orderService.getArticleById(stock.article_id.toString()).subscribe({
-                next: (article) => {
-                  order.article_libelle = article.libelle;
-                  order.isFabrication1 = article.origineArticle === 'fabrication';
-                },
-                error: (error) => {
-                  console.error('Error loading article details:', error);
-                }
-              });
+              return this.orderService.getArticleById(stock.article_id.toString()).toPromise();
             }
-          },
-          error: (error) => {
-            console.error('Error loading stock details:', error);
-          }
-        });
+            return null;
+          })
+          .then(article => {
+            if (article) {
+              order.article_libelle = article.libelle;
+              order.isFabrication1 = article.origineArticle === 'fabrication';
+            }
+          })
+          .catch(error => {
+            console.error('Error loading article details:', error);
+          });
+        promises.push(promise);
       }
+      
       // Second product: check fabrication2, otherwise use stock
       if (order['fabrication2']) {
-        this.orderService.getArticleById(order['fabrication2'].toString()).subscribe({
-          next: (article) => {
+        const promise = this.orderService.getArticleById(order['fabrication2'].toString()).toPromise()
+          .then(article => {
             order.article_libelle2 = article.libelle;
             order.isFabrication2 = article.origineArticle === 'fabrication';
-          },
-          error: (error) => {
+          })
+          .catch(error => {
             console.error('Error loading fabrication2 article details:', error);
-          }
-        });
+          });
+        promises.push(promise);
       } else if (order.produit2) {
-        this.orderService.getStockById(order.produit2.toString()).subscribe({
-          next: (stock) => {
+        const promise = this.orderService.getStockById(order.produit2.toString()).toPromise()
+          .then(stock => {
             if (stock.article_id) {
-              this.orderService.getArticleById(stock.article_id.toString()).subscribe({
-                next: (article) => {
-                  order.article_libelle2 = article.libelle;
-                  order.isFabrication2 = article.origineArticle === 'fabrication';
-                },
-                error: (error) => {
-                  console.error('Error loading article details for produit2:', error);
-                }
-              });
+              return this.orderService.getArticleById(stock.article_id.toString()).toPromise();
             }
-          },
-          error: (error) => {
-            console.error('Error loading stock details for produit2:', error);
-          }
-        });
+            return null;
+          })
+          .then(article => {
+            if (article) {
+              order.article_libelle2 = article.libelle;
+              order.isFabrication2 = article.origineArticle === 'fabrication';
+            }
+          })
+          .catch(error => {
+            console.error('Error loading article details for produit2:', error);
+          });
+        promises.push(promise);
       }
     });
+
+    // Wait for all product details to load before creating pages
+    if (promises.length > 0) {
+      Promise.all(promises).then(() => {
+        console.log('All product details loaded, creating pages...');
+        this.calculateTotal();
+      });
+    } else {
+      console.log('No product details to load, creating pages immediately...');
+      this.calculateTotal();
+    }
   }
 
   calculateTotal(): void {
@@ -156,6 +179,143 @@ export class DeliveryNoteModalComponent implements OnInit {
     }, 0);
     console.log('Total Amount:', this.totalAmount);
     console.log('Final Orders with all details:', this.data.orders);
+    this.createPages();
+  }
+
+  calculateOptimalRowsPerPage(totalRows: number, totalOrders: number): number {
+    // Base calculation
+    let optimalRows = Math.ceil(totalRows / Math.ceil(totalRows / this.maxRowsPerPage));
+    
+    // Adjust based on order count to avoid too many pages
+    if (totalOrders <= this.maxRowsPerPage) {
+      return this.maxRowsPerPage;
+    }
+    
+    // If we have many orders but few rows, increase rows per page
+    if (totalRows < totalOrders * 2) {
+      optimalRows = Math.min(this.maxRowsPerPage + 2, totalRows);
+    }
+    
+    // Ensure we don't exceed maximum
+    return Math.min(optimalRows, this.maxRowsPerPage + 4);
+  }
+
+  createPages(): void {
+    this.pages = [];
+    const expandedOrders: Order[] = [];
+    
+    console.log('Creating pages for orders:', this.data.orders.length);
+    
+    // Expand orders that have two different products into separate rows
+    this.data.orders.forEach(order => {
+      if (order.article_libelle && order.article_libelle2 && order.article_libelle !== order.article_libelle2) {
+        // Add first product
+        expandedOrders.push({
+          ...order,
+          article_libelle2: undefined,
+          price2: undefined,
+          isFabrication2: undefined
+        });
+        // Add second product
+        const secondProductOrder = {
+          ...order,
+          article_libelle: order.article_libelle2 || 'N/A',
+          price: order.price2 || '0',
+          article_libelle2: undefined,
+          price2: undefined,
+          isFabrication1: order.isFabrication2,
+          isFabrication2: undefined
+        };
+        expandedOrders.push(secondProductOrder);
+      } else {
+        expandedOrders.push(order);
+      }
+    });
+
+    console.log('Expanded orders:', expandedOrders.length);
+
+    // If we have very few orders, put them all on one page
+    if (expandedOrders.length <= this.maxRowsPerPage) {
+      this.pages.push({
+        orders: expandedOrders,
+        pageNumber: 1,
+        isLastPage: true
+      });
+      console.log('Single page created with all orders');
+      return;
+    }
+
+    // Calculate optimal distribution
+    const totalRows = expandedOrders.reduce((sum, order) => sum + this.getOrderRowCount(order), 0);
+    const optimalRowsPerPage = this.calculateOptimalRowsPerPage(totalRows, expandedOrders.length);
+    const estimatedPages = Math.ceil(totalRows / optimalRowsPerPage);
+    
+    console.log(`Total rows: ${totalRows}, Estimated pages: ${estimatedPages}, Optimal rows per page: ${optimalRowsPerPage}`);
+
+    // Create pages with better distribution
+    let currentPageOrders: Order[] = [];
+    let rowCount = 0;
+    let pageNumber = 1;
+
+    for (let i = 0; i < expandedOrders.length; i++) {
+      const order = expandedOrders[i];
+      const orderRows = this.getOrderRowCount(order);
+      
+      console.log(`Order ${i + 1}: ${orderRows} rows, current page row count: ${rowCount}, target: ${optimalRowsPerPage}`);
+      
+      // Check if adding this order would exceed the target rows per page
+      // But allow some flexibility to avoid very uneven distribution
+      const remainingOrders = expandedOrders.length - i;
+      const shouldStartNewPage = rowCount + orderRows > optimalRowsPerPage && 
+                                currentPageOrders.length > 0 && 
+                                (remainingOrders > 1 || rowCount + orderRows > optimalRowsPerPage + 2);
+      
+      if (shouldStartNewPage) {
+        // Create new page
+        console.log(`Creating page ${pageNumber} with ${currentPageOrders.length} orders (${rowCount} rows)`);
+        this.pages.push({
+          orders: currentPageOrders,
+          pageNumber: pageNumber,
+          isLastPage: false
+        });
+        
+        currentPageOrders = [order];
+        rowCount = orderRows;
+        pageNumber++;
+      } else {
+        currentPageOrders.push(order);
+        rowCount += orderRows;
+      }
+    }
+
+    // Add the last page
+    if (currentPageOrders.length > 0) {
+      console.log(`Creating final page ${pageNumber} with ${currentPageOrders.length} orders (${rowCount} rows)`);
+      this.pages.push({
+        orders: currentPageOrders,
+        pageNumber: pageNumber,
+        isLastPage: true
+      });
+    }
+
+    // Update isLastPage flag for the actual last page
+    if (this.pages.length > 0) {
+      this.pages[this.pages.length - 1].isLastPage = true;
+    }
+
+    console.log('Created pages:', this.pages);
+    console.log('Total pages:', this.pages.length);
+  }
+
+  getOrderRowCount(order: Order): number {
+    // Count how many rows this order will take
+    if (order.article_libelle && order.article_libelle2 && order.article_libelle === order.article_libelle2) {
+      return 1; // Single row with x2
+    } else if (order.article_libelle2 && order.article_libelle !== order.article_libelle2) {
+      return 2; // Two separate rows
+    } else {
+      return 1; // Single row
+    }
   }
 
   generateDeliveryNoteNumber(): string {
@@ -167,8 +327,189 @@ export class DeliveryNoteModalComponent implements OnInit {
     return `BL-${year}${month}${day}-${random}`;
   }
 
+  togglePrintView(): void {
+    this.isPrintView = !this.isPrintView;
+    const printPages = document.querySelector('.print-pages') as HTMLElement;
+    const screenView = document.querySelector('.screen-view') as HTMLElement;
+    
+    if (printPages && screenView) {
+      if (this.isPrintView) {
+        printPages.style.display = 'block';
+        screenView.style.display = 'none';
+      } else {
+        printPages.style.display = 'none';
+        screenView.style.display = 'block';
+      }
+    }
+  }
+
+  exportToPDF(): void {
+    if (this.isGeneratingPDF) {
+      return; // Prevent multiple simultaneous PDF generations
+    }
+
+    if (this.isPrintView) {
+      // In print view mode, export the current paginated view
+      this.generatePDFFromPrintView();
+    } else {
+      // In screen view mode, temporarily show print view and export
+      this.isPrintView = true;
+      const printPages = document.querySelector('.print-pages') as HTMLElement;
+      const screenView = document.querySelector('.screen-view') as HTMLElement;
+      
+      if (printPages && screenView) {
+        printPages.style.display = 'block';
+        screenView.style.display = 'none';
+        
+        // Use setTimeout to ensure the DOM is updated before generating PDF
+        setTimeout(() => {
+          this.generatePDFFromPrintView();
+          
+          // Restore screen view after PDF generation
+          setTimeout(() => {
+            this.isPrintView = false;
+            printPages.style.display = 'none';
+            screenView.style.display = 'block';
+          }, 100);
+        }, 100);
+      }
+    }
+  }
+
+  private async generatePDFFromPrintView(): Promise<void> {
+    this.isGeneratingPDF = true;
+    
+    try {
+      console.log('Starting PDF generation...');
+      
+      const printPagesElement = document.querySelector('.print-pages') as HTMLElement;
+      if (!printPagesElement) {
+        throw new Error('Print pages element not found in DOM');
+      }
+
+      console.log('Found print pages element, hiding controls...');
+
+      // Hide the print view controls before generating PDF
+      const controlsElement = printPagesElement.querySelector('div:first-child') as HTMLElement;
+      if (controlsElement) {
+        controlsElement.style.display = 'none';
+      }
+
+      // Create PDF with A5 landscape format
+      console.log('Creating PDF document...');
+      const pdf = new jsPDF('landscape', 'mm', 'a5');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      console.log(`PDF page dimensions: ${pageWidth}mm x ${pageHeight}mm`);
+      
+      // Get all pages
+      const pageElements = printPagesElement.querySelectorAll('.page');
+      const totalPages = pageElements.length;
+      
+      console.log(`Found ${totalPages} pages to process`);
+
+      if (totalPages === 0) {
+        throw new Error('No pages found to convert to PDF');
+      }
+
+      for (let i = 0; i < totalPages; i++) {
+        const pageElement = pageElements[i] as HTMLElement;
+        
+        console.log(`Processing page ${i + 1}/${totalPages}...`);
+        console.log(`Page element dimensions: ${pageElement.offsetWidth}px x ${pageElement.offsetHeight}px`);
+        
+        // Check if page element has content
+        if (!pageElement.innerHTML.trim()) {
+          console.warn(`Page ${i + 1} appears to be empty, skipping...`);
+          continue;
+        }
+        
+        try {
+          // Convert page to canvas
+          console.log(`Converting page ${i + 1} to canvas...`);
+          const canvas = await html2canvas(pageElement, {
+            scale: 2, // Higher quality
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            width: pageElement.offsetWidth,
+            height: pageElement.offsetHeight,
+            logging: false, // Disable html2canvas logging
+            onclone: (clonedDoc) => {
+              // Ensure the cloned element is visible
+              const clonedElement = clonedDoc.querySelector('.page') as HTMLElement;
+              if (clonedElement) {
+                clonedElement.style.display = 'block';
+                clonedElement.style.visibility = 'visible';
+              }
+            }
+          });
+
+          console.log(`Canvas created for page ${i + 1}: ${canvas.width}px x ${canvas.height}px`);
+
+          // Add page to PDF
+          if (i > 0) {
+            pdf.addPage();
+          }
+
+          // Calculate dimensions to fit A5
+          const imgWidth = pageWidth;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          console.log(`Adding image to PDF: ${imgWidth}mm x ${imgHeight}mm`);
+          
+          // Add image to PDF
+          const imgData = canvas.toDataURL('image/png');
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          
+          console.log(`Page ${i + 1} added to PDF successfully`);
+          
+        } catch (pageError: any) {
+          console.error(`Error processing page ${i + 1}:`, pageError);
+          throw new Error(`Failed to process page ${i + 1}: ${pageError.message || 'Unknown error'}`);
+        }
+      }
+
+      // Show controls again
+      if (controlsElement) {
+        controlsElement.style.display = 'block';
+      }
+
+      // Download the PDF
+      const fileName = `delivery-note-${this.deliveryNoteNumber}-${new Date().toISOString().split('T')[0]}.pdf`;
+      console.log(`Saving PDF as: ${fileName}`);
+      pdf.save(fileName);
+      
+      console.log('PDF generation completed successfully');
+
+    } catch (error: any) {
+      console.error('Error generating PDF:', error);
+      
+      // Provide more specific error messages
+      let errorMessage = 'Error generating PDF. Please try again.';
+      
+      if (error.message && error.message.includes('Print pages element not found')) {
+        errorMessage = 'PDF generation failed: Could not find the document content. Please refresh and try again.';
+      } else if (error.message && error.message.includes('No pages found')) {
+        errorMessage = 'PDF generation failed: No content to convert. Please check if the delivery note has data.';
+      } else if (error.message && error.message.includes('Failed to process page')) {
+        errorMessage = 'PDF generation failed: Error processing document pages. Please try again.';
+      } else if (error.message && error.message.includes('html2canvas')) {
+        errorMessage = 'PDF generation failed: Error converting document to image. Please try again.';
+      } else if (error.message && error.message.includes('jsPDF')) {
+        errorMessage = 'PDF generation failed: Error creating PDF document. Please try again.';
+      }
+      
+      alert(errorMessage);
+    } finally {
+      this.isGeneratingPDF = false;
+    }
+  }
+
   printDeliveryNote(): void {
-    window.print();
+    // Keep the old print method for backward compatibility
+    this.exportToPDF();
   }
 
   close(): void {

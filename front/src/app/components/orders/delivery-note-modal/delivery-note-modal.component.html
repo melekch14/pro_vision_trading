@@ -1,103 +1,238 @@
 <div class="delivery-note-container">
-  <div class="delivery-note-header">
-    <div class="company-info">
-      <h1>BON DE LIVRAISON</h1>
-      <p class="company-name">Pro Vision Trading</p>
-      <p>123 Business Street</p>
-      <p>City, Country</p>
-      <p>Phone: +123 456 7890</p>
-    </div>
-    <div class="delivery-info">
-      <div class="info-group">
-        <label>N° BL:</label>
-        <span>{{ deliveryNoteNumber }}</span>
-      </div>
-      <div class="info-group">
-        <label>Date:</label>
-        <span>{{ currentDate }}</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="client-info minimized single-line">
-    <h2>Informations Client</h2>
-    <div class="info-single-line">
-      <span><strong>Raison Sociale:</strong> {{ customerDetails?.raison_social }}</span>
-      <span class="separator">|</span>
-      <span><strong>Téléphone:</strong> {{ customerDetails?.tel }}</span>
-      <span class="separator">|</span>
-      <span><strong>Adresse:</strong> {{ customerDetails?.adresse }}</span>
-    </div>
-  </div>
-
-  <div class="orders-table">
-    <table>
-      <thead>
-        <tr>
-          <th>N° Commande</th>
-          <th>Date</th>
-          <th>Produit</th>
-          <th>Type de commande</th>
-          <th>Type de correction</th>
-          <th>Prix</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let order of data.orders">
-          <!-- If both articles are the same, show one line with x2 -->
-          <tr *ngIf="order.article_libelle && order.article_libelle2 && order.article_libelle === order.article_libelle2">
-            <td>{{ order.order_id }}</td>
-            <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
-            <td>
-              {{ order.article_libelle }} <span style="font-weight:bold;">x2</span>
-              <span *ngIf="order.isFabrication1 || order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
-            </td>
-            <td>{{ formatValue(order.typeCommande) }}</td>
-            <td>{{ formatValue(order.typeCorrection) }}</td>
-            <td>{{ sumPrices(order.price, order.price2) | currency:'EUR':'symbol':'1.2-2' }}</td>
-          </tr>
-          <!-- If articles are different, show two lines -->
-          <tr *ngIf="!order.article_libelle2 || order.article_libelle !== order.article_libelle2">
-            <td>{{ order.order_id }}</td>
-            <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
-            <td>
-              {{ order.article_libelle || 'Chargement...' }}
-              <span *ngIf="order.isFabrication1" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
-            </td>
-            <td>{{ formatValue(order.typeCommande) }}</td>
-            <td>{{ formatValue(order.typeCorrection) }}</td>
-            <td>{{ order.price | currency:'EUR':'symbol':'1.2-2' }}</td>
-          </tr>
-          <tr *ngIf="order.article_libelle2 && order.article_libelle !== order.article_libelle2" class="second-product-row">
-            <td></td>
-            <td></td>
-            <td>
-              + {{ order.article_libelle2 || 'Chargement...' }}
-              <span *ngIf="order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
-            </td>
-            <td></td>
-            <td></td>
-            <td>{{ (order.price2 || 0) | currency:'EUR':'symbol':'1.2-2' }}</td>
-          </tr>
-        </ng-container>
-        <tr class="total-row">
-          <td colspan="5" class="text-right"><strong>Total</strong></td>
-          <td><strong>{{ totalAmount | currency:'EUR':'symbol':'1.2-2' }}</strong></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="delivery-note-footer">
-    <div class="action-buttons">
-      <button class="print-button" (click)="printDeliveryNote()">
-        <i class="material-icons">print</i>
-        Imprimer
+  <!-- Print-only pagination container -->
+  <div class="print-pages">
+    <!-- Print view controls -->
+    <div style="background: #e3f2fd; padding: 10px; margin-bottom: 20px; border-radius: 5px; text-align: center;">
+      <h4>Print View Mode</h4>
+      <p>This is the paginated view that will be exported as PDF</p>
+      <button (click)="exportToPDF()" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; margin-right: 10px;" [disabled]="isGeneratingPDF">
+        {{ isGeneratingPDF ? 'Generating PDF...' : 'Export as PDF' }}
       </button>
-      <button class="close-button" (click)="close()">
-        <i class="material-icons">close</i>
-        Fermer
+      <button (click)="togglePrintView()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px;">
+        Back to Screen View
       </button>
+    </div>
+    
+    <div *ngFor="let page of pages" class="page" [class.last-page]="page.isLastPage">
+      <!-- Header - appears on every page -->
+      <div class="delivery-note-header">
+        <div class="company-info">
+          <h1>BON DE LIVRAISON</h1>
+          <p class="company-name">Pro Vision Trading</p>
+          <p>123 Business Street</p>
+          <p>City, Country</p>
+          <p>Phone: +123 456 7890</p>
+        </div>
+        <div class="delivery-info">
+          <div class="info-group">
+            <label>N° BL:</label>
+            <span>{{ deliveryNoteNumber }}</span>
+          </div>
+          <div class="info-group">
+            <label>Date:</label>
+            <span>{{ currentDate }}</span>
+          </div>
+          <div class="info-group">
+            <label>Page:</label>
+            <span>{{ page.pageNumber }}/{{ pages.length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Client info - appears on first page only -->
+      <div class="client-info minimized single-line" *ngIf="page.pageNumber === 1">
+        <h2>Informations Client</h2>
+        <div class="info-single-line">
+          <span><strong>Raison Sociale:</strong> {{ customerDetails?.raison_social }}</span>
+          <span class="separator">|</span>
+          <span><strong>Téléphone:</strong> {{ customerDetails?.tel }}</span>
+          <span class="separator">|</span>
+          <span><strong>Adresse:</strong> {{ customerDetails?.adresse }}</span>
+        </div>
+      </div>
+
+      <!-- Orders table for this page -->
+      <div class="orders-table">
+        <table>
+          <thead>
+            <tr>
+              <th>N° Commande</th>
+              <th>Date</th>
+              <th>Produit</th>
+              <th>Type de commande</th>
+              <th>Type de correction</th>
+              <th>Prix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let order of page.orders">
+              <!-- If both articles are the same, show one line with x2 -->
+              <tr *ngIf="order.article_libelle && order.article_libelle2 && order.article_libelle === order.article_libelle2">
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  {{ order.article_libelle }} <span style="font-weight:bold;">x2</span>
+                  <span *ngIf="order.isFabrication1 || order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+                </td>
+                <td>{{ formatValue(order.typeCommande) }}</td>
+                <td>{{ formatValue(order.typeCorrection) }}</td>
+                <td>{{ sumPrices(order.price, order.price2) | currency:'EUR':'symbol':'1.2-2' }}</td>
+              </tr>
+              <!-- If articles are different, show two lines -->
+              <tr *ngIf="!order.article_libelle2 || order.article_libelle !== order.article_libelle2">
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  {{ order.article_libelle || 'Chargement...' }}
+                  <span *ngIf="order.isFabrication1" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+                </td>
+                <td>{{ formatValue(order.typeCommande) }}</td>
+                <td>{{ formatValue(order.typeCorrection) }}</td>
+                <td>{{ order.price | currency:'EUR':'symbol':'1.2-2' }}</td>
+              </tr>
+              <tr *ngIf="order.article_libelle2 && order.article_libelle !== order.article_libelle2" class="second-product-row">
+                <td></td>
+                <td></td>
+                <td>
+                  + {{ order.article_libelle2 || 'Chargement...' }}
+                  <span *ngIf="order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+                </td>
+                <td></td>
+                <td></td>
+                <td>{{ (order.price2 || 0) | currency:'EUR':'symbol':'1.2-2' }}</td>
+              </tr>
+            </ng-container>
+            <!-- Total row - only on last page -->
+            <tr class="total-row" *ngIf="page.isLastPage">
+              <td colspan="5" class="text-right"><strong>Total</strong></td>
+              <td><strong>{{ totalAmount | currency:'EUR':'symbol':'1.2-2' }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen-only view (original layout) -->
+  <div class="screen-view">
+    <!-- Debug information -->
+    <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+      <h4>Debug Info:</h4>
+      <p>Current View: <strong>{{ isPrintView ? 'Print View' : 'Screen View' }}</strong></p>
+      <p>Total Pages: {{ pages.length }}</p>
+      <p>Total Orders: {{ data.orders.length }}</p>
+      <p>Total Amount: {{ totalAmount | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <div *ngFor="let page of pages; let i = index">
+        <p>Page {{ i + 1 }}: {{ page.orders.length }} orders, Last Page: {{ page.isLastPage }}</p>
+      </div>
+      <button (click)="togglePrintView()" style="margin-top: 10px; padding: 5px 10px; margin-right: 10px;">
+        {{ isPrintView ? 'Show Screen View' : 'Show Print View' }}
+      </button>
+      <button (click)="exportToPDF()" style="margin-top: 10px; padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 3px;" [disabled]="isGeneratingPDF">
+        {{ isGeneratingPDF ? 'Generating PDF...' : 'Export ' + (isPrintView ? 'Current View' : 'Paginated') + ' as PDF' }}
+      </button>
+    </div>
+
+    <div class="delivery-note-header">
+      <div class="company-info">
+        <h1>BON DE LIVRAISON</h1>
+        <p class="company-name">Pro Vision Trading</p>
+        <p>123 Business Street</p>
+        <p>City, Country</p>
+        <p>Phone: +123 456 7890</p>
+      </div>
+      <div class="delivery-info">
+        <div class="info-group">
+          <label>N° BL:</label>
+          <span>{{ deliveryNoteNumber }}</span>
+        </div>
+        <div class="info-group">
+          <label>Date:</label>
+          <span>{{ currentDate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="client-info minimized single-line">
+      <h2>Informations Client</h2>
+      <div class="info-single-line">
+        <span><strong>Raison Sociale:</strong> {{ customerDetails?.raison_social }}</span>
+        <span class="separator">|</span>
+        <span><strong>Téléphone:</strong> {{ customerDetails?.tel }}</span>
+        <span class="separator">|</span>
+        <span><strong>Adresse:</strong> {{ customerDetails?.adresse }}</span>
+      </div>
+    </div>
+
+    <div class="orders-table">
+      <table>
+        <thead>
+          <tr>
+            <th>N° Commande</th>
+            <th>Date</th>
+            <th>Produit</th>
+            <th>Type de commande</th>
+            <th>Type de correction</th>
+            <th>Prix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let order of data.orders">
+            <!-- If both articles are the same, show one line with x2 -->
+            <tr *ngIf="order.article_libelle && order.article_libelle2 && order.article_libelle === order.article_libelle2">
+              <td>{{ order.order_id }}</td>
+              <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
+              <td>
+                {{ order.article_libelle }} <span style="font-weight:bold;">x2</span>
+                <span *ngIf="order.isFabrication1 || order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+              </td>
+              <td>{{ formatValue(order.typeCommande) }}</td>
+              <td>{{ formatValue(order.typeCorrection) }}</td>
+              <td>{{ sumPrices(order.price, order.price2) | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+            <!-- If articles are different, show two lines -->
+            <tr *ngIf="!order.article_libelle2 || order.article_libelle !== order.article_libelle2">
+              <td>{{ order.order_id }}</td>
+              <td>{{ order.order_datetime | date:'dd/MM/yyyy' }}</td>
+              <td>
+                {{ order.article_libelle || 'Chargement...' }}
+                <span *ngIf="order.isFabrication1" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+              </td>
+              <td>{{ formatValue(order.typeCommande) }}</td>
+              <td>{{ formatValue(order.typeCorrection) }}</td>
+              <td>{{ order.price | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+            <tr *ngIf="order.article_libelle2 && order.article_libelle !== order.article_libelle2" class="second-product-row">
+              <td></td>
+              <td></td>
+              <td>
+                + {{ order.article_libelle2 || 'Chargement...' }}
+                <span *ngIf="order.isFabrication2" style="color: #d9534f; font-weight: bold;"> (Fabrication)</span>
+              </td>
+              <td></td>
+              <td></td>
+              <td>{{ (order.price2 || 0) | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+          </ng-container>
+          <tr class="total-row">
+            <td colspan="5" class="text-right"><strong>Total</strong></td>
+            <td><strong>{{ totalAmount | currency:'EUR':'symbol':'1.2-2' }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="delivery-note-footer">
+      <div class="action-buttons">
+        <button class="print-button" (click)="exportToPDF()" [disabled]="isGeneratingPDF">
+          <i class="material-icons">{{ isGeneratingPDF ? 'hourglass_empty' : 'picture_as_pdf' }}</i>
+          {{ isGeneratingPDF ? 'Generating...' : 'Export PDF' }}
+        </button>
+        <button class="close-button" (click)="close()">
+          <i class="material-icons">close</i>
+          Fermer
+        </button>
+      </div>
     </div>
   </div>
 </div>

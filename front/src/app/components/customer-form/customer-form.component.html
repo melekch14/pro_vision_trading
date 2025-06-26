@@ -4,22 +4,16 @@
   </div>
 
   <div class="form-container">
-    <div class="form-header">
-      <h2>{{ formTitle }}</h2>
-    </div>
-
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
-
     <div *ngIf="successMessage" class="success-message">
       {{ successMessage }}
     </div>
-
     <form *ngIf="customer" (ngSubmit)="onSubmit()" #customerForm="ngForm">
       <div class="form-grid">
         <div class="form-group">
-          <label for="codee">Code {{ !isEditMode ? '(Généré automatiquement)' : '' }}</label>
+          <label for="codee">Code (Généré automatiquement)</label>
           <input
             type="text"
             id="codee"
@@ -31,9 +25,6 @@
           />
           <div *ngIf="codee.invalid && (codee.dirty || codee.touched)" class="validation-error">
             Code est requis
-          </div>
-          <div *ngIf="!isEditMode" class="field-hint">
-            Un code unique sera généré automatiquement lors de la création du client.
           </div>
         </div>
 

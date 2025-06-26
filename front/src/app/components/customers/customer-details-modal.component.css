@@ -1,33 +1,130 @@
-.modal-actions {
+/* Modal container */
+:host ::ng-deep .mat-dialog-container {
+  padding: 0;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+  max-width: 520px;
+  width: 100%;
+  background: #f8fafc;
+  max-height: 55vh;
+  overflow-y: auto;
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
+  flex-direction: column;
+  align-items: center;
 }
+
+.modal-header-bar {
+  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  padding: 8px 0 4px 0;
+  text-align: center;
+}
+.modal-header-bar h2 {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.modal-body {
+  background: #fff;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-actions-row {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 12px 0;
+  justify-content: space-between;
+  width: 98%;
+  max-width: 480px;
+}
+
+.wide-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin-bottom: 0;
+  margin-right: 0;
+}
+
 .accept-btn {
   background: #22c55e;
   color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
+  margin-right: 6px;
+}
+.accept-btn:hover {
+  background: #16a34a;
 }
 .decline-btn {
   background: #ef4444;
   color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
+  margin-right: 6px;
+}
+.decline-btn:hover {
+  background: #b91c1c;
 }
 .close-btn {
-  background: #e5e7eb;
+  background: #fff;
   color: #374151;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
+  border: 2px solid #e5e7eb;
+}
+.close-btn:hover {
+  background: #f3f4f6;
+}
+.material-icons {
+  font-size: 1.05em;
+  margin-right: 6px;
+}
+
+/* Responsive styles */
+@media (max-width: 520px) {
+  :host ::ng-deep .mat-dialog-container {
+    max-width: 98vw;
+    border-radius: 8px;
+    max-height: 70vh;
+  }
+  .modal-header-bar {
+    padding: 4px 0 2px 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  .modal-header-bar h2 {
+    font-size: 1rem;
+  }
+  .modal-body {
+    padding: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+  .modal-actions-row {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    width: 99%;
+    max-width: 99vw;
+  }
+  .wide-btn {
+    font-size: 0.92rem;
+    padding: 7px 0;
+    margin-right: 0;
+  }
 } 

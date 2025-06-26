@@ -27,6 +27,9 @@ export class CustomersComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
   showPendingOnly: boolean = false;
+  pendingCount: number = 0;
+  showForm: boolean = false;
+  editingCustomer: Customer | null = null;
   
   constructor(
     private customerService: CustomerService,
@@ -45,6 +48,7 @@ export class CustomersComponent implements OnInit {
     this.customerService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers = data;
+        this.updatePendingCount();
         this.applyFilters();
         this.isLoading = false;
       },
@@ -56,6 +60,10 @@ export class CustomersComponent implements OnInit {
     });
   }
   
+  updatePendingCount(): void {
+    this.pendingCount = this.customers.filter(c => c.status === 'pending').length;
+  }
+  
   applyFilters(): void {
     let filtered = [...this.customers];
     
@@ -64,6 +72,7 @@ export class CustomersComponent implements OnInit {
     } else {
       filtered = filtered.filter(customer => customer.status === 'active');
     }
+    this.updatePendingCount();
     
     // Apply code filter
     if (this.searchCode.trim()) {
@@ -229,7 +238,19 @@ export class CustomersComponent implements OnInit {
   }
   
   editCustomer(customer: Customer): void {
-    this.router.navigate(['/app/customers', customer.id]);
+    this.editingCustomer = { ...customer };
+    this.showForm = true;
+  }
+
+  openAddCustomerForm(): void {
+    this.editingCustomer = null;
+    this.showForm = true;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
+    this.editingCustomer = null;
+    this.loadCustomers(); // Refresh list after add/edit
   }
 
   deleteCustomer(id: number): void {

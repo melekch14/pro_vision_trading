@@ -74,23 +74,39 @@ const createClient = async (clientData) => {
 const updateClient = async (id, clientData) => {
     const updates = [];
     const values = [];
-    
+
+    // Get current client data
+    const currentClient = await getClientById(id);
+
     // Handle client code update with uniqueness check
     if (clientData.codee) {
-        // Check if the new code already exists for another client
-        const [existingClients] = await db.query('SELECT id FROM client WHERE codee = ? AND id != ?', [clientData.codee, id]);
-        if (existingClients.length > 0) {
-            throw new Error('Client code already exists');
+        const incomingCode = clientData.codee.trim();
+        const currentCode = (currentClient.codee || '').trim();
+        if (incomingCode !== currentCode) {
+            // Check if the new code already exists for another client
+            const [existingClients] = await db.query('SELECT id FROM client WHERE codee = ? AND id != ?', [clientData.codee, id]);
+            if (existingClients.length > 0) {
+                throw new Error('Client code already exists');
+            }
         }
         updates.push('codee = ?');
         values.push(clientData.codee);
     }
-    
+
     if (clientData.raison_social) {
         updates.push('raison_social = ?');
         values.push(clientData.raison_social);
     }
     if (clientData.email) {
+        const incomingEmail = clientData.email.trim().toLowerCase();
+        const currentEmail = (currentClient.email || '').trim().toLowerCase();
+        if (incomingEmail !== currentEmail) {
+            // Check if the new email already exists for another client
+            const [existingClients] = await db.query('SELECT id FROM client WHERE email = ? AND id != ?', [clientData.email, id]);
+            if (existingClients.length > 0) {
+                throw new Error('Email already exists');
+            }
+        }
         updates.push('email = ?');
         values.push(clientData.email);
     }

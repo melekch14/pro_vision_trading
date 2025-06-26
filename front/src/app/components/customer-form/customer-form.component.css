@@ -71,17 +71,15 @@
 }
 
 .form-container {
-  background: #f8fafc;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border: 1px solid #e5e7eb;
-  padding: 2px 8px 2px 8px;
-  margin: 0 auto;
-  max-width: 480px;
+  background-color: var(--card-background);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .form-header {
@@ -124,9 +122,10 @@
 }
 
 .form-group {
+  margin-top: 10px;
   display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .form-group.full-width {
@@ -178,11 +177,13 @@
   margin-top: 1px;
 }
 
-.form-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-  justify-content: flex-end;
+.btn {
+  padding: 4px 14px;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
 }
 
 .cancel-btn,

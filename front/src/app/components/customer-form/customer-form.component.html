@@ -1,192 +1,93 @@
-<div class="page-container">
-  <div class="header-row">
-    <h1 class="page-title">{{ formTitle }}</h1>
-  </div>
-
-  <div class="form-container">
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-    <div *ngIf="successMessage" class="success-message">
-      {{ successMessage }}
-    </div>
-    <form *ngIf="customer" (ngSubmit)="onSubmit()" #customerForm="ngForm">
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="codee">Code</label>
-          <input
-            type="text"
-            id="codee"
-            name="codee"
-            [(ngModel)]="customer.codee"
-            [required]="isEditMode"
-            [readonly]="readonly || !isEditMode"
-            #codee="ngModel"
-          />
-          <div *ngIf="codee.invalid && (codee.dirty || codee.touched)" class="validation-error">
-            Code est requis
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="raison_social">Raison Sociale</label>
-          <input
-            type="text"
-            id="raison_social"
-            name="raison_social"
-            [(ngModel)]="customer.raison_social"
-            required
-            [readonly]="readonly"
-            #raison_social="ngModel"
-          />
-          <div *ngIf="raison_social.invalid && (raison_social.dirty || raison_social.touched)" class="validation-error">
-            Raison Sociale est requise
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="customer.email"
-            required
-            email
-            [readonly]="readonly"
-            #email="ngModel"
-          />
-          <div *ngIf="email.invalid && (email.dirty || email.touched)" class="validation-error">
-            <div *ngIf="email.errors?.['required']">L'email est requis</div>
-            <div *ngIf="email.errors?.['email']">Veuillez entrer un email valide</div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="responsable">Responsable</label>
-          <input
-            type="text"
-            id="responsable"
-            name="responsable"
-            [(ngModel)]="customer.responsable"
-            required
-            [readonly]="readonly"
-            #responsable="ngModel"
-          />
-          <div *ngIf="responsable.invalid && (responsable.dirty || responsable.touched)" class="validation-error">
-            Responsable est requis
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="tel">Tel</label>
-          <input
-            type="tel"
-            id="tel"
-            name="tel"
-            [(ngModel)]="customer.tel"
-            required
-            [readonly]="readonly"
-            #tel="ngModel"
-          />
-          <div *ngIf="tel.invalid && (tel.dirty || tel.touched)" class="validation-error">
-            Tel is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="status">Status</label>
-          <select
-            id="status"
-            name="status"
-            [(ngModel)]="customer.status"
-            required
-            [disabled]="readonly"
-            #status="ngModel"
-          >
-            <option *ngFor="let status of customerStatuses" [value]="status">
-              {{ status | titlecase }}
-            </option>
-          </select>
-          <div *ngIf="status.invalid && (status.dirty || status.touched)" class="validation-error">
-            Status is required
-          </div>
-        </div>
-
-        <div class="form-group full-width">
-          <label for="adresse">Adresse</label>
-          <textarea
-            id="adresse"
-            name="adresse"
-            [(ngModel)]="customer.adresse"
-            required
-            rows="3"
-            [readonly]="readonly"
-            #adresse="ngModel"
-          ></textarea>
-          <div *ngIf="adresse.invalid && (adresse.dirty || adresse.touched)" class="validation-error">
-            Adresse is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="rccm">RCCM</label>
-          <input
-            type="text"
-            id="rccm"
-            name="rccm"
-            [(ngModel)]="customer.rccm"
-            required
-            [readonly]="readonly"
-            #rccm="ngModel"
-          />
-          <div *ngIf="rccm.invalid && (rccm.dirty || rccm.touched)" class="validation-error">
-            RCCM is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="ninea">NINEA</label>
-          <input
-            type="text"
-            id="ninea"
-            name="ninea"
-            [(ngModel)]="customer.ninea"
-            required
-            [readonly]="readonly"
-            #ninea="ngModel"
-          />
-          <div *ngIf="ninea.invalid && (ninea.dirty || ninea.touched)" class="validation-error">
-            NINEA is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="code_douane">Customs Code</label>
-          <input
-            type="text"
-            id="code_douane"
-            name="code_douane"
-            [(ngModel)]="customer.code_douane"
-            required
-            [readonly]="readonly"
-            #code_douane="ngModel"
-          />
-          <div *ngIf="code_douane.invalid && (code_douane.dirty || code_douane.touched)" class="validation-error">
-            Customs Code is required
-          </div>
+<div class="form-container">
+  <h3>Modifier le client</h3>
+  <form *ngIf="customerForm" [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="codee">Code</label>
+        <input type="text" class="form-control" id="codee" formControlName="codee" readonly>
+        <div *ngIf="customerForm.get('codee')?.invalid && (customerForm.get('codee')?.dirty || customerForm.get('codee')?.touched)" class="validation-error">
+          Code est requis
         </div>
       </div>
-
-      <div class="form-actions" *ngIf="!readonly">
-        <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="isLoading">
-          Cancel
-        </button>
-        <button type="submit" class="submit-btn" [disabled]="customerForm.invalid || isLoading">
-          <span *ngIf="isLoading" class="spinner"></span>
-          {{ isEditMode ? 'Update' : 'Create' }}
-        </button>
+      <div class="col-md-4 mb-3">
+        <label for="raison_social">Raison Sociale</label>
+        <input type="text" class="form-control" id="raison_social" formControlName="raison_social">
+        <div *ngIf="customerForm.get('raison_social')?.invalid && (customerForm.get('raison_social')?.dirty || customerForm.get('raison_social')?.touched)" class="validation-error">
+          Raison Sociale est requise
+        </div>
       </div>
-    </form>
-  </div>
+      <div class="col-md-4 mb-3">
+        <label for="adresse">Adresse</label>
+        <input type="text" class="form-control" id="adresse" formControlName="adresse">
+        <div *ngIf="customerForm.get('adresse')?.invalid && (customerForm.get('adresse')?.dirty || customerForm.get('adresse')?.touched)" class="validation-error">
+          Adresse est requise
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="tel">Téléphone</label>
+        <input type="text" class="form-control" id="tel" formControlName="tel">
+        <div *ngIf="customerForm.get('tel')?.invalid && (customerForm.get('tel')?.dirty || customerForm.get('tel')?.touched)" class="validation-error">
+          Téléphone est requis
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" formControlName="email">
+        <div *ngIf="customerForm.get('email')?.invalid && (customerForm.get('email')?.dirty || customerForm.get('email')?.touched)" class="validation-error">
+          <div *ngIf="customerForm.get('email')?.errors?.['required']">L'email est requis</div>
+          <div *ngIf="customerForm.get('email')?.errors?.['email']">Veuillez entrer un email valide</div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="responsable">Responsable</label>
+        <input type="text" class="form-control" id="responsable" formControlName="responsable">
+        <div *ngIf="customerForm.get('responsable')?.invalid && (customerForm.get('responsable')?.dirty || customerForm.get('responsable')?.touched)" class="validation-error">
+          Responsable est requis
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="status">Statut</label>
+        <select class="form-control" id="status" formControlName="status">
+          <option *ngFor="let status of customerStatuses" [value]="status">{{ status | titlecase }}</option>
+        </select>
+        <div *ngIf="customerForm.get('status')?.invalid && (customerForm.get('status')?.dirty || customerForm.get('status')?.touched)" class="validation-error">
+          Statut est requis
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="rccm">RCCM</label>
+        <input type="text" class="form-control" id="rccm" formControlName="rccm">
+        <div *ngIf="customerForm.get('rccm')?.invalid && (customerForm.get('rccm')?.dirty || customerForm.get('rccm')?.touched)" class="validation-error">
+          RCCM est requis
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="ninea">NINEA</label>
+        <input type="text" class="form-control" id="ninea" formControlName="ninea">
+        <div *ngIf="customerForm.get('ninea')?.invalid && (customerForm.get('ninea')?.dirty || customerForm.get('ninea')?.touched)" class="validation-error">
+          NINEA est requis
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="code_douane">Code Douane</label>
+        <input type="text" class="form-control" id="code_douane" formControlName="code_douane">
+        <div *ngIf="customerForm.get('code_douane')?.invalid && (customerForm.get('code_douane')?.dirty || customerForm.get('code_douane')?.touched)" class="validation-error">
+          Code Douane est requis
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary mr-2" [disabled]="customerForm.invalid || isLoading">
+        <span *ngIf="isLoading" class="spinner"></span>
+        Mettre à jour Client
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancelFormAction()" [disabled]="isLoading">Annuler</button>
+    </div>
+  </form>
 </div>

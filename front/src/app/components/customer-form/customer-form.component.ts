@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Customer, CustomerStatus } from '../../shared/models/customer.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-customer-form',
@@ -10,27 +11,35 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./customer-form.component.css'],
   standalone: false
 })
-export class CustomerFormComponent implements OnInit {
+export class CustomerFormComponent implements OnInit, OnChanges {
   @Input() readonly: boolean = false;
   @Input() customer: Customer | null = null;
+  @Output() cancelForm = new EventEmitter<void>();
+  @Output() updated = new EventEmitter<void>();
   isEditMode: boolean = false;
   formTitle: string = 'Add New Customer';
   isLoading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
   customerStatuses = Object.values(CustomerStatus);
+  customerForm!: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
     if (this.customer) {
-      // Use provided customer (readonly modal)
-      this.isEditMode = false;
-      this.formTitle = 'Détails du client';
+      this.isEditMode = true;
+      this.formTitle = 'Modifier le client';
+      this.customerForm.patchValue(this.customer);
+      if (this.readonly) {
+        this.customerForm.disable();
+      }
     } else {
       const customerId = this.route.snapshot.paramMap.get('id');
       if (customerId && customerId !== 'new') {
@@ -41,21 +50,26 @@ export class CustomerFormComponent implements OnInit {
     }
   }
 
-  getEmptyCustomer(): Customer {
-    return {
-      id: 0,
-      codee: '',
-      raison_social: '',
-      email: '',
-      responsable: '',
-      tel: '',
-      status: CustomerStatus.Active,
-      adresse: '',
-      password: '',
-      rccm: '',
-      ninea: '',
-      code_douane: ''
-    };
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['customer'] && this.customerForm && this.customer) {
+      this.customerForm.patchValue(this.customer);
+    }
+  }
+
+  initForm(): void {
+    this.customerForm = this.fb.group({
+      codee: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      raison_social: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      email: [{ value: '', disabled: this.readonly }, [Validators.required, Validators.email]],
+      responsable: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      tel: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      status: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      adresse: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      rccm: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      ninea: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      code_douane: [{ value: '', disabled: this.readonly }, [Validators.required]],
+      password: [{ value: '', disabled: this.readonly }]
+    });
   }
 
   loadCustomer(id: number): void {
@@ -63,6 +77,7 @@ export class CustomerFormComponent implements OnInit {
     this.http.get<Customer>(`${environment.apiUrl}/clients/${id}`).subscribe({
       next: (data) => {
         this.customer = data;
+        this.customerForm.patchValue(data);
         this.isLoading = false;
       },
       error: (error) => {
@@ -74,55 +89,31 @@ export class CustomerFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.validateForm()) {
-      this.isLoading = true;
-      this.errorMessage = '';
-      this.successMessage = '';
-
-      const request = this.isEditMode
-        ? this.http.put(`${environment.apiUrl}/clients/${this.customer?.id ?? ''}`, this.customer)
-        : this.http.post(`${environment.apiUrl}/clients`, this.customer);
-
-      request.subscribe({
-        next: (response: any) => {
-          this.isLoading = false;
-          if (!this.isEditMode && response.codee) {
-            this.successMessage = `Customer created successfully! Generated code: ${response.codee}`;
-            setTimeout(() => {
-              this.router.navigate(['/app/customers']);
-            }, 2000);
-          } else {
-            this.router.navigate(['/app/customers']);
-          }
-        },
-        error: (error) => {
-          console.error('Error saving customer:', error);
-          this.errorMessage = error.error?.message || 'Failed to save customer data';
-          this.isLoading = false;
-        }
-      });
-    }
-  }
-
-  validateForm(): boolean {
-    const baseValidation = (
-      (this.customer?.raison_social?.trim() ?? '') !== '' &&
-      (this.customer?.email?.trim() ?? '') !== '' &&
-      (this.customer?.responsable?.trim() ?? '') !== '' &&
-      (this.customer?.tel?.trim() ?? '') !== '' &&
-      (this.customer?.status?.trim() ?? '') !== '' &&
-      (this.customer?.adresse?.trim() ?? '') !== ''
-    );
-
-    // For edit mode, code is required. For new customers, password is required
+    if (this.customerForm.invalid) return;
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+    const formValue = this.customerForm.getRawValue();
+    let request;
     if (this.isEditMode) {
-      return baseValidation && (this.customer?.codee?.trim() ?? '') !== '';
+      request = this.http.put(`${environment.apiUrl}/clients/${this.customer?.id ?? ''}`, formValue);
     } else {
-      return baseValidation && (this.customer?.password?.trim() ?? '').length >= 6;
+      request = this.http.post(`${environment.apiUrl}/clients`, formValue);
     }
+    request.subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.updated.emit();
+      },
+      error: (error) => {
+        console.error('Error saving customer:', error);
+        this.errorMessage = error.error?.message || 'Failed to save customer data';
+        this.isLoading = false;
+      }
+    });
   }
 
-  cancel(): void {
-    this.router.navigate(['/app/customers']);
+  cancelFormAction(): void {
+    this.cancelForm.emit();
   }
 }

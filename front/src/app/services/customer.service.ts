@@ -36,4 +36,9 @@ export class CustomerService {
   deleteCustomer(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // Update customer status (admin approval/rejection)
+  updateCustomerStatus(id: number, status: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/status`, { status });
+  }
 } 

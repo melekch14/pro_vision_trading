@@ -38,6 +38,10 @@ const authenticateDynamicUser = async (email, password) => {
     if (!result) return null;
 
     const { user, role } = result;
+    if (role === 'client' && user.status === 'pending') {
+        // Prevent login if client is pending approval
+        throw new Error('Votre compte est en attente de validation par l\'administrateur.');
+    }
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return null;
 

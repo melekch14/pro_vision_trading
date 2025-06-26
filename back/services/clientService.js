@@ -60,7 +60,7 @@ const createClient = async (clientData) => {
             hashedPassword,
             clientData.responsable,
             clientData.tel,
-            clientData.status || 'active',
+            clientData.status || 'pending',
             clientData.adresse,
             clientData.rccm,
             clientData.ninea,

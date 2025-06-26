@@ -17,4 +17,7 @@ router.put('/:id', clientController.updateClient);
 // Delete client
 router.delete('/:id', clientController.deleteClient);
 
+// Update client status
+router.patch('/:id/status', clientController.updateClientStatus);
+
 module.exports = router; 

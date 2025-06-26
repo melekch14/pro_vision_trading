@@ -71,10 +71,25 @@ const deleteClient = async (req, res) => {
     }
 };
 
+// Update client status (approve/reject)
+const updateClientStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const success = await clientService.updateClient(req.params.id, { status });
+        if (!success) {
+            return res.status(404).json({ message: 'Client not found or no changes made' });
+        }
+        res.json({ message: 'Client status updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAllClients,
     getClientById,
     createClient,
     updateClient,
-    deleteClient
+    deleteClient,
+    updateClientStatus
 }; 

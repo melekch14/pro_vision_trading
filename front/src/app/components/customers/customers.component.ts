@@ -24,6 +24,7 @@ export class CustomersComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   isLoading: boolean = false;
   errorMessage: string = '';
+  showPendingOnly: boolean = false;
   
   constructor(
     private customerService: CustomerService,
@@ -41,7 +42,7 @@ export class CustomersComponent implements OnInit {
     this.customerService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers = data;
-        this.filteredCustomers = [...this.customers];
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -54,6 +55,10 @@ export class CustomersComponent implements OnInit {
   
   applyFilters(): void {
     let filtered = [...this.customers];
+    
+    if (this.showPendingOnly) {
+      filtered = filtered.filter(customer => customer.status === 'pending');
+    }
     
     // Apply code filter
     if (this.searchCode.trim()) {
@@ -154,6 +159,7 @@ export class CustomersComponent implements OnInit {
     this.searchResponsable = '';
     this.sortColumn = 'id';
     this.sortDirection = 'asc';
+    this.showPendingOnly = false;
     this.filteredCustomers = [...this.customers];
   }
 
@@ -239,5 +245,34 @@ export class CustomersComponent implements OnInit {
         }
       });
     }
+  }
+
+  togglePendingRequests(): void {
+    this.showPendingOnly = !this.showPendingOnly;
+    this.applyFilters();
+  }
+
+  approveCustomer(customer: Customer): void {
+    this.customerService.updateCustomerStatus(customer.id, 'active').subscribe({
+      next: () => {
+        customer.status = 'active';
+        this.applyFilters();
+      },
+      error: (error) => {
+        alert('Failed to approve customer: ' + (error.error?.message || error.message));
+      }
+    });
+  }
+
+  rejectCustomer(customer: Customer): void {
+    this.customerService.updateCustomerStatus(customer.id, 'inactive').subscribe({
+      next: () => {
+        customer.status = 'inactive';
+        this.applyFilters();
+      },
+      error: (error) => {
+        alert('Failed to reject customer: ' + (error.error?.message || error.message));
+      }
+    });
   }
 } 

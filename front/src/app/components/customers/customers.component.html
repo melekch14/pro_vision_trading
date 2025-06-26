@@ -23,6 +23,10 @@
           <span class="material-icons">picture_as_pdf</span>
           Exporter PDF
         </button>
+        <button class="export-btn" (click)="togglePendingRequests()">
+          <span class="material-icons">hourglass_empty</span>
+          {{ showPendingOnly ? 'Voir tous les clients' : 'Voir les demandes en attente' }}
+        </button>
       </div>
     </div>
 
@@ -105,6 +109,16 @@
               <button class="delete-btn" (click)="deleteCustomer(customer.id)">
                 <span class="material-icons">delete</span>
               </button>
+              <ng-container *ngIf="customer.status === 'pending'">
+                <button class="approve-btn" (click)="approveCustomer(customer)">
+                  <span class="material-icons">check_circle</span>
+                  Accepter
+                </button>
+                <button class="reject-btn" (click)="rejectCustomer(customer)">
+                  <span class="material-icons">cancel</span>
+                  Rejeter
+                </button>
+              </ng-container>
             </td>
           </tr>
         </tbody>

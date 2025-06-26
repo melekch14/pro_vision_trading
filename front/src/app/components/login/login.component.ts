@@ -53,7 +53,7 @@ export class LoginComponent {
           });
         },
         error: (err) => {
-          this.loginError = err.error?.message || 'Invalid login credentials';
+          this.loginError = err.error?.error || err.error?.message || 'Invalid login credentials';
         }
       });
     }

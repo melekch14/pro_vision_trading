@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Customer, CustomerStatus } from '../../shared/models/customer.model';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +11,8 @@ import { environment } from '../../../environments/environment';
   standalone: false
 })
 export class CustomerFormComponent implements OnInit {
-  customer: Customer = this.getEmptyCustomer();
+  @Input() readonly: boolean = false;
+  @Input() customer: Customer | null = null;
   isEditMode: boolean = false;
   formTitle: string = 'Add New Customer';
   isLoading: boolean = false;
@@ -26,12 +27,17 @@ export class CustomerFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const customerId = this.route.snapshot.paramMap.get('id');
-
-    if (customerId && customerId !== 'new') {
-      this.isEditMode = true;
-      this.formTitle = 'Edit Customer';
-      this.loadCustomer(+customerId);
+    if (this.customer) {
+      // Use provided customer (readonly modal)
+      this.isEditMode = false;
+      this.formTitle = 'Détails du client';
+    } else {
+      const customerId = this.route.snapshot.paramMap.get('id');
+      if (customerId && customerId !== 'new') {
+        this.isEditMode = true;
+        this.formTitle = 'Edit Customer';
+        this.loadCustomer(+customerId);
+      }
     }
   }
 
@@ -74,7 +80,7 @@ export class CustomerFormComponent implements OnInit {
       this.successMessage = '';
 
       const request = this.isEditMode
-        ? this.http.put(`${environment.apiUrl}/clients/${this.customer.id}`, this.customer)
+        ? this.http.put(`${environment.apiUrl}/clients/${this.customer?.id ?? ''}`, this.customer)
         : this.http.post(`${environment.apiUrl}/clients`, this.customer);
 
       request.subscribe({
@@ -100,19 +106,19 @@ export class CustomerFormComponent implements OnInit {
 
   validateForm(): boolean {
     const baseValidation = (
-      this.customer.raison_social.trim() !== '' &&
-      this.customer.email.trim() !== '' &&
-      this.customer.responsable.trim() !== '' &&
-      this.customer.tel.trim() !== '' &&
-      this.customer.status.trim() !== '' &&
-      this.customer.adresse.trim() !== ''
+      (this.customer?.raison_social?.trim() ?? '') !== '' &&
+      (this.customer?.email?.trim() ?? '') !== '' &&
+      (this.customer?.responsable?.trim() ?? '') !== '' &&
+      (this.customer?.tel?.trim() ?? '') !== '' &&
+      (this.customer?.status?.trim() ?? '') !== '' &&
+      (this.customer?.adresse?.trim() ?? '') !== ''
     );
 
     // For edit mode, code is required. For new customers, password is required
     if (this.isEditMode) {
-      return baseValidation && this.customer.codee.trim() !== '';
+      return baseValidation && (this.customer?.codee?.trim() ?? '') !== '';
     } else {
-      return baseValidation && this.customer.password.trim() !== '' && this.customer.password.length >= 6;
+      return baseValidation && (this.customer?.password?.trim() ?? '').length >= 6;
     }
   }
 

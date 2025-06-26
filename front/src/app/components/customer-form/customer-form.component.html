@@ -16,7 +16,7 @@
       {{ successMessage }}
     </div>
 
-    <form (ngSubmit)="onSubmit()" #customerForm="ngForm">
+    <form *ngIf="customer" (ngSubmit)="onSubmit()" #customerForm="ngForm">
       <div class="form-grid">
         <div class="form-group">
           <label for="codee">Code {{ !isEditMode ? '(Généré automatiquement)' : '' }}</label>
@@ -26,7 +26,7 @@
             name="codee"
             [(ngModel)]="customer.codee"
             [required]="isEditMode"
-            [readonly]="!isEditMode"
+            [readonly]="readonly || !isEditMode"
             #codee="ngModel"
           />
           <div *ngIf="codee.invalid && (codee.dirty || codee.touched)" class="validation-error">
@@ -45,6 +45,7 @@
             name="raison_social"
             [(ngModel)]="customer.raison_social"
             required
+            [readonly]="readonly"
             #raison_social="ngModel"
           />
           <div *ngIf="raison_social.invalid && (raison_social.dirty || raison_social.touched)" class="validation-error">
@@ -61,6 +62,7 @@
             [(ngModel)]="customer.email"
             required
             email
+            [readonly]="readonly"
             #email="ngModel"
           />
           <div *ngIf="email.invalid && (email.dirty || email.touched)" class="validation-error">
@@ -77,6 +79,7 @@
             name="responsable"
             [(ngModel)]="customer.responsable"
             required
+            [readonly]="readonly"
             #responsable="ngModel"
           />
           <div *ngIf="responsable.invalid && (responsable.dirty || responsable.touched)" class="validation-error">
@@ -92,6 +95,7 @@
             name="tel"
             [(ngModel)]="customer.tel"
             required
+            [readonly]="readonly"
             #tel="ngModel"
           />
           <div *ngIf="tel.invalid && (tel.dirty || tel.touched)" class="validation-error">
@@ -106,6 +110,7 @@
             name="status"
             [(ngModel)]="customer.status"
             required
+            [disabled]="readonly"
             #status="ngModel"
           >
             <option *ngFor="let status of customerStatuses" [value]="status">
@@ -125,6 +130,7 @@
             [(ngModel)]="customer.adresse"
             required
             rows="3"
+            [readonly]="readonly"
             #adresse="ngModel"
           ></textarea>
           <div *ngIf="adresse.invalid && (adresse.dirty || adresse.touched)" class="validation-error">
@@ -140,6 +146,7 @@
             name="rccm"
             [(ngModel)]="customer.rccm"
             required
+            [readonly]="readonly"
             #rccm="ngModel"
           />
           <div *ngIf="rccm.invalid && (rccm.dirty || rccm.touched)" class="validation-error">
@@ -155,6 +162,7 @@
             name="ninea"
             [(ngModel)]="customer.ninea"
             required
+            [readonly]="readonly"
             #ninea="ngModel"
           />
           <div *ngIf="ninea.invalid && (ninea.dirty || ninea.touched)" class="validation-error">
@@ -170,6 +178,7 @@
             name="code_douane"
             [(ngModel)]="customer.code_douane"
             required
+            [readonly]="readonly"
             #code_douane="ngModel"
           />
           <div *ngIf="code_douane.invalid && (code_douane.dirty || code_douane.touched)" class="validation-error">
@@ -178,7 +187,7 @@
         </div>
       </div>
 
-      <div class="form-actions">
+      <div class="form-actions" *ngIf="!readonly">
         <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="isLoading">
           Cancel
         </button>

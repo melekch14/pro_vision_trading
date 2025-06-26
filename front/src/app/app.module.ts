@@ -50,6 +50,7 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { CustomerDetailsModalComponent } from './components/customers/customer-details-modal.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
     StockDialogComponent,
     DashboardComponent,
     ResetPasswordComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    CustomerDetailsModalComponent
   ],
   imports: [
     BrowserModule,

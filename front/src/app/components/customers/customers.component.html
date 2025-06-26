@@ -103,22 +103,20 @@
             <td>{{ customer.ninea }}</td>
             <td>{{ customer.code_douane }}</td>
             <td class="actions-cell">
-              <button class="edit-btn" (click)="editCustomer(customer)">
-                <span class="material-icons">edit</span>
-              </button>
-              <button class="delete-btn" (click)="deleteCustomer(customer.id)">
-                <span class="material-icons">delete</span>
-              </button>
-              <ng-container *ngIf="customer.status === 'pending'">
-                <button class="approve-btn" (click)="approveCustomer(customer)">
-                  <span class="material-icons">check_circle</span>
-                  Accepter
-                </button>
-                <button class="reject-btn" (click)="rejectCustomer(customer)">
-                  <span class="material-icons">cancel</span>
-                  Rejeter
+              <ng-container *ngIf="customer.status === 'pending'; else normalActions">
+                <button class="view-btn" (click)="openCustomerDetailsDialog(customer)">
+                  <span class="material-icons">visibility</span>
+                  Voir données
                 </button>
               </ng-container>
+              <ng-template #normalActions>
+                <button class="edit-btn" (click)="editCustomer(customer)">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button class="delete-btn" (click)="deleteCustomer(customer.id)">
+                  <span class="material-icons">delete</span>
+                </button>
+              </ng-template>
             </td>
           </tr>
         </tbody>

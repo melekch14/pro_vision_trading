@@ -6,6 +6,8 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { UserOptions } from 'jspdf-autotable';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomerDetailsModalComponent } from './customer-details-modal.component';
 
 @Component({
   selector: 'app-customers',
@@ -28,7 +30,8 @@ export class CustomersComponent implements OnInit {
   
   constructor(
     private customerService: CustomerService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
   
   ngOnInit(): void {
@@ -272,6 +275,20 @@ export class CustomersComponent implements OnInit {
       },
       error: (error) => {
         alert('Failed to reject customer: ' + (error.error?.message || error.message));
+      }
+    });
+  }
+
+  openCustomerDetailsDialog(customer: Customer): void {
+    const dialogRef = this.dialog.open(CustomerDetailsModalComponent, {
+      width: '600px',
+      data: { customer }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'approved') {
+        this.approveCustomer(customer);
+      } else if (result === 'rejected') {
+        this.rejectCustomer(customer);
       }
     });
   }

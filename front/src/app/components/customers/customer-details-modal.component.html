@@ -1,0 +1,9 @@
+<h2>Détails du client</h2>
+<ng-container *ngIf="data.customer">
+  <app-customer-form [customer]="data.customer" [readonly]="true"></app-customer-form>
+  <div class="modal-actions">
+    <button *ngIf="data.customer.status === 'pending'" class="accept-btn" (click)="onAccept()">Accepter</button>
+    <button *ngIf="data.customer.status === 'pending'" class="decline-btn" (click)="onDecline()">Refuser</button>
+    <button class="close-btn" (click)="onClose()">Fermer</button>
+  </div>
+</ng-container> 

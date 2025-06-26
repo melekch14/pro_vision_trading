@@ -17,21 +17,14 @@
         </div>
       </div>
       <div class="col-md-4 mb-3">
-        <label for="adresse">Adresse</label>
-        <input type="text" class="form-control" id="adresse" formControlName="adresse">
-        <div *ngIf="customerForm.get('adresse')?.invalid && (customerForm.get('adresse')?.dirty || customerForm.get('adresse')?.touched)" class="validation-error">
-          Adresse est requise
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4 mb-3">
         <label for="tel">Téléphone</label>
         <input type="text" class="form-control" id="tel" formControlName="tel">
         <div *ngIf="customerForm.get('tel')?.invalid && (customerForm.get('tel')?.dirty || customerForm.get('tel')?.touched)" class="validation-error">
           Téléphone est requis
         </div>
       </div>
+    </div>
+    <div class="row">
       <div class="col-md-4 mb-3">
         <label for="email">Email</label>
         <input type="email" class="form-control" id="email" formControlName="email">
@@ -47,8 +40,6 @@
           Responsable est requis
         </div>
       </div>
-    </div>
-    <div class="row">
       <div class="col-md-4 mb-3">
         <label for="status">Statut</label>
         <select class="form-control" id="status" formControlName="status">
@@ -58,6 +49,8 @@
           Statut est requis
         </div>
       </div>
+    </div>
+    <div class="row">
       <div class="col-md-4 mb-3">
         <label for="rccm">RCCM</label>
         <input type="text" class="form-control" id="rccm" formControlName="rccm">
@@ -79,6 +72,15 @@
         <input type="text" class="form-control" id="code_douane" formControlName="code_douane">
         <div *ngIf="customerForm.get('code_douane')?.invalid && (customerForm.get('code_douane')?.dirty || customerForm.get('code_douane')?.touched)" class="validation-error">
           Code Douane est requis
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <label for="adresse">Adresse</label>
+        <textarea class="form-control" id="adresse" formControlName="adresse" rows="3"></textarea>
+        <div *ngIf="customerForm.get('adresse')?.invalid && (customerForm.get('adresse')?.dirty || customerForm.get('adresse')?.touched)" class="validation-error">
+          Adresse est requise
         </div>
       </div>
     </div>

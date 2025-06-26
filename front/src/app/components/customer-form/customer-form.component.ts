@@ -102,19 +102,17 @@ export class CustomerFormComponent implements OnInit {
     const baseValidation = (
       this.customer.raison_social.trim() !== '' &&
       this.customer.email.trim() !== '' &&
-      this.customer.password.trim() !== '' &&
-      this.customer.password.length >= 6 &&
       this.customer.responsable.trim() !== '' &&
       this.customer.tel.trim() !== '' &&
       this.customer.status.trim() !== '' &&
       this.customer.adresse.trim() !== ''
     );
 
-    // For edit mode, code is required. For new customers, it's optional (will be auto-generated)
+    // For edit mode, code is required. For new customers, password is required
     if (this.isEditMode) {
       return baseValidation && this.customer.codee.trim() !== '';
     } else {
-      return baseValidation;
+      return baseValidation && this.customer.password.trim() !== '' && this.customer.password.length >= 6;
     }
   }
 

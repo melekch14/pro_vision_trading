@@ -194,43 +194,18 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   onTypeCommandeChange() {
-    if (this.order.typeCommande !== 'precal') {
-      this.selectedFileName = '';
-      this.selectedFile = null;
-    }
-    
-    // Reset all fields below Type de commande
-    this.order.typeCorrection = '';
-    this.order.origineArticle = '';
-    this.order.produit = '';
-    this.order.produit2 = '';
-    
-    // Reset product selections and prices
-    this.selectedProduct = null;
-    this.selectedProduct2 = null;
-    this.selectedArticle = null;
-    this.selectedArticle2 = null;
-    this.price = 0;
-    this.price2 = 0;
-    this.totalPrice = 0;
-    
-    // Reset filtered products
-    this.filteredProducts = [];
-    this.filteredProducts2 = [];
-    
-    // Reset shipping and delivery
-    this.shippingType = '';
-    this.deliveryTime = '';
-    
+    this.resetFieldsBelowTypeCommande();
     this.updateStepEnabling();
   }
 
   onTypeCorrectionChange() {
+    this.resetFieldsBelowTypeCorrection();
     this.updateStepEnabling();
     // Filtering is now only handled in onOrigineArticleChange
   }
 
   onOrigineArticleChange() {
+    this.resetFieldsBelowOrigineArticle();
     this.updateStepEnabling();
     if (this.order.origineArticle === 'fabrication') {
       // Get all fabrication products without filtering by corrections
@@ -589,28 +564,22 @@ export class ClientCreateOrderComponent implements OnDestroy {
       alert('Veuillez remplir l\'adresse email.');
       return;
     }
-    
-    // Additional validation for second product
-    console.log('Debug - needsSecondProduct:', this.needsSecondProduct);
-    console.log('Debug - produit2:', this.order.produit2);
-    console.log('Debug - origineArticle:', this.order.origineArticle);
-    console.log('Debug - selectedProduct2:', this.selectedProduct2);
-    
-    if (this.needsSecondProduct) {
-      if (this.order.origineArticle === 'fabrication') {
-        // For fabrication, check if produit2 is selected
-        if (!this.order.produit2) {
-          alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
-          return;
-        }
-      } else {
-        // For stock, check if produit2 is selected
-        if (!this.order.produit2) {
-          alert('Veuillez sélectionner un produit pour l\'œil gauche (OG) car les valeurs de correction sont différentes.');
-          return;
-        }
+
+    // --- PRODUCT SELECTION VALIDATION ---
+    if (!this.needsSecondProduct) {
+      // Correction values are the same, only one product should be selected
+      if (!this.order.produit) {
+        alert('Veuillez sélectionner un produit avant de soumettre la commande.');
+        return;
+      }
+    } else {
+      // Correction values are different, two products should be selected
+      if (!this.order.produit || !this.order.produit2) {
+        alert('Veuillez sélectionner deux produits (un pour chaque œil) avant de soumettre la commande.');
+        return;
       }
     }
+    // --- END PRODUCT SELECTION VALIDATION ---
     
     // Validation for precal file requirement
     if (this.order.typeCommande === 'precal' && !this.selectedFile) {
@@ -736,39 +705,65 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   // Reset all fields below Type de commande when corrections change
   resetFieldsBelowTypeCommande() {
-    // Only reset if a type de commande was previously selected
-    if (this.order.typeCommande) {
-      // Reset type de commande
-      this.order.typeCommande = '';
-      
-      // Reset all fields below Type de commande
-      this.order.typeCorrection = '';
-      this.order.origineArticle = '';
-      this.order.produit = '';
-      this.order.produit2 = '';
-      
-      // Reset product selections and prices
-      this.selectedProduct = null;
-      this.selectedProduct2 = null;
-      this.selectedArticle = null;
-      this.selectedArticle2 = null;
-      this.price = 0;
-      this.price2 = 0;
-      this.totalPrice = 0;
-      
-      // Reset filtered products
-      this.filteredProducts = [];
-      this.filteredProducts2 = [];
-      
-      // Reset shipping and delivery
-      this.shippingType = '';
-      this.deliveryTime = '';
-      
-      // Reset file selection
-      this.selectedFileName = '';
-      this.selectedFile = null;
-      
-      this.updateStepEnabling();
-    }
+    // Do NOT reset typeCommande itself here
+    // Reset all fields below Type de commande
+    this.order.typeCorrection = '';
+    this.order.origineArticle = '';
+    this.order.produit = '';
+    this.order.produit2 = '';
+    // Reset product selections and prices
+    this.selectedProduct = null;
+    this.selectedProduct2 = null;
+    this.selectedArticle = null;
+    this.selectedArticle2 = null;
+    this.price = 0;
+    this.price2 = 0;
+    this.totalPrice = 0;
+    // Reset filtered products
+    this.filteredProducts = [];
+    this.filteredProducts2 = [];
+    // Reset shipping and delivery
+    this.shippingType = '';
+    this.deliveryTime = '';
+    // Reset file selection
+    this.selectedFileName = '';
+    this.selectedFile = null;
+  }
+
+  resetFieldsBelowTypeCorrection() {
+    this.order.origineArticle = '';
+    this.order.produit = '';
+    this.order.produit2 = '';
+    this.selectedProduct = null;
+    this.selectedProduct2 = null;
+    this.selectedArticle = null;
+    this.selectedArticle2 = null;
+    this.price = 0;
+    this.price2 = 0;
+    this.totalPrice = 0;
+    this.filteredProducts = [];
+    this.filteredProducts2 = [];
+    this.shippingType = '';
+    this.deliveryTime = '';
+    this.selectedFileName = '';
+    this.selectedFile = null;
+  }
+
+  resetFieldsBelowOrigineArticle() {
+    this.order.produit = '';
+    this.order.produit2 = '';
+    this.selectedProduct = null;
+    this.selectedProduct2 = null;
+    this.selectedArticle = null;
+    this.selectedArticle2 = null;
+    this.price = 0;
+    this.price2 = 0;
+    this.totalPrice = 0;
+    this.filteredProducts = [];
+    this.filteredProducts2 = [];
+    this.shippingType = '';
+    this.deliveryTime = '';
+    this.selectedFileName = '';
+    this.selectedFile = null;
   }
 } 

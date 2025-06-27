@@ -46,6 +46,7 @@
   border-radius: 8px;
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 .stock-header {
@@ -168,13 +169,21 @@
   border-collapse: collapse;
   margin-top: 16px;
   font-size: 0.875rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: transparent;
 }
 
 .stock-table th,
 .stock-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  line-height: 1.4;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 200px;
 }
 
 .stock-table th {
@@ -186,6 +195,12 @@
 
 .stock-table td {
   color: var(--text-color);
+  white-space: normal;
+  min-height: 2.8em; /* Allows for 2 lines of text */
+}
+
+.stock-table tbody tr {
+  background: #fafbfc;
 }
 
 .stock-table tr:hover {
@@ -214,8 +229,11 @@
 
 /* Actions */
 .actions-cell {
-  display: flex;
-  gap: 8px;
+  vertical-align: top;
+}
+
+.actions-cell button {
+  margin-bottom: 4px;
 }
 
 .edit-btn,
@@ -595,6 +613,7 @@
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  padding: 8px;
 }
 
 .stock-table {

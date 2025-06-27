@@ -1,7 +1,14 @@
 <div class="profile-requests-container">
   <div class="header">
-    <h2>Demandes de modification de profil</h2>
+    <div class="header-content">
+      <div class="header-title">
+        <mat-icon class="header-icon">manage_accounts</mat-icon>
+        <h2>Demandes de modification de profil</h2>
+      </div>
+      <p class="header-subtitle">Gérez les demandes de modification des informations client</p>
+    </div>
     <div class="filters">
+      <label class="filter-label">Statut:</label>
       <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-filter">
         <option value="pending">En attente</option>
         <option value="approved">Approuvées</option>
@@ -12,45 +19,78 @@
   </div>
 
   <div *ngIf="loading" class="loading">
-    <mat-spinner diameter="40"></mat-spinner>
+    <div class="loading-spinner">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
     <p>Chargement des demandes...</p>
   </div>
 
   <div *ngIf="error" class="error-message">
-    <mat-icon>error</mat-icon>
-    {{ error }}
+    <mat-icon>error_outline</mat-icon>
+    <div class="error-content">
+      <h4>Erreur de chargement</h4>
+      <p>{{ error }}</p>
+    </div>
   </div>
 
   <div *ngIf="!loading && !error" class="requests-list">
     <div *ngIf="requests.length === 0" class="no-requests">
-      <mat-icon>inbox</mat-icon>
-      <p>Aucune demande trouvée</p>
+      <div class="no-requests-icon">
+        <mat-icon>inbox</mat-icon>
+      </div>
+      <h3>Aucune demande trouvée</h3>
+      <p>Aucune demande de modification ne correspond aux critères sélectionnés.</p>
     </div>
 
     <div *ngFor="let request of requests" class="request-card" (click)="selectRequest(request)">
       <div class="request-header">
         <div class="client-info">
-          <h3>{{ request.raison_social || 'Client inconnu' }}</h3>
-          <p class="client-email">{{ request.email }}</p>
-          <p class="client-responsable">Responsable: {{ request.responsable }}</p>
+          <div class="client-main">
+            <h3>{{ request.raison_social || 'Client inconnu' }}</h3>
+            <span class="status-badge" [ngClass]="getStatusClass(request.status)">
+              {{ getStatusLabel(request.status) }}
+            </span>
+          </div>
+          <div class="client-details">
+            <div class="detail-item">
+              <mat-icon class="detail-icon">email</mat-icon>
+              <span>{{ request.email }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">person</mat-icon>
+              <span>{{ request.responsable }}</span>
+            </div>
+          </div>
         </div>
         <div class="request-meta">
-          <span class="status-badge" [ngClass]="getStatusClass(request.status)">
-            {{ getStatusLabel(request.status) }}
-          </span>
-          <span class="request-date">{{ request.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          <div class="meta-item">
+            <mat-icon class="meta-icon">schedule</mat-icon>
+            <span class="request-date">{{ request.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon class="meta-icon">edit</mat-icon>
+            <span class="changes-count">{{ getChangedFields(request).length }} modification(s)</span>
+          </div>
         </div>
       </div>
+      
       <div class="request-preview">
-        <p><strong>Modifications demandées:</strong></p>
+        <div class="preview-header">
+          <mat-icon class="preview-icon">compare_arrows</mat-icon>
+          <span>Modifications demandées</span>
+        </div>
         <div class="changes-preview">
-          <div *ngFor="let key of getChangedFields(request)" class="change-item">
-            <span class="field-name">{{ getFieldLabel(key) }}:</span>
+          <div *ngFor="let key of getChangedFields(request).slice(0, 3)" class="change-item">
+            <span class="field-name">{{ getFieldLabel(key) }}</span>
             <div class="change-comparison">
-              <span class="old-value">{{ getCurrentValue(request, key) }}</span>
+              <span class="old-value">{{ getCurrentValue(request, key) || 'Non définie' }}</span>
               <mat-icon class="arrow-icon">arrow_forward</mat-icon>
-              <span class="new-value">{{ getRequestedValue(request, key) }}</span>
+              <span class="new-value">{{ getRequestedValue(request, key) || 'Non définie' }}</span>
             </div>
+          </div>
+          <div *ngIf="getChangedFields(request).length > 3" class="more-changes">
+            <mat-icon>more_horiz</mat-icon>
+            <span>{{ getChangedFields(request).length - 3 }} autre(s) modification(s)</span>
           </div>
         </div>
       </div>
@@ -61,70 +101,157 @@
   <div *ngIf="selectedRequest" class="modal-overlay" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Révision de la demande</h3>
+        <div class="modal-title">
+          <mat-icon class="title-icon">assignment</mat-icon>
+          <div class="title-content">
+            <h3>Révision de la demande</h3>
+            <p class="title-subtitle">Demande #{{ selectedRequest.id }} - {{ selectedRequest.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+        </div>
         <button class="close-btn" (click)="closeModal()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
       
       <div class="modal-body">
-        <div class="client-details">
-          <h4>Client</h4>
-          <p><strong>Raison Sociale:</strong> {{ selectedRequest.raison_social }}</p>
-          <p><strong>Email:</strong> {{ selectedRequest.email }}</p>
-          <p><strong>Responsable:</strong> {{ selectedRequest.responsable }}</p>
+        <!-- Status Overview -->
+        <div class="status-overview" [ngClass]="getStatusClass(selectedRequest.status)">
+          <mat-icon class="status-icon">
+            {{ selectedRequest.status === 'pending' ? 'pending' : 
+               selectedRequest.status === 'approved' ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <div class="status-info">
+            <h4>{{ getStatusLabel(selectedRequest.status) }}</h4>
+            <p>{{ selectedRequest.status === 'pending' ? 'En attente de révision' : 
+                selectedRequest.status === 'approved' ? 'Demande approuvée' : 'Demande rejetée' }}</p>
+          </div>
         </div>
 
-        <div class="requested-changes">
-          <h4>Comparaison des modifications</h4>
-          <div class="changes-list">
-            <div *ngFor="let key of getChangedFields(selectedRequest)" class="change-item">
-              <div class="field-info">
-                <span class="field-label">{{ getFieldLabel(key) }}:</span>
-                <div class="comparison-display">
-                  <div class="current-value">
-                    <span class="label">Actuel:</span>
-                    <span class="value">{{ getCurrentValue(selectedRequest, key) }}</span>
-                  </div>
-                  <mat-icon class="arrow-icon">arrow_forward</mat-icon>
-                  <div class="requested-value">
-                    <span class="label">Demandé:</span>
-                    <span class="value">{{ getRequestedValue(selectedRequest, key) }}</span>
-                  </div>
-                </div>
+        <!-- Client Information Section -->
+        <div class="section client-details">
+          <div class="section-header">
+            <mat-icon class="section-icon">business</mat-icon>
+            <h4>Informations du client</h4>
+          </div>
+          <div class="client-info-grid">
+            <div class="info-item">
+              <div class="info-header">
+                <mat-icon class="info-icon">business</mat-icon>
+                <span class="info-label">Raison Sociale</span>
               </div>
+              <span class="info-value">{{ selectedRequest.raison_social || 'Non définie' }}</span>
+            </div>
+            <div class="info-item">
+              <div class="info-header">
+                <mat-icon class="info-icon">email</mat-icon>
+                <span class="info-label">Adresse email</span>
+              </div>
+              <span class="info-value">{{ selectedRequest.email || 'Non définie' }}</span>
+            </div>
+            <div class="info-item">
+              <div class="info-header">
+                <mat-icon class="info-icon">person</mat-icon>
+                <span class="info-label">Responsable</span>
+              </div>
+              <span class="info-value">{{ selectedRequest.responsable || 'Non défini' }}</span>
             </div>
           </div>
         </div>
 
-        <div class="admin-notes">
-          <h4>Notes d'administration (optionnel)</h4>
-          <textarea 
-            [(ngModel)]="adminNotes" 
-            placeholder="Ajoutez des notes pour le client..."
-            rows="3"
-            class="notes-textarea"></textarea>
+        <!-- Requested Changes Section -->
+        <div class="section requested-changes">
+          <div class="section-header">
+            <mat-icon class="section-icon">compare_arrows</mat-icon>
+            <h4>Modifications demandées</h4>
+            <span class="changes-count-badge">{{ getChangedFields(selectedRequest).length }} modification(s)</span>
+          </div>
+          <div class="changes-list">
+            <div *ngFor="let key of getChangedFields(selectedRequest)" class="change-item">
+              <div class="change-header">
+                <mat-icon class="field-icon">edit</mat-icon>
+                <span class="field-label">{{ getFieldLabel(key) }}</span>
+              </div>
+              <div class="comparison-container">
+                <div class="value-card current-value-card">
+                  <div class="value-header">
+                    <mat-icon class="value-icon">history</mat-icon>
+                    <span class="value-title">Valeur actuelle</span>
+                  </div>
+                  <div class="value-content">
+                    <span class="value-text">{{ getCurrentValue(selectedRequest, key) || 'Non définie' }}</span>
+                  </div>
+                </div>
+                
+                <div class="arrow-container">
+                  <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                </div>
+                
+                <div class="value-card requested-value-card">
+                  <div class="value-header">
+                    <mat-icon class="value-icon">edit</mat-icon>
+                    <span class="value-title">Valeur demandée</span>
+                  </div>
+                  <div class="value-content">
+                    <span class="value-text">{{ getRequestedValue(selectedRequest, key) || 'Non définie' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="getChangedFields(selectedRequest).length === 0" class="no-changes">
+              <mat-icon>info_outline</mat-icon>
+              <h4>Aucune modification détectée</h4>
+              <p>Cette demande ne contient aucune modification visible.</p>
+            </div>
+          </div>
         </div>
 
+        <!-- Admin Notes Section -->
+        <div class="section admin-notes">
+          <div class="section-header">
+            <mat-icon class="section-icon">note</mat-icon>
+            <h4>Notes d'administration</h4>
+            <span class="optional-badge">Optionnel</span>
+          </div>
+          <div class="notes-container">
+            <textarea 
+              [(ngModel)]="adminNotes" 
+              placeholder="Ajoutez des notes pour le client (raison de l'approbation ou du rejet)..."
+              rows="4"
+              class="notes-textarea"></textarea>
+            <div class="notes-help">
+              <mat-icon>info</mat-icon>
+              <span>Ces notes seront visibles par le client</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
         <div class="modal-actions">
-          <button 
-            *ngIf="selectedRequest.status === 'pending'"
-            class="approve-btn" 
-            (click)="approveRequest()">
-            <mat-icon>check</mat-icon>
-            Approuver
-          </button>
-          <button 
-            *ngIf="selectedRequest.status === 'pending'"
-            class="reject-btn" 
-            (click)="rejectRequest()">
-            <mat-icon>close</mat-icon>
-            Rejeter
-          </button>
-          <button class="cancel-btn" (click)="closeModal()">
-            <mat-icon>cancel</mat-icon>
-            Annuler
-          </button>
+          <div class="action-info">
+            <mat-icon>info</mat-icon>
+            <span>Choisissez une action pour traiter cette demande</span>
+          </div>
+          <div class="action-buttons">
+            <button 
+              *ngIf="selectedRequest.status === 'pending'"
+              class="action-btn approve-btn" 
+              (click)="approveRequest()">
+              <mat-icon>check_circle</mat-icon>
+              <span>Approuver</span>
+            </button>
+            <button 
+              *ngIf="selectedRequest.status === 'pending'"
+              class="action-btn reject-btn" 
+              (click)="rejectRequest()">
+              <mat-icon>cancel</mat-icon>
+              <span>Rejeter</span>
+            </button>
+            <button class="action-btn cancel-btn" (click)="closeModal()">
+              <mat-icon>close</mat-icon>
+              <span>Fermer</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -141,7 +141,15 @@ export class ProfileUpdateRequestsComponent implements OnInit {
     const currentData = request.requested_data.current_data;
     const requestedData = request.requested_data.requested_data;
     
+    // Filter out password-related fields
+    const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass'];
+    
     return Object.keys(requestedData).filter(key => {
+      // Skip password fields
+      if (passwordFields.some(pwdField => key.toLowerCase().includes(pwdField))) {
+        return false;
+      }
+      
       const currentValue = currentData[key] || '';
       const requestedValue = requestedData[key] || '';
       return currentValue !== requestedValue;

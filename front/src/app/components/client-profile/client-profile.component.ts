@@ -130,7 +130,14 @@ export class ClientProfileComponent implements OnInit {
     if (!requestedData || !requestedData.requested_data) {
       return [];
     }
-    return Object.keys(requestedData.requested_data || {});
+    
+    // Filter out password-related fields
+    const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass', 'password_reset_token', 'password_reset_expires'];
+    
+    return Object.keys(requestedData.requested_data || {}).filter(key => {
+      // Skip password fields
+      return !passwordFields.some(pwdField => key.toLowerCase().includes(pwdField));
+    });
   }
 
   getFieldLabel(key: string): string {

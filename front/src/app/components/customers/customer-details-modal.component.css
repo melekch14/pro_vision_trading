@@ -1,130 +1,391 @@
+/* Global styles to ensure modal opens at top */
+:host ::ng-deep .customer-details-modal {
+  position: relative !important;
+  top: 0 !important;
+  transform: none !important;
+}
+
+:host ::ng-deep .customer-details-modal .cdk-overlay-pane {
+  position: relative !important;
+  top: 0 !important;
+  transform: none !important;
+}
+
+/* Prevent any automatic scrolling */
+:host ::ng-deep .customer-details-modal .cdk-overlay-container {
+  overflow: visible !important;
+}
+
+:host ::ng-deep .customer-details-modal .cdk-global-overlay-wrapper {
+  overflow: visible !important;
+}
+
 /* Modal container */
 :host ::ng-deep .mat-dialog-container {
   padding: 0;
   border-radius: 18px !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
-  max-width: 520px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  max-width: 700px;
   width: 100%;
   background: #f8fafc;
-  max-height: 55vh;
-  overflow-y: auto;
+  max-height: 80vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  top: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  scroll-behavior: auto;
+}
+
+/* Ensure modal dialog is positioned at top */
+:host ::ng-deep .mat-dialog-content {
+  max-height: none;
+  overflow: visible;
+}
+
+/* Override Material Dialog positioning */
+:host ::ng-deep .cdk-overlay-pane {
+  position: relative !important;
+  top: 0 !important;
+  transform: none !important;
+}
+
+:host ::ng-deep .mat-dialog-container {
+  margin: 20px auto;
+  position: relative;
+  top: 0;
+  transform: none;
 }
 
 .modal-header-bar {
-  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
-  border-top-left-radius: 14px;
-  border-top-right-radius: 14px;
-  padding: 8px 0 4px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  padding: 20px 0;
   text-align: center;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
+
 .modal-header-bar h2 {
   color: #fff;
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-size: 1.4rem;
+  font-weight: 700;
   margin: 0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .modal-body {
   background: #fff;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
-  padding: 0;
+  padding: 24px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scroll-behavior: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Custom scrollbar styling for webkit browsers */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.customer-details-container {
+  width: 100%;
+  max-width: 650px;
+  padding-bottom: 20px;
+}
+
+.info-section {
+  margin-bottom: 28px;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.section-header .material-icons {
+  color: #667eea;
+  font-size: 1.4rem;
+  margin-right: 10px;
+  background: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-item label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.info-item .value {
+  font-size: 1rem;
+  color: #1e293b;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.status-active {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-inactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.address-container {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.address-value {
+  color: #1e293b;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .modal-actions-row {
   display: flex;
-  gap: 10px;
-  margin: 10px 0 12px 0;
-  justify-content: space-between;
-  width: 98%;
-  max-width: 480px;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+  max-width: 650px;
+  background: #fff;
+  padding: 20px 24px;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
 }
 
 .wide-btn {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 1;
+  max-width: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.95rem;
   font-weight: 600;
-  padding: 8px 0;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  margin-bottom: 0;
-  margin-right: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .accept-btn {
-  background: #22c55e;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff;
-  margin-right: 6px;
 }
+
 .accept-btn:hover {
-  background: #16a34a;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
 }
+
 .decline-btn {
-  background: #ef4444;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: #fff;
-  margin-right: 6px;
 }
+
 .decline-btn:hover {
-  background: #b91c1c;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
 }
+
 .close-btn {
-  background: #fff;
-  color: #374151;
-  border: 2px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 2px solid #cbd5e1;
 }
+
 .close-btn:hover {
-  background: #f3f4f6;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.2);
 }
+
 .material-icons {
-  font-size: 1.05em;
-  margin-right: 6px;
+  font-size: 1.1em;
+  margin-right: 8px;
 }
 
 /* Responsive styles */
-@media (max-width: 520px) {
+@media (max-width: 768px) {
   :host ::ng-deep .mat-dialog-container {
-    max-width: 98vw;
-    border-radius: 8px;
-    max-height: 70vh;
+    max-width: 95vw;
+    border-radius: 12px;
+    max-height: 85vh;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
+  
   .modal-header-bar {
-    padding: 4px 0 2px 0;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    padding: 16px 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
   }
+  
   .modal-header-bar h2 {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
+  
   .modal-body {
-    padding: 0;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    padding: 16px;
   }
+  
+  .info-section {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
   .modal-actions-row {
     flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    margin-bottom: 10px;
-    width: 99%;
-    max-width: 99vw;
+    gap: 10px;
+    padding: 16px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
   }
+  
   .wide-btn {
-    font-size: 0.92rem;
-    padding: 7px 0;
-    margin-right: 0;
+    max-width: none;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  :host ::ng-deep .mat-dialog-container {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .modal-header-bar {
+    padding: 12px 0;
+  }
+  
+  .modal-header-bar h2 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 12px;
+  }
+  
+  .info-section {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .section-header h3 {
+    font-size: 1rem;
+  }
+  
+  .info-item .value {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+  
+  .modal-actions-row {
+    padding: 12px;
   }
 } 

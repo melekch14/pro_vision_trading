@@ -304,8 +304,13 @@ export class CustomersComponent implements OnInit {
 
   openCustomerDetailsDialog(customer: Customer): void {
     const dialogRef = this.dialog.open(CustomerDetailsModalComponent, {
-      width: '600px',
-      data: { customer }
+      width: '700px',
+      maxHeight: '80vh',
+      position: { top: '20px' },
+      data: { customer },
+      panelClass: 'customer-details-modal',
+      autoFocus: false,
+      restoreFocus: false
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'approved') {

@@ -2,7 +2,77 @@
   <h2>Détails du client</h2>
 </div>
 <div class="modal-body">
-  <app-customer-form [customer]="data.customer" [readonly]="true"></app-customer-form>
+  <div class="customer-details-container">
+    <!-- Basic Information Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <span class="material-icons">business</span>
+        <h3>Informations de base</h3>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Code</label>
+          <span class="value">{{ data.customer.codee }}</span>
+        </div>
+        <div class="info-item">
+          <label>Raison Sociale</label>
+          <span class="value">{{ data.customer.raison_social }}</span>
+        </div>
+        <div class="info-item">
+          <label>Téléphone</label>
+          <span class="value">{{ data.customer.tel }}</span>
+        </div>
+        <div class="info-item">
+          <label>Email</label>
+          <span class="value">{{ data.customer.email }}</span>
+        </div>
+        <div class="info-item">
+          <label>Responsable</label>
+          <span class="value">{{ data.customer.responsable }}</span>
+        </div>
+        <div class="info-item">
+          <label>Statut</label>
+          <span class="value status-badge" [ngClass]="'status-' + data.customer.status">
+            {{ data.customer.status | titlecase }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal Information Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <span class="material-icons">gavel</span>
+        <h3>Informations légales</h3>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>RCCM</label>
+          <span class="value">{{ data.customer.rccm || 'Non défini' }}</span>
+        </div>
+        <div class="info-item">
+          <label>NINEA</label>
+          <span class="value">{{ data.customer.ninea || 'Non défini' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Code Douane</label>
+          <span class="value">{{ data.customer.code_douane || 'Non défini' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <span class="material-icons">location_on</span>
+        <h3>Adresse</h3>
+      </div>
+      <div class="address-container">
+        <span class="address-value">{{ data.customer.adresse || 'Adresse non définie' }}</span>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-actions-row">
     <button *ngIf="data.customer.status === 'pending'" class="accept-btn wide-btn" (click)="onAccept()">
       <span class="material-icons">check</span> Accepter

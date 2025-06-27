@@ -1,8 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Customer } from '../../shared/models/customer.model';
-import { CustomerFormComponent } from '../customer-form/customer-form.component';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-customer-details-modal',

@@ -21,15 +21,15 @@
         <thead>
           <tr>
             <th></th>
-            <th *ngFor="let sphere of filteredSphereValues" class="sphere-header">
-              {{sphere}}
+            <th *ngFor="let cylindre of filteredCylindreValues" class="cylindre-header">
+              {{cylindre}}
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let cylindre of filteredCylindreValues">
-            <td class="cylindre-header">{{cylindre}}</td>
-            <td *ngFor="let sphere of filteredSphereValues"
+          <tr *ngFor="let sphere of filteredSphereValues">
+            <td class="sphere-header">{{sphere}}</td>
+            <td *ngFor="let cylindre of filteredCylindreValues"
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
                 [class.non-zero]="hasNonZeroValue(sphere, cylindre)">

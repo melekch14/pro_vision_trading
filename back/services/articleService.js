@@ -7,14 +7,16 @@ const createArticle = async (article) => {
             code, libelle, diametre, foyer_id, indice_id, design_id, 
             couleur_photo_id, traitement_id, prix_achat, tva, prix_vente, 
             code_a_barre, expiration, fournisseur_id, typeArticle_id, 
-            article_subfamily_id, type_stock, origineArticle
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            article_subfamily_id, type_stock, origineArticle,
+            min_sphere, max_sphere, min_cylindre, max_cylindre, min_addition, max_addition
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
             article.prix_achat, article.tva, article.prix_vente, article.code_a_barre, 
             article.expiration, article.fournisseur_id, article.typeArticle_id, 
-            article.article_subfamily_id, article.type_stock, article.origineArticle
+            article.article_subfamily_id, article.type_stock, article.origineArticle,
+            article.min_sphere, article.max_sphere, article.min_cylindre, article.max_cylindre, article.min_addition, article.max_addition
         ]
     );
     return result.insertId;
@@ -72,14 +74,16 @@ const updateArticle = async (id, article) => {
             design_id = ?, couleur_photo_id = ?, traitement_id = ?, 
             prix_achat = ?, tva = ?, prix_vente = ?, code_a_barre = ?, 
             expiration = ?, fournisseur_id = ?, typeArticle_id = ?, 
-            article_subfamily_id = ?, type_stock = ?, origineArticle = ?
+            article_subfamily_id = ?, type_stock = ?, origineArticle = ?,
+            min_sphere = ?, max_sphere = ?, min_cylindre = ?, max_cylindre = ?, min_addition = ?, max_addition = ?
         WHERE id = ?`,
         [
             article.code, article.libelle, article.diametre, article.foyer_id, article.indice_id,
             article.design_id, article.couleur_photo_id, article.traitement_id,
             article.prix_achat, article.tva, article.prix_vente, article.code_a_barre, 
             article.expiration, article.fournisseur_id, article.typeArticle_id, 
-            article.article_subfamily_id, article.type_stock, article.origineArticle, id
+            article.article_subfamily_id, article.type_stock, article.origineArticle,
+            article.min_sphere, article.max_sphere, article.min_cylindre, article.max_cylindre, article.min_addition, article.max_addition, id
         ]
     );
 };

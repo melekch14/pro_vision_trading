@@ -116,7 +116,13 @@ export class ArticleManagerComponent implements OnInit {
       fournisseur_id: ['', Validators.required],
       typeArticle_id: ['', Validators.required],
       type_stock: ['', Validators.required],
-      origineArticle: ['stock', Validators.required] // Add new field with default value 'stock'
+      origineArticle: ['stock', Validators.required],
+      min_sphere: [null],
+      max_sphere: [null],
+      min_cylindre: [null],
+      max_cylindre: [null],
+      min_addition: [null],
+      max_addition: [null]
     });
 
     // Subscribe to subfamily changes
@@ -351,6 +357,15 @@ export class ArticleManagerComponent implements OnInit {
     // Ensure TVA is set to 18 after reset
     this.setTvaValue();
     this.editingArticle = null;
+    // Reset min/max fields
+    this.articleForm.patchValue({
+      min_sphere: null,
+      max_sphere: null,
+      min_cylindre: null,
+      max_cylindre: null,
+      min_addition: null,
+      max_addition: null
+    });
   }
 
   applyFilters(): void {

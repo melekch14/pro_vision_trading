@@ -226,6 +226,39 @@
                     </select>
                   </div>
                 </div>
+                <!-- Min/Max Sphere -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="min_sphere">Min Sphère</label>
+                    <input type="number" id="min_sphere" formControlName="min_sphere" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="max_sphere">Max Sphère</label>
+                    <input type="number" id="max_sphere" formControlName="max_sphere" class="form-control">
+                  </div>
+                </div>
+                <!-- Min/Max Cylandre (if type_stock == 'cylindre') -->
+                <div class="form-row" *ngIf="articleForm.get('type_stock')?.value === 'cylindre'">
+                  <div class="form-group">
+                    <label for="min_cylindre">Min Cylindre</label>
+                    <input type="number" id="min_cylindre" formControlName="min_cylindre" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="max_cylindre">Max Cylindre</label>
+                    <input type="number" id="max_cylindre" formControlName="max_cylindre" class="form-control">
+                  </div>
+                </div>
+                <!-- Min/Max Addition (if type_stock == 'addition') -->
+                <div class="form-row" *ngIf="articleForm.get('type_stock')?.value === 'addition'">
+                  <div class="form-group">
+                    <label for="min_addition">Min Addition</label>
+                    <input type="number" id="min_addition" formControlName="min_addition" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="max_addition">Max Addition</label>
+                    <input type="number" id="max_addition" formControlName="max_addition" class="form-control">
+                  </div>
+                </div>
               </div>
             </div>
 

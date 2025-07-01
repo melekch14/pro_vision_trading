@@ -23,6 +23,12 @@ export interface Article {
   article_subfamily_id?: number;
   type_stock: string;
   origineArticle: 'stock' | 'fabrication';
+  min_sphere?: number | null;
+  max_sphere?: number | null;
+  min_cylindre?: number | null;
+  max_cylindre?: number | null;
+  min_addition?: number | null;
+  max_addition?: number | null;
   // Display names from joins
   foyer_name?: string;
   indice_name?: string;

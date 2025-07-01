@@ -22,7 +22,7 @@ interface DialogStockEntry {
   standalone: false
 })
 export class StockDialogComponent implements OnInit {
-  sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
+  sphereValues: number[] = [];
   cylindreValues: number[] = [];
   stockEntries: DialogStockEntry[] = [];
   existingStock: ApiStockEntry[] = [];
@@ -37,19 +37,55 @@ export class StockDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.setSphereValues();
     this.setCylindreValues();
     this.initializeStockEntries();
     this.loadExistingStock();
   }
 
+  private setSphereValues(): void {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa ", this.data.article.min_sphere);
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa ", this.data.article.max_sphere);
+    
+    // Convert to numbers and check if they are valid
+    const min = this.data.article.min_sphere !== null && this.data.article.min_sphere !== undefined && !isNaN(Number(this.data.article.min_sphere)) 
+      ? Number(this.data.article.min_sphere) 
+      : -4;
+    const max = this.data.article.max_sphere !== null && this.data.article.max_sphere !== undefined && !isNaN(Number(this.data.article.max_sphere)) 
+      ? Number(this.data.article.max_sphere) 
+      : 4;
+    
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa ", min);
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa ", max);
+    this.sphereValues = this.generateRange(min, max, 0.25);
+  }
+
   private setCylindreValues(): void {
     if (this.data.article.type_stock === 'addition') {
-      // Only positive values, 0 to 5, step 0.25
-      this.cylindreValues = Array.from({length: 21}, (_, i) => 0 + (i * 0.25));
+      const min = this.data.article.min_addition !== null && this.data.article.min_addition !== undefined && !isNaN(Number(this.data.article.min_addition)) 
+        ? Number(this.data.article.min_addition) 
+        : 0;
+      const max = this.data.article.max_addition !== null && this.data.article.max_addition !== undefined && !isNaN(Number(this.data.article.max_addition)) 
+        ? Number(this.data.article.max_addition) 
+        : 5;
+      this.cylindreValues = this.generateRange(min, max, 0.25);
     } else {
-      // Range: -5 to 5, step 0.25
-      this.cylindreValues = Array.from({length: 41}, (_, i) => -5 + (i * 0.25));
+      const min = this.data.article.min_cylindre !== null && this.data.article.min_cylindre !== undefined && !isNaN(Number(this.data.article.min_cylindre)) 
+        ? Number(this.data.article.min_cylindre) 
+        : -5;
+      const max = this.data.article.max_cylindre !== null && this.data.article.max_cylindre !== undefined && !isNaN(Number(this.data.article.max_cylindre)) 
+        ? Number(this.data.article.max_cylindre) 
+        : 5;
+      this.cylindreValues = this.generateRange(min, max, 0.25);
     }
+  }
+
+  private generateRange(min: number, max: number, step: number): number[] {
+    const values: number[] = [];
+    for (let v = min; v <= max + 0.001; v += step) {
+      values.push(Number(v.toFixed(2)));
+    }
+    return values;
   }
 
   private initializeStockEntries(): void {

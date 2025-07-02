@@ -19,6 +19,10 @@
       </div>
       
       <div class="bulk-actions">
+        <div class="selection-status" *ngIf="isSelecting">
+          <span class="material-icons">drag_indicator</span>
+          Mode sélection active - Glissez pour sélectionner
+        </div>
         <div class="bulk-input">
           <label>Prix en lot :</label>
           <input type="number" 
@@ -42,14 +46,15 @@
       <p><strong>Instructions :</strong></p>
       <ul>
         <li>Cliquez sur une cellule pour la sélectionner</li>
-        <li>Maintenez Ctrl/Cmd pour sélectionner plusieurs cellules</li>
+        <li>Cliquez et glissez pour sélectionner plusieurs cellules (comme Excel)</li>
+        <li>Maintenez Ctrl/Cmd + clic pour ajouter/supprimer des cellules individuelles</li>
         <li>Entrez un prix et cliquez "Appliquer" pour définir le prix des cellules sélectionnées</li>
         <li>Seules les cellules avec du stock peuvent avoir des prix suppléments</li>
       </ul>
     </div>
 
     <div class="price-grid">
-      <table>
+      <table (dragstart)="$event.preventDefault()">
         <thead>
           <tr>
             <th></th>
@@ -66,8 +71,11 @@
                 [class.has-stock]="hasStock(sphere, cylindre)"
                 [class.has-price]="hasNonZeroPrice(sphere, cylindre)"
                 [class.selected]="isCellSelected(sphere, cylindre)"
+                [class.selecting]="isSelecting"
                 [class.no-stock]="!hasStock(sphere, cylindre)"
-                (click)="onCellClick(sphere, cylindre, $event)">
+                (mousedown)="onCellMouseDown(sphere, cylindre, $event)"
+                (mouseenter)="onCellMouseEnter(sphere, cylindre, $event)"
+                (mouseup)="onCellMouseUp()">
               <div *ngIf="hasStock(sphere, cylindre)" class="price-content">
                 <input type="number"
                        min="0"

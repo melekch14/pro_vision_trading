@@ -55,6 +55,23 @@
   gap: 12px;
   align-items: flex-end;
 
+  .selection-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    animation: pulse 1.5s infinite;
+
+    .material-icons {
+      font-size: 16px;
+    }
+  }
+
   .bulk-input {
     display: flex;
     align-items: center;
@@ -130,6 +147,7 @@
   overflow-x: auto;
   margin: 10px 0;
   max-width: 100%;
+  user-select: none; // Prevent text selection during drag operations
 
   table {
     margin: 0 auto;
@@ -172,6 +190,7 @@
     position: relative;
     min-width: 60px;
     height: 40px;
+    user-select: none; // Prevent text selection during drag
     
     &.has-stock {
       background-color: var(--success-bg) !important;
@@ -202,6 +221,10 @@
         color: white !important;
         border-color: white;
       }
+    }
+
+    &.selecting {
+      cursor: crosshair;
     }
 
     &.no-stock {
@@ -258,6 +281,18 @@
     text-align: center;
     line-height: 1.2;
     padding: 2px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

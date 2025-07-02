@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 interface DialogSupplementaryPrice {
   sphere: number;
   cylindre: number | null;
+  addition: number | null;
   prix_supplement: number;
   stock_id?: number;
   modified?: boolean;
@@ -33,6 +34,8 @@ export class SupplementaryPriceDialogComponent implements OnInit {
   filterCylindre: number | null = null;
   selectedCells: Set<string> = new Set();
   bulkPrice: number = 0;
+  isSelecting: boolean = false;
+  selectionStart: { sphere: number; cylindre: number | null } | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<SupplementaryPriceDialogComponent>,
@@ -45,8 +48,15 @@ export class SupplementaryPriceDialogComponent implements OnInit {
   ngOnInit(): void {
     this.setSphereValues();
     this.setCylindreValues();
-    this.initializeSupplementaryPrices();
     this.loadExistingData();
+    
+    // Add global mouse up listener
+    document.addEventListener('mouseup', this.onGlobalMouseUp.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    // Remove global mouse up listener
+    document.removeEventListener('mouseup', this.onGlobalMouseUp.bind(this));
   }
 
   private setSphereValues(): void {
@@ -90,46 +100,73 @@ export class SupplementaryPriceDialogComponent implements OnInit {
 
   private initializeSupplementaryPrices(): void {
     this.supplementaryPrices = [];
+    
     this.sphereValues.forEach(sphere => {
       this.cylindreValues.forEach(cylindre => {
+        // Check if this sphere/cylindre combination has stock
+        const matchingStocks = this.stockWithPrices.filter(stock => {
+          const sphereMatch = Math.abs(stock.sphere - sphere) < 0.001;
+          
+          if (this.data.article.type_stock === 'addition') {
+            // For addition type, match against addition field
+            const additionMatch = stock.addition === null ? cylindre === null : 
+              (cylindre !== null && Math.abs(stock.addition - cylindre) < 0.001);
+            return sphereMatch && additionMatch;
+          } else {
+            // For cylindre type, match against cylindre field
+            const cylindreMatch = stock.cylindre === null ? cylindre === null : 
+              (cylindre !== null && Math.abs(stock.cylindre - cylindre) < 0.001);
+            return sphereMatch && cylindreMatch;
+          }
+        });
+        
+        const hasStock = matchingStocks.some(stock => stock.quantite > 0);
+        const stockEntry = matchingStocks.find(stock => stock.quantite > 0);
+        
         this.supplementaryPrices.push({
           sphere,
-          cylindre,
+          cylindre: this.data.article.type_stock === 'cylindre' ? cylindre : null,
+          addition: this.data.article.type_stock === 'addition' ? cylindre : null,
           prix_supplement: 0,
           modified: false,
-          hasStock: false
+          hasStock: hasStock,
+          stock_id: stockEntry?.id
         });
       });
     });
   }
 
   private loadExistingData(): void {
-    // Load stock with supplementary prices
+    // Load stock with supplementary prices first
     this.supplementaryPriceService.getStockWithSupplementaryPrices(this.data.article.id!).subscribe({
       next: (stockData) => {
         this.stockWithPrices = stockData;
         
-        // Mark cells that have stock
+        // Initialize supplementary prices array with stock information
+        this.initializeSupplementaryPrices();
+        
+        // Update existing supplementary prices from stock data
         stockData.forEach(stock => {
-          const priceEntry = this.supplementaryPrices.find(
-            e => Math.abs(e.sphere - stock.sphere) < 0.001 && 
-                 (stock.cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - stock.cylindre) < 0.001))
-          );
-          if (priceEntry) {
-            priceEntry.hasStock = stock.quantite > 0;
-            priceEntry.stock_id = stock.id;
-            if (stock.prix_supplement !== null) {
+          if (stock.prix_supplement !== null) {
+            const value = this.data.article.type_stock === 'addition' ? stock.addition : stock.cylindre;
+            const priceEntry = this.findEntry(stock.sphere, value);
+            if (priceEntry) {
               priceEntry.prix_supplement = stock.prix_supplement;
             }
           }
         });
+        
+        // Now load existing supplementary prices
+        this.loadExistingSupplementaryPrices();
       },
       error: (error) => {
         console.error('Error loading stock with prices:', error);
         this.snackBar.open('Error loading stock data', 'Close', { duration: 3000 });
       }
     });
+  }
 
+  private loadExistingSupplementaryPrices(): void {
     // Load existing supplementary prices
     this.supplementaryPriceService.getSupplementaryPricesByArticleId(this.data.article.id!).subscribe({
       next: (prices) => {
@@ -137,10 +174,7 @@ export class SupplementaryPriceDialogComponent implements OnInit {
         prices.forEach(price => {
           const sphere = parseFloat(price.sphere.toString());
           const value = this.data.article.type_stock === 'addition' ? price.addition : price.cylindre;
-          const priceEntry = this.supplementaryPrices.find(
-            e => Math.abs(e.sphere - sphere) < 0.001 && 
-                 (value === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - value) < 0.001))
-          );
+          const priceEntry = this.findEntry(sphere, value);
           if (priceEntry) {
             priceEntry.prix_supplement = price.prix_supplement;
             priceEntry.modified = false;
@@ -164,42 +198,52 @@ export class SupplementaryPriceDialogComponent implements OnInit {
   }
 
   hasNonZeroPrice(sphere: number, cylindre: number | null): boolean {
-    const entry = this.supplementaryPrices.find(
-      e => Math.abs(e.sphere - sphere) < 0.001 && 
-           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
-    );
+    const entry = this.findEntry(sphere, cylindre);
     return entry ? entry.prix_supplement > 0 : false;
   }
 
   hasStock(sphere: number, cylindre: number | null): boolean {
-    const entry = this.supplementaryPrices.find(
-      e => Math.abs(e.sphere - sphere) < 0.001 && 
-           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
-    );
+    const entry = this.findEntry(sphere, cylindre);
     return entry ? entry.hasStock || false : false;
   }
 
   getPrice(sphere: number, cylindre: number | null): number {
-    const entry = this.supplementaryPrices.find(
-      e => Math.abs(e.sphere - sphere) < 0.001 && 
-           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
-    );
+    const entry = this.findEntry(sphere, cylindre);
     return entry ? entry.prix_supplement : 0;
   }
 
   onPriceChange(sphere: number, cylindre: number | null, value: number): void {
-    const entry = this.supplementaryPrices.find(
-      e => Math.abs(e.sphere - sphere) < 0.001 && 
-           (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
-    );
+    const entry = this.findEntry(sphere, cylindre);
     if (entry) {
       entry.prix_supplement = value;
       entry.modified = true;
     }
   }
 
-  onCellClick(sphere: number, cylindre: number | null, event: MouseEvent): void {
-    const cellKey = `${sphere}-${cylindre}`;
+  private findEntry(sphere: number, cylindre: number | null): DialogSupplementaryPrice | undefined {
+    return this.supplementaryPrices.find(e => {
+      const sphereMatch = Math.abs(e.sphere - sphere) < 0.001;
+      
+      if (this.data.article.type_stock === 'addition') {
+        // For addition type, match against addition field
+        const additionMatch = e.addition === null ? cylindre === null : 
+          (cylindre !== null && Math.abs(e.addition - cylindre) < 0.001);
+        return sphereMatch && additionMatch;
+      } else {
+        // For cylindre type, match against cylindre field
+        const cylindreMatch = e.cylindre === null ? cylindre === null : 
+          (cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001);
+        return sphereMatch && cylindreMatch;
+      }
+    });
+  }
+
+  onCellMouseDown(sphere: number, cylindre: number | null, event: MouseEvent): void {
+    if (!this.hasStock(sphere, cylindre)) {
+      return; // Don't allow selection of cells without stock
+    }
+
+    const cellKey = `${sphere}|${cylindre}`;
     
     if (event.ctrlKey || event.metaKey) {
       // Multi-select with Ctrl/Cmd
@@ -209,14 +253,62 @@ export class SupplementaryPriceDialogComponent implements OnInit {
         this.selectedCells.add(cellKey);
       }
     } else {
-      // Single select
+      // Start drag selection
+      this.isSelecting = true;
+      this.selectionStart = { sphere, cylindre };
       this.selectedCells.clear();
       this.selectedCells.add(cellKey);
     }
   }
 
+  onCellMouseEnter(sphere: number, cylindre: number | null, event: MouseEvent): void {
+    if (this.isSelecting && this.selectionStart && this.hasStock(sphere, cylindre)) {
+      // Clear current selection and select the range
+      this.selectedCells.clear();
+      this.selectRange(this.selectionStart, { sphere, cylindre });
+    }
+  }
+
+  onCellMouseUp(): void {
+    this.isSelecting = false;
+    this.selectionStart = null;
+  }
+
+  onGlobalMouseUp(): void {
+    this.isSelecting = false;
+    this.selectionStart = null;
+  }
+
+  private selectRange(start: { sphere: number; cylindre: number | null }, end: { sphere: number; cylindre: number | null }): void {
+    const startSphereIndex = this.sphereValues.findIndex(s => Math.abs(s - start.sphere) < 0.001);
+    const endSphereIndex = this.sphereValues.findIndex(s => Math.abs(s - end.sphere) < 0.001);
+    const startCylindreIndex = this.cylindreValues.findIndex(c => Math.abs(c - (start.cylindre || 0)) < 0.001);
+    const endCylindreIndex = this.cylindreValues.findIndex(c => Math.abs(c - (end.cylindre || 0)) < 0.001);
+
+    if (startSphereIndex === -1 || endSphereIndex === -1 || startCylindreIndex === -1 || endCylindreIndex === -1) {
+      return;
+    }
+
+    const minSphereIndex = Math.min(startSphereIndex, endSphereIndex);
+    const maxSphereIndex = Math.max(startSphereIndex, endSphereIndex);
+    const minCylindreIndex = Math.min(startCylindreIndex, endCylindreIndex);
+    const maxCylindreIndex = Math.max(startCylindreIndex, endCylindreIndex);
+
+    for (let i = minSphereIndex; i <= maxSphereIndex; i++) {
+      for (let j = minCylindreIndex; j <= maxCylindreIndex; j++) {
+        const sphere = this.sphereValues[i];
+        const cylindre = this.cylindreValues[j];
+        
+        if (this.hasStock(sphere, cylindre)) {
+          const cellKey = `${sphere}|${cylindre}`;
+          this.selectedCells.add(cellKey);
+        }
+      }
+    }
+  }
+
   isCellSelected(sphere: number, cylindre: number | null): boolean {
-    const cellKey = `${sphere}-${cylindre}`;
+    const cellKey = `${sphere}|${cylindre}`;
     return this.selectedCells.has(cellKey);
   }
 
@@ -226,28 +318,33 @@ export class SupplementaryPriceDialogComponent implements OnInit {
       return;
     }
 
+    let appliedCount = 0;
+    console.log('Selected cells:', Array.from(this.selectedCells));
+    console.log('Article type:', this.data.article.type_stock);
+
     this.selectedCells.forEach(cellKey => {
-      const [sphereStr, cylindreStr] = cellKey.split('-');
+      const [sphereStr, cylindreStr] = cellKey.split('|');
       const sphere = parseFloat(sphereStr);
       const cylindre = cylindreStr === 'null' ? null : parseFloat(cylindreStr);
       
-      const entry = this.supplementaryPrices.find(
-        e => Math.abs(e.sphere - sphere) < 0.001 && 
-             (cylindre === null ? e.cylindre === null : (e.cylindre !== null && Math.abs(e.cylindre - cylindre) < 0.001))
-      );
+      const entry = this.findEntry(sphere, cylindre);
+      console.log(`Cell ${cellKey}: entry found=${!!entry}, hasStock=${entry?.hasStock}`);
       
       if (entry && entry.hasStock) {
         entry.prix_supplement = this.bulkPrice;
         entry.modified = true;
+        appliedCount++;
       }
     });
 
-    this.snackBar.open(`Applied price ${this.bulkPrice} to ${this.selectedCells.size} selected cells`, 'Close', { duration: 2000 });
+    this.snackBar.open(`Applied price ${this.bulkPrice} to ${appliedCount} selected cells`, 'Close', { duration: 2000 });
   }
 
   clearSelection(): void {
     this.selectedCells.clear();
   }
+
+
 
   onCancel(): void {
     this.dialogRef.close();

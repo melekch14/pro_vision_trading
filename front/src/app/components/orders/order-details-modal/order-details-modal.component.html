@@ -297,15 +297,30 @@
                     <span class="product bold-italic">{{ (order.first_name + ' ' + order.last_name) | uppercase }}</span>
                   </div>
                 </div>
-                <div class="card-row">
+                <!-- Only OD present -->
+                <div class="card-row" *ngIf="order.produit && !order.produit2">
                   <div class="verre-block">
                     <span class="verre-label">verres :</span>
                     <span class="product">{{ formatStockLibelle('od', true) }}</span>
                   </div>
                 </div>
-                <div class="card-row">
+                <!-- Only OG present -->
+                <div class="card-row" *ngIf="!order.produit && order.produit2">
                   <div class="verre-block">
-                    <span class="verre-label"></span>
+                    <span class="verre-label">verres :</span>
+                    <span class="product">{{ formatStockLibelle('og', true) }}</span>
+                  </div>
+                </div>
+                <!-- Both OD and OG present -->
+                <div class="card-row" *ngIf="order.produit && order.produit2">
+                  <div class="verre-block">
+                    <span class="verre-label">verres OD :</span>
+                    <span class="product">{{ formatStockLibelle('od', true) }}</span>
+                  </div>
+                </div>
+                <div class="card-row" *ngIf="order.produit && order.produit2">
+                  <div class="verre-block">
+                    <span class="verre-label">verres OG :</span>
                     <span class="product">{{ formatStockLibelle('og', true) }}</span>
                   </div>
                 </div>
@@ -321,14 +336,31 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <!-- Only OD present -->
+                      <tr *ngIf="order.produit && !order.produit2">
                         <td>{{ getDiametre('od') }}</td>
                         <td>{{ order.od_sphere || '0.00' }}</td>
                         <td>{{ order.od_cylinder || '0.00' }}</td>
                         <td>{{ order['od_axe'] || '0' }}</td>
                         <td>{{ order.od_addition || '0.00' }}</td>
                       </tr>
-                      <tr>
+                      <!-- Only OG present -->
+                      <tr *ngIf="!order.produit && order.produit2">
+                        <td>{{ getDiametre('og') }}</td>
+                        <td>{{ order.og_sphere || '0.00' }}</td>
+                        <td>{{ order.og_cylinder || '0.00' }}</td>
+                        <td>{{ order['og_axe'] || '0' }}</td>
+                        <td>{{ order.og_addition || '0.00' }}</td>
+                      </tr>
+                      <!-- Both OD and OG present -->
+                      <tr *ngIf="order.produit && order.produit2">
+                        <td>{{ getDiametre('od') }}</td>
+                        <td>{{ order.od_sphere || '0.00' }}</td>
+                        <td>{{ order.od_cylinder || '0.00' }}</td>
+                        <td>{{ order['od_axe'] || '0' }}</td>
+                        <td>{{ order.od_addition || '0.00' }}</td>
+                      </tr>
+                      <tr *ngIf="order.produit && order.produit2">
                         <td>{{ getDiametre('og') }}</td>
                         <td>{{ order.og_sphere || '0.00' }}</td>
                         <td>{{ order.og_cylinder || '0.00' }}</td>

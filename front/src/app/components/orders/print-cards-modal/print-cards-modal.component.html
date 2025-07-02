@@ -36,7 +36,7 @@
             <span class="product">{{ getProductLibelle(order, 'od') }}</span>
           </div>
         </div>
-        <div class="card-row">
+        <div class="card-row" *ngIf="getProductLibelle(order, 'og') && getProductLibelle(order, 'og') !== getProductLibelle(order, 'od')">
           <div class="verre-block">
             <span class="verre-label"></span>
             <span class="product">{{ getProductLibelle(order, 'og') }}</span>
@@ -61,7 +61,7 @@
                 <td>{{ order.od_axe || '0' }}</td>
                 <td>{{ order.od_addition || '0.00' }}</td>
               </tr>
-              <tr>
+              <tr *ngIf="getProductLibelle(order, 'og') && getProductLibelle(order, 'og') !== getProductLibelle(order, 'od')">
                 <td>{{ getDiametre(order, 'og') }}</td>
                 <td>{{ order.og_sphere || '0.00' }}</td>
                 <td>{{ order.og_cylinder || '0.00' }}</td>

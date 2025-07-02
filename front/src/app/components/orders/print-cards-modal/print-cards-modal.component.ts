@@ -264,35 +264,35 @@ export class PrintCardsModalComponent implements OnInit {
         const fournisseurText = String(order['fournisseur_code'] || order.fournisseur_id || 'N/A');
         const dateText = order.order_datetime ? (new Date(order.order_datetime)).toLocaleDateString('fr-FR') : '';
 
-        // Build the card HTML for PDF with separate OD and OG product names
+        // Determine if only one eye is present or both
+        const odLibelle = this.getProductLibelle(order, 'od');
+        const ogLibelle = this.getProductLibelle(order, 'og');
+        const showOG = ogLibelle && ogLibelle !== odLibelle;
+
+        // Build the card HTML for PDF with conditional OD/OG display
         const cardHtml = `
-          <div class=\"order-card\">
-            <div class=\"card-row\">
-              <div class=\"verre-block\">
-                <span class=\"verre-label\">Opticien :</span>
-                <span class=\"product\">${(order['raison_social'] || 'Opticien Name').toUpperCase()}</span>
+          <div class="order-card">
+            <div class="card-row">
+              <div class="verre-block">
+                <span class="verre-label">Opticien :</span>
+                <span class="product">${(order['raison_social'] || 'Opticien Name').toUpperCase()}</span>
               </div>
             </div>
-            <div class=\"card-row\">
-              <div class=\"verre-block\">
-                <span class=\"verre-label\">Porteur :</span>
-                <span class=\"product bold-italic\">${(order.first_name + ' ' + order.last_name).toUpperCase()}</span>
+            <div class="card-row">
+              <div class="verre-block">
+                <span class="verre-label">Porteur :</span>
+                <span class="product bold-italic">${(order.first_name + ' ' + order.last_name).toUpperCase()}</span>
               </div>
             </div>
-            <div class=\"card-row\">
-              <div class=\"verre-block\">
-                <span class=\"verre-label\">verres :</span>
-                <span class=\"product\">${this.getProductLibelle(order, 'od')}</span>
+            <div class="card-row">
+              <div class="verre-block">
+                <span class="verre-label">verres :</span>
+                <span class="product">${odLibelle}</span>
               </div>
             </div>
-            <div class=\"card-row\">
-              <div class=\"verre-block\">
-                <span class=\"verre-label\"></span>
-                <span class=\"product\">${this.getProductLibelle(order, 'og')}</span>
-              </div>
-            </div>
-            <div class=\"table-date-row\">
-              <table class=\"card-table\">
+            ${showOG ? `<div class=\"card-row\"><div class=\"verre-block\"><span class=\"verre-label\"></span><span class=\"product\">${ogLibelle}</span></div></div>` : ''}
+            <div class="table-date-row">
+              <table class="card-table">
                 <thead>
                   <tr>
                     <th>Ø</th>
@@ -310,13 +310,7 @@ export class PrintCardsModalComponent implements OnInit {
                     <td>${order['od_axe'] || '0'}</td>
                     <td>${order.od_addition || '0.00'}</td>
                   </tr>
-                  <tr>
-                    <td>${this.getDiametre(order, 'og')}</td>
-                    <td>${order.og_sphere || '0.00'}</td>
-                    <td>${order.og_cylinder || '0.00'}</td>
-                    <td>${order['og_axe'] || '0'}</td>
-                    <td>${order.og_addition || '0.00'}</td>
-                  </tr>
+                  ${showOG ? `<tr><td>${this.getDiametre(order, 'og')}</td><td>${order.og_sphere || '0.00'}</td><td>${order.og_cylinder || '0.00'}</td><td>${order['og_axe'] || '0'}</td><td>${order.og_addition || '0.00'}</td></tr>` : ''}
                 </tbody>
               </table>
             </div>

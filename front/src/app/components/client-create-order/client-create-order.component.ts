@@ -190,7 +190,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.errors.step4Disabled = !this.order.typeCommande;
     this.errors.step5Disabled = !this.order.typeCorrection;
     this.errors.step6Disabled = !this.order.origineArticle;
-    this.errors.step6bDisabled = !this.order.produit || !this.needsSecondProduct;
+    this.errors.step6bDisabled = !(this.isODFilled() && this.isOGFilled() && this.needsSecondProduct);
   }
 
   onTypeCommandeChange() {
@@ -527,11 +527,9 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   updateFormValidity() {
     this.errors.formInvalid = 
-      this.errors.od.axe || 
-      this.errors.od.addition || 
-      this.errors.og.axe || 
-      this.errors.og.addition || 
-      this.errors.phone || 
+      (this.isODFilled() && (this.errors.od.axe || this.errors.od.addition)) ||
+      (this.isOGFilled() && (this.errors.og.axe || this.errors.og.addition)) ||
+      this.errors.phone ||
       this.errors.email ||
       this.errors.lastName ||
       this.errors.firstName;
@@ -566,18 +564,19 @@ export class ClientCreateOrderComponent implements OnDestroy {
     }
 
     // --- PRODUCT SELECTION VALIDATION ---
-    if (!this.needsSecondProduct) {
-      // Correction values are the same, only one product should be selected
-      if (!this.order.produit) {
-        alert('Veuillez sélectionner un produit avant de soumettre la commande.');
-        return;
-      }
-    } else {
-      // Correction values are different, two products should be selected
-      if (!this.order.produit || !this.order.produit2) {
-        alert('Veuillez sélectionner deux produits (un pour chaque œil) avant de soumettre la commande.');
-        return;
-      }
+    // At least one eye must be filled
+    if (!this.isODFilled() && !this.isOGFilled()) {
+      alert('Veuillez remplir les corrections pour OD ou OG.');
+      return;
+    }
+    // Product selection validation
+    if (this.isODFilled() && !this.order.produit) {
+      alert('Veuillez sélectionner un produit pour OD.');
+      return;
+    }
+    if (this.isOGFilled() && !this.order.produit2) {
+      alert('Veuillez sélectionner un produit pour OG.');
+      return;
     }
     // --- END PRODUCT SELECTION VALIDATION ---
     
@@ -601,28 +600,28 @@ export class ClientCreateOrderComponent implements OnDestroy {
       // Prepare order data with additional fields
       let orderData: any = {
         ...this.order,
-        price: this.price,
-        price2: this.price2,
-        totalPrice: this.totalPrice,
+        price: this.isODFilled() ? this.price : 0,
+        price2: this.isOGFilled() ? this.price2 : 0,
+        totalPrice: (this.isODFilled() ? this.price : 0) + (this.isOGFilled() ? this.price2 : 0),
         shippingType: this.shippingType,
         deliveryTime: this.deliveryTime,
         selectedProduct: this.selectedProduct,
         selectedProduct2: this.selectedProduct2,
         selectedArticle: this.selectedArticle,
         selectedArticle2: this.selectedArticle2,
-        needsSecondProduct: this.needsSecondProduct,
+        needsSecondProduct: this.isODFilled() && this.isOGFilled() && this.needsSecondProduct,
         client_id: this.authService.getClientId()
       };
 
       // Handle fabrication/stock logic
       if (this.order.origineArticle === 'fabrication') {
-        orderData.fabrication1 = this.order.produit || '';
-        orderData.fabrication2 = this.needsSecondProduct ? (this.order.produit2 || '') : '';
+        orderData.fabrication1 = this.isODFilled() ? (this.order.produit || '') : '';
+        orderData.fabrication2 = this.isOGFilled() ? (this.order.produit2 || '') : '';
         orderData.produit = '';
         orderData.produit2 = '';
       } else {
-        orderData.produit = this.order.produit;
-        orderData.produit2 = this.needsSecondProduct ? this.order.produit2 : '';
+        orderData.produit = this.isODFilled() ? this.order.produit : '';
+        orderData.produit2 = this.isOGFilled() ? this.order.produit2 : '';
         orderData.fabrication1 = '';
         orderData.fabrication2 = '';
       }
@@ -644,12 +643,19 @@ export class ClientCreateOrderComponent implements OnDestroy {
     }
   }
 
+  isODFilled(): boolean {
+    const { od } = this.order;
+    return od.sphere !== '' && od.cylinder !== '' && od.axe !== '' && od.addition !== '';
+  }
+
+  isOGFilled(): boolean {
+    const { og } = this.order;
+    return og.sphere !== '' && og.cylinder !== '' && og.axe !== '' && og.addition !== '';
+  }
+
   areAllCorrectionsFilled(): boolean {
-    const { od, og } = this.order;
-    return (
-      od.sphere !== '' && od.cylinder !== '' && od.axe !== '' && od.addition !== '' &&
-      og.sphere !== '' && og.cylinder !== '' && og.axe !== '' && og.addition !== ''
-    );
+    // Allow if either OD or OG is filled
+    return this.isODFilled() || this.isOGFilled();
   }
 
   blockNegative(event: KeyboardEvent) {

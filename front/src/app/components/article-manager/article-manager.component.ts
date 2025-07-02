@@ -130,15 +130,15 @@ export class ArticleManagerComponent implements OnInit {
 
     // Subscribe to subfamily changes
     this.articleForm.get('article_subfamily_id')?.valueChanges.subscribe(subfamilyId => {
-      if (subfamilyId) {
-        const selectedSubfamily = this.subfamilyOptions.find(sf => sf.id === Number(subfamilyId));
-        if (selectedSubfamily) {
-          this.articleForm.patchValue({
-            code: selectedSubfamily.code,
-            libelle: selectedSubfamily.name
-          }, { emitEvent: false }); // Prevent infinite loop
-        }
-      }
+      // Do not set code and libelle when a Sous-famille is selected
+      // (Requirement: selecting Sous-famille should not auto-fill code/libelle)
+      // const selectedSubfamily = this.subfamilyOptions.find(sf => sf.id === Number(subfamilyId));
+      // if (selectedSubfamily) {
+      //   this.articleForm.patchValue({
+      //     code: selectedSubfamily.code,
+      //     libelle: selectedSubfamily.name
+      //   }, { emitEvent: false }); // Prevent infinite loop
+      // }
     });
 
     // Subscribe to prix_achat changes to calculate prix_vente

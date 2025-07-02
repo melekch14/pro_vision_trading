@@ -319,8 +319,6 @@ export class SupplementaryPriceDialogComponent implements OnInit {
     }
 
     let appliedCount = 0;
-    console.log('Selected cells:', Array.from(this.selectedCells));
-    console.log('Article type:', this.data.article.type_stock);
 
     this.selectedCells.forEach(cellKey => {
       const [sphereStr, cylindreStr] = cellKey.split('|');
@@ -328,7 +326,6 @@ export class SupplementaryPriceDialogComponent implements OnInit {
       const cylindre = cylindreStr === 'null' ? null : parseFloat(cylindreStr);
       
       const entry = this.findEntry(sphere, cylindre);
-      console.log(`Cell ${cellKey}: entry found=${!!entry}, hasStock=${entry?.hasStock}`);
       
       if (entry && entry.hasStock) {
         entry.prix_supplement = this.bulkPrice;

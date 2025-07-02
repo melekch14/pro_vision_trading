@@ -156,8 +156,7 @@ export class SupplementaryPriceDialogComponent implements OnInit {
           }
         });
         
-        // Now load existing supplementary prices
-        this.loadExistingSupplementaryPrices();
+
       },
       error: (error) => {
         console.error('Error loading stock with prices:', error);
@@ -166,27 +165,7 @@ export class SupplementaryPriceDialogComponent implements OnInit {
     });
   }
 
-  private loadExistingSupplementaryPrices(): void {
-    // Load existing supplementary prices
-    this.supplementaryPriceService.getSupplementaryPricesByArticleId(this.data.article.id!).subscribe({
-      next: (prices) => {
-        this.existingPrices = prices;
-        prices.forEach(price => {
-          const sphere = parseFloat(price.sphere.toString());
-          const value = this.data.article.type_stock === 'addition' ? price.addition : price.cylindre;
-          const priceEntry = this.findEntry(sphere, value);
-          if (priceEntry) {
-            priceEntry.prix_supplement = price.prix_supplement;
-            priceEntry.modified = false;
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error loading supplementary prices:', error);
-        this.snackBar.open('Error loading supplementary prices', 'Close', { duration: 3000 });
-      }
-    });
-  }
+
 
   hasExistingPrice(sphere: number, cylindre: number | null): boolean {
     return this.existingPrices.some(price => {

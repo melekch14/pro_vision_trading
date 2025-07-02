@@ -191,6 +191,17 @@ const tableStatements = [
     PRIMARY KEY (id),
     KEY article_id (article_id)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  `CREATE TABLE IF NOT EXISTS supplementary_prices (
+    id int NOT NULL AUTO_INCREMENT,
+    stock_id int NOT NULL,
+    sphere decimal(5,2) NOT NULL,
+    cylindre decimal(5,2) DEFAULT NULL,
+    addition decimal(5,2) DEFAULT NULL,
+    prix_supplement decimal(10,2) NOT NULL DEFAULT '0',
+    PRIMARY KEY (id),
+    KEY stock_id (stock_id),
+    FOREIGN KEY (stock_id) REFERENCES stock(id) ON DELETE CASCADE
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS orders (
     id int NOT NULL AUTO_INCREMENT,
     client_id int NOT NULL,

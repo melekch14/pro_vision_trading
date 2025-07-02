@@ -38,6 +38,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { OpticienComponent } from './components/opticien/opticien.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { StockDialogComponent } from './components/article-manager/stock-dialog/stock-dialog.component';
+import { SupplementaryPriceDialogComponent } from './components/article-manager/supplementary-price-dialog/supplementary-price-dialog.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
 
 // Client Components
@@ -77,6 +78,7 @@ import { ProfileUpdateRequestsComponent } from './components/profile-update-requ
     ClientOrdersComponent,
     ClientProfileComponent,
     StockDialogComponent,
+    SupplementaryPriceDialogComponent,
     DashboardComponent,
     ResetPasswordComponent,
     ForgotPasswordComponent,

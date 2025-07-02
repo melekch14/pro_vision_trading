@@ -613,6 +613,15 @@ button {
         background-color: #388e3c;
       }
     }
+
+    &.price-btn {
+      background-color: #ff9800;
+      color: white;
+
+      &:hover {
+        background-color: #f57c00;
+      }
+    }
   }
 }
 

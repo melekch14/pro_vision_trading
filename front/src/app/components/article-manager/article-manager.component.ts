@@ -11,7 +11,9 @@ import { ArticleParamsService } from '../../services/article-params.service';
 import { ArticleHierarchyService } from '../../shared/services/article-hierarchy.service';
 import { ArticleSubfamily } from '../../shared/models/article-hierarchy.model';
 import { StockDialogComponent } from './stock-dialog/stock-dialog.component';
+import { SupplementaryPriceDialogComponent } from './supplementary-price-dialog/supplementary-price-dialog.component';
 import { StockService, StockEntryWithArticle, StockEntry as ApiStockEntry } from '../../services/stock.service';
+import { SupplementaryPriceService, SupplementaryPrice as ApiSupplementaryPrice } from '../../services/supplementary-price.service';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
@@ -95,6 +97,7 @@ export class ArticleManagerComponent implements OnInit {
     private articleParamsService: ArticleParamsService,
     private articleHierarchyService: ArticleHierarchyService,
     private stockService: StockService,
+    private supplementaryPriceService: SupplementaryPriceService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {
@@ -511,6 +514,136 @@ export class ArticleManagerComponent implements OnInit {
           .catch(error => {
             console.error('Error updating stock:', error);
             this.snackBar.open('Error updating stock', 'Close', { duration: 3000 });
+          });
+      }
+    });
+  }
+
+  openSupplementaryPriceDialog(article: Article): void {
+    const dialogRef = this.dialog.open(SupplementaryPriceDialogComponent, {
+      width: '100vw',
+      maxWidth: '100vw',
+      height: '100vh',
+      maxHeight: '100vh',
+      panelClass: 'full-screen-modal',
+      data: { article }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Supplementary price dialog result:', result);
+        const promises: Promise<any>[] = [];
+
+        // Handle updates
+        if (result.updates && result.updates.length > 0) {
+          console.log('Processing supplementary price updates:', result.updates);
+          result.updates.forEach((entry: ApiSupplementaryPrice) => {
+            console.log('Updating supplementary price with data:', {
+              id: entry.id,
+              stock_id: entry.stock_id,
+              sphere: entry.sphere,
+              cylindre: entry.cylindre,
+              prix_supplement: entry.prix_supplement
+            });
+            
+            const updatePromise = this.supplementaryPriceService.updateSupplementaryPrice(entry.id!, entry)
+              .toPromise()
+              .then(response => {
+                console.log('Supplementary price update successful:', response);
+                return response;
+              })
+              .catch(error => {
+                console.error('Supplementary price update failed:', error);
+                console.error('Error details:', {
+                  status: error.status,
+                  statusText: error.statusText,
+                  error: error.error
+                });
+                throw error;
+              });
+            
+            promises.push(updatePromise);
+          });
+        } else {
+          console.log('No supplementary price updates to process');
+        }
+
+        // Handle insertions
+        if (result.insertions && result.insertions.length > 0) {
+          console.log('Processing supplementary price insertions:', result.insertions);
+          result.insertions.forEach((entry: ApiSupplementaryPrice) => {
+            console.log('Inserting supplementary price with data:', {
+              stock_id: entry.stock_id,
+              sphere: entry.sphere,
+              cylindre: entry.cylindre,
+              prix_supplement: entry.prix_supplement
+            });
+            
+            const insertPromise = this.supplementaryPriceService.createSupplementaryPrice(entry)
+              .toPromise()
+              .then(response => {
+                console.log('Supplementary price insert successful:', response);
+                return response;
+              })
+              .catch(error => {
+                console.error('Supplementary price insert failed:', error);
+                console.error('Error details:', {
+                  status: error.status,
+                  statusText: error.statusText,
+                  error: error.error
+                });
+                throw error;
+              });
+            
+            promises.push(insertPromise);
+          });
+        } else {
+          console.log('No supplementary price insertions to process');
+        }
+
+        // Handle deletions
+        if (result.deletions && result.deletions.length > 0) {
+          console.log('Processing supplementary price deletions:', result.deletions);
+          result.deletions.forEach((entry: ApiSupplementaryPrice) => {
+            if (entry.id) {
+              console.log('Deleting supplementary price with id:', entry.id);
+              
+              const deletePromise = this.supplementaryPriceService.deleteSupplementaryPrice(entry.id)
+                .toPromise()
+                .then(response => {
+                  console.log('Supplementary price delete successful:', response);
+                  return response;
+                })
+                .catch(error => {
+                  console.error('Supplementary price delete failed:', error);
+                  console.error('Error details:', {
+                    status: error.status,
+                    statusText: error.statusText,
+                    error: error.error
+                  });
+                  throw error;
+                });
+              
+              promises.push(deletePromise);
+            }
+          });
+        } else {
+          console.log('No supplementary price deletions to process');
+        }
+
+        if (promises.length === 0) {
+          console.log('No supplementary price operations to perform');
+          return;
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            console.log('All supplementary price operations completed successfully');
+            this.snackBar.open('Supplementary prices updated successfully', 'Close', { duration: 3000 });
+          })
+          .catch(error => {
+            console.error('Error updating supplementary prices:', error);
+            this.snackBar.open('Error updating supplementary prices', 'Close', { duration: 3000 });
           });
       }
     });

@@ -235,9 +235,31 @@ export class TicketsComponent implements OnInit {
    * Checks if an order is already placed in the grid
    */
   private isOrderAlreadyPlaced(order: Order): boolean {
-    return this.gridCells.some(cell => 
-      cell.ticket && cell.ticket.order && cell.ticket.order.order_id === order.order_id
-    );
+    const orderId = order.order_id;
+    const placedEyesForOrder = this.placedEyes[orderId];
+    
+    // If no eyes are placed yet, the order is not placed
+    if (!placedEyesForOrder) {
+      return false;
+    }
+    
+    // Check if both eyes are already placed
+    const hasOD = this.hasEyeData(order, 'right');
+    const hasOG = this.hasEyeData(order, 'left');
+    
+    if (hasOD && hasOG) {
+      // Both eyes exist, check if both are placed
+      return placedEyesForOrder.right && placedEyesForOrder.left;
+    } else if (hasOD) {
+      // Only OD exists, check if it's placed
+      return placedEyesForOrder.right;
+    } else if (hasOG) {
+      // Only OG exists, check if it's placed
+      return placedEyesForOrder.left;
+    }
+    
+    // No eye data available
+    return false;
   }
 
   printGrid() {

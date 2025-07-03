@@ -34,14 +34,14 @@
         <i class="material-icons">search</i>
       </div>
       <div class="filter-item">
-        <label>Statut :</label>
+        <label>Statut</label>
         <select [(ngModel)]="statusFilter" (change)="applyFilters()">
           <option value="All">Tous les statuts</option>
           <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
         </select>
       </div>
       <div class="filter-item">
-        <label>Date :</label>
+        <label>Date</label>
         <input type="date" [(ngModel)]="dateFilter" (change)="applyFilters()">
       </div>
       <button class="reset-button" (click)="resetFilters()">

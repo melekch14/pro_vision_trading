@@ -111,10 +111,28 @@ export class TicketsComponent implements OnInit {
         this.draggedFromList = false;
         return;
       }
-      // Show confirmation modal for eye selection if dragging from list
-      this.showEyeModal = true;
-      this.pendingDropCell = cell;
-      this.pendingDropOrder = this.draggedOrder;
+      
+      // Check if this order is already placed in the grid
+      if (this.isOrderAlreadyPlaced(this.draggedOrder)) {
+        console.warn('Order is already placed in the grid');
+        this.draggedOrder = null;
+        this.draggedFromCell = null;
+        this.draggedFromList = false;
+        return;
+      }
+      
+      // Check if order has only one eye (OD or OG)
+      const availableEye = this.getAvailableEye(this.draggedOrder);
+      
+      if (availableEye) {
+        // Automatically place the order with the available eye
+        this.placeOrderInCell(cell, this.draggedOrder, availableEye);
+      } else {
+        // Show confirmation modal for eye selection if both eyes are available
+        this.showEyeModal = true;
+        this.pendingDropCell = cell;
+        this.pendingDropOrder = this.draggedOrder;
+      }
     }
     this.draggedOrder = null;
     this.draggedFromCell = null;
@@ -123,6 +141,16 @@ export class TicketsComponent implements OnInit {
 
   confirmEye(eye: 'right' | 'left') {
     if (!this.pendingDropCell || !this.pendingDropOrder) return;
+    
+    // Check if this order is already placed in the grid
+    if (this.isOrderAlreadyPlaced(this.pendingDropOrder)) {
+      console.warn('Order is already placed in the grid');
+      this.showEyeModal = false;
+      this.pendingDropCell = null;
+      this.pendingDropOrder = null;
+      return;
+    }
+    
     // Place the ticket in the cell
     this.pendingDropCell.ticket = {
       order: this.pendingDropOrder,
@@ -148,6 +176,68 @@ export class TicketsComponent implements OnInit {
     this.showEyeModal = false;
     this.pendingDropCell = null;
     this.pendingDropOrder = null;
+  }
+
+  /**
+   * Determines if an order has only one eye available (OD or OG)
+   * Returns 'right' if only OD is available, 'left' if only OG is available, or null if both are available
+   */
+  private getAvailableEye(order: Order): 'right' | 'left' | null {
+    const hasOD = this.hasEyeData(order, 'right');
+    const hasOG = this.hasEyeData(order, 'left');
+    
+    if (hasOD && !hasOG) {
+      return 'right'; // Only OD available
+    } else if (hasOG && !hasOD) {
+      return 'left'; // Only OG available
+    }
+    
+    return null; // Both eyes available or neither available
+  }
+
+  /**
+   * Checks if an order has data for a specific eye
+   */
+  private hasEyeData(order: Order, eye: 'right' | 'left'): boolean {
+    if (eye === 'right') {
+      // Check if OD has any prescription data
+      return !!(order.od_sphere || order.od_cylinder || order.od_axe || order.od_addition);
+    } else {
+      // Check if OG has any prescription data
+      return !!(order.og_sphere || order.og_cylinder || order.og_axe || order.og_addition);
+    }
+  }
+
+  /**
+   * Places an order in a cell with the specified eye
+   */
+  private placeOrderInCell(cell: any, order: Order, eye: 'right' | 'left') {
+    // Place the ticket in the cell
+    cell.ticket = {
+      order: order,
+      eye
+    };
+    
+    // Mark the eye as placed
+    const orderId = order.order_id;
+    if (!this.placedEyes[orderId]) {
+      this.placedEyes[orderId] = { right: false, left: false };
+    }
+    this.placedEyes[orderId][eye] = true;
+    
+    // Remove from list if both eyes are placed
+    if (this.placedEyes[orderId].right && this.placedEyes[orderId].left) {
+      this.orders = this.orders.filter(o => o.order_id !== orderId);
+    }
+  }
+
+  /**
+   * Checks if an order is already placed in the grid
+   */
+  private isOrderAlreadyPlaced(order: Order): boolean {
+    return this.gridCells.some(cell => 
+      cell.ticket && cell.ticket.order && cell.ticket.order.order_id === order.order_id
+    );
   }
 
   printGrid() {

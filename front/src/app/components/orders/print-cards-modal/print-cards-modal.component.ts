@@ -267,7 +267,7 @@ export class PrintCardsModalComponent implements OnInit {
         // Determine if only one eye is present or both
         const odLibelle = this.getProductLibelle(order, 'od');
         const ogLibelle = this.getProductLibelle(order, 'og');
-        const showOG = ogLibelle && ogLibelle !== odLibelle;
+        const showOG = order.og_sphere || order.og_cylinder || order.og_axe || order.og_addition;
 
         // Build the card HTML for PDF with conditional OD/OG display
         const cardHtml = `

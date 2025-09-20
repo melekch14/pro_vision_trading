@@ -54,14 +54,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr *ngIf="!areAllParametersZero(order, 'od')">
                 <td>{{ getDiametre(order, 'od') }}</td>
                 <td>{{ order.od_sphere || '0.00' }}</td>
                 <td>{{ order.od_cylinder || '0.00' }}</td>
                 <td>{{ order.od_axe || '0' }}</td>
                 <td>{{ order.od_addition || '0.00' }}</td>
               </tr>
-              <tr>
+              <tr *ngIf="!areAllParametersZero(order, 'og')">
                 <td>{{ getDiametre(order, 'og') }}</td>
                 <td>{{ order.og_sphere || '0.00' }}</td>
                 <td>{{ order.og_cylinder || '0.00' }}</td>

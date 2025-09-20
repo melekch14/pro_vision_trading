@@ -163,6 +163,16 @@ export class PrintCardsModalComponent implements OnInit {
     return this.odProductLibelle[key] || 'N/A';
   }
 
+  // Helper method to check if all four parameters are zero
+  areAllParametersZero(order: Order, eye: 'od' | 'og'): boolean {
+    const sphere = parseFloat(order[`${eye}_sphere`] || '0');
+    const cylinder = parseFloat(order[`${eye}_cylinder`] || '0');
+    const axe = parseFloat(order[`${eye}_axe`] || '0');
+    const addition = parseFloat(order[`${eye}_addition`] || '0');
+    
+    return sphere === 0 && cylinder === 0 && axe === 0 && addition === 0;
+  }
+
   close() {
     this.dialogRef.close();
   }
@@ -303,6 +313,7 @@ export class PrintCardsModalComponent implements OnInit {
                   </tr>
                 </thead>
                 <tbody>
+                  ${!this.areAllParametersZero(order, 'od') ? `
                   <tr>
                     <td>${this.getDiametre(order, 'od')}</td>
                     <td>${order.od_sphere || '0.00'}</td>
@@ -310,6 +321,8 @@ export class PrintCardsModalComponent implements OnInit {
                     <td>${order['od_axe'] || '0'}</td>
                     <td>${order.od_addition || '0.00'}</td>
                   </tr>
+                  ` : ''}
+                  ${!this.areAllParametersZero(order, 'og') ? `
                   <tr>
                     <td>${this.getDiametre(order, 'og')}</td>
                     <td>${order.og_sphere || '0.00'}</td>
@@ -317,6 +330,7 @@ export class PrintCardsModalComponent implements OnInit {
                     <td>${order['og_axe'] || '0'}</td>
                     <td>${order.og_addition || '0.00'}</td>
                   </tr>
+                  ` : ''}
                 </tbody>
               </table>
             </div>

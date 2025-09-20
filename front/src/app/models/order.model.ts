@@ -4,6 +4,7 @@ export interface Order {
   order_datetime: string;
   status: string;
   price: string;
+  price2: string;
   first_name: string;
   last_name: string;
   shipping_type: string;

@@ -238,6 +238,27 @@ const tableStatements = [
     KEY client_id (client_id),
     KEY produit (produit),
     KEY fk_fournisseur (fournisseur_code)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  `CREATE TABLE IF NOT EXISTS bl (
+    id int NOT NULL AUTO_INCREMENT,
+    numero varchar(50) NOT NULL,
+    date datetime DEFAULT NULL,
+    code_tier varchar(20) DEFAULT NULL,
+    nom_raison_social varchar(255) DEFAULT NULL,
+    total_ttc decimal(15,2) DEFAULT NULL,
+    mode_paie varchar(100) DEFAULT NULL,
+    observation text DEFAULT NULL,
+    user_create varchar(100) DEFAULT NULL,
+    totreg decimal(15,2) DEFAULT 0,
+    deja_recu decimal(15,2) DEFAULT 0,
+    reste decimal(15,2) DEFAULT NULL,
+    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY numero (numero),
+    KEY code_tier (code_tier),
+    KEY date (date),
+    KEY user_create (user_create)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`
 ];
 

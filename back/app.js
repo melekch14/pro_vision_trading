@@ -15,6 +15,7 @@ const opticienRoutes = require('./routes/opticienRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const statisticsRoutes = require('./routes/statisticsRoutes');
 const profileUpdateRequestRoutes = require('./routes/profileUpdateRequestRoutes');
+const blRoutes = require('./routes/blRoutes');
 
 // Debug middleware to log all requests
 app.use((req, res, next) => {
@@ -42,6 +43,7 @@ app.use('/opticiens', opticienRoutes);
 app.use('/orders', orderRoutes);
 app.use('/statistics', statisticsRoutes);
 app.use('/profile-update-requests', profileUpdateRequestRoutes);
+app.use('/bl', blRoutes);
 
 // Test route to verify server is working
 app.get('/test', (req, res) => {

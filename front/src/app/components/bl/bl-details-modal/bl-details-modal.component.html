@@ -1,0 +1,104 @@
+<div class="details-modal">
+  <div class="modal-header">
+    <h2>Détails du BL - {{ blRecord.numero }}</h2>
+    <div class="header-actions">
+      <button class="edit-button" (click)="toggleEdit()" *ngIf="!isEditing">
+        <i class="material-icons">edit</i>
+        Modifier
+      </button>
+      <button class="close-button" (click)="closeDialog()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-content">
+    <div class="details-grid">
+      <div class="detail-group">
+        <label>Numéro</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ blRecord.numero }}</div>
+        <input type="text" [(ngModel)]="editedRecord.numero" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Date</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ formatDate(blRecord.date) }}</div>
+        <input type="date" [(ngModel)]="editedRecord.date" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Code Tier</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ blRecord.code_tier }}</div>
+        <input type="text" [(ngModel)]="editedRecord.code_tier" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Nom/Raison Social</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ blRecord.nom_raison_social }}</div>
+        <input type="text" [(ngModel)]="editedRecord.nom_raison_social" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Total TTC</label>
+        <div class="detail-value amount" *ngIf="!isEditing">{{ formatCurrency(blRecord.total_ttc) }}</div>
+        <input type="number" [(ngModel)]="editedRecord.total_ttc" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Mode Paiement</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ blRecord.mode_paie || '-' }}</div>
+        <input type="text" [(ngModel)]="editedRecord.mode_paie" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Observation</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ blRecord.observation || '-' }}</div>
+        <textarea [(ngModel)]="editedRecord.observation" *ngIf="isEditing" class="edit-textarea" rows="3"></textarea>
+      </div>
+
+      <div class="detail-group">
+        <label>Créé par</label>
+        <div class="detail-value" *ngIf="!isEditing">{{ blRecord.user_create }}</div>
+        <input type="text" [(ngModel)]="editedRecord.user_create" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Totreg</label>
+        <div class="detail-value amount" *ngIf="!isEditing">{{ formatCurrency(blRecord.totreg) }}</div>
+        <input type="number" [(ngModel)]="editedRecord.totreg" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Déjà Reçu</label>
+        <div class="detail-value amount" *ngIf="!isEditing">{{ formatCurrency(blRecord.deja_recu) }}</div>
+        <input type="number" [(ngModel)]="editedRecord.deja_recu" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Reste</label>
+        <div class="detail-value amount" *ngIf="!isEditing">{{ formatCurrency(blRecord.reste) }}</div>
+        <input type="number" [(ngModel)]="editedRecord.reste" *ngIf="isEditing" class="edit-input">
+      </div>
+
+      <div class="detail-group">
+        <label>Date de création</label>
+        <div class="detail-value">{{ formatDate(blRecord.created_at) }}</div>
+      </div>
+
+      <div class="detail-group">
+        <label>Dernière modification</label>
+        <div class="detail-value">{{ formatDate(blRecord.updated_at) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-actions" *ngIf="isEditing">
+    <button class="cancel-button" (click)="toggleEdit()">
+      Annuler
+    </button>
+    <button class="save-button" (click)="saveChanges()">
+      <i class="material-icons">save</i>
+      Sauvegarder
+    </button>
+  </div>
+</div>

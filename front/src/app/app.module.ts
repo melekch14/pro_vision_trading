@@ -53,6 +53,9 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { CustomerDetailsModalComponent } from './components/customers/customer-details-modal.component';
 import { ProfileUpdateRequestsComponent } from './components/profile-update-requests/profile-update-requests.component';
+import { BlComponent } from './components/bl/bl.component';
+import { BlImportModalComponent } from './components/bl/bl-import-modal/bl-import-modal.component';
+import { BlDetailsModalComponent } from './components/bl/bl-details-modal/bl-details-modal.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +86,10 @@ import { ProfileUpdateRequestsComponent } from './components/profile-update-requ
     ResetPasswordComponent,
     ForgotPasswordComponent,
     CustomerDetailsModalComponent,
-    ProfileUpdateRequestsComponent
+    ProfileUpdateRequestsComponent,
+    BlComponent,
+    BlImportModalComponent,
+    BlDetailsModalComponent
   ],
   imports: [
     BrowserModule,

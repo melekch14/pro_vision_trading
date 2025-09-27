@@ -1,0 +1,79 @@
+<div class="import-modal">
+  <div class="modal-header">
+    <h2>Importer des données BL depuis Excel</h2>
+    <button class="close-button" (click)="closeDialog()">
+      <i class="material-icons">close</i>
+    </button>
+  </div>
+
+  <div class="modal-content">
+    <div class="instructions">
+      <h3>Instructions d'importation</h3>
+      <ul>
+        <li>Le fichier Excel doit contenir les colonnes suivantes dans l'ordre :</li>
+        <li>NUMERO, DATE, Code Tier, Nom / Raison Social, Total TTC, MODE PAIE, Observation, USERCREATE, TOTREG, DEJARECU, RESTE</li>
+        <li>La première ligne doit contenir les en-têtes de colonnes</li>
+        <li>Les formats supportés sont .xlsx et .xls</li>
+      </ul>
+    </div>
+
+    <div class="file-upload-section">
+      <div class="file-input-container">
+        <input type="file" 
+               id="fileInput" 
+               accept=".xlsx,.xls" 
+               (change)="onFileSelected($event)"
+               class="file-input">
+        <label for="fileInput" class="file-input-label">
+          <i class="material-icons">cloud_upload</i>
+          <span>Sélectionner un fichier Excel</span>
+        </label>
+      </div>
+      
+      <div *ngIf="selectedFile" class="selected-file">
+        <i class="material-icons">description</i>
+        <span>{{ selectedFile.name }}</span>
+        <span class="file-size">({{ (selectedFile.size / 1024).toFixed(1) }} KB)</span>
+      </div>
+    </div>
+
+    <div class="template-section">
+      <p>Vous n'avez pas de modèle ? Téléchargez notre modèle :</p>
+      <button class="template-button" (click)="downloadTemplate()">
+        <i class="material-icons">download</i>
+        Télécharger le modèle
+      </button>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <i class="material-icons">error</i>
+      {{ error }}
+    </div>
+
+    <div *ngIf="uploadResult" class="success-message">
+      <i class="material-icons">check_circle</i>
+      <div class="success-content">
+        <h4>Importation réussie !</h4>
+        <p>{{ uploadResult.message }}</p>
+        <div class="import-stats">
+          <span>Enregistrements importés : {{ uploadResult.importedCount }}</span>
+          <span>Total dans le fichier : {{ uploadResult.totalRecords }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <button class="cancel-button" (click)="closeDialog()">
+      Annuler
+    </button>
+    <button class="upload-button" 
+            (click)="uploadFile()" 
+            [disabled]="!selectedFile || uploading"
+            [class.loading]="uploading">
+      <i class="material-icons" *ngIf="!uploading">upload</i>
+      <div class="spinner" *ngIf="uploading"></div>
+      {{ uploading ? 'Importation...' : 'Importer' }}
+    </button>
+  </div>
+</div>

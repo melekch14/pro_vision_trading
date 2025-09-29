@@ -16,7 +16,6 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { OpticienComponent } from './components/opticien/opticien.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
 import { ProfileUpdateRequestsComponent } from './components/profile-update-requests/profile-update-requests.component';
-import { BlComponent } from './components/bl/bl.component';
 
 // Client Components
 import { ClientLayoutComponent } from './components/client-layout/client-layout.component';
@@ -69,8 +68,7 @@ const routes: Routes = [
       { path: 'settings', component: SettingsComponent },
       { path: 'opticiens', component: OpticienComponent },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent },
-      { path: 'bl', component: BlComponent }
+      { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent }
     ]
   },
   {

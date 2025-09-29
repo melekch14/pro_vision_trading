@@ -11,6 +11,9 @@ router.get('/:id', clientController.getClientById);
 // Create new client
 router.post('/', clientController.createClient);
 
+// Import clients from Excel file
+router.post('/import', clientController.getUploadMiddleware(), clientController.importClientsFromExcel);
+
 // Update client
 router.put('/:id', clientController.updateClient);
 

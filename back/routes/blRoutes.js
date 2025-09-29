@@ -27,3 +27,4 @@ router.put('/:id', blController.updateBl);
 router.delete('/:id', blController.deleteBl);
 
 module.exports = router;
+

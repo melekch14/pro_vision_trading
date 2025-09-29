@@ -5,12 +5,17 @@ export interface Customer {
   email: string;
   responsable: string;
   tel: string;
+  fax?: string;
   status: string;
   adresse: string;
+  ville?: string;
   password: string;
   rccm: string;
   ninea: string;
   code_douane: string;
+  risque?: string;
+  password_updated?: boolean;
+  email_updated?: boolean;
 }
 
 export interface Address {

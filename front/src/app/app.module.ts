@@ -56,6 +56,7 @@ import { ProfileUpdateRequestsComponent } from './components/profile-update-requ
 import { BlComponent } from './components/bl/bl.component';
 import { BlImportModalComponent } from './components/bl/bl-import-modal/bl-import-modal.component';
 import { BlDetailsModalComponent } from './components/bl/bl-details-modal/bl-details-modal.component';
+import { CustomerImportModalComponent } from './components/customers/customer-import-modal/customer-import-modal.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { BlDetailsModalComponent } from './components/bl/bl-details-modal/bl-det
     ProfileUpdateRequestsComponent,
     BlComponent,
     BlImportModalComponent,
-    BlDetailsModalComponent
+    BlDetailsModalComponent,
+    CustomerImportModalComponent
   ],
   imports: [
     BrowserModule,

@@ -246,3 +246,4 @@ class BlService {
 }
 
 module.exports = new BlService();
+

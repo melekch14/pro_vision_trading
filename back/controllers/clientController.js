@@ -85,11 +85,44 @@ const updateClientStatus = async (req, res) => {
     }
 };
 
+// Import clients from Excel file
+const importClientsFromExcel = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        const result = await clientService.importClientsFromExcel(req.file.path);
+        res.json({
+            success: true,
+            message: result.message,
+            importedCount: result.importedCount,
+            totalRecords: result.totalRecords
+        });
+    } catch (error) {
+        console.error('Error importing client data:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get upload middleware
+const getUploadMiddleware = () => {
+    return clientService.getUploadMiddleware();
+};
+
 module.exports = {
     getAllClients,
     getClientById,
     createClient,
     updateClient,
     deleteClient,
-    updateClientStatus
+    updateClientStatus,
+    importClientsFromExcel,
+    getUploadMiddleware
 }; 

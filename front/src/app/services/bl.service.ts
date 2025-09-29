@@ -56,3 +56,4 @@ export class BlService {
     return this.http.get<BlStatistics>(`${this.apiUrl}/statistics`);
   }
 }
+

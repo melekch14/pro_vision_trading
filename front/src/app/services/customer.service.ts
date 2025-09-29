@@ -41,4 +41,12 @@ export class CustomerService {
   updateCustomerStatus(id: number, status: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}/status`, { status });
   }
+
+  // Import customers from Excel file
+  importCustomersFromExcel(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return this.http.post<any>(`${this.apiUrl}/import`, formData);
+  }
 } 

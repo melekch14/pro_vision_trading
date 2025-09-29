@@ -15,6 +15,10 @@
     <div class="stock-header">
       <h2>Gestion des clients</h2>
       <div class="stock-actions">
+        <button class="export-btn" (click)="openImportModal()">
+          <span class="material-icons">upload</span>
+          Importer Excel
+        </button>
         <button class="export-btn" (click)="exportToCSV()">
           <span class="material-icons">file_download</span>
           Exporter CSV
@@ -90,11 +94,14 @@
               <span class="material-icons">{{ getSortIcon('responsable') }}</span>
             </th>
             <th>Tel</th>
+            <th>Fax</th>
+            <th>Ville</th>
             <th (click)="setSortBy('status')" class="sortable">
               Statut
               <span class="material-icons">{{ getSortIcon('status') }}</span>
             </th>
             <th>Adresse</th>
+            <th>Risque</th>
             <th>RCCM</th>
             <th>NINEA</th>
             <th>Code Douane</th>
@@ -109,12 +116,15 @@
             <td>{{ customer.email }}</td>
             <td>{{ customer.responsable }}</td>
             <td>{{ customer.tel }}</td>
+            <td>{{ customer.fax || '-' }}</td>
+            <td>{{ customer.ville || '-' }}</td>
             <td>
               <span class="status-badge" [ngClass]="'status-' + customer.status">
                 {{ customer.status | titlecase }}
               </span>
             </td>
             <td>{{ customer.adresse }}</td>
+            <td>{{ customer.risque || '-' }}</td>
             <td>{{ customer.rccm }}</td>
             <td>{{ customer.ninea }}</td>
             <td>{{ customer.code_douane }}</td>

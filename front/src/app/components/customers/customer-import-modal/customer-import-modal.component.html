@@ -1,6 +1,6 @@
 <div class="import-modal">
   <div class="modal-header">
-    <h2>Importer des données BL depuis Excel</h2>
+    <h2>Importer des clients depuis Excel</h2>
     <button class="close-button" (click)="closeDialog()">
       <i class="material-icons">close</i>
     </button>
@@ -11,9 +11,11 @@
       <h3>Instructions d'importation</h3>
       <ul>
         <li>Le fichier Excel doit contenir les colonnes suivantes dans l'ordre :</li>
-        <li>NUMERO, DATE, Code Tier, Nom / Raison Social, Total TTC, MODE PAIE, Observation, USERCREATE, TOTREG, DEJARECU, RESTE</li>
+        <li>Code, Nom et Prénom, Adresse, Ville, Tél., Fax, Risque</li>
         <li>La première ligne doit contenir les en-têtes de colonnes</li>
         <li>Les formats supportés sont .xlsx et .xls</li>
+        <li>Les champs Fax et Risque sont optionnels</li>
+        <li>Les emails et mots de passe seront générés automatiquement</li>
       </ul>
     </div>
 
@@ -56,7 +58,7 @@
         <h4>Importation réussie !</h4>
         <p>{{ uploadResult.message }}</p>
         <div class="import-stats">
-          <span>Enregistrements importés : {{ uploadResult.importedCount }}</span>
+          <span>Clients importés : {{ uploadResult.importedCount }}</span>
           <span>Total dans le fichier : {{ uploadResult.totalRecords }}</span>
         </div>
       </div>
@@ -77,4 +79,3 @@
     </button>
   </div>
 </div>
-

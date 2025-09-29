@@ -8,6 +8,7 @@ import 'jspdf-autotable';
 import { UserOptions } from 'jspdf-autotable';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomerDetailsModalComponent } from './customer-details-modal.component';
+import { CustomerImportModalComponent } from './customer-import-modal/customer-import-modal.component';
 
 @Component({
   selector: 'app-customers',
@@ -235,6 +236,19 @@ export class CustomersComponent implements OnInit {
 
     (doc as any).autoTable(options);
     doc.save('customers_report.pdf');
+  }
+
+  openImportModal(): void {
+    const dialogRef = this.dialog.open(CustomerImportModalComponent, {
+      width: '600px',
+      maxHeight: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.loadCustomers();
+      }
+    });
   }
   
   editCustomer(customer: Customer): void {

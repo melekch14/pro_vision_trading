@@ -1,5 +1,44 @@
 const db = require('../models/db');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const xlsx = require('xlsx');
+
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '..', 'uploads');
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const extension = path.extname(file.originalname);
+    cb(null, `client_import_${timestamp}${extension}`);
+  }
+});
+
+const uploadMiddleware = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    const allowedMimes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only Excel files (.xlsx, .xls) are allowed'), false);
+    }
+  },
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 // Generate unique client code
 const generateUniqueClientCode = async () => {
@@ -51,8 +90,8 @@ const createClient = async (clientData) => {
     }
     
     const [result] = await db.query(
-        `INSERT INTO client (codee, raison_social, email, password, responsable, tel, status, adresse, rccm, ninea, code_douane) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO client (codee, raison_social, email, password, responsable, tel, fax, ville, status, adresse, risque, rccm, ninea, code_douane, password_updated, email_updated) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             clientCode,
             clientData.raison_social,
@@ -60,11 +99,16 @@ const createClient = async (clientData) => {
             hashedPassword,
             clientData.responsable,
             clientData.tel,
+            clientData.fax || null,
+            clientData.ville || null,
             clientData.status || 'pending',
             clientData.adresse,
+            clientData.risque || null,
             clientData.rccm,
             clientData.ninea,
-            clientData.code_douane
+            clientData.code_douane,
+            clientData.password_updated || false,
+            clientData.email_updated || false
         ]
     );
     return { insertId: result.insertId, codee: clientCode };
@@ -123,6 +167,14 @@ const updateClient = async (id, clientData) => {
         updates.push('tel = ?');
         values.push(clientData.tel);
     }
+    if (clientData.fax !== undefined) {
+        updates.push('fax = ?');
+        values.push(clientData.fax);
+    }
+    if (clientData.ville) {
+        updates.push('ville = ?');
+        values.push(clientData.ville);
+    }
     if (clientData.status) {
         updates.push('status = ?');
         values.push(clientData.status);
@@ -130,6 +182,10 @@ const updateClient = async (id, clientData) => {
     if (clientData.adresse) {
         updates.push('adresse = ?');
         values.push(clientData.adresse);
+    }
+    if (clientData.risque !== undefined) {
+        updates.push('risque = ?');
+        values.push(clientData.risque);
     }
     if (clientData.rccm) {
         updates.push('rccm = ?');
@@ -163,11 +219,105 @@ const deleteClient = async (id) => {
     return result.affectedRows > 0;
 };
 
+// Generate random email and password for imported clients
+const generateRandomEmail = (name) => {
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    return `${cleanName}${randomNum}@temp.com`;
+};
+
+const generateRandomPassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < 8; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+};
+
+// Import clients from Excel file
+const importClientsFromExcel = async (filePath) => {
+    try {
+        // Read the Excel file
+        const workbook = xlsx.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Convert to JSON
+        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        // Skip header row and process data
+        const clientRecords = [];
+        for (let i = 1; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            
+            // Skip empty rows
+            if (!row[0]) continue;
+            
+            const name = row[1] ? row[1].toString().trim() : '';
+            if (!name) continue; // Skip if no name provided
+            
+            const clientRecord = {
+                codee: row[0] ? row[0].toString().trim() : '',
+                raison_social: name,
+                responsable: name, // Fill with nom & prenom
+                tel: row[4] ? row[4].toString().trim() : '',
+                fax: row[5] ? row[5].toString().trim() : '',
+                adresse: row[2] ? row[2].toString().trim() : '',
+                ville: row[3] ? row[3].toString().trim() : '',
+                risque: row[6] ? row[6].toString().trim() : '',
+                email: generateRandomEmail(name),
+                password: generateRandomPassword(),
+                status: 'pending',
+                rccm: '',
+                ninea: '',
+                code_douane: ''
+            };
+            
+            clientRecords.push(clientRecord);
+        }
+        
+        // Insert records into database
+        const insertedRecords = [];
+        for (const record of clientRecords) {
+            try {
+                const result = await createClient(record);
+                insertedRecords.push(result);
+            } catch (error) {
+                console.error(`Error inserting client ${record.codee}:`, error.message);
+                // Continue with other records even if one fails
+            }
+        }
+        
+        // Clean up the uploaded file
+        fs.unlinkSync(filePath);
+        
+        return {
+            message: `Successfully imported ${insertedRecords.length} clients`,
+            importedCount: insertedRecords.length,
+            totalRecords: clientRecords.length
+        };
+    } catch (error) {
+        // Clean up file if it exists
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        throw new Error(`Error importing clients: ${error.message}`);
+    }
+};
+
+// Get upload middleware
+const getUploadMiddleware = () => {
+    return uploadMiddleware.single('file');
+};
+
 module.exports = {
     getAllClients,
     getClientById,
     createClient,
     updateClient,
     deleteClient,
-    generateUniqueClientCode
+    generateUniqueClientCode,
+    importClientsFromExcel,
+    getUploadMiddleware
 }; 

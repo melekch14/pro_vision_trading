@@ -32,3 +32,4 @@ export interface BlSearchResult {
   data: Bl[];
   count: number;
 }
+

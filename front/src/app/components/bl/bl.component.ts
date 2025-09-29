@@ -208,3 +208,4 @@ export class BlComponent implements OnInit {
     return this.filteredBlRecords.slice(startIndex, startIndex + this.pageSize);
   }
 }
+

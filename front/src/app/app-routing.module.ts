@@ -26,6 +26,7 @@ import { ClientProfileComponent } from './components/client-profile/client-profi
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { BlComponent } from './components/bl/bl.component';
 
 const routes: Routes = [
   {
@@ -67,6 +68,7 @@ const routes: Routes = [
       { path: 'fournisseurs', component: FournisseurComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'opticiens', component: OpticienComponent },
+      { path: 'bl', component: BlComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent }
     ]

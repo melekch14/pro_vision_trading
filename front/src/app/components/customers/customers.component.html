@@ -142,6 +142,14 @@
                 <button class="delete-btn" (click)="deleteCustomer(customer.id)">
                   <span class="material-icons">delete</span>
                 </button>
+                <!-- View Password Button - only show for imported, active clients who haven't updated password -->
+                <button 
+                  *ngIf="canViewPassword(customer)" 
+                  class="password-btn" 
+                  (click)="viewCustomerPassword(customer)"
+                  title="View Password">
+                  <span class="material-icons">lock</span>
+                </button>
               </ng-template>
             </td>
           </tr>

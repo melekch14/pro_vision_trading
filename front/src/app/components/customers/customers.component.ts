@@ -334,4 +334,29 @@ export class CustomersComponent implements OnInit {
       }
     });
   }
+
+  // Check if password can be viewed for a customer
+  canViewPassword(customer: Customer): boolean {
+    return customer.status === 'active' && 
+           customer.imported_from_excel === true && 
+           customer.password_updated === false;
+  }
+
+  // View customer password
+  viewCustomerPassword(customer: Customer): void {
+    this.customerService.canViewCustomerPassword(customer.id).subscribe({
+      next: (response) => {
+        if (response.success && response.data.canViewPassword) {
+          // Show password in a modal or alert
+          alert(`Password for ${customer.raison_social}:\n\nNote: The original password is not retrievable from the database as it is stored in hashed format. The password was only available during the import process.`);
+        } else {
+          alert(response.data.message || 'Password cannot be viewed for this client.');
+        }
+      },
+      error: (error) => {
+        console.error('Error checking password visibility:', error);
+        alert('Error checking password visibility.');
+      }
+    });
+  }
 } 

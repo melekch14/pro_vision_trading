@@ -49,4 +49,19 @@ export class CustomerService {
     
     return this.http.post<any>(`${this.apiUrl}/import`, formData);
   }
+
+  // Get customer credentials
+  getCustomerCredentials(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/credentials`);
+  }
+
+  // Check if customer password can be viewed
+  canViewCustomerPassword(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/can-view-password`);
+  }
+
+  // Get all customers with password status
+  getAllCustomersWithPasswordStatus(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/password-status/all`);
+  }
 } 

@@ -103,6 +103,7 @@ const tableStatements = [
     password_reset_expires varchar(255) NULL,
     password_updated boolean DEFAULT FALSE,
     email_updated boolean DEFAULT FALSE,
+    imported_from_excel boolean DEFAULT FALSE,
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,

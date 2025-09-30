@@ -23,4 +23,13 @@ router.delete('/:id', clientController.deleteClient);
 // Update client status
 router.patch('/:id/status', clientController.updateClientStatus);
 
+// Get client credentials (with password visibility rules)
+router.get('/:id/credentials', clientController.getClientCredentials);
+
+// Check if client password can be viewed
+router.get('/:id/can-view-password', clientController.canViewClientPassword);
+
+// Get all clients with password status
+router.get('/password-status/all', clientController.getAllClientsWithPasswordStatus);
+
 module.exports = router; 

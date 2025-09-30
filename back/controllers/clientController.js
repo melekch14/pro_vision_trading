@@ -100,10 +100,64 @@ const importClientsFromExcel = async (req, res) => {
             success: true,
             message: result.message,
             importedCount: result.importedCount,
-            totalRecords: result.totalRecords
+            totalRecords: result.totalRecords,
+            clientCredentials: result.clientCredentials // Include client credentials
         });
     } catch (error) {
         console.error('Error importing client data:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get client credentials (with password visibility rules)
+const getClientCredentials = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const credentials = await clientService.getClientCredentials(id);
+        res.json({
+            success: true,
+            data: credentials
+        });
+    } catch (error) {
+        console.error('Error getting client credentials:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get all clients with password status
+const getAllClientsWithPasswordStatus = async (req, res) => {
+    try {
+        const clients = await clientService.getAllClientsWithPasswordStatus();
+        res.json({
+            success: true,
+            data: clients
+        });
+    } catch (error) {
+        console.error('Error getting clients with password status:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Check if client password can be viewed
+const canViewClientPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await clientService.canViewClientPassword(id);
+        res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        console.error('Error checking password visibility:', error);
         res.status(500).json({
             success: false,
             message: error.message
@@ -124,5 +178,8 @@ module.exports = {
     deleteClient,
     updateClientStatus,
     importClientsFromExcel,
+    getClientCredentials,
+    canViewClientPassword,
+    getAllClientsWithPasswordStatus,
     getUploadMiddleware
 }; 

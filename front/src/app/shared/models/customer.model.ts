@@ -16,6 +16,7 @@ export interface Customer {
   risque?: string;
   password_updated?: boolean;
   email_updated?: boolean;
+  imported_from_excel?: boolean;
 }
 
 export interface Address {

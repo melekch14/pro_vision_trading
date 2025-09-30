@@ -90,8 +90,8 @@ const createClient = async (clientData) => {
     }
     
     const [result] = await db.query(
-        `INSERT INTO client (codee, raison_social, email, password, responsable, tel, fax, ville, status, adresse, risque, rccm, ninea, code_douane, password_updated, email_updated) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO client (codee, raison_social, email, password, responsable, tel, fax, ville, status, adresse, risque, rccm, ninea, code_douane, password_updated, email_updated, imported_from_excel) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             clientCode,
             clientData.raison_social,
@@ -108,7 +108,8 @@ const createClient = async (clientData) => {
             clientData.ninea,
             clientData.code_douane,
             clientData.password_updated || false,
-            clientData.email_updated || false
+            clientData.email_updated || false,
+            clientData.imported_from_excel || false
         ]
     );
     return { insertId: result.insertId, codee: clientCode };
@@ -271,7 +272,8 @@ const importClientsFromExcel = async (filePath) => {
                 status: 'pending',
                 rccm: '',
                 ninea: '',
-                code_douane: ''
+                code_douane: '',
+                imported_from_excel: true // Mark as imported from Excel
             };
             
             clientRecords.push(clientRecord);
@@ -279,10 +281,23 @@ const importClientsFromExcel = async (filePath) => {
         
         // Insert records into database
         const insertedRecords = [];
+        const clientCredentials = []; // Store credentials for return
+        
         for (const record of clientRecords) {
             try {
                 const result = await createClient(record);
                 insertedRecords.push(result);
+                
+                // Store the original password before hashing for display
+                // Only show password for imported clients (they start with password_updated = false)
+                clientCredentials.push({
+                    codee: record.codee,
+                    raison_social: record.raison_social,
+                    email: record.email,
+                    password: record.password, // Original unhashed password
+                    passwordUpdated: false, // New imported clients haven't updated password yet
+                    importedFromExcel: true
+                });
             } catch (error) {
                 console.error(`Error inserting client ${record.codee}:`, error.message);
                 // Continue with other records even if one fails
@@ -295,7 +310,8 @@ const importClientsFromExcel = async (filePath) => {
         return {
             message: `Successfully imported ${insertedRecords.length} clients`,
             importedCount: insertedRecords.length,
-            totalRecords: clientRecords.length
+            totalRecords: clientRecords.length,
+            clientCredentials: clientCredentials // Include credentials in response
         };
     } catch (error) {
         // Clean up file if it exists
@@ -304,6 +320,115 @@ const importClientsFromExcel = async (filePath) => {
         }
         throw new Error(`Error importing clients: ${error.message}`);
     }
+};
+
+// Get client credentials (only for imported clients who haven't updated their password)
+const getClientCredentials = async (clientId) => {
+    const [clients] = await db.query(
+        'SELECT id, codee, raison_social, email, password_updated, imported_from_excel FROM client WHERE id = ?',
+        [clientId]
+    );
+    
+    if (clients.length === 0) {
+        throw new Error('Client not found');
+    }
+    
+    const client = clients[0];
+    
+    // Only show credentials for clients imported from Excel
+    if (!client.imported_from_excel) {
+        return {
+            codee: client.codee,
+            raison_social: client.raison_social,
+            email: client.email,
+            password: null,
+            passwordUpdated: null,
+            importedFromExcel: false,
+            message: 'This client was not imported from Excel. Password visibility is not available.'
+        };
+    }
+    
+    // Check if password has been updated
+    if (client.password_updated) {
+        return {
+            codee: client.codee,
+            raison_social: client.raison_social,
+            email: client.email,
+            password: null,
+            passwordUpdated: true,
+            importedFromExcel: true,
+            message: 'Password has been updated by client and is no longer visible.'
+        };
+    }
+    
+    // For imported clients who haven't updated their password
+    // Note: We cannot retrieve the original password from database as it's hashed
+    return {
+        codee: client.codee,
+        raison_social: client.raison_social,
+        email: client.email,
+        password: null, // Original password is not retrievable from database
+        passwordUpdated: false,
+        importedFromExcel: true,
+        message: 'This client was imported from Excel and hasn\'t updated their password, but the original password is not retrievable from the database.'
+    };
+};
+
+// Check if client password can be viewed (conditions check)
+const canViewClientPassword = async (clientId) => {
+    const [clients] = await db.query(
+        'SELECT id, codee, raison_social, email, password_updated, imported_from_excel, status FROM client WHERE id = ?',
+        [clientId]
+    );
+    
+    if (clients.length === 0) {
+        throw new Error('Client not found');
+    }
+    
+    const client = clients[0];
+    
+    // Check all conditions
+    const conditions = {
+        isActive: client.status === 'active',
+        isImported: client.imported_from_excel === true,
+        passwordNotUpdated: client.password_updated === false
+    };
+    
+    const canView = conditions.isActive && conditions.isImported && conditions.passwordNotUpdated;
+    
+    return {
+        canViewPassword: canView,
+        conditions: conditions,
+        clientInfo: {
+            id: client.id,
+            codee: client.codee,
+            raison_social: client.raison_social,
+            email: client.email,
+            status: client.status,
+            importedFromExcel: client.imported_from_excel,
+            passwordUpdated: client.password_updated
+        },
+        message: canView 
+            ? 'Password can be viewed for this client.' 
+            : 'Password cannot be viewed. Check conditions: Active status, Imported from Excel, Password not updated.'
+    };
+};
+
+// Get all clients with their password visibility status
+const getAllClientsWithPasswordStatus = async () => {
+    const [clients] = await db.query(
+        'SELECT id, codee, raison_social, email, password_updated, imported_from_excel FROM client ORDER BY id DESC'
+    );
+    
+    return clients.map(client => ({
+        id: client.id,
+        codee: client.codee,
+        raison_social: client.raison_social,
+        email: client.email,
+        passwordUpdated: client.password_updated,
+        importedFromExcel: client.imported_from_excel,
+        canShowPassword: client.imported_from_excel && !client.password_updated
+    }));
 };
 
 // Get upload middleware
@@ -319,5 +444,8 @@ module.exports = {
     deleteClient,
     generateUniqueClientCode,
     importClientsFromExcel,
+    getClientCredentials,
+    canViewClientPassword,
+    getAllClientsWithPasswordStatus,
     getUploadMiddleware
 }; 

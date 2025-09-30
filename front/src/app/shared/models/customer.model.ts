@@ -14,9 +14,9 @@ export interface Customer {
   ninea: string;
   code_douane: string;
   risque?: string;
-  password_updated?: boolean;
+  password_updated?: number;
   email_updated?: boolean;
-  imported_from_excel?: boolean;
+  imported_from_excel?: number;
 }
 
 export interface Address {

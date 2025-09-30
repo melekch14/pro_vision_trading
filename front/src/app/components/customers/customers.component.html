@@ -150,6 +150,14 @@
                   title="View Password">
                   <span class="material-icons">lock</span>
                 </button>
+                <!-- Reset Password Button - only show for imported, active clients who haven't updated password -->
+                <button 
+                  *ngIf="canViewPassword(customer)" 
+                  class="reset-password-btn" 
+                  (click)="resetCustomerPassword(customer)"
+                  title="Reset Password">
+                  <span class="material-icons">refresh</span>
+                </button>
               </ng-template>
             </td>
           </tr>

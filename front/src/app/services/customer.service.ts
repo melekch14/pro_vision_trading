@@ -64,4 +64,9 @@ export class CustomerService {
   getAllCustomersWithPasswordStatus(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/password-status/all`);
   }
+
+  // Reset customer password (admin only)
+  resetCustomerPassword(id: number, newPassword: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/reset-password`, { newPassword });
+  }
 } 

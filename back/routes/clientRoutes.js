@@ -29,6 +29,9 @@ router.get('/:id/credentials', clientController.getClientCredentials);
 // Check if client password can be viewed
 router.get('/:id/can-view-password', clientController.canViewClientPassword);
 
+// Reset client password (admin only)
+router.post('/:id/reset-password', clientController.resetClientPassword);
+
 // Get all clients with password status
 router.get('/password-status/all', clientController.getAllClientsWithPasswordStatus);
 

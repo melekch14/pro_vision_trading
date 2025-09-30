@@ -68,7 +68,7 @@ export class CustomerFormComponent implements OnInit, OnChanges {
       rccm: [{ value: '', disabled: this.readonly }, [Validators.required]],
       ninea: [{ value: '', disabled: this.readonly }, [Validators.required]],
       code_douane: [{ value: '', disabled: this.readonly }, [Validators.required]],
-      password: [{ value: '', disabled: this.readonly }]
+      password: [{ value: '', disabled: this.readonly }, [Validators.minLength(6)]]
     });
   }
 
@@ -115,5 +115,14 @@ export class CustomerFormComponent implements OnInit, OnChanges {
 
   cancelFormAction(): void {
     this.cancelForm.emit();
+  }
+
+  // Check if password can be set for this customer
+  canSetPassword(): boolean {
+    if (!this.customer) return false;
+    
+    return this.customer.status === 'active' && 
+           this.customer.imported_from_excel === 1 && 
+           this.customer.password_updated === 0;
   }
 }

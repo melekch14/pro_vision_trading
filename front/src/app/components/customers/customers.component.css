@@ -595,6 +595,26 @@
   opacity: 0.9;
 }
 
+.reset-password-btn {
+  background-color: #f59e0b;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reset-password-btn:hover {
+  background-color: #d97706;
+  opacity: 0.9;
+}
+
 /* Status badges */
 .status-badge {
   display: inline-block;

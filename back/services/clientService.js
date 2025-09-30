@@ -156,9 +156,21 @@ const updateClient = async (id, clientData) => {
         values.push(clientData.email);
     }
     if (clientData.password) {
+        // Check if client meets conditions for password update
+        const canUpdatePassword = currentClient.status === 'active' && 
+                                 (currentClient.imported_from_excel === 1 || currentClient.imported_from_excel === true) && 
+                                 (currentClient.password_updated === 0 || currentClient.password_updated === false);
+        
+        if (!canUpdatePassword) {
+            throw new Error('Password can only be updated for active, imported clients who haven\'t updated their password yet.');
+        }
+        
         const hashedPassword = await bcrypt.hash(clientData.password, 10);
         updates.push('password = ?');
         values.push(hashedPassword);
+        // Mark password as updated when admin sets it
+        updates.push('password_updated = ?');
+        values.push(true);
     }
     if (clientData.responsable) {
         updates.push('responsable = ?');
@@ -390,8 +402,8 @@ const canViewClientPassword = async (clientId) => {
     // Check all conditions
     const conditions = {
         isActive: client.status === 'active',
-        isImported: client.imported_from_excel === true,
-        passwordNotUpdated: client.password_updated === false
+        isImported: client.imported_from_excel === 1 || client.imported_from_excel === true,
+        passwordNotUpdated: client.password_updated === 0 || client.password_updated === false
     };
     
     const canView = conditions.isActive && conditions.isImported && conditions.passwordNotUpdated;
@@ -411,6 +423,50 @@ const canViewClientPassword = async (clientId) => {
         message: canView 
             ? 'Password can be viewed for this client.' 
             : 'Password cannot be viewed. Check conditions: Active status, Imported from Excel, Password not updated.'
+    };
+};
+
+// Reset client password (admin only)
+const resetClientPassword = async (clientId, newPassword) => {
+    const [clients] = await db.query(
+        'SELECT id, codee, raison_social, email, status, imported_from_excel, password_updated FROM client WHERE id = ?',
+        [clientId]
+    );
+    
+    if (clients.length === 0) {
+        throw new Error('Client not found');
+    }
+    
+    const client = clients[0];
+    
+    // Check if client meets the conditions for password reset
+    const canReset = client.status === 'active' && 
+                    (client.imported_from_excel === 1 || client.imported_from_excel === true) && 
+                    (client.password_updated === 0 || client.password_updated === false);
+    
+    if (!canReset) {
+        throw new Error('Password can only be reset for active, imported clients who haven\'t updated their password yet.');
+    }
+    
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update the password and mark as updated by admin
+    await db.query(
+        'UPDATE client SET password = ?, password_updated = true WHERE id = ?',
+        [hashedPassword, clientId]
+    );
+    
+    return {
+        success: true,
+        message: 'Password has been reset successfully',
+        clientInfo: {
+            id: client.id,
+            codee: client.codee,
+            raison_social: client.raison_social,
+            email: client.email,
+            newPassword: newPassword // Return the new password for admin to share
+        }
     };
 };
 
@@ -446,6 +502,7 @@ module.exports = {
     importClientsFromExcel,
     getClientCredentials,
     canViewClientPassword,
+    resetClientPassword,
     getAllClientsWithPasswordStatus,
     getUploadMiddleware
 }; 

@@ -338,8 +338,8 @@ export class CustomersComponent implements OnInit {
   // Check if password can be viewed for a customer
   canViewPassword(customer: Customer): boolean {
     return customer.status === 'active' && 
-           customer.imported_from_excel === true && 
-           customer.password_updated === false;
+           customer.imported_from_excel === 1 && 
+           customer.password_updated === 0;
   }
 
   // View customer password
@@ -358,5 +358,30 @@ export class CustomersComponent implements OnInit {
         alert('Error checking password visibility.');
       }
     });
+  }
+
+  // Reset customer password
+  resetCustomerPassword(customer: Customer): void {
+    const newPassword = prompt(`Reset password for ${customer.raison_social}:\n\nEnter new password:`, '');
+    
+    if (newPassword && newPassword.length >= 6) {
+      this.customerService.resetCustomerPassword(customer.id, newPassword).subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert(`Password reset successfully for ${customer.raison_social}!\n\nNew password: ${response.data.clientInfo.newPassword}\n\nPlease share this password with the client.`);
+            // Refresh the customer list to update the UI
+            this.loadCustomers();
+          } else {
+            alert('Failed to reset password: ' + response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error resetting password:', error);
+          alert('Error resetting password: ' + (error.error?.message || error.message));
+        }
+      });
+    } else if (newPassword !== null) {
+      alert('Password must be at least 6 characters long.');
+    }
   }
 } 

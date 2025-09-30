@@ -165,6 +165,33 @@ const canViewClientPassword = async (req, res) => {
     }
 };
 
+// Reset client password (admin only)
+const resetClientPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { newPassword } = req.body;
+        
+        if (!newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password is required'
+            });
+        }
+        
+        const result = await clientService.resetClientPassword(id, newPassword);
+        res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // Get upload middleware
 const getUploadMiddleware = () => {
     return clientService.getUploadMiddleware();
@@ -180,6 +207,7 @@ module.exports = {
     importClientsFromExcel,
     getClientCredentials,
     canViewClientPassword,
+    resetClientPassword,
     getAllClientsWithPasswordStatus,
     getUploadMiddleware
 }; 

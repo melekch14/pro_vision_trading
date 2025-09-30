@@ -74,6 +74,22 @@
         </div>
       </div>
     </div>
+    
+    <!-- Password field - only show for imported, active clients who haven't updated password -->
+    <div class="row" *ngIf="canSetPassword()">
+      <div class="col-md-6 mb-3">
+        <label for="password">Nouveau Mot de Passe</label>
+        <input type="password" class="form-control" id="password" formControlName="password" placeholder="Entrez un nouveau mot de passe">
+        <div class="form-text">
+          <i class="material-icons" style="font-size: 16px; vertical-align: middle;">info</i>
+          Ce champ n'est disponible que pour les clients importés, actifs et n'ayant pas encore mis à jour leur mot de passe.
+        </div>
+        <div *ngIf="customerForm.get('password')?.invalid && (customerForm.get('password')?.dirty || customerForm.get('password')?.touched)" class="validation-error">
+          <div *ngIf="customerForm.get('password')?.errors?.['required']">Le mot de passe est requis</div>
+          <div *ngIf="customerForm.get('password')?.errors?.['minlength']">Le mot de passe doit contenir au moins 6 caractères</div>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-12 mb-3">
         <label for="adresse">Adresse</label>

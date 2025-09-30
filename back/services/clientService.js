@@ -157,13 +157,13 @@ const updateClient = async (id, clientData) => {
     }
     if (clientData.password) {
         // Check if client meets conditions for password update
-        const canUpdatePassword = currentClient.status === 'active' && 
+        /*const canUpdatePassword = currentClient.status === 'active' && 
                                  (currentClient.imported_from_excel === 1 || currentClient.imported_from_excel === true) && 
                                  (currentClient.password_updated === 0 || currentClient.password_updated === false);
         
         if (!canUpdatePassword) {
             throw new Error('Password can only be updated for active, imported clients who haven\'t updated their password yet.');
-        }
+        }*/
         
         const hashedPassword = await bcrypt.hash(clientData.password, 10);
         updates.push('password = ?');

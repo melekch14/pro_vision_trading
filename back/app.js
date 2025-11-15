@@ -16,6 +16,8 @@ const orderRoutes = require('./routes/orderRoutes');
 const statisticsRoutes = require('./routes/statisticsRoutes');
 const profileUpdateRequestRoutes = require('./routes/profileUpdateRequestRoutes');
 const blRoutes = require('./routes/blRoutes');
+const activityHistoryRoutes = require('./routes/activityHistoryRoutes');
+const activityLogger = require('./middleware/activityLogger');
 
 // Debug middleware to log all requests
 app.use((req, res, next) => {
@@ -29,6 +31,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Activity logging middleware (should be after express.json to access req.body)
+app.use(activityLogger);
 
 // Routes
 app.use('/auth', authRoutes);
@@ -44,6 +49,7 @@ app.use('/orders', orderRoutes);
 app.use('/statistics', statisticsRoutes);
 app.use('/profile-update-requests', profileUpdateRequestRoutes);
 app.use('/bl', blRoutes);
+app.use('/activity-history', activityHistoryRoutes);
 
 // Test route to verify server is working
 app.get('/test', (req, res) => {

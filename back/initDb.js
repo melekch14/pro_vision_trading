@@ -265,6 +265,20 @@ const tableStatements = [
     KEY code_tier (code_tier),
     KEY date (date),
     KEY user_create (user_create)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  `CREATE TABLE IF NOT EXISTS activity_history (
+    id int NOT NULL AUTO_INCREMENT,
+    user_id int NOT NULL,
+    user_name varchar(255) NOT NULL,
+    user_role varchar(50) NOT NULL,
+    action varchar(255) NOT NULL,
+    target varchar(500) DEFAULT NULL,
+    ip_address varchar(45) DEFAULT NULL,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY user_id (user_id),
+    KEY created_at (created_at),
+    KEY action (action)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`
 ];
 

@@ -89,6 +89,12 @@ export class SidebarComponent implements OnInit {
       name: 'Paramètres',
       icon: 'settings_applications',
       route: '/app/settings'
+    },
+    {
+      id: 'activity-history',
+      name: 'Historique des activités',
+      icon: 'history',
+      route: '/app/activity-history'
     }
   ];
 

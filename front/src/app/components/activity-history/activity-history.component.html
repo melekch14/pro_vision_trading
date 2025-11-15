@@ -1,0 +1,194 @@
+<div class="activity-history-container">
+  <!-- Header -->
+  <div class="activity-header">
+    <div class="header-left">
+      <h1>Activity History</h1>
+      <p class="subtitle">Monitor and track all user activities across the application</p>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn refresh-btn" (click)="refresh()">
+        <span class="material-icons">refresh</span>
+        Refresh
+      </button>
+      <button class="action-btn export-btn" (click)="exportToCSV()">
+        <span class="material-icons">download</span>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid" *ngIf="statistics">
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <span class="material-icons">timeline</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ statistics.totalActivities | number }}</div>
+        <div class="stat-label">Total Activities</div>
+        <div class="stat-change positive" *ngIf="statistics.weekChange > 0">
+          +{{ statistics.weekChange }}% from last week
+        </div>
+        <div class="stat-change negative" *ngIf="statistics.weekChange < 0">
+          {{ statistics.weekChange }}% from last week
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <span class="material-icons">people</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ statistics.activeUsers }}</div>
+        <div class="stat-label">Active Users</div>
+        <div class="stat-change positive" *ngIf="statistics.newUsers > 0">
+          +{{ statistics.newUsers }} new this week
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <span class="material-icons">warning</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ statistics.criticalActions }}</div>
+        <div class="stat-label">Critical Actions</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <span class="material-icons">timeline</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ statistics.thisWeekTotal }}</div>
+        <div class="stat-label">This Week</div>
+        <div class="stat-change positive" *ngIf="statistics.thisWeekChange > 0">
+          +{{ statistics.thisWeekChange }}% increase
+        </div>
+        <div class="stat-change negative" *ngIf="statistics.thisWeekChange < 0">
+          {{ statistics.thisWeekChange }}% decrease
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="search-box">
+      <span class="material-icons search-icon">search</span>
+      <input 
+        type="text" 
+        placeholder="Search activities..." 
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        class="search-input"
+      />
+    </div>
+    <div class="filter-dropdowns">
+      <select [(ngModel)]="selectedAction" (change)="onFilterChange()" class="filter-select">
+        <option value="All actions">All actions</option>
+        <option *ngFor="let action of actions" [value]="action">{{ action }}</option>
+      </select>
+      <select [(ngModel)]="selectedUser" (change)="onFilterChange()" class="filter-select">
+        <option value="All users">All users</option>
+        <option *ngFor="let user of users" [value]="user.user_name + ' (' + user.user_role + ')'">
+          {{ user.user_name }} ({{ user.user_role }})
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+
+  <!-- Activity Table -->
+  <div class="activity-table-container" *ngIf="!loading && !error">
+    <table class="activity-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Action</th>
+          <th>Target</th>
+          <th>Time</th>
+          <th>IP Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let activity of activities">
+          <td>
+            <div class="user-cell">
+              <div 
+                class="user-avatar" 
+                [style.background-color]="getUserAvatarColor(activity.user_name)"
+              >
+                {{ getInitials(activity.user_name) }}
+              </div>
+              <span class="user-name">{{ activity.user_name }}</span>
+            </div>
+          </td>
+          <td>
+            <span 
+              class="action-badge" 
+              [class]="'action-' + getActionColor(activity.action)"
+            >
+              <span class="material-icons action-icon">{{ getActionIcon(activity.action) }}</span>
+              {{ activity.action }}
+            </span>
+          </td>
+          <td>
+            <span class="target-text">{{ activity.target || '-' }}</span>
+          </td>
+          <td>
+            <span class="time-text">{{ formatTime(activity.created_at) }}</span>
+          </td>
+          <td>
+            <span class="ip-text">{{ activity.ip_address || '-' }}</span>
+          </td>
+        </tr>
+        <tr *ngIf="activities.length === 0">
+          <td colspan="5" class="no-data">
+            No activities found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        (click)="previousPage()" 
+        [disabled]="currentPage === 1"
+      >
+        Previous
+      </button>
+      <span class="page-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button 
+        class="page-btn" 
+        (click)="nextPage()" 
+        [disabled]="currentPage === totalPages"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-count">
+      Showing {{ activities.length }} of {{ totalItems }} activities
+    </div>
+  </div>
+</div>
+

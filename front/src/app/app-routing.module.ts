@@ -27,6 +27,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { BlComponent } from './components/bl/bl.component';
+import { ActivityHistoryComponent } from './components/activity-history/activity-history.component';
 
 const routes: Routes = [
   {
@@ -70,7 +71,8 @@ const routes: Routes = [
       { path: 'opticiens', component: OpticienComponent },
       { path: 'bl', component: BlComponent },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent }
+      { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent },
+      { path: 'activity-history', component: ActivityHistoryComponent }
     ]
   },
   {

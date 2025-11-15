@@ -1,4 +1,16 @@
 const authService = require('../services/authService');
+const activityHistoryService = require('../services/activityHistoryService');
+const jwt = require('jsonwebtoken');
+
+// Helper function to get IP address
+const getIpAddress = (req) => {
+  return req.ip || 
+         req.connection.remoteAddress || 
+         req.socket.remoteAddress ||
+         (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
+         req.headers['x-forwarded-for']?.split(',')[0] ||
+         'Unknown';
+};
 
 exports.register = async (req, res) => {
     const { type } = req.params;
@@ -27,6 +39,30 @@ exports.login = async (req, res) => {
     try {
         const result = await authService.authenticateDynamicUser(email, password);
         if (!result) return res.status(401).json({ error: 'Invalid email or password' });
+
+        // Log login activity for admin users (opticien and technicien)
+        try {
+            const decoded = jwt.verify(result.token, process.env.JWT_SECRET);
+            if (decoded.role === 'opticien' || decoded.role === 'technicien') {
+                const userName = decoded.nom && decoded.prenom 
+                    ? `${decoded.prenom} ${decoded.nom}` 
+                    : decoded.email || 'Unknown';
+                
+                activityHistoryService.logActivity(
+                    decoded.id,
+                    userName,
+                    decoded.role,
+                    'Logged in',
+                    null,
+                    getIpAddress(req)
+                ).catch(err => {
+                    console.error('Error logging login activity:', err);
+                });
+            }
+        } catch (logError) {
+            // Don't fail login if logging fails
+            console.error('Error logging login activity:', logError);
+        }
 
         res.json(result);
     } catch (err) {

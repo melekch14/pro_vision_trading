@@ -196,11 +196,39 @@ const importFromExcel = async (filePath) => {
         }
         
         let importedCount = 0;
+        let ignoredCount = 0;
         const errors = [];
         
         // Process each record
         for (const record of records) {
             try {
+                // Check if the complete row already exists
+                // A row exists if: group code exists, family code exists for that group, and subfamily code exists for that family
+                let [existingGroups] = await db.query('SELECT id FROM article_groups WHERE code = ?', [record.groupCode]);
+                
+                if (existingGroups.length > 0) {
+                    const groupId = existingGroups[0].id;
+                    let [existingFamilies] = await db.query(
+                        'SELECT id FROM article_families WHERE code = ? AND group_id = ?',
+                        [record.familyCode, groupId]
+                    );
+                    
+                    if (existingFamilies.length > 0) {
+                        const familyId = existingFamilies[0].id;
+                        let [existingSubfamilies] = await db.query(
+                            'SELECT id FROM article_subfamilies WHERE code = ? AND family_id = ?',
+                            [record.subfamilyCode, familyId]
+                        );
+                        
+                        // If subfamily already exists, this row already exists - ignore it
+                        if (existingSubfamilies.length > 0) {
+                            ignoredCount++;
+                            continue; // Skip this record
+                        }
+                    }
+                }
+                
+                // Row doesn't exist, proceed with import
                 // Find or create group
                 let [groups] = await db.query('SELECT id FROM article_groups WHERE code = ?', [record.groupCode]);
                 let groupId;
@@ -238,22 +266,11 @@ const importFromExcel = async (filePath) => {
                     await db.query('UPDATE article_families SET name = ? WHERE id = ?', [record.familyName, familyId]);
                 }
                 
-                // Find or create subfamily
-                let [subfamilies] = await db.query(
-                    'SELECT id FROM article_subfamilies WHERE code = ? AND family_id = ?',
-                    [record.subfamilyCode, familyId]
+                // Create subfamily (we already checked it doesn't exist)
+                await db.query(
+                    'INSERT INTO article_subfamilies (code, name, family_id) VALUES (?, ?, ?)',
+                    [record.subfamilyCode, record.subfamilyName, familyId]
                 );
-                
-                if (subfamilies.length === 0) {
-                    // Create new subfamily
-                    await db.query(
-                        'INSERT INTO article_subfamilies (code, name, family_id) VALUES (?, ?, ?)',
-                        [record.subfamilyCode, record.subfamilyName, familyId]
-                    );
-                } else {
-                    // Update subfamily name if different
-                    await db.query('UPDATE article_subfamilies SET name = ? WHERE id = ?', [record.subfamilyName, subfamilies[0].id]);
-                }
                 
                 importedCount++;
             } catch (error) {
@@ -266,12 +283,23 @@ const importFromExcel = async (filePath) => {
             fs.unlinkSync(filePath);
         }
         
+        // Build message
+        let message = `${importedCount} enregistrement(s) importé(s)`;
+        if (ignoredCount > 0) {
+            message += `, ${ignoredCount} ligne(s) ignorée(s) (ligne déjà existante)`;
+        }
+        if (errors.length > 0) {
+            message += `, ${errors.length} erreur(s)`;
+        }
+        if (importedCount > 0 && ignoredCount === 0 && errors.length === 0) {
+            message += ' avec succès';
+        }
+        
         return {
             importedCount,
+            ignoredCount,
             totalRecords: records.length,
-            message: errors.length > 0 
-                ? `${importedCount} enregistrement(s) importé(s) avec ${errors.length} erreur(s)`
-                : `${importedCount} enregistrement(s) importé(s) avec succès`,
+            message: message,
             errors: errors.length > 0 ? errors : undefined
         };
     } catch (error) {

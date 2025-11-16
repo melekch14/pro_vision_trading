@@ -197,7 +197,11 @@ export class ArticleHierarchyComponent implements OnInit {
 
     this.articleHierarchyService.importFromExcel(formData).subscribe({
       next: (result) => {
-        this.importSuccess = `Import réussi: ${result.importedCount} enregistrement(s) importé(s) sur ${result.totalRecords}`;
+        let message = `Import réussi: ${result.importedCount} enregistrement(s) importé(s) sur ${result.totalRecords}`;
+        if (result.ignoredCount > 0) {
+          message += `, ${result.ignoredCount} ligne(s) ignorée(s) (ligne déjà existante)`;
+        }
+        this.importSuccess = message;
         this.importError = null;
         // Reload data after import - this will automatically rebuild table if on table tab
         this.loadData();

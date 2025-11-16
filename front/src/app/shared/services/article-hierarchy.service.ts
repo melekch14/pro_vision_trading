@@ -76,7 +76,7 @@ export class ArticleHierarchyService {
   }
 
   // Import from Excel
-  importFromExcel(formData: FormData): Observable<{ importedCount: number, totalRecords: number, message: string }> {
-    return this.http.post<{ importedCount: number, totalRecords: number, message: string }>(`${this.apiUrl}/import`, formData);
+  importFromExcel(formData: FormData): Observable<{ importedCount: number, ignoredCount: number, totalRecords: number, message: string }> {
+    return this.http.post<{ importedCount: number, ignoredCount: number, totalRecords: number, message: string }>(`${this.apiUrl}/import`, formData);
   }
 } 

@@ -162,6 +162,7 @@ exports.importFromExcel = async (req, res) => {
             success: true,
             message: result.message,
             importedCount: result.importedCount,
+            ignoredCount: result.ignoredCount,
             totalRecords: result.totalRecords,
             errors: result.errors
         });

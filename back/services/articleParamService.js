@@ -180,6 +180,92 @@ const deleteTypeArticle = async (id) => {
     await db.query('DELETE FROM typeArticle WHERE id = ?', [id]);
 };
 
+// Bulk Import with duplicate checking
+const importBulk = async (importData) => {
+    let totalCreated = 0;
+    let totalSkipped = 0;
+
+    // Helper function to check if name exists and create if not
+    const processType = async (type, names, createFunc, getFunc) => {
+        let created = 0;
+        let skipped = 0;
+
+        if (!names || names.length === 0) {
+            return { created, skipped };
+        }
+
+        // Get existing items
+        const existing = await getFunc();
+        const existingNames = new Set(existing.map(item => item.name.toLowerCase().trim()));
+
+        for (const name of names) {
+            const trimmedName = name.trim();
+            if (!trimmedName) continue;
+
+            // Check for duplicates (case-insensitive)
+            if (existingNames.has(trimmedName.toLowerCase())) {
+                skipped++;
+                continue;
+            }
+
+            try {
+                // Create new item with name in both name and description fields
+                await createFunc({ name: trimmedName, description: trimmedName });
+                existingNames.add(trimmedName.toLowerCase());
+                created++;
+            } catch (error) {
+                // If error is due to duplicate (race condition), skip it
+                if (error.message && error.message.includes('Duplicate')) {
+                    skipped++;
+                } else {
+                    throw error;
+                }
+            }
+        }
+
+        return { created, skipped };
+    };
+
+    // Process each type
+    if (importData['foyers']) {
+        const result = await processType('foyers', importData['foyers'], createFoyer, getFoyers);
+        totalCreated += result.created;
+        totalSkipped += result.skipped;
+    }
+
+    if (importData['indices']) {
+        const result = await processType('indices', importData['indices'], createIndice, getIndices);
+        totalCreated += result.created;
+        totalSkipped += result.skipped;
+    }
+
+    if (importData['designs']) {
+        const result = await processType('designs', importData['designs'], createDesign, getDesigns);
+        totalCreated += result.created;
+        totalSkipped += result.skipped;
+    }
+
+    if (importData['couleur-photos']) {
+        const result = await processType('couleur-photos', importData['couleur-photos'], createCouleurPhoto, getCouleurPhotos);
+        totalCreated += result.created;
+        totalSkipped += result.skipped;
+    }
+
+    if (importData['traitements']) {
+        const result = await processType('traitements', importData['traitements'], createTraitement, getTraitements);
+        totalCreated += result.created;
+        totalSkipped += result.skipped;
+    }
+
+    if (importData['type-articles']) {
+        const result = await processType('type-articles', importData['type-articles'], createTypeArticle, getTypeArticles);
+        totalCreated += result.created;
+        totalSkipped += result.skipped;
+    }
+
+    return { created: totalCreated, skipped: totalSkipped };
+};
+
 module.exports = {
     // Foyer
     createFoyer,
@@ -221,5 +307,8 @@ module.exports = {
     getTypeArticles,
     getTypeArticleById,
     updateTypeArticle,
-    deleteTypeArticle
+    deleteTypeArticle,
+    
+    // Bulk Import
+    importBulk
 }; 

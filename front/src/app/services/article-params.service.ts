@@ -80,4 +80,13 @@ export class ArticleParamsService {
     const route = routeMap[type] || type;
     return this.http.delete<void>(`${this.apiUrl}/${route}/${id}`);
   }
+
+  importBulk(data: { [key: string]: Set<string> }): Observable<{created: number, skipped: number}> {
+    // Convert Sets to arrays for JSON serialization
+    const importData: { [key: string]: string[] } = {};
+    Object.keys(data).forEach(key => {
+      importData[key] = Array.from(data[key]);
+    });
+    return this.http.post<{created: number, skipped: number}>(`${this.apiUrl}/import-bulk`, importData);
+  }
 } 

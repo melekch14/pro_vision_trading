@@ -292,4 +292,14 @@ exports.deleteTypeArticle = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+// Bulk Import Controller
+exports.importBulk = async (req, res) => {
+    try {
+        const result = await articleParamService.importBulk(req.body);
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }; 

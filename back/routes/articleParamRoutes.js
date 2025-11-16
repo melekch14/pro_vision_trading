@@ -44,4 +44,7 @@ router.get('/type-articles/:id', articleParamController.getTypeArticleById);
 router.put('/type-articles/:id', articleParamController.updateTypeArticle);
 router.delete('/type-articles/:id', articleParamController.deleteTypeArticle);
 
+// Bulk Import Route
+router.post('/import-bulk', articleParamController.importBulk);
+
 module.exports = router; 

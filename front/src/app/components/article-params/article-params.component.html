@@ -4,11 +4,11 @@
   <!-- Tabs -->
   <div class="tabs">
     <button
-      *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles']"
+      *ngFor="let type of ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles', 'all-data']"
       [class.active]="activePanel === type"
       class="tab-btn"
       (click)="setPanel(type)">
-      {{type | titlecase}}
+      {{type === 'all-data' ? 'All Data / Import-Export' : (type | titlecase)}}
     </button>
   </div>
 
@@ -72,4 +72,44 @@
       </div>
     </div>
   </ng-container>
+
+  <!-- All Data / Import-Export Tab -->
+  <div *ngIf="activePanel === 'all-data'" class="panel-container all-data-panel">
+    <div class="card full-width-card">
+      <div class="params-header">
+        <h2 class="section-title">Toutes les données</h2>
+        <div class="action-buttons">
+          <button class="export-btn" (click)="exportToExcel()">
+            <span class="icon-export"></span> Exporter vers Excel
+          </button>
+          <label for="file-import" class="import-btn">
+            <span class="icon-import"></span> Importer depuis Excel
+            <input type="file" id="file-import" accept=".xlsx,.xls" (change)="onFileSelected($event)" style="display: none;">
+          </label>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <table class="table all-data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Nom</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of allData">
+              <td><b>{{item.type}}</b></td>
+              <td>{{item.name}}</td>
+              <td>{{item.description}}</td>
+            </tr>
+            <tr *ngIf="allData.length === 0">
+              <td colspan="3" class="no-data">Aucune donnée disponible</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

@@ -448,58 +448,60 @@
           </div>
         </div>
 
-        <table class="stock-table">
-          <thead>
-            <tr>
-              <th>Code Groupe</th>
-              <th>Nom Groupe</th>
-              <th>Code famille</th>
-              <th>Nom famille</th>
-              <th>Code sous famille</th>
-              <th>Nom sous famille</th>
-              <th>Code ARTICLE</th>
-              <th>Libelle</th>
-              <th>Diamètre</th>
-              <th>Type d'article</th>
-              <th>Origine</th>
-              <th>Foyer</th>
-              <th>Indice</th>
-              <th>Design</th>
-              <th>Type de stock</th>
-              <th>Couleur photo</th>
-              <th>Traitement</th>
-              <th>Prix d'achat ht</th>
-              <th>Prix d'achat ttc</th>
-              <th>Prix de vente ht</th>
-              <th>Prix de vente ttc</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let article of filteredAllData">
-              <td>{{ article.group_code || '' }}</td>
-              <td>{{ article.group_name || '' }}</td>
-              <td>{{ article.family_code || '' }}</td>
-              <td>{{ article.family_name || '' }}</td>
-              <td>{{ article.subfamily_code || '' }}</td>
-              <td>{{ article.subfamily_name || '' }}</td>
-              <td>{{ article.code }}</td>
-              <td>{{ article.libelle }}</td>
-              <td>{{ article.diametre || '' }}</td>
-              <td>{{ article.type_article_name || '' }}</td>
-              <td>{{ article.origineArticle || '' }}</td>
-              <td>{{ article.foyer_name || '' }}</td>
-              <td>{{ article.indice_name || '' }}</td>
-              <td>{{ article.design_name || '' }}</td>
-              <td>{{ article.type_stock || '' }}</td>
-              <td>{{ article.couleur_photo_name || '' }}</td>
-              <td>{{ article.traitement_name || '' }}</td>
-              <td>{{ article.prix_achat || '' }}</td>
-              <td>{{ (article.prix_achat * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
-              <td>{{ article.prix_vente || '' }}</td>
-              <td>{{ (article.prix_vente * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="stock-table import-export-table">
+            <thead>
+              <tr>
+                <th>Code Groupe</th>
+                <th>Nom Groupe</th>
+                <th>Code famille</th>
+                <th>Nom famille</th>
+                <th>Code sous famille</th>
+                <th>Nom sous famille</th>
+                <th>Code ARTICLE</th>
+                <th>Libelle</th>
+                <th>Diamètre</th>
+                <th>Type d'article</th>
+                <th>Origine</th>
+                <th>Foyer</th>
+                <th>Indice</th>
+                <th>Design</th>
+                <th>Type de stock</th>
+                <th>Couleur photo</th>
+                <th>Traitement</th>
+                <th>Prix d'achat ht</th>
+                <th>Prix d'achat ttc</th>
+                <th>Prix de vente ht</th>
+                <th>Prix de vente ttc</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let article of filteredAllData">
+                <td>{{ article.group_code || '' }}</td>
+                <td>{{ article.group_name || '' }}</td>
+                <td>{{ article.family_code || '' }}</td>
+                <td>{{ article.family_name || '' }}</td>
+                <td>{{ article.subfamily_code || '' }}</td>
+                <td>{{ article.subfamily_name || '' }}</td>
+                <td>{{ article.code }}</td>
+                <td>{{ article.libelle }}</td>
+                <td>{{ article.diametre || '' }}</td>
+                <td>{{ article.type_article_name || '' }}</td>
+                <td>{{ article.origineArticle || '' }}</td>
+                <td>{{ article.foyer_name || '' }}</td>
+                <td>{{ article.indice_name || '' }}</td>
+                <td>{{ article.design_name || '' }}</td>
+                <td>{{ article.type_stock || '' }}</td>
+                <td>{{ article.couleur_photo_name || '' }}</td>
+                <td>{{ article.traitement_name || '' }}</td>
+                <td>{{ article.prix_achat || '' }}</td>
+                <td>{{ (article.prix_achat * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
+                <td>{{ article.prix_vente || '' }}</td>
+                <td>{{ (article.prix_vente * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- No Results Message -->
         <div *ngIf="filteredAllData.length === 0" class="no-results">

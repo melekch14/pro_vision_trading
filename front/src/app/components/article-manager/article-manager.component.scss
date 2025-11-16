@@ -566,6 +566,55 @@ button {
   }
 }
 
+// Table wrapper for horizontal scrolling
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100%;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+  
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--card-background);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--text-color);
+      opacity: 0.5;
+    }
+  }
+}
+
+// Import/Export table specific styles
+.import-export-table {
+  min-width: 100%;
+  width: max-content;
+  
+  th, td {
+    min-width: 120px;
+    max-width: 200px;
+    white-space: normal;
+    word-wrap: break-word;
+    padding: 10px 8px;
+    vertical-align: top;
+  }
+  
+  th {
+    white-space: nowrap;
+    background-color: var(--table-header-bg);
+  }
+}
+
 // Action buttons
 .actions-cell {
   display: flex;

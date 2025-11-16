@@ -58,10 +58,56 @@ const deleteArticle = async (req, res) => {
     }
 };
 
+// Get all data with hierarchy
+const getAllData = async (req, res) => {
+    try {
+        const articles = await articleService.getAllData();
+        res.json(articles);
+    } catch (error) {
+        console.error('Error fetching all data:', error);
+        res.status(500).json({ error: 'Failed to fetch all data' });
+    }
+};
+
+// Import articles from Excel
+const importArticlesFromExcel = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        const result = await articleService.importArticlesFromExcel(req.file.path);
+        res.json({
+            success: true,
+            message: result.message,
+            importedCount: result.importedCount,
+            totalRecords: result.totalRecords,
+            errors: result.errors
+        });
+    } catch (error) {
+        console.error('Error importing article data:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get upload middleware
+const getUploadMiddleware = () => {
+    return articleService.getUploadMiddleware();
+};
+
 module.exports = {
     createArticle,
     getArticles,
     getArticleById,
     updateArticle,
-    deleteArticle
+    deleteArticle,
+    getAllData,
+    importArticlesFromExcel,
+    getUploadMiddleware
 }; 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -52,8 +52,16 @@ export class ArticleManagerComponent implements OnInit {
   subfamilyOptions: ArticleSubfamily[] = [];
   
   // Tab state
-  activeTab: 'browse' | 'add' | 'stock' = 'browse';
+  activeTab: 'browse' | 'add' | 'stock' | 'import-export' = 'browse';
   editingArticle: Article | null = null;
+
+  // Import/Export properties
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  allData: any[] = [];
+  filteredAllData: any[] = [];
+  allDataFilter: string = '';
+  importSuccess: string | null = null;
+  importError: string | null = null;
 
   // Stock management
   sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
@@ -169,6 +177,7 @@ export class ArticleManagerComponent implements OnInit {
     this.loadArticles();
     this.loadOptions();
     this.loadStockEntries();
+    this.loadAllData();
     
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
@@ -654,12 +663,14 @@ export class ArticleManagerComponent implements OnInit {
     console.log('Stock entries:', this.stockEntries);
   }
 
-  setTab(tab: 'browse' | 'add' | 'stock'): void {
+  setTab(tab: 'browse' | 'add' | 'stock' | 'import-export'): void {
     this.activeTab = tab;
     if (tab === 'browse') {
       this.resetForm();
     } else if (tab === 'add' && !this.editingArticle) {
       this.resetForm();
+    } else if (tab === 'import-export') {
+      this.loadAllData();
     }
   }
 
@@ -906,5 +917,124 @@ export class ArticleManagerComponent implements OnInit {
 
   private setTvaValue(): void {
     this.articleForm.patchValue({ tva: 18 });
+  }
+
+  // Import/Export methods
+  loadAllData(): void {
+    this.articleService.getAllData().subscribe({
+      next: (data) => {
+        this.allData = data;
+        this.applyAllDataFilters();
+      },
+      error: (error) => {
+        console.error('Error loading all data:', error);
+        this.snackBar.open('Error loading all data', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  applyAllDataFilters(): void {
+    if (!this.allDataFilter) {
+      this.filteredAllData = [...this.allData];
+      return;
+    }
+
+    const filter = this.allDataFilter.toLowerCase();
+    this.filteredAllData = this.allData.filter(article => {
+      return (
+        (article.code && article.code.toLowerCase().includes(filter)) ||
+        (article.libelle && article.libelle.toLowerCase().includes(filter)) ||
+        (article.group_name && article.group_name.toLowerCase().includes(filter)) ||
+        (article.family_name && article.family_name.toLowerCase().includes(filter)) ||
+        (article.subfamily_name && article.subfamily_name.toLowerCase().includes(filter)) ||
+        (article.type_article_name && article.type_article_name.toLowerCase().includes(filter)) ||
+        (article.foyer_name && article.foyer_name.toLowerCase().includes(filter)) ||
+        (article.indice_name && article.indice_name.toLowerCase().includes(filter)) ||
+        (article.design_name && article.design_name.toLowerCase().includes(filter))
+      );
+    });
+  }
+
+  triggerFileInput(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const validExtensions = ['.xlsx', '.xls'];
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    
+    if (!validExtensions.includes(fileExtension)) {
+      this.importError = 'Veuillez sélectionner un fichier Excel valide (.xlsx ou .xls)';
+      this.importSuccess = null;
+      return;
+    }
+
+    this.importError = null;
+    this.importSuccess = null;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.articleService.importArticlesFromExcel(formData).subscribe({
+      next: (result) => {
+        let message = `Import réussi: ${result.importedCount} enregistrement(s) importé(s) sur ${result.totalRecords}`;
+        if (result.errors && result.errors.length > 0) {
+          message += `, ${result.errors.length} erreur(s)`;
+        }
+        this.importSuccess = message;
+        this.importError = null;
+        this.loadArticles();
+        this.loadAllData();
+        this.loadStockEntries();
+        // Reset file input
+        if (this.fileInput) {
+          this.fileInput.nativeElement.value = '';
+        }
+      },
+      error: (error) => {
+        this.importError = error.error?.message || 'Erreur lors de l\'importation du fichier';
+        this.importSuccess = null;
+        // Reset file input
+        if (this.fileInput) {
+          this.fileInput.nativeElement.value = '';
+        }
+      }
+    });
+  }
+
+  exportAllDataToExcel(): void {
+    const exportData = this.filteredAllData.map(article => ({
+      'Code Groupe': article.group_code || '',
+      'Nom Groupe': article.group_name || '',
+      'Code famille': article.family_code || '',
+      'Nom famille': article.family_name || '',
+      'Code sous famille': article.subfamily_code || '',
+      'Nom sous famille': article.subfamily_name || '',
+      'Code ARTICLE': article.code || '',
+      'Libelle': article.libelle || '',
+      'Diamètre': article.diametre || '',
+      'Type d\'article': article.type_article_name || '',
+      'Origine (stock / fabrication)': article.origineArticle || '',
+      'Foyer': article.foyer_name || '',
+      'Indice': article.indice_name || '',
+      'Design': article.design_name || '',
+      'Type de stock (addition / cyl)': article.type_stock || '',
+      'Couleur photo': article.couleur_photo_name || '',
+      'Traitement': article.traitement_name || '',
+      'Fournisseur': article.fournisseur_name || '',
+      'Code a barre': article.code_a_barre || '',
+      'Prix d\'achat ht': article.prix_achat || '',
+      'Prix d\'achat ttc': article.prix_achat ? (article.prix_achat * (1 + (article.tva || 0) / 100)).toFixed(2) : '',
+      'Prix de vente ht': article.prix_vente || '',
+      'Prix de vente ttc': article.prix_vente ? (article.prix_vente * (1 + (article.tva || 0) / 100)).toFixed(2) : ''
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
+    
+    XLSX.writeFile(workbook, 'articles_all_data.xlsx');
   }
 }

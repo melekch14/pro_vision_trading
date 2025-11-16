@@ -25,6 +25,9 @@
       <button class="tab-btn" [class.active]="activeTab === 'stock'" (click)="setTab('stock')">
         Stock
       </button>
+      <button class="tab-btn" [class.active]="activeTab === 'import-export'" (click)="setTab('import-export')">
+        Import/Export
+      </button>
     </div>
 
     <!-- Browse Tab -->
@@ -407,6 +410,102 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </ng-container>
+
+    <!-- Import/Export Tab -->
+    <ng-container *ngIf="activeTab === 'import-export'">
+      <div class="stock-panel">
+        <div class="stock-header">
+          <h2>Import/Export des articles</h2>
+          <div class="stock-actions">
+            <button class="export-btn" (click)="exportAllDataToExcel()">
+              <span class="material-icons">file_download</span>
+              Exporter Excel
+            </button>
+            <button class="export-btn" (click)="triggerFileInput()">
+              <span class="material-icons">file_upload</span>
+              Importer Excel
+            </button>
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept=".xlsx,.xls" style="display: none;">
+          </div>
+        </div>
+
+        <!-- Import Success/Error Messages -->
+        <div *ngIf="importSuccess" class="import-success">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ importSuccess }}</span>
+        </div>
+        <div *ngIf="importError" class="import-error">
+          <mat-icon>error</mat-icon>
+          <span>{{ importError }}</span>
+        </div>
+
+        <!-- All Data Table -->
+        <div class="stock-filters">
+          <div class="filter-group">
+            <input type="text" class="filter-input" [(ngModel)]="allDataFilter" (ngModelChange)="applyAllDataFilters()" placeholder="Rechercher...">
+          </div>
+        </div>
+
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th>Code Groupe</th>
+              <th>Nom Groupe</th>
+              <th>Code famille</th>
+              <th>Nom famille</th>
+              <th>Code sous famille</th>
+              <th>Nom sous famille</th>
+              <th>Code ARTICLE</th>
+              <th>Libelle</th>
+              <th>Diamètre</th>
+              <th>Type d'article</th>
+              <th>Origine</th>
+              <th>Foyer</th>
+              <th>Indice</th>
+              <th>Design</th>
+              <th>Type de stock</th>
+              <th>Couleur photo</th>
+              <th>Traitement</th>
+              <th>Prix d'achat ht</th>
+              <th>Prix d'achat ttc</th>
+              <th>Prix de vente ht</th>
+              <th>Prix de vente ttc</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredAllData">
+              <td>{{ article.group_code || '' }}</td>
+              <td>{{ article.group_name || '' }}</td>
+              <td>{{ article.family_code || '' }}</td>
+              <td>{{ article.family_name || '' }}</td>
+              <td>{{ article.subfamily_code || '' }}</td>
+              <td>{{ article.subfamily_name || '' }}</td>
+              <td>{{ article.code }}</td>
+              <td>{{ article.libelle }}</td>
+              <td>{{ article.diametre || '' }}</td>
+              <td>{{ article.type_article_name || '' }}</td>
+              <td>{{ article.origineArticle || '' }}</td>
+              <td>{{ article.foyer_name || '' }}</td>
+              <td>{{ article.indice_name || '' }}</td>
+              <td>{{ article.design_name || '' }}</td>
+              <td>{{ article.type_stock || '' }}</td>
+              <td>{{ article.couleur_photo_name || '' }}</td>
+              <td>{{ article.traitement_name || '' }}</td>
+              <td>{{ article.prix_achat || '' }}</td>
+              <td>{{ (article.prix_achat * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
+              <td>{{ article.prix_vente || '' }}</td>
+              <td>{{ (article.prix_vente * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- No Results Message -->
+        <div *ngIf="filteredAllData.length === 0" class="no-results">
+          <mat-icon>search_off</mat-icon>
+          <p>Aucun article trouvé</p>
+        </div>
       </div>
     </ng-container>
   </div>

@@ -651,6 +651,39 @@ button {
   }
 }
 
+// Import success/error messages
+.import-success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  color: #155724;
+
+  mat-icon {
+    color: #28a745;
+  }
+}
+
+.import-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  color: #721c24;
+
+  mat-icon {
+    color: #dc3545;
+  }
+}
+
 // Responsive Design
 @media (max-width: 1024px) {
   .form-grid {

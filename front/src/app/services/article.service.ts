@@ -66,4 +66,14 @@ export class ArticleService {
   deleteArticle(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  // Get all data with hierarchy information
+  getAllData(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/all-data`);
+  }
+
+  // Import articles from Excel file
+  importArticlesFromExcel(file: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/import`, file);
+  }
 } 

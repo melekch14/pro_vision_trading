@@ -176,11 +176,11 @@
         <span class="livraison-label">Type de Livraison</span>
         <div class="livraison-options">
           <label>
-            Livraison Gratuite <small>(7-10 jours ouvrables)</small>
+            Livraison Gratuite <small>(7-15 jours)</small>
             <input type="radio" name="shippingType" value="free" [(ngModel)]="shippingType" (change)="onShippingTypeChange()">
           </label>
           <label>
-            Livraison Express <small>(24-48 heures)</small>
+            Livraison Illico <small>(4-7 jours)</small>
             <input type="radio" name="shippingType" value="express" [(ngModel)]="shippingType" (change)="onShippingTypeChange()">
           </label>
         </div>
@@ -203,7 +203,7 @@
         </div>
         <div>
           <span class="resume-label">Type de Livraison</span>
-          <span class="resume-value">{{ shippingType ? (shippingType === 'free' ? 'Gratuite' : 'Express') : 'À choisir' }}</span>
+          <span class="resume-value">{{ shippingType ? (shippingType === 'free' ? 'Gratuite' : 'Illico') : 'À choisir' }}</span>
         </div>
         <div>
           <span class="resume-label">Délais</span>

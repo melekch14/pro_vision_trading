@@ -477,17 +477,20 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   updateTotalPrice() {
-    this.totalPrice = (this.price || 0) + (this.price2 || 0);
+    const baseTotal = (this.price || 0) + (this.price2 || 0);
+    const shippingCost = this.shippingType === 'express' ? 3000 : 0;
+    this.totalPrice = baseTotal + shippingCost;
   }
 
   onShippingTypeChange() {
     if (this.shippingType === 'free') {
-      this.deliveryTime = '7-10 jours ouvrables';
+      this.deliveryTime = '7-15 jours';
     } else if (this.shippingType === 'express') {
-      this.deliveryTime = '24-48 heures';
+      this.deliveryTime = '4-7 jours';
     } else {
       this.deliveryTime = '';
     }
+    this.updateTotalPrice();
   }
 
   copyToOG() {
@@ -602,7 +605,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
         ...this.order,
         price: this.isODFilled() ? this.price : 0,
         price2: this.isOGFilled() ? this.price2 : 0,
-        totalPrice: (this.isODFilled() ? this.price : 0) + (this.isOGFilled() ? this.price2 : 0),
+        totalPrice: this.totalPrice,
         shippingType: this.shippingType,
         deliveryTime: this.deliveryTime,
         selectedProduct: this.selectedProduct,

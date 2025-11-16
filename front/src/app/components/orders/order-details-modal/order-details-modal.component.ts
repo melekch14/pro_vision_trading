@@ -266,6 +266,17 @@ export class OrderDetailsModalComponent implements OnInit {
       .join(' ');
   }
 
+  formatShippingType(type: string): string {
+    if (!type) return 'N/A';
+    if (type.toLowerCase() === 'express') {
+      return 'Illico';
+    }
+    if (type.toLowerCase() === 'free') {
+      return 'Gratuite';
+    }
+    return type;
+  }
+
   switchTab(tab: 'details' | 'management'): void {
     this.activeTab = tab;
   }

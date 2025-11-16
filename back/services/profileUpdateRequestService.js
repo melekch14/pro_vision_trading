@@ -8,19 +8,56 @@ const createProfileUpdateRequest = async (clientId, requestedData) => {
         throw new Error('Client not found');
     }
 
-    // Create request data with both current and requested data
+    // Helper function to normalize values for comparison
+    const normalizeValue = (value) => {
+        if (value === null || value === undefined) {
+            return '';
+        }
+        return String(value).trim();
+    };
+
+    // Filter out unchanged fields and system fields
+    const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass', 'id', 'created_at', 'updated_at'];
+    // Fields that clients are allowed to edit (from the profile form)
+    const editableFields = ['raison_social', 'responsable', 'email', 'tel', 'adresse', 'rccm', 'ninea', 'code_douane'];
+    
+    const changedData = {};
+    const currentDataForChangedFields = {};
+
+    // Only include fields that actually changed
+    for (const key in requestedData) {
+        // Skip password fields and system fields
+        if (passwordFields.some(pwdField => key.toLowerCase().includes(pwdField))) {
+            continue;
+        }
+
+        // Skip fields that clients are not allowed to edit (like codee, status, etc.)
+        // Only process editable fields
+        if (!editableFields.includes(key)) {
+            continue;
+        }
+
+        // Get current value from the client object
+        const currentValue = normalizeValue(currentClient[key]);
+        const requestedValue = normalizeValue(requestedData[key]);
+
+        // Only include if the value actually changed
+        if (currentValue !== requestedValue) {
+            changedData[key] = requestedData[key];
+            // Store the current value for this changed field
+            currentDataForChangedFields[key] = currentClient[key];
+        }
+    }
+
+    // If no fields changed, throw an error
+    if (Object.keys(changedData).length === 0) {
+        throw new Error('No changes detected in the profile update request');
+    }
+
+    // Create request data with both current and requested data (only changed fields)
     const requestData = {
-        current_data: {
-            raison_social: currentClient.raison_social,
-            responsable: currentClient.responsable,
-            email: currentClient.email,
-            tel: currentClient.tel,
-            adresse: currentClient.adresse,
-            rccm: currentClient.rccm,
-            ninea: currentClient.ninea,
-            code_douane: currentClient.code_douane
-        },
-        requested_data: requestedData
+        current_data: currentDataForChangedFields,
+        requested_data: changedData
     };
 
     const [result] = await db.query(

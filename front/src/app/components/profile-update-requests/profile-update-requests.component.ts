@@ -141,17 +141,29 @@ export class ProfileUpdateRequestsComponent implements OnInit {
     const currentData = request.requested_data.current_data;
     const requestedData = request.requested_data.requested_data;
     
-    // Filter out password-related fields
-    const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass'];
+    // Filter out password-related fields and other system fields
+    const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass', 'id', 'created_at', 'updated_at'];
+    
+    // Helper function to normalize values for comparison
+    const normalizeValue = (value: any): string => {
+      if (value === null || value === undefined) {
+        return '';
+      }
+      // Convert to string and trim whitespace
+      return String(value).trim();
+    };
     
     return Object.keys(requestedData).filter(key => {
-      // Skip password fields
+      // Skip password fields and system fields
       if (passwordFields.some(pwdField => key.toLowerCase().includes(pwdField))) {
         return false;
       }
       
-      const currentValue = currentData[key] || '';
-      const requestedValue = requestedData[key] || '';
+      // Normalize both values for proper comparison
+      const currentValue = normalizeValue(currentData[key]);
+      const requestedValue = normalizeValue(requestedData[key]);
+      
+      // Only return fields where values actually changed
       return currentValue !== requestedValue;
     });
   }

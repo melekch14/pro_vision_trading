@@ -52,7 +52,11 @@ export class OpticienComponent implements OnInit {
     { componentId: 'orders', componentName: 'Orders', hasAccess: false },
     { componentId: 'customers', componentName: 'Customers', hasAccess: false },
     { componentId: 'fournisseurs', componentName: 'Suppliers', hasAccess: false },
-    { componentId: 'opticiens', componentName: 'Opticien Management', hasAccess: false }
+    { componentId: 'opticiens', componentName: 'Opticien Management', hasAccess: false },
+    { componentId: 'activity-history', componentName: 'Historique des activités', hasAccess: false },
+    { componentId: 'profile-update-requests', componentName: 'Demandes de modification', hasAccess: false },
+    { componentId: 'bl', componentName: 'Bon de Livraison', hasAccess: false },
+    { componentId: 'settings', componentName: 'Paramètres', hasAccess: false },
   ];
 
   constructor(

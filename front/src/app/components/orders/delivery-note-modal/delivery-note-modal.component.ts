@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../shared/models/customer.model';
 import { OrderService } from '../../../services/order.service';
+import { BlService } from '../../../services/bl.service';
+import { AuthService } from '../../../services/auth.service';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -61,7 +63,9 @@ export class DeliveryNoteModalComponent implements OnInit {
     public dialogRef: MatDialogRef<DeliveryNoteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { orders: Order[] },
     private customerService: CustomerService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private blService: BlService,
+    private authService: AuthService
   ) {
     this.currentDate = new Date().toLocaleDateString('fr-FR');
     this.deliveryNoteNumber = this.generateDeliveryNoteNumber();
@@ -181,6 +185,8 @@ export class DeliveryNoteModalComponent implements OnInit {
     console.log('Total Amount:', this.totalAmount);
     console.log('Final Orders with all details:', this.data.orders);
     this.createPages();
+    // Create BL after total is calculated
+    this.createBlIfNotExists();
   }
 
   calculateOptimalRowsPerPage(totalRows: number, totalOrders: number): number {
@@ -790,5 +796,61 @@ export class DeliveryNoteModalComponent implements OnInit {
     const p1 = typeof price1 === 'string' ? parseFloat(price1) || 0 : (price1 || 0);
     const p2 = typeof price2 === 'string' ? parseFloat(price2) || 0 : (price2 || 0);
     return p1 + p2;
+  }
+
+  // Create BL if it doesn't already exist
+  createBlIfNotExists(): void {
+    // Check if BL already exists by numero
+    this.blService.getBlByNumero(this.deliveryNoteNumber).subscribe({
+      next: (existingBl) => {
+        // BL already exists, don't create again
+        console.log('BL already exists, skipping creation');
+      },
+      error: (error) => {
+        // BL doesn't exist (404), create it
+        if (error.status === 404) {
+          this.createNewBl();
+        } else {
+          console.error('Error checking BL existence:', error);
+        }
+      }
+    });
+  }
+
+  // Create a new BL record
+  createNewBl(): void {
+    if (!this.customerDetails) {
+      // Wait for customer details to load
+      setTimeout(() => this.createNewBl(), 100);
+      return;
+    }
+
+    const userData = this.authService.getUserData();
+    const userCreate = userData?.nom && userData?.prenom 
+      ? `${userData.prenom} ${userData.nom}` 
+      : (userData?.raison_social || userData?.email || 'Unknown');
+
+    const blData = {
+      numero: this.deliveryNoteNumber,
+      date: new Date().toISOString().split('T')[0],
+      code_tier: this.customerDetails.codee || '',
+      nom_raison_social: this.customerDetails.raison_social || '',
+      total_ttc: this.totalAmount,
+      mode_paie: '', // Empty as requested
+      observation: '',
+      user_create: userCreate,
+      totreg: 0,
+      deja_recu: 0,
+      reste: this.totalAmount
+    };
+
+    this.blService.createBl(blData).subscribe({
+      next: (response) => {
+        console.log('BL created successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error creating BL:', error);
+      }
+    });
   }
 } 

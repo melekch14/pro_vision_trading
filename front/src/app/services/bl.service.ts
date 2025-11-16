@@ -22,6 +22,11 @@ export class BlService {
     return this.http.get<Bl>(`${this.apiUrl}/${id}`);
   }
 
+  // Get BL by numero
+  getBlByNumero(numero: string): Observable<Bl> {
+    return this.http.get<Bl>(`${this.apiUrl}/numero/${numero}`);
+  }
+
   // Create a new BL record
   createBl(blData: Partial<Bl>): Observable<any> {
     return this.http.post(this.apiUrl, blData);

@@ -25,6 +25,20 @@ const getBlById = async (req, res) => {
     }
 };
 
+// Get BL by numero
+const getBlByNumero = async (req, res) => {
+    try {
+        const blRecord = await blService.getBlByNumero(req.params.numero);
+        if (!blRecord) {
+            return res.status(404).json({ error: 'BL record not found' });
+        }
+        res.json(blRecord);
+    } catch (error) {
+        console.error('Error fetching BL record by numero:', error);
+        res.status(500).json({ error: 'Failed to fetch BL record' });
+    }
+};
+
 // Create a new BL record
 const createBl = async (req, res) => {
     try {
@@ -154,6 +168,7 @@ const getUploadMiddleware = () => {
 module.exports = {
     getAllBl,
     getBlById,
+    getBlByNumero,
     createBl,
     updateBl,
     deleteBl,

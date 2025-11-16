@@ -50,6 +50,19 @@ class BlService {
     }
   }
 
+  // Get BL by numero (to check for duplicates)
+  async getBlByNumero(numero) {
+    try {
+      const [rows] = await db.query(
+        'SELECT * FROM bl WHERE numero = ?',
+        [numero]
+      );
+      return rows[0];
+    } catch (error) {
+      throw new Error(`Error fetching BL record by numero: ${error.message}`);
+    }
+  }
+
   // Create a new BL record
   async createBl(blData) {
     try {
@@ -138,10 +151,22 @@ class BlService {
         // Skip empty rows
         if (!row[0]) continue;
         
+        const code_tier = row[2] ? row[2].toString() : null;
+        
+        // Check if code_tier exists in client table (codee field)
+        if (code_tier) {
+          const [clients] = await db.query('SELECT id FROM client WHERE codee = ?', [code_tier]);
+          if (clients.length === 0) {
+            // Skip this row if client doesn't exist
+            console.log(`Skipping row ${i + 1}: Code Tier ${code_tier} does not exist in client table`);
+            continue;
+          }
+        }
+        
         const blRecord = {
           numero: row[0] ? row[0].toString() : null,
           date: row[1] ? this.parseExcelDate(row[1]) : null,
-          code_tier: row[2] ? row[2].toString() : null,
+          code_tier: code_tier,
           nom_raison_social: row[3] ? row[3].toString() : null,
           total_ttc: row[4] ? parseFloat(row[4]) : null,
           mode_paie: row[5] ? row[5].toString() : null,

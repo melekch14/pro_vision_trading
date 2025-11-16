@@ -72,8 +72,9 @@ export class BlComponent implements OnInit {
 
   loadStatistics(): void {
     this.blService.getBlStatistics().subscribe({
-      next: (response: BlStatistics) => {
-        this.statistics = response;
+      next: (response: any) => {
+        // Handle both direct response and wrapped response
+        this.statistics = response.data || response;
       },
       error: (error: any) => {
         console.error('Error loading BL statistics:', error);

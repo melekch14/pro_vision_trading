@@ -11,6 +11,9 @@ router.get('/statistics', blController.getBlStatistics);
 // Search BL records
 router.get('/search', blController.searchBl);
 
+// Get BL by numero
+router.get('/numero/:numero', blController.getBlByNumero);
+
 // Get BL by ID
 router.get('/:id', blController.getBlById);
 

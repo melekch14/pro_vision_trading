@@ -85,13 +85,13 @@ export class BlComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.blRecords];
 
-    if (this.searchQuery.trim()) {
+    if (this.searchQuery && this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(record =>
-        record.numero.toLowerCase().includes(query) ||
-        record.nom_raison_social.toLowerCase().includes(query) ||
-        record.code_tier.toLowerCase().includes(query) ||
-        record.user_create.toLowerCase().includes(query)
+        (record.numero && record.numero.toLowerCase().includes(query)) ||
+        (record.nom_raison_social && record.nom_raison_social.toLowerCase().includes(query)) ||
+        (record.code_tier && record.code_tier.toLowerCase().includes(query)) ||
+        (record.user_create && record.user_create.toLowerCase().includes(query))
       );
     }
 
@@ -102,9 +102,10 @@ export class BlComponent implements OnInit {
       );
     }
 
-    if (this.userFilter) {
+    if (this.userFilter && this.userFilter.trim()) {
+      const userQuery = this.userFilter.toLowerCase().trim();
       filtered = filtered.filter(record =>
-        record.user_create.toLowerCase().includes(this.userFilter.toLowerCase())
+        record.user_create && record.user_create.toLowerCase().includes(userQuery)
       );
     }
 

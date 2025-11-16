@@ -146,6 +146,16 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
+  position: relative;
+  z-index: 1;
+  background-color: white;
+  cursor: text;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }
 
 .search-container i {
@@ -154,6 +164,8 @@
   top: 50%;
   transform: translateY(-50%);
   color: #666;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .filter-item input, .filter-item select {

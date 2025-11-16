@@ -319,7 +319,7 @@ async function initDb() {
     const hashedPassword = await bcrypt.hash('admin@password123', 10);
     await db.query(
       `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
-      ['admin01', 'admin', 'admin', 'admin@admin.com', hashedPassword, 'opticien']
+      ['admin01', 'admin', 'admin', 'admin@admin.com', hashedPassword, 'administrateur']
     );
     console.log('Default admin opticien created: admin@admin.com / admin@password123');
   } else {

@@ -16,7 +16,7 @@ export interface Opticien {
   prenom: string;
   email: string;
   password?: string;
-  role: 'opticien' | 'technicien';
+  role: 'administrateur' | 'assistant';
   permissions?: ComponentPermission[];
 }
 

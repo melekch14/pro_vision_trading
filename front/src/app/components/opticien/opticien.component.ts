@@ -24,7 +24,7 @@ export class OpticienComponent implements OnInit {
   isEditing = false;
   showForm = false;
   selectedOpticienId: number | null = null;
-  roles = ['opticien', 'technicien'];
+  roles = ['administrateur', 'assistant'];
 
   // Loading and error states
   isLoading = false;
@@ -280,13 +280,13 @@ export class OpticienComponent implements OnInit {
   }
 
   openPermissionsPanel(opticien: Opticien): void {
-    if (this.authService.getUserData()?.role !== 'opticien') {
-      this.showMessage('Seuls les opticiens peuvent gérer les permissions');
+    if (this.authService.getUserData()?.role !== 'administrateur') {
+      this.showMessage('Seuls les administrateurs peuvent gérer les permissions');
       return;
     }
 
-    if (opticien.role !== 'technicien') {
-      this.showMessage('Les permissions ne peuvent être gérées que pour les techniciens');
+    if (opticien.role !== 'assistant') {
+      this.showMessage('Les permissions ne peuvent être gérées que pour les assistants');
       return;
     }
 

@@ -79,9 +79,9 @@ const updateOpticienPermissions = async (req, res) => {
             return res.status(404).json({ error: 'Opticien not found' });
         }
         
-        // Check if the target user is a technicien
-        if (targetOpticien.role !== 'technicien') {
-            return res.status(400).json({ error: 'Permissions can only be managed for technicians' });
+        // Check if the target user is an assistant
+        if (targetOpticien.role !== 'assistant') {
+            return res.status(400).json({ error: 'Permissions can only be managed for assistants' });
         }
 
         const permissions = await opticienService.updateOpticienPermissions(req.params.id, req.body);

@@ -55,7 +55,7 @@ const routes: Routes = [
     path: 'app',
     component: LayoutComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'opticien' },
+    data: { role: 'administrateur' },
     children: [
       { path: '', redirectTo: 'article-manager', pathMatch: 'full' },
       { path: 'customers', component: CustomersComponent },

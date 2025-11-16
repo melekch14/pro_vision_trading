@@ -40,10 +40,10 @@ exports.login = async (req, res) => {
         const result = await authService.authenticateDynamicUser(email, password);
         if (!result) return res.status(401).json({ error: 'Invalid email or password' });
 
-        // Log login activity for admin users (opticien and technicien)
+        // Log login activity for admin users (administrateur and assistant)
         try {
             const decoded = jwt.verify(result.token, process.env.JWT_SECRET);
-            if (decoded.role === 'opticien' || decoded.role === 'technicien') {
+            if (decoded.role === 'administrateur' || decoded.role === 'assistant') {
                 const userName = decoded.nom && decoded.prenom 
                     ? `${decoded.prenom} ${decoded.nom}` 
                     : decoded.email || 'Unknown';

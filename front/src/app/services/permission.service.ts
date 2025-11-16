@@ -19,7 +19,7 @@ export class PermissionService {
 
   loadUserPermissions(): Observable<void> {
     const userData = this.authService.getUserData();
-    if (!userData || (userData.role !== 'opticien' && userData.role !== 'technicien')) {
+    if (!userData || (userData.role !== 'administrateur' && userData.role !== 'assistant')) {
       return of(void 0);
     }
 
@@ -41,11 +41,11 @@ export class PermissionService {
     const userData = this.authService.getUserData();
     if (!userData) return false;
     
-    // If user is an opticien, they have full access to everything
-    if (userData.role === 'opticien') return true;
+    // If user is an administrateur, they have full access to everything
+    if (userData.role === 'administrateur') return true;
     
-    // For technicien, check their permissions
-    if (userData.role === 'technicien') {
+    // For assistant, check their permissions
+    if (userData.role === 'assistant') {
       return this.userPermissions[componentId] || false;
     }
     

@@ -179,7 +179,7 @@ const activityLogger = (req, res, next) => {
     return next();
   }
 
-  // Only log for admin users (opticien and technicien)
+  // Only log for admin users (administrateur and assistant)
   const user = getUserFromToken(req);
   
   // Debug: Log all POST/PUT/PATCH/DELETE requests
@@ -192,7 +192,7 @@ const activityLogger = (req, res, next) => {
 
   console.log(`[Activity Logger] User found: ${user.email || user.id}, Role: ${user.role}`);
 
-  if (user.role !== 'opticien' && user.role !== 'technicien') {
+  if (user.role !== 'administrateur' && user.role !== 'assistant') {
     console.log(`[Activity Logger] User role ${user.role} is not admin, skipping log`);
     return next();
   }

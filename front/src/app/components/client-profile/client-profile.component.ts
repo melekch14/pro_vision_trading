@@ -19,6 +19,7 @@ export class ClientProfileComponent implements OnInit {
   passwordResetRequested = false;
   resetToken = '';
   newPassword = '';
+  showPassword = false;
   pendingRequests: any[] = [];
 
   constructor(

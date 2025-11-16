@@ -1,4 +1,43 @@
 const db = require('../models/db');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const xlsx = require('xlsx');
+
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '..', 'uploads');
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const extension = path.extname(file.originalname);
+    cb(null, `article_hierarchy_import_${timestamp}${extension}`);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    const allowedMimes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only Excel files (.xlsx, .xls) are allowed'), false);
+    }
+  },
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 // Article Groups CRUD
 const createGroup = async (group) => {
@@ -110,6 +149,145 @@ const deleteSubfamily = async (id) => {
     await db.query('DELETE FROM article_subfamilies WHERE id = ?', [id]);
 };
 
+// Import from Excel
+const importFromExcel = async (filePath) => {
+    try {
+        // Read the Excel file
+        const workbook = xlsx.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Convert to JSON
+        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        // Expected headers: Code Groupe, Nom Groupe, Code famille, Nom famille, Code sous famille, Nom sous famille
+        if (jsonData.length < 2) {
+            throw new Error('Le fichier Excel doit contenir au moins une ligne d\'en-tête et une ligne de données');
+        }
+        
+        // Skip header row and process data
+        const records = [];
+        for (let i = 1; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            
+            // Skip empty rows
+            if (!row[0] && !row[1] && !row[2] && !row[3] && !row[4] && !row[5]) continue;
+            
+            const groupCode = row[0] ? row[0].toString().trim() : '';
+            const groupName = row[1] ? row[1].toString().trim() : '';
+            const familyCode = row[2] ? row[2].toString().trim() : '';
+            const familyName = row[3] ? row[3].toString().trim() : '';
+            const subfamilyCode = row[4] ? row[4].toString().trim() : '';
+            const subfamilyName = row[5] ? row[5].toString().trim() : '';
+            
+            // Validate required fields
+            if (!groupCode || !groupName || !familyCode || !familyName || !subfamilyCode || !subfamilyName) {
+                continue; // Skip incomplete rows
+            }
+            
+            records.push({
+                groupCode,
+                groupName,
+                familyCode,
+                familyName,
+                subfamilyCode,
+                subfamilyName
+            });
+        }
+        
+        let importedCount = 0;
+        const errors = [];
+        
+        // Process each record
+        for (const record of records) {
+            try {
+                // Find or create group
+                let [groups] = await db.query('SELECT id FROM article_groups WHERE code = ?', [record.groupCode]);
+                let groupId;
+                
+                if (groups.length === 0) {
+                    // Create new group
+                    const [result] = await db.query(
+                        'INSERT INTO article_groups (code, name) VALUES (?, ?)',
+                        [record.groupCode, record.groupName]
+                    );
+                    groupId = result.insertId;
+                } else {
+                    groupId = groups[0].id;
+                    // Update group name if different
+                    await db.query('UPDATE article_groups SET name = ? WHERE id = ?', [record.groupName, groupId]);
+                }
+                
+                // Find or create family
+                let [families] = await db.query(
+                    'SELECT id FROM article_families WHERE code = ? AND group_id = ?',
+                    [record.familyCode, groupId]
+                );
+                let familyId;
+                
+                if (families.length === 0) {
+                    // Create new family
+                    const [result] = await db.query(
+                        'INSERT INTO article_families (code, name, group_id) VALUES (?, ?, ?)',
+                        [record.familyCode, record.familyName, groupId]
+                    );
+                    familyId = result.insertId;
+                } else {
+                    familyId = families[0].id;
+                    // Update family name if different
+                    await db.query('UPDATE article_families SET name = ? WHERE id = ?', [record.familyName, familyId]);
+                }
+                
+                // Find or create subfamily
+                let [subfamilies] = await db.query(
+                    'SELECT id FROM article_subfamilies WHERE code = ? AND family_id = ?',
+                    [record.subfamilyCode, familyId]
+                );
+                
+                if (subfamilies.length === 0) {
+                    // Create new subfamily
+                    await db.query(
+                        'INSERT INTO article_subfamilies (code, name, family_id) VALUES (?, ?, ?)',
+                        [record.subfamilyCode, record.subfamilyName, familyId]
+                    );
+                } else {
+                    // Update subfamily name if different
+                    await db.query('UPDATE article_subfamilies SET name = ? WHERE id = ?', [record.subfamilyName, subfamilies[0].id]);
+                }
+                
+                importedCount++;
+            } catch (error) {
+                errors.push(`Erreur pour ${record.groupCode}/${record.familyCode}/${record.subfamilyCode}: ${error.message}`);
+            }
+        }
+        
+        // Clean up the uploaded file
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        
+        return {
+            importedCount,
+            totalRecords: records.length,
+            message: errors.length > 0 
+                ? `${importedCount} enregistrement(s) importé(s) avec ${errors.length} erreur(s)`
+                : `${importedCount} enregistrement(s) importé(s) avec succès`,
+            errors: errors.length > 0 ? errors : undefined
+        };
+    } catch (error) {
+        // Clean up the uploaded file on error
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        throw new Error(`Erreur lors de l'importation: ${error.message}`);
+    }
+};
+
+// Get upload middleware
+const getUploadMiddleware = () => {
+    return upload.single('file');
+};
+
 module.exports = {
     // Groups
     createGroup,
@@ -130,5 +308,9 @@ module.exports = {
     getSubfamilies,
     getSubfamilyById,
     updateSubfamily,
-    deleteSubfamily
+    deleteSubfamily,
+    
+    // Import
+    importFromExcel,
+    getUploadMiddleware
 }; 

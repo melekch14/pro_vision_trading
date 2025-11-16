@@ -23,4 +23,7 @@ router.get('/subfamilies/:id', articleHierarchyController.getSubfamilyById);
 router.put('/subfamilies/:id', articleHierarchyController.updateSubfamily);
 router.delete('/subfamilies/:id', articleHierarchyController.deleteSubfamily);
 
+// Import from Excel
+router.post('/import', articleHierarchyController.getUploadMiddleware(), articleHierarchyController.importFromExcel);
+
 module.exports = router; 

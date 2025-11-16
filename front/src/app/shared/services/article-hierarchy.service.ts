@@ -74,4 +74,9 @@ export class ArticleHierarchyService {
   deleteSubfamily(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/subfamilies/${id}`);
   }
+
+  // Import from Excel
+  importFromExcel(formData: FormData): Observable<{ importedCount: number, totalRecords: number, message: string }> {
+    return this.http.post<{ importedCount: number, totalRecords: number, message: string }>(`${this.apiUrl}/import`, formData);
+  }
 } 

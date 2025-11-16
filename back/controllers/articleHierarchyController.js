@@ -145,4 +145,36 @@ exports.deleteSubfamily = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+// Import from Excel
+exports.importFromExcel = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Aucun fichier téléchargé'
+            });
+        }
+
+        const result = await articleHierarchyService.importFromExcel(req.file.path);
+        res.json({
+            success: true,
+            message: result.message,
+            importedCount: result.importedCount,
+            totalRecords: result.totalRecords,
+            errors: result.errors
+        });
+    } catch (error) {
+        console.error('Error importing article hierarchy data:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get upload middleware
+exports.getUploadMiddleware = () => {
+    return articleHierarchyService.getUploadMiddleware();
 }; 

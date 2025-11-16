@@ -3,8 +3,26 @@
     <h1 class="page-title">Gestion de la hiérarchie des articles</h1>
   </div>
 
-  <!-- Main layout: Three column grid -->
-  <div class="hierarchy-container">
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'hierarchy'"
+      (click)="onTabChange('hierarchy')">
+      Hiérarchie
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'table'"
+      (click)="onTabChange('table')">
+      Tableau
+    </button>
+  </div>
+
+  <!-- Hierarchy Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'hierarchy'">
+    <!-- Main layout: Three column grid -->
+    <div class="hierarchy-container">
     <!-- Groups Column -->
     <div class="hierarchy-column">
       <div class="column-header">
@@ -153,6 +171,69 @@
         <div *ngIf="!selectedFamily" class="empty-message info">
           Sélectionnez une famille pour voir les sous-familles
         </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Table Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'table'">
+    <div class="table-view-container">
+      <div class="table-actions">
+        <button class="action-button" (click)="exportToExcel()">
+          <i class="material-icons">download</i>
+          Exporter vers Excel
+        </button>
+        <button class="action-button" (click)="triggerFileInput()">
+          <i class="material-icons">upload</i>
+          Importer depuis Excel
+        </button>
+        <input 
+          type="file" 
+          #fileInput 
+          accept=".xlsx,.xls" 
+          (change)="onFileSelected($event)"
+          style="display: none;">
+      </div>
+
+      <div *ngIf="importError" class="error-message">
+        <i class="material-icons">error</i>
+        {{ importError }}
+      </div>
+
+      <div *ngIf="importSuccess" class="success-message">
+        <i class="material-icons">check_circle</i>
+        {{ importSuccess }}
+      </div>
+
+      <div class="table-wrapper">
+        <table class="hierarchy-table">
+          <thead>
+            <tr>
+              <th>Code Groupe</th>
+              <th>Nom Groupe</th>
+              <th>Code famille</th>
+              <th>Nom famille</th>
+              <th>Code sous famille</th>
+              <th>Nom sous famille</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of tableData">
+              <td>{{ row.groupCode }}</td>
+              <td>{{ row.groupName }}</td>
+              <td>{{ row.familyCode }}</td>
+              <td>{{ row.familyName }}</td>
+              <td>{{ row.subfamilyCode }}</td>
+              <td>{{ row.subfamilyName }}</td>
+            </tr>
+            <tr *ngIf="tableData.length === 0">
+              <td colspan="6" class="empty-table-message">
+                Aucune donnée disponible
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

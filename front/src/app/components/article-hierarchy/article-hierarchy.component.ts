@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ArticleGroup, ArticleFamily, ArticleSubfamily } from '../../shared/models/article-hierarchy.model';
 import { ArticleHierarchyService } from '../../shared/services/article-hierarchy.service';
+import { forkJoin } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-article-hierarchy',
@@ -42,50 +44,213 @@ export class ArticleHierarchyComponent implements OnInit {
   filteredFamilies: ArticleFamily[] = [];
   filteredSubfamilies: ArticleSubfamily[] = [];
 
+  // Tab management
+  activeTab: 'hierarchy' | 'table' = 'hierarchy';
+
+  // Table data
+  tableData: Array<{
+    groupCode: string;
+    groupName: string;
+    familyCode: string;
+    familyName: string;
+    subfamilyCode: string;
+    subfamilyName: string;
+  }> = [];
+
+  // Import/Export
+  importError: string | null = null;
+  importSuccess: string | null = null;
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   constructor(private articleHierarchyService: ArticleHierarchyService) {}
   
   ngOnInit(): void {
     this.loadData();
   }
-  
-  loadData(): void {
-    // Load groups
-    this.articleHierarchyService.getGroups().subscribe({
-      next: (groups) => {
-        this.groups = groups;
-        this.applyFilters();
-      },
-      error: (error) => {
-        console.error('Error loading groups:', error);
-        // Handle error appropriately
+
+  // Tab management
+  onTabChange(tab: 'hierarchy' | 'table'): void {
+    this.activeTab = tab;
+    if (tab === 'table') {
+      // Ensure all data is loaded before building table
+      if (this.groups.length > 0 || this.families.length > 0 || this.subfamilies.length > 0) {
+        this.buildTableData();
+      } else {
+        // If no data loaded yet, load it
+        this.loadData();
+      }
+    }
+  }
+
+  // Build table data from hierarchy
+  buildTableData(): void {
+    this.tableData = [];
+    
+    // For each subfamily, create a row with group, family, and subfamily info
+    // This ensures we show all complete hierarchies (group -> family -> subfamily)
+    this.subfamilies.forEach(subfamily => {
+      const family = this.families.find(f => f.id === subfamily.family_id);
+      if (family) {
+        const group = this.groups.find(g => g.id === family.group_id);
+        if (group) {
+          this.tableData.push({
+            groupCode: group.code || '',
+            groupName: group.name || '',
+            familyCode: family.code || '',
+            familyName: family.name || '',
+            subfamilyCode: subfamily.code || '',
+            subfamilyName: subfamily.name || ''
+          });
+        } else {
+          // If group not found, still show the row with empty group fields
+          this.tableData.push({
+            groupCode: '',
+            groupName: '',
+            familyCode: family.code || '',
+            familyName: family.name || '',
+            subfamilyCode: subfamily.code || '',
+            subfamilyName: subfamily.name || ''
+          });
+        }
+      } else {
+        // If family not found, still show the subfamily with empty parent fields
+        this.tableData.push({
+          groupCode: '',
+          groupName: '',
+          familyCode: '',
+          familyName: '',
+          subfamilyCode: subfamily.code || '',
+          subfamilyName: subfamily.name || ''
+        });
       }
     });
+    
+    // Sort by group code, then family code, then subfamily code
+    this.tableData.sort((a, b) => {
+      if (a.groupCode !== b.groupCode) {
+        return a.groupCode.localeCompare(b.groupCode);
+      }
+      if (a.familyCode !== b.familyCode) {
+        return a.familyCode.localeCompare(b.familyCode);
+      }
+      return a.subfamilyCode.localeCompare(b.subfamilyCode);
+    });
+  }
 
-    // Load families
-    this.articleHierarchyService.getFamilies().subscribe({
-      next: (families) => {
+  // Excel Export
+  exportToExcel(): void {
+    this.buildTableData();
+    
+    const worksheetData = [
+      ['Code Groupe', 'Nom Groupe', 'Code famille', 'Nom famille', 'Code sous famille', 'Nom sous famille'],
+      ...this.tableData.map(row => [
+        row.groupCode,
+        row.groupName,
+        row.familyCode,
+        row.familyName,
+        row.subfamilyCode,
+        row.subfamilyName
+      ])
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Hiérarchie Articles');
+
+    // Set column widths
+    worksheet['!cols'] = [
+      { wch: 15 }, // Code Groupe
+      { wch: 30 }, // Nom Groupe
+      { wch: 15 }, // Code famille
+      { wch: 30 }, // Nom famille
+      { wch: 20 }, // Code sous famille
+      { wch: 40 }  // Nom sous famille
+    ];
+
+    XLSX.writeFile(workbook, `hierarchie_articles_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }
+
+  // Excel Import
+  triggerFileInput(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const validExtensions = ['.xlsx', '.xls'];
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    
+    if (!validExtensions.includes(fileExtension)) {
+      this.importError = 'Veuillez sélectionner un fichier Excel valide (.xlsx ou .xls)';
+      this.importSuccess = null;
+      return;
+    }
+
+    this.importError = null;
+    this.importSuccess = null;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.articleHierarchyService.importFromExcel(formData).subscribe({
+      next: (result) => {
+        this.importSuccess = `Import réussi: ${result.importedCount} enregistrement(s) importé(s) sur ${result.totalRecords}`;
+        this.importError = null;
+        // Reload data after import - this will automatically rebuild table if on table tab
+        this.loadData();
+        // Reset file input
+        if (this.fileInput) {
+          this.fileInput.nativeElement.value = '';
+        }
+      },
+      error: (error) => {
+        this.importError = error.error?.message || 'Erreur lors de l\'importation du fichier';
+        this.importSuccess = null;
+        // Reset file input
+        if (this.fileInput) {
+          this.fileInput.nativeElement.value = '';
+        }
+      }
+    });
+  }
+  
+  loadData(): void {
+    // Load all data in parallel using forkJoin
+    forkJoin({
+      groups: this.articleHierarchyService.getGroups(),
+      families: this.articleHierarchyService.getFamilies(),
+      subfamilies: this.articleHierarchyService.getSubfamilies()
+    }).subscribe({
+      next: ({ groups, families, subfamilies }) => {
+        this.groups = groups;
         this.families = families;
+        this.subfamilies = subfamilies;
+        
+        // Apply filters for hierarchy view
+        this.applyFilters();
+        
+        // Update filtered lists based on selections
         if (this.selectedGroup) {
           this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
         }
-      },
-      error: (error) => {
-        console.error('Error loading families:', error);
-        // Handle error appropriately
-      }
-    });
-
-    // Load subfamilies
-    this.articleHierarchyService.getSubfamilies().subscribe({
-      next: (subfamilies) => {
-        this.subfamilies = subfamilies;
         if (this.selectedFamily) {
           this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
         }
+        
+        // Build table if on table tab
+        if (this.activeTab === 'table') {
+          this.buildTableData();
+        }
       },
       error: (error) => {
-        console.error('Error loading subfamilies:', error);
-        // Handle error appropriately
+        console.error('Error loading data:', error);
+        // Still try to build table with whatever data we have
+        if (this.activeTab === 'table') {
+          this.buildTableData();
+        }
       }
     });
   }
@@ -194,6 +359,9 @@ export class ArticleHierarchyComponent implements OnInit {
           }
           this.closeAllPanels();
           this.applyFilters();
+          if (this.activeTab === 'table') {
+            this.buildTableData();
+          }
         },
         error: (error) => {
           console.error('Error updating group:', error);
@@ -210,6 +378,9 @@ export class ArticleHierarchyComponent implements OnInit {
           });
           this.closeAllPanels();
           this.applyFilters();
+          if (this.activeTab === 'table') {
+            this.buildTableData();
+          }
         },
         error: (error) => {
           console.error('Error creating group:', error);
@@ -232,6 +403,9 @@ export class ArticleHierarchyComponent implements OnInit {
           if (this.selectedGroup) {
             this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
           }
+          if (this.activeTab === 'table') {
+            this.buildTableData();
+          }
         },
         error: (error) => {
           console.error('Error updating family:', error);
@@ -250,6 +424,9 @@ export class ArticleHierarchyComponent implements OnInit {
           this.closeAllPanels();
           if (this.selectedGroup) {
             this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
+          }
+          if (this.activeTab === 'table') {
+            this.buildTableData();
           }
         },
         error: (error) => {
@@ -273,6 +450,9 @@ export class ArticleHierarchyComponent implements OnInit {
           if (this.selectedFamily) {
             this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
           }
+          if (this.activeTab === 'table') {
+            this.buildTableData();
+          }
         },
         error: (error) => {
           console.error('Error updating subfamily:', error);
@@ -291,6 +471,9 @@ export class ArticleHierarchyComponent implements OnInit {
           this.closeAllPanels();
           if (this.selectedFamily) {
             this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
+          }
+          if (this.activeTab === 'table') {
+            this.buildTableData();
           }
         },
         error: (error) => {
@@ -330,6 +513,9 @@ export class ArticleHierarchyComponent implements OnInit {
           }
           
           this.applyFilters();
+          if (this.activeTab === 'table') {
+            this.buildTableData();
+          }
         },
         error: (error) => {
           console.error('Error deleting group:', error);
@@ -359,6 +545,9 @@ export class ArticleHierarchyComponent implements OnInit {
           if (this.selectedGroup) {
             this.filteredFamilies = this.families.filter(f => f.group_id === this.selectedGroup!.id);
           }
+          if (this.activeTab === 'table') {
+            this.buildTableData();
+          }
         },
         error: (error) => {
           console.error('Error deleting family:', error);
@@ -382,6 +571,9 @@ export class ArticleHierarchyComponent implements OnInit {
           
           if (this.selectedFamily) {
             this.filteredSubfamilies = this.subfamilies.filter(s => s.family_id === this.selectedFamily!.id);
+          }
+          if (this.activeTab === 'table') {
+            this.buildTableData();
           }
         },
         error: (error) => {

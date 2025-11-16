@@ -377,6 +377,170 @@
   cursor: not-allowed;
 }
 
+/* Tabs */
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.tab-button {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0.7;
+}
+
+.tab-button:hover {
+  opacity: 1;
+  background-color: var(--hover-color);
+}
+
+.tab-button.active {
+  opacity: 1;
+  border-bottom-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.tab-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Table View */
+.table-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.action-button i {
+  font-size: 18px;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.hierarchy-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-background);
+}
+
+.hierarchy-table thead {
+  background-color: var(--hover-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.hierarchy-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.hierarchy-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.hierarchy-table tbody tr:hover {
+  background-color: var(--hover-color);
+}
+
+.hierarchy-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.empty-table-message {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-color);
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #fee;
+  color: #c33;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 4px solid #c33;
+}
+
+.error-message i {
+  font-size: 20px;
+}
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #efe;
+  color: #3c3;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 4px solid #3c3;
+}
+
+.success-message i {
+  font-size: 20px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .hierarchy-container {
@@ -392,5 +556,23 @@
   .side-panel {
     width: 100%;
     right: -100%;
+  }
+
+  .table-actions {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hierarchy-table {
+    font-size: 12px;
+  }
+
+  .hierarchy-table th,
+  .hierarchy-table td {
+    padding: 8px 12px;
   }
 } 

@@ -137,31 +137,7 @@
     <!-- Password Reset Section -->
     <div *ngIf="passwordResetRequested" class="reset-password-form modern-reset-form card">
       <h4 class="section-title">Réinitialisez votre mot de passe</h4>
-      <p class="reset-description">Vérifiez votre email pour un lien de réinitialisation. Collez le jeton ci-dessous et entrez votre nouveau mot de passe.</p>
-      <form class="reset-form">
-        <div class="form-row modern-row">
-          <label>Jeton de réinitialisation</label>
-          <input type="text" [(ngModel)]="resetToken" name="resetToken" placeholder="Collez votre jeton ici" />
-        </div>
-        <div class="form-row modern-row">
-          <label>Nouveau mot de passe</label>
-          <div class="password-input-wrapper">
-            <input 
-              [type]="showPassword ? 'text' : 'password'" 
-              [(ngModel)]="newPassword" 
-              name="newPassword" 
-              placeholder="Entrez votre nouveau mot de passe" 
-            />
-            <mat-icon class="password-toggle" (click)="showPassword = !showPassword">
-              {{ showPassword ? 'visibility' : 'visibility_off' }}
-            </mat-icon>
-          </div>
-          <span class="password-hint">Le mot de passe doit contenir au moins 8 caractères</span>
-        </div>
-        <div class="form-actions modern-actions">
-          <button type="button" class="modern-btn" (click)="submitNewPassword()">Valider le nouveau mot de passe</button>
-        </div>
-      </form>
+      <p class="reset-description">Vérifiez votre email pour un lien de réinitialisation. Cliquez sur le lien dans l'email pour réinitialiser votre mot de passe.</p>
     </div>
   </div>
 </div>

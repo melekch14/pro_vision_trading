@@ -266,6 +266,16 @@ const tableStatements = [
     KEY date (date),
     KEY user_create (user_create)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  `CREATE TABLE IF NOT EXISTS bl_orders (
+    id int NOT NULL AUTO_INCREMENT,
+    bl_id int NOT NULL,
+    order_id int NOT NULL,
+    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY unique_bl_order (bl_id, order_id),
+    KEY bl_id (bl_id),
+    KEY order_id (order_id)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS activity_history (
     id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,

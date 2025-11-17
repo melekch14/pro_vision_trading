@@ -68,7 +68,7 @@ export class DeliveryNoteModalComponent implements OnInit {
     private authService: AuthService
   ) {
     this.currentDate = new Date().toLocaleDateString('fr-FR');
-    this.deliveryNoteNumber = this.generateDeliveryNoteNumber();
+    this.deliveryNoteNumber = ''; // Will be set in ngOnInit
   }
 
   formatValue(value: string): string {
@@ -82,7 +82,76 @@ export class DeliveryNoteModalComponent implements OnInit {
       const clientId = this.data.orders[0].client_id;
       this.loadCustomerDetails(clientId);
       this.loadProductDetails();
+      this.loadBlNumber();
     }
+  }
+
+  loadBlNumber(): void {
+    // First, check if a BL already exists for these orders
+    const orderIds = this.data.orders.map(order => order.order_id || order.id).filter(id => id);
+    
+    if (orderIds.length > 0) {
+      this.blService.findBlByOrderIds(orderIds).subscribe({
+        next: (response) => {
+          if (response.success && response.data && response.data.numero) {
+            // BL already exists for these orders, reuse it
+            this.deliveryNoteNumber = response.data.numero;
+            console.log('Found existing BL for these orders:', this.deliveryNoteNumber);
+            // Don't create a new BL, just use the existing one
+            return;
+          }
+          // No existing BL found, generate a new one
+          this.generateNewBlNumber();
+        },
+        error: (error) => {
+          // If error is 404, no BL exists, so generate a new one
+          if (error.status === 404) {
+            console.log('No existing BL found for these orders, generating new one');
+            this.generateNewBlNumber();
+          } else {
+            console.error('Error checking for existing BL:', error);
+            // Fallback: generate new number
+            this.generateNewBlNumber();
+          }
+        }
+      });
+    } else {
+      // No order IDs available, generate new number
+      this.generateNewBlNumber();
+    }
+  }
+
+  generateNewBlNumber(): void {
+    this.blService.getNextBlNumber().subscribe({
+      next: (response) => {
+        if (response.success && response.numero) {
+          this.deliveryNoteNumber = response.numero;
+          console.log('Generated unique BL number:', this.deliveryNoteNumber);
+          // If total is already calculated, create BL now
+          if (this.totalAmount > 0) {
+            this.createBlIfNotExists();
+          }
+        } else {
+          // Fallback to old method if API fails
+          this.deliveryNoteNumber = this.generateDeliveryNoteNumber();
+          console.warn('Failed to get unique BL number, using fallback');
+          // If total is already calculated, create BL now
+          if (this.totalAmount > 0) {
+            this.createBlIfNotExists();
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error getting BL number:', error);
+        // Fallback to old method if API fails
+        this.deliveryNoteNumber = this.generateDeliveryNoteNumber();
+        console.warn('Error getting unique BL number, using fallback');
+        // If total is already calculated, create BL now
+        if (this.totalAmount > 0) {
+          this.createBlIfNotExists();
+        }
+      }
+    });
   }
 
   loadCustomerDetails(clientId: number): void {
@@ -185,8 +254,10 @@ export class DeliveryNoteModalComponent implements OnInit {
     console.log('Total Amount:', this.totalAmount);
     console.log('Final Orders with all details:', this.data.orders);
     this.createPages();
-    // Create BL after total is calculated
-    this.createBlIfNotExists();
+    // Create BL after total is calculated, but only if BL number is ready
+    if (this.deliveryNoteNumber) {
+      this.createBlIfNotExists();
+    }
   }
 
   calculateOptimalRowsPerPage(totalRows: number, totalOrders: number): number {
@@ -800,6 +871,11 @@ export class DeliveryNoteModalComponent implements OnInit {
 
   // Create BL if it doesn't already exist
   createBlIfNotExists(): void {
+    if (!this.deliveryNoteNumber) {
+      console.warn('BL number not available yet');
+      return;
+    }
+
     // Check if BL already exists by numero
     this.blService.getBlByNumero(this.deliveryNoteNumber).subscribe({
       next: (existingBl) => {
@@ -830,6 +906,9 @@ export class DeliveryNoteModalComponent implements OnInit {
       ? `${userData.prenom} ${userData.nom}` 
       : (userData?.raison_social || userData?.email || 'Unknown');
 
+    // Get order IDs from the orders
+    const orderIds = this.data.orders.map(order => order.order_id || order.id).filter(id => id);
+
     const blData = {
       numero: this.deliveryNoteNumber,
       date: new Date().toISOString().split('T')[0],
@@ -841,12 +920,13 @@ export class DeliveryNoteModalComponent implements OnInit {
       user_create: userCreate,
       totreg: 0,
       deja_recu: 0,
-      reste: this.totalAmount
+      reste: this.totalAmount,
+      order_ids: orderIds // Link orders to this BL
     };
 
     this.blService.createBl(blData).subscribe({
       next: (response) => {
-        console.log('BL created successfully:', response);
+        console.log('BL created successfully with linked orders:', response);
       },
       error: (error) => {
         console.error('Error creating BL:', error);

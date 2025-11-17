@@ -39,6 +39,39 @@ const getBlByNumero = async (req, res) => {
     }
 };
 
+// Find BL by order IDs
+const findBlByOrderIds = async (req, res) => {
+    try {
+        const { orderIds } = req.query;
+        if (!orderIds) {
+            return res.status(400).json({ error: 'orderIds parameter is required' });
+        }
+
+        // Parse orderIds (can be comma-separated string or array)
+        const orderIdArray = Array.isArray(orderIds) 
+            ? orderIds 
+            : orderIds.split(',').map(id => id.trim()).filter(id => id);
+
+        const blRecord = await blService.findBlByOrderIds(orderIdArray);
+        
+        if (!blRecord) {
+            return res.status(404).json({ error: 'BL record not found for these orders' });
+        }
+        
+        res.json({
+            success: true,
+            data: blRecord
+        });
+    } catch (error) {
+        console.error('Error finding BL by order IDs:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to find BL record',
+            message: error.message 
+        });
+    }
+};
+
 // Create a new BL record
 const createBl = async (req, res) => {
     try {
@@ -160,6 +193,23 @@ const getBlStatistics = async (req, res) => {
     }
 };
 
+// Get next available BL number
+const getNextBlNumber = async (req, res) => {
+    try {
+        const blNumber = await blService.getNextBlNumber();
+        res.json({
+            success: true,
+            numero: blNumber
+        });
+    } catch (error) {
+        console.error('Error generating next BL number:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // Get upload middleware
 const getUploadMiddleware = () => {
     return blService.getUploadMiddleware();
@@ -169,12 +219,14 @@ module.exports = {
     getAllBl,
     getBlById,
     getBlByNumero,
+    findBlByOrderIds,
     createBl,
     updateBl,
     deleteBl,
     importBlFromExcel,
     searchBl,
     getBlStatistics,
+    getNextBlNumber,
     getUploadMiddleware
 };
 

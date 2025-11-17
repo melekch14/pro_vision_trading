@@ -60,5 +60,16 @@ export class BlService {
   getBlStatistics(): Observable<BlStatistics> {
     return this.http.get<BlStatistics>(`${this.apiUrl}/statistics`);
   }
+
+  // Get next available BL number
+  getNextBlNumber(): Observable<{ success: boolean; numero: string }> {
+    return this.http.get<{ success: boolean; numero: string }>(`${this.apiUrl}/next-number`);
+  }
+
+  // Find BL by order IDs
+  findBlByOrderIds(orderIds: number[]): Observable<{ success: boolean; data: Bl }> {
+    const params = new HttpParams().set('orderIds', orderIds.join(','));
+    return this.http.get<{ success: boolean; data: Bl }>(`${this.apiUrl}/find-by-orders`, { params });
+  }
 }
 

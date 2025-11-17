@@ -63,12 +63,50 @@ class BlService {
     }
   }
 
+  // Find BL by order IDs (check if BL already exists for these orders)
+  async findBlByOrderIds(orderIds) {
+    try {
+      if (!orderIds || orderIds.length === 0) {
+        return null;
+      }
+
+      // Convert orderIds to integers and create placeholders
+      const orderIdInts = orderIds.map(id => parseInt(id)).filter(id => !isNaN(id));
+      if (orderIdInts.length === 0) {
+        return null;
+      }
+
+      const placeholders = orderIdInts.map(() => '?').join(',');
+      
+      // Find BLs that have EXACTLY the same set of order IDs
+      // This query finds BLs where:
+      // 1. All input order IDs are linked to the BL
+      // 2. The BL has no additional orders (count matches)
+      const [rows] = await db.query(
+        `SELECT b.*, 
+                COUNT(DISTINCT bo.order_id) as matching_orders,
+                (SELECT COUNT(*) FROM bl_orders WHERE bl_id = b.id) as total_orders
+         FROM bl b
+         INNER JOIN bl_orders bo ON b.id = bo.bl_id
+         WHERE bo.order_id IN (${placeholders})
+         GROUP BY b.id
+         HAVING matching_orders = ? AND total_orders = ?`,
+        [...orderIdInts, orderIdInts.length, orderIdInts.length]
+      );
+
+      // Return the first matching BL if found
+      return rows.length > 0 ? rows[0] : null;
+    } catch (error) {
+      throw new Error(`Error finding BL by order IDs: ${error.message}`);
+    }
+  }
+
   // Create a new BL record
   async createBl(blData) {
     try {
       const {
         numero, date, code_tier, nom_raison_social, total_ttc,
-        mode_paie, observation, user_create, totreg, deja_recu, reste
+        mode_paie, observation, user_create, totreg, deja_recu, reste, order_ids
       } = blData;
 
       const [result] = await db.query(
@@ -82,7 +120,29 @@ class BlService {
         ]
       );
 
-      return { id: result.insertId, ...blData };
+      const blId = result.insertId;
+
+      // Link orders to BL if order_ids are provided
+      if (order_ids && Array.isArray(order_ids) && order_ids.length > 0) {
+        const orderIdInts = order_ids.map(id => parseInt(id)).filter(id => !isNaN(id));
+        if (orderIdInts.length > 0) {
+          for (const orderId of orderIdInts) {
+            try {
+              await db.query(
+                'INSERT INTO bl_orders (bl_id, order_id) VALUES (?, ?)',
+                [blId, orderId]
+              );
+            } catch (linkError) {
+              // Ignore duplicate key errors (order already linked)
+              if (!linkError.message.includes('Duplicate entry')) {
+                console.error(`Error linking order ${orderId} to BL ${blId}:`, linkError);
+              }
+            }
+          }
+        }
+      }
+
+      return { id: blId, ...blData };
     } catch (error) {
       throw new Error(`Error creating BL record: ${error.message}`);
     }
@@ -266,6 +326,62 @@ class BlService {
       };
     } catch (error) {
       throw new Error(`Error fetching BL statistics: ${error.message}`);
+    }
+  }
+
+  // Generate next unique BL number
+  async getNextBlNumber() {
+    try {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const datePrefix = `${year}${month}${day}`;
+      const blPrefix = `BL-${datePrefix}-`;
+
+      // Get the highest sequence number for today
+      const [rows] = await db.query(
+        `SELECT numero FROM bl WHERE numero LIKE ? ORDER BY numero DESC LIMIT 1`,
+        [`${blPrefix}%`]
+      );
+
+      let sequence = 1;
+      if (rows.length > 0) {
+        // Extract the sequence number from the last BL number
+        const lastNumero = rows[0].numero;
+        const parts = lastNumero.split('-');
+        if (parts.length >= 3) {
+          const lastSequence = parseInt(parts[2]) || 0;
+          sequence = lastSequence + 1;
+        }
+      }
+
+      // Try to find an available number (handle race conditions)
+      let attempts = 0;
+      const maxAttempts = 100; // Prevent infinite loop
+      
+      while (attempts < maxAttempts) {
+        // Generate the BL number with 3-digit sequence (or more if needed)
+        const sequenceStr = sequence.toString().padStart(3, '0');
+        const blNumber = `${blPrefix}${sequenceStr}`;
+
+        // Check if this number already exists
+        const [existing] = await db.query('SELECT id FROM bl WHERE numero = ?', [blNumber]);
+        
+        if (existing.length === 0) {
+          // Number is available, return it
+          return blNumber;
+        }
+        
+        // Number exists, try next sequence
+        sequence++;
+        attempts++;
+      }
+
+      // If we've tried too many times, throw an error
+      throw new Error('Unable to generate unique BL number after multiple attempts');
+    } catch (error) {
+      throw new Error(`Error generating next BL number: ${error.message}`);
     }
   }
 }

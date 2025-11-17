@@ -8,8 +8,14 @@ router.get('/', blController.getAllBl);
 // Get BL statistics
 router.get('/statistics', blController.getBlStatistics);
 
+// Get next available BL number
+router.get('/next-number', blController.getNextBlNumber);
+
 // Search BL records
 router.get('/search', blController.searchBl);
+
+// Find BL by order IDs
+router.get('/find-by-orders', blController.findBlByOrderIds);
 
 // Get BL by numero
 router.get('/numero/:numero', blController.getBlByNumero);

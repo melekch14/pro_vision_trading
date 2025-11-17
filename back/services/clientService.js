@@ -259,6 +259,10 @@ const importClientsFromExcel = async (filePath) => {
         // Convert to JSON
         const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
         
+        // Get existing client codes from database for duplicate checking
+        const [existingClients] = await db.query('SELECT codee FROM client WHERE codee IS NOT NULL AND codee != ""');
+        const existingCodes = new Set(existingClients.map(client => client.codee.trim().toUpperCase()));
+        
         // Skip header row and process data
         const clientRecords = [];
         for (let i = 1; i < jsonData.length; i++) {
@@ -270,8 +274,17 @@ const importClientsFromExcel = async (filePath) => {
             const name = row[1] ? row[1].toString().trim() : '';
             if (!name) continue; // Skip if no name provided
             
+            const codee = row[0] ? row[0].toString().trim() : '';
+            if (!codee) continue; // Skip if no code provided
+            
+            // Check for duplicate code (case-insensitive)
+            if (existingCodes.has(codee.toUpperCase())) {
+                console.log(`Skipping duplicate client code: ${codee}`);
+                continue;
+            }
+            
             const clientRecord = {
-                codee: row[0] ? row[0].toString().trim() : '',
+                codee: codee,
                 raison_social: name,
                 responsable: name, // Fill with nom & prenom
                 tel: row[4] ? row[4].toString().trim() : '',
@@ -289,14 +302,28 @@ const importClientsFromExcel = async (filePath) => {
             };
             
             clientRecords.push(clientRecord);
+            // Add to existing codes set to prevent duplicates within the same import
+            existingCodes.add(codee.toUpperCase());
         }
         
         // Insert records into database
         const insertedRecords = [];
+        const skippedRecords = [];
         const clientCredentials = []; // Store credentials for return
         
         for (const record of clientRecords) {
             try {
+                // Double-check for duplicates before inserting (in case of race conditions)
+                const [duplicateCheck] = await db.query('SELECT id FROM client WHERE codee = ?', [record.codee]);
+                if (duplicateCheck.length > 0) {
+                    skippedRecords.push({
+                        codee: record.codee,
+                        raison_social: record.raison_social,
+                        reason: 'Duplicate code already exists in database'
+                    });
+                    continue;
+                }
+                
                 const result = await createClient(record);
                 insertedRecords.push(result);
                 
@@ -312,6 +339,14 @@ const importClientsFromExcel = async (filePath) => {
                 });
             } catch (error) {
                 console.error(`Error inserting client ${record.codee}:`, error.message);
+                // If error is due to duplicate (race condition), track it
+                if (error.message && (error.message.includes('Duplicate') || error.message.includes('already exists'))) {
+                    skippedRecords.push({
+                        codee: record.codee,
+                        raison_social: record.raison_social,
+                        reason: error.message
+                    });
+                }
                 // Continue with other records even if one fails
             }
         }
@@ -319,11 +354,14 @@ const importClientsFromExcel = async (filePath) => {
         // Clean up the uploaded file
         fs.unlinkSync(filePath);
         
+        const totalProcessed = insertedRecords.length + skippedRecords.length;
         return {
-            message: `Successfully imported ${insertedRecords.length} clients`,
+            message: `Successfully imported ${insertedRecords.length} clients${skippedRecords.length > 0 ? `, skipped ${skippedRecords.length} duplicates` : ''}`,
             importedCount: insertedRecords.length,
-            totalRecords: clientRecords.length,
-            clientCredentials: clientCredentials // Include credentials in response
+            skippedCount: skippedRecords.length,
+            totalRecords: totalProcessed,
+            clientCredentials: clientCredentials, // Include credentials in response
+            skippedRecords: skippedRecords // Include skipped records for reference
         };
     } catch (error) {
         // Clean up file if it exists

@@ -31,4 +31,8 @@ export class FournisseurService {
   deleteFournisseur(code: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${code}`);
   }
+
+  importFournisseursFromExcel(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/import`, formData);
+  }
 } 

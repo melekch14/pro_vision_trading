@@ -9,12 +9,31 @@
   {{ errorMessage }}
 </div>
 
+<!-- Import Success/Error Messages -->
+<div *ngIf="importSuccess" class="success-message" style="background-color: #4caf50; color: white; padding: 12px; margin: 10px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+  <mat-icon>check_circle</mat-icon>
+  {{ importSuccess }}
+</div>
+<div *ngIf="importError" class="error-message" style="background-color: #f44336; color: white; padding: 12px; margin: 10px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+  <mat-icon>error</mat-icon>
+  {{ importError }}
+</div>
+
 <!-- Main Content -->
 <div class="customers-container">
   <div class="stock-panel">
     <div class="stock-header">
       <h2>Gestion des fournisseurs</h2>
       <div class="stock-actions">
+        <input type="file" #fileInput accept=".xlsx,.xls" (change)="onFileSelected($event)" style="display: none;">
+        <button class="export-btn" (click)="triggerFileInput()">
+          <span class="material-icons">file_upload</span>
+          Importer Excel
+        </button>
+        <button class="export-btn" (click)="downloadTemplate()">
+          <span class="material-icons">download</span>
+          Télécharger le modèle
+        </button>
         <button class="export-btn" (click)="exportToCSV()">
           <span class="material-icons">file_download</span>
           Exporter CSV

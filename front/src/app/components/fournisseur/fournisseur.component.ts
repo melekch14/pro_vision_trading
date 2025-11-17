@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FournisseurService } from '../../services/fournisseur.service';
 import { Fournisseur } from '../../models/fournisseur.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -22,6 +22,10 @@ export class FournisseurComponent implements OnInit {
   showForm = false;
   isLoading: boolean = false;
   errorMessage: string = '';
+  importSuccess: string | null = null;
+  importError: string | null = null;
+
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   // Filter and sort properties
   searchCode: string = '';
@@ -322,5 +326,70 @@ export class FournisseurComponent implements OnInit {
 
   getUniqueStatuses(): string[] {
     return [...new Set(this.fournisseurs.map(f => f.status))].filter(Boolean);
+  }
+
+  triggerFileInput(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const validExtensions = ['.xlsx', '.xls'];
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    
+    if (!validExtensions.includes(fileExtension)) {
+      this.importError = 'Veuillez sélectionner un fichier Excel valide (.xlsx ou .xls)';
+      this.importSuccess = null;
+      return;
+    }
+
+    this.importError = null;
+    this.importSuccess = null;
+    this.isLoading = true;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.fournisseurService.importFournisseursFromExcel(formData).subscribe({
+      next: (result) => {
+        let message = `Import réussi: ${result.importedCount} enregistrement(s) importé(s) sur ${result.totalRecords}`;
+        if (result.errors && result.errors.length > 0) {
+          message += `, ${result.errors.length} erreur(s)`;
+        }
+        this.importSuccess = message;
+        this.importError = null;
+        this.isLoading = false;
+        this.loadFournisseurs();
+        // Reset file input
+        if (this.fileInput) {
+          this.fileInput.nativeElement.value = '';
+        }
+      },
+      error: (error) => {
+        this.importError = error.error?.message || 'Erreur lors de l\'importation du fichier';
+        this.importSuccess = null;
+        this.isLoading = false;
+        // Reset file input
+        if (this.fileInput) {
+          this.fileInput.nativeElement.value = '';
+        }
+      }
+    });
+  }
+
+  downloadTemplate(): void {
+    // Create a sample Excel template for fournisseur import
+    const templateData = [
+      ['code', 'raison_social', 'adresse', 'mat_vin', 'tel', 'fax', 'email', 'responsable', 'id_fiscale', 'banque', 'agence', 'rib', 'categorie_prix_vente', 'status', 'activite_economique', 'remise', 'taux_retenue', 'rccm', 'ninea', 'code_douane'],
+      ['F001', 'Fournisseur Exemple 1', '123 Rue Exemple', 'MAT001', '771234567', '771234568', 'fournisseur1@example.com', 'Responsable 1', 'ID001', 'Banque 1', 'Agence 1', 'RIB001', 'Cat1', 'actif', 'Commerce', 0, 0, 'RCCM001', 'NINEA001', 'CD001'],
+      ['F002', 'Fournisseur Exemple 2', '456 Avenue Test', 'MAT002', '772345678', '772345679', 'fournisseur2@example.com', 'Responsable 2', 'ID002', 'Banque 2', 'Agence 2', 'RIB002', 'Cat2', 'actif', 'Industrie', 5, 2, 'RCCM002', 'NINEA002', 'CD002']
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Fournisseurs');
+    XLSX.writeFile(wb, 'modele_import_fournisseurs.xlsx');
   }
 } 

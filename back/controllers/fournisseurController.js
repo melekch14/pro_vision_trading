@@ -46,4 +46,36 @@ exports.deleteFournisseur = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+// Import fournisseurs from Excel file
+exports.importFournisseursFromExcel = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        const result = await fournisseurService.importFournisseursFromExcel(req.file.path);
+        res.json({
+            success: true,
+            message: 'Import completed',
+            importedCount: result.importedCount,
+            totalRecords: result.totalRecords,
+            errors: result.errors
+        });
+    } catch (error) {
+        console.error('Error importing fournisseur data:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get upload middleware
+exports.getUploadMiddleware = () => {
+    return fournisseurService.getUploadMiddleware();
 }; 

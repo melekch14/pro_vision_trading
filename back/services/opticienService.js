@@ -17,10 +17,41 @@ const createOpticien = async (opticien) => {
         `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
         [opticien.codee, opticien.nom, opticien.prenom, opticien.email, hashedPassword, opticien.role]
     );
+    
+    // If the role is 'assistant', create default permissions with 0 access (has_access = false)
+    if (opticien.role === 'assistant') {
+        const componentIds = [
+            'dashboard',
+            'article-manager',
+            'article-hierarchy',
+            'article-params',
+            'tickets',
+            'orders',
+            'customers',
+            'fournisseurs',
+            'opticiens',
+            'activity-history',
+            'profile-update-requests',
+            'bl',
+            'settings'
+        ];
+        
+        // Insert default permissions with has_access = false for all components
+        for (const componentId of componentIds) {
+            await db.query(
+                `INSERT INTO opticien_permissions (opticien_id, component_id, has_access) VALUES (?, ?, ?)`,
+                [result.insertId, componentId, false]
+            );
+        }
+    }
+    
     return result.insertId;
 };
 
 const updateOpticien = async (id, opticien) => {
+    // Get current opticien to check if role is changing to 'assistant'
+    const currentOpticien = await getOpticienById(id);
+    
     let query = 'UPDATE opticien SET codee = ?, nom = ?, prenom = ?, email = ?, role = ?';
     let params = [opticien.codee, opticien.nom, opticien.prenom, opticien.email, opticien.role];
 
@@ -34,6 +65,41 @@ const updateOpticien = async (id, opticien) => {
     params.push(id);
 
     const [result] = await db.query(query, params);
+    
+    // If role is being changed to 'assistant' and it wasn't 'assistant' before, create default permissions
+    if (result.affectedRows > 0 && opticien.role === 'assistant' && currentOpticien && currentOpticien.role !== 'assistant') {
+        const componentIds = [
+            'dashboard',
+            'article-manager',
+            'article-hierarchy',
+            'article-params',
+            'tickets',
+            'orders',
+            'customers',
+            'fournisseurs',
+            'opticiens',
+            'activity-history',
+            'profile-update-requests',
+            'bl',
+            'settings'
+        ];
+        
+        // Check if permissions already exist, if not create them with has_access = false
+        for (const componentId of componentIds) {
+            const [existing] = await db.query(
+                'SELECT id FROM opticien_permissions WHERE opticien_id = ? AND component_id = ?',
+                [id, componentId]
+            );
+            
+            if (existing.length === 0) {
+                await db.query(
+                    `INSERT INTO opticien_permissions (opticien_id, component_id, has_access) VALUES (?, ?, ?)`,
+                    [id, componentId, false]
+                );
+            }
+        }
+    }
+    
     return result.affectedRows > 0;
 };
 

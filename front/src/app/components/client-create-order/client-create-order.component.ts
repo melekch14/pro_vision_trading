@@ -63,8 +63,8 @@ export class ClientCreateOrderComponent implements OnDestroy {
   needsSecondProduct: boolean = false;
 
   errors = {
-    od: { axe: false, addition: false },
-    og: { axe: false, addition: false },
+    od: { sphere: false, cylinder: false, axe: false, addition: false },
+    og: { sphere: false, cylinder: false, axe: false, addition: false },
     phone: false,
     email: false,
     lastName: false,
@@ -101,14 +101,78 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   validateAxeAndAddition() {
-    this.errors.od.axe = this.isNegative(this.order.od.axe);
-    this.errors.od.addition = this.isNegative(this.order.od.addition);
-    this.errors.og.axe = this.isNegative(this.order.og.axe);
-    this.errors.og.addition = this.isNegative(this.order.og.addition);
+    this.validateSphere('od');
+    this.validateCylinder('od');
+    this.validateAxe('od');
+    this.validateAddition('od');
+    this.validateSphere('og');
+    this.validateCylinder('og');
+    this.validateAxe('og');
+    this.validateAddition('og');
     
     this.checkIfValuesAreDifferent();
     this.checkCorrectionsForStep3();
     this.updateFormValidity();
+  }
+
+  validateSphere(eye: 'od' | 'og') {
+    const value = this.order[eye].sphere;
+    if (value === '' || value === null || value === undefined) {
+      this.errors[eye].sphere = false;
+      return;
+    }
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      this.errors[eye].sphere = true;
+      return;
+    }
+    // Sphère : entre –6.00 et +6.00
+    this.errors[eye].sphere = numValue < -6.00 || numValue > 6.00;
+  }
+
+  validateCylinder(eye: 'od' | 'og') {
+    const value = this.order[eye].cylinder;
+    if (value === '' || value === null || value === undefined) {
+      this.errors[eye].cylinder = false;
+      return;
+    }
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      this.errors[eye].cylinder = true;
+      return;
+    }
+    // Cylindre: Entre –0.25 à –6.00
+    this.errors[eye].cylinder = numValue < -6.00 || numValue > -0.25;
+  }
+
+  validateAxe(eye: 'od' | 'og') {
+    const value = this.order[eye].axe;
+    if (value === '' || value === null || value === undefined) {
+      this.errors[eye].axe = false;
+      return;
+    }
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      this.errors[eye].axe = true;
+      return;
+    }
+    // AXE: Min : 0° Max : 180°
+    this.errors[eye].axe = numValue < 0 || numValue > 180;
+  }
+
+  validateAddition(eye: 'od' | 'og') {
+    const value = this.order[eye].addition;
+    if (value === '' || value === null || value === undefined) {
+      this.errors[eye].addition = false;
+      return;
+    }
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      this.errors[eye].addition = true;
+      return;
+    }
+    // Addition (ADD): Min : +0.50 Max : +3.50
+    this.errors[eye].addition = numValue < 0.50 || numValue > 3.50;
   }
 
   isNegative(value: any): boolean {
@@ -498,6 +562,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.order.og.cylinder = this.order.od.cylinder;
     this.order.og.axe = this.order.od.axe;
     this.order.og.addition = this.order.od.addition;
+    this.validateAxeAndAddition();
     this.checkIfValuesAreDifferent();
     this.checkCorrectionsForStep3();
   }
@@ -506,13 +571,15 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.order.od.sphere = this.order.og.sphere;
     this.order.od.cylinder = this.order.og.cylinder;
     this.order.od.axe = this.order.og.axe;
-    this.order.od.addition = this.order.od.addition;
+    this.order.od.addition = this.order.og.addition;
+    this.validateAxeAndAddition();
     this.checkIfValuesAreDifferent();
     this.checkCorrectionsForStep3();
   }
 
   copyFieldToOG(field: 'sphere' | 'cylinder' | 'axe' | 'addition') {
     this.order.og[field] = this.order.od[field];
+    this.validateAxeAndAddition();
     this.checkIfValuesAreDifferent();
     this.checkCorrectionsForStep3();
   }
@@ -530,8 +597,8 @@ export class ClientCreateOrderComponent implements OnDestroy {
 
   updateFormValidity() {
     this.errors.formInvalid = 
-      (this.isODFilled() && (this.errors.od.axe || this.errors.od.addition)) ||
-      (this.isOGFilled() && (this.errors.og.axe || this.errors.og.addition)) ||
+      (this.isODFilled() && (this.errors.od.sphere || this.errors.od.cylinder || this.errors.od.axe || this.errors.od.addition)) ||
+      (this.isOGFilled() && (this.errors.og.sphere || this.errors.og.cylinder || this.errors.og.axe || this.errors.og.addition)) ||
       this.errors.phone ||
       this.errors.email ||
       this.errors.lastName ||
@@ -544,6 +611,20 @@ export class ClientCreateOrderComponent implements OnDestroy {
     this.validateEmail();
     this.validateLastName();
     this.validateFirstName();
+    
+    // Validate correction values before submission
+    if (this.isODFilled()) {
+      this.validateSphere('od');
+      this.validateCylinder('od');
+      this.validateAxe('od');
+      this.validateAddition('od');
+    }
+    if (this.isOGFilled()) {
+      this.validateSphere('og');
+      this.validateCylinder('og');
+      this.validateAxe('og');
+      this.validateAddition('og');
+    }
     
     // Check if all required Porteur fields are filled
     if (!this.order.lastName || this.order.lastName.trim() === '') {
@@ -577,7 +658,8 @@ export class ClientCreateOrderComponent implements OnDestroy {
       alert('Veuillez sélectionner un produit pour OD.');
       return;
     }
-    if (this.isOGFilled() && !this.order.produit2) {
+    // Only require produit2 if values are different (needsSecondProduct is true)
+    if (this.isOGFilled() && this.needsSecondProduct && !this.order.produit2) {
       alert('Veuillez sélectionner un produit pour OG.');
       return;
     }
@@ -617,16 +699,34 @@ export class ClientCreateOrderComponent implements OnDestroy {
       };
 
       // Handle fabrication/stock logic
+      // If values are the same, use the same product for both eyes
       if (this.order.origineArticle === 'fabrication') {
         orderData.fabrication1 = this.isODFilled() ? (this.order.produit || '') : '';
-        orderData.fabrication2 = this.isOGFilled() ? (this.order.produit2 || '') : '';
+        // If values are the same, use the same product for OG
+        if (this.isOGFilled() && !this.needsSecondProduct) {
+          orderData.fabrication2 = this.isODFilled() ? (this.order.produit || '') : '';
+        } else {
+          orderData.fabrication2 = this.isOGFilled() ? (this.order.produit2 || '') : '';
+        }
         orderData.produit = '';
         orderData.produit2 = '';
       } else {
         orderData.produit = this.isODFilled() ? this.order.produit : '';
-        orderData.produit2 = this.isOGFilled() ? this.order.produit2 : '';
+        // If values are the same, use the same product for OG
+        if (this.isOGFilled() && !this.needsSecondProduct) {
+          orderData.produit2 = this.isODFilled() ? this.order.produit : '';
+        } else {
+          orderData.produit2 = this.isOGFilled() ? this.order.produit2 : '';
+        }
         orderData.fabrication1 = '';
         orderData.fabrication2 = '';
+      }
+      
+      // Also update selectedProduct2 and selectedArticle2 when values are the same
+      if (this.isOGFilled() && !this.needsSecondProduct) {
+        orderData.selectedProduct2 = orderData.selectedProduct;
+        orderData.selectedArticle2 = orderData.selectedArticle;
+        orderData.price2 = orderData.price;
       }
 
       // First create the order

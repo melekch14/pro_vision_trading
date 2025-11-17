@@ -105,15 +105,16 @@ const decodeClientToken = (token) => {
 const sendPasswordByEmail = async (email) => {
     const result = await findUserByEmail(email);
     if (!result) throw new Error('User not found');
-    const { user } = result;
+    const { user, role } = result;
 
     // Generate token for reset link
     const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
-    // Store token and expiry in DB
+    // Store token and expiry in DB - use appropriate table based on role
+    const tableName = role === 'client' ? 'client' : 'opticien';
     await db.query(
-        'UPDATE client SET password_reset_token = ?, password_reset_expires = ? WHERE id = ?',
+        `UPDATE ${tableName} SET password_reset_token = ?, password_reset_expires = ? WHERE id = ?`,
         [token, expires, user.id]
     );
 
@@ -178,16 +179,17 @@ const sendPasswordByEmail = async (email) => {
 // Request password reset: generate token, store in DB, send email
 const requestPasswordReset = async (email) => {
     const result = await findUserByEmail(email);
-    if (!result || result.role !== 'client') throw new Error('User not found');
-    const { user } = result;
+    if (!result) throw new Error('User not found');
+    const { user, role } = result;
 
     // Generate token
     const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
-    // Store token and expiry in DB
+    // Store token and expiry in DB - use appropriate table based on role
+    const tableName = role === 'client' ? 'client' : 'opticien';
     await db.query(
-        'UPDATE client SET password_reset_token = ?, password_reset_expires = ? WHERE id = ?',
+        `UPDATE ${tableName} SET password_reset_token = ?, password_reset_expires = ? WHERE id = ?`,
         [token, expires, user.id]
     );
 
@@ -251,19 +253,39 @@ const requestPasswordReset = async (email) => {
 
 // Reset password using token
 const resetPassword = async (token, newPassword) => {
-    // Find user by token and check expiry
+    // Find user by token and check expiry - check both client and opticien tables
     console.log(token);
-    const [rows] = await db.query(
+    let user = null;
+    let tableName = null;
+    
+    // First check client table
+    const [clientRows] = await db.query(
         'SELECT * FROM client WHERE password_reset_token = ? AND password_reset_expires > NOW()',
         [token]
     );
-    if (!rows[0]) throw new Error('Invalid or expired token');
-    const user = rows[0];
+    
+    if (clientRows[0]) {
+        user = clientRows[0];
+        tableName = 'client';
+    } else {
+        // Check opticien table
+        const [opticienRows] = await db.query(
+            'SELECT * FROM opticien WHERE password_reset_token = ? AND password_reset_expires > NOW()',
+            [token]
+        );
+        if (opticienRows[0]) {
+            user = opticienRows[0];
+            tableName = 'opticien';
+        }
+    }
+    
+    if (!user) throw new Error('Invalid or expired token');
+    
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     // Update password and clear token
     await db.query(
-        'UPDATE client SET password = ?, password_reset_token = NULL, password_reset_expires = NULL WHERE id = ?',
+        `UPDATE ${tableName} SET password = ?, password_reset_token = NULL, password_reset_expires = NULL WHERE id = ?`,
         [hashedPassword, user.id]
     );
     return true;

@@ -68,6 +68,8 @@ const tableStatements = [
     email varchar(191) NOT NULL,
     password varchar(255) NOT NULL,
     role varchar(50) DEFAULT NULL,
+    password_reset_token varchar(250) NULL,
+    password_reset_expires varchar(255) NULL,
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,

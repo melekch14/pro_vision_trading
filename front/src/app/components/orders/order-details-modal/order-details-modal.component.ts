@@ -410,7 +410,8 @@ export class OrderDetailsModalComponent implements OnInit {
   getTotalPrice(): number {
     const price1 = parseFloat(this.order.price) || 0;
     const price2 = parseFloat(this.order.price2 || '0') || 0;
-    return price1 + price2;
+    const shippingCost = this.order.shipping_type === 'express' ? 3000 : 0;
+    return price1 + price2 + shippingCost;
   }
 
   needsSecondProduct(): boolean {

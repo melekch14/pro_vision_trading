@@ -249,7 +249,8 @@ export class DeliveryNoteModalComponent implements OnInit {
     this.totalAmount = this.data.orders.reduce((sum, order) => {
       const price = parseFloat(order.price) || 0;
       const price2 = parseFloat(order.price2 || '0') || 0;
-      return sum + price + price2;
+      const shippingCost = order.shipping_type === 'express' ? 3000 : 0;
+      return sum + price + price2 + shippingCost;
     }, 0);
     console.log('Total Amount:', this.totalAmount);
     console.log('Final Orders with all details:', this.data.orders);

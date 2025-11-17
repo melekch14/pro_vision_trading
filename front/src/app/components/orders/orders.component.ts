@@ -165,7 +165,8 @@ export class OrdersComponent implements OnInit {
   getTotalPrice(order: Order): string {
     const basePrice = parseFloat(order.price) || 0;
     const price2 = parseFloat(order.price2 || '0') || 0;
-    const total = basePrice + price2;
+    const shippingCost = order.shipping_type === 'express' ? 3000 : 0;
+    const total = basePrice + price2 + shippingCost;
     return total.toFixed(2) + ' CFA';
   }
 

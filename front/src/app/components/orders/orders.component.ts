@@ -47,12 +47,12 @@ export class OrdersComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
   // Filter states
-  statusFilter: string = 'All';
+  statusFilter: string = 'Tous';
   dateFilter: string = '';
   searchQuery: string = '';
 
   // Status options
-  statuses: string[] = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  statuses: string[] = ['Tous', 'En attente', 'En traitement', 'Expédié', 'Livré', 'Annulé'];
 
   // Table columns
   displayedColumns: string[] = [
@@ -70,7 +70,7 @@ export class OrdersComponent implements OnInit {
     private orderService: OrderService,
     private authService: AuthService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadOrders();
@@ -88,7 +88,7 @@ export class OrdersComponent implements OnInit {
         this.loading = false;
       },
       error: (error: any) => {
-        this.error = 'Failed to load orders. Please try again later.';
+        this.error = 'Échec du chargement des commandes. Veuillez réessayer plus tard.';
         this.loading = false;
         console.error('Error loading orders:', error);
       }
@@ -112,7 +112,7 @@ export class OrdersComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.orders];
 
-    if (this.statusFilter !== 'All') {
+    if (this.statusFilter !== 'Tous') {
       filtered = filtered.filter(order =>
         order.status.toLowerCase() === this.statusFilter.toLowerCase()
       );
@@ -139,7 +139,7 @@ export class OrdersComponent implements OnInit {
   }
 
   resetFilters(): void {
-    this.statusFilter = 'All';
+    this.statusFilter = 'Tous';
     this.dateFilter = '';
     this.searchQuery = '';
     this.filteredOrders = [...this.orders];

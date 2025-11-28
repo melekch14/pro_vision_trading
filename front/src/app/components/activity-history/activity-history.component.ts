@@ -12,23 +12,23 @@ export class ActivityHistoryComponent implements OnInit {
   statistics: ActivityStatistics | null = null;
   users: User[] = [];
   actions: string[] = [];
-  
+
   loading = false;
   error: string | null = null;
-  
+
   // Pagination
   currentPage = 1;
   pageSize = 50;
   totalItems = 0;
   totalPages = 0;
-  
+
   // Filters
   searchTerm = '';
   selectedAction: string = 'All actions';
   selectedUser: string = 'All users';
   filters: ActivityFilters = {};
-  
-  constructor(private activityHistoryService: ActivityHistoryService) {}
+
+  constructor(private activityHistoryService: ActivityHistoryService) { }
 
   ngOnInit(): void {
     this.loadStatistics();
@@ -103,14 +103,14 @@ export class ActivityHistoryComponent implements OnInit {
             (activity.ip_address && activity.ip_address.toLowerCase().includes(search))
           );
         }
-        
+
         this.activities = filteredActivities;
         this.totalItems = response.pagination.total;
         this.totalPages = response.pagination.totalPages;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load activities';
+        this.error = 'Échec du chargement des activités';
         this.loading = false;
         console.error('Error loading activities:', err);
       }
@@ -162,7 +162,7 @@ export class ActivityHistoryComponent implements OnInit {
       this.formatTime(activity.created_at),
       activity.ip_address || '-'
     ]);
-    
+
     return [
       headers.join(','),
       ...rows.map(row => row.map(cell => `"${cell}"`).join(','))

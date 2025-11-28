@@ -58,6 +58,8 @@ import { BlImportModalComponent } from './components/bl/bl-import-modal/bl-impor
 import { BlDetailsModalComponent } from './components/bl/bl-details-modal/bl-details-modal.component';
 import { CustomerImportModalComponent } from './components/customers/customer-import-modal/customer-import-modal.component';
 import { ActivityHistoryComponent } from './components/activity-history/activity-history.component';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { CustomPaginatorIntl } from './shared/services/paginator-intl.service';
 
 @NgModule({
   declarations: [
@@ -125,6 +127,10 @@ import { ActivityHistoryComponent } from './components/activity-history/activity
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
+    },
+    {
+      provide: MatPaginatorIntl,
+      useClass: CustomPaginatorIntl
     }
   ],
   bootstrap: [AppComponent]

@@ -31,13 +31,13 @@ export class ArticleParamsComponent implements OnInit {
   };
   paramForms: { [key: string]: FormGroup } = {};
   filterForms: { [key: string]: FormGroup } = {};
-  allData: Array<{type: string, name: string, description: string}> = [];
-  
+  allData: Array<{ type: string, name: string, description: string }> = [];
+
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private articleParamsService: ArticleParamsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const paramTypes = ['foyers', 'indices', 'designs', 'couleur-photos', 'traitements', 'type-articles'];
@@ -92,7 +92,7 @@ export class ArticleParamsComponent implements OnInit {
           this.params[type].push(createdParam);
           this.applyFilter(type); // Update filtered list
           this.paramForms[type].reset();
-          this.snackBar.open('Parameter added successfully', 'Close', {
+          this.snackBar.open('Paramètre ajouté avec succès', 'Fermer', {
             duration: 3000
           });
         },
@@ -126,7 +126,7 @@ export class ArticleParamsComponent implements OnInit {
         if (this.activePanel === 'all-data') {
           this.loadAllData();
         }
-        this.snackBar.open('Parameter deleted successfully', 'Close', {
+        this.snackBar.open('Paramètre supprimé avec succès', 'Fermer', {
           duration: 3000
         });
       },
@@ -150,7 +150,7 @@ export class ArticleParamsComponent implements OnInit {
       'type-articles': 'Type Article'
     };
 
-    const requests = paramTypes.map(type => 
+    const requests = paramTypes.map(type =>
       this.articleParamsService.getParams(type)
     );
 
@@ -182,7 +182,7 @@ export class ArticleParamsComponent implements OnInit {
     // Prepare data in Excel format (matching the image structure)
     // Only include cells with values, matching the sparse format shown in the image
     const excelData: any[] = [];
-    
+
     // Headers
     excelData.push(['Type d\'article', 'Foyer', 'Indice', 'Design', 'Couleur photo', 'Traitement']);
 
@@ -209,7 +209,7 @@ export class ArticleParamsComponent implements OnInit {
     if (maxLength > 0) {
       for (let i = 0; i < maxLength; i++) {
         const row: any[] = [];
-        
+
         // Only add value if it exists at this index, otherwise empty string
         row.push(i < typeArticles.length ? typeArticles[i] : '');
         row.push(i < foyers.length ? foyers[i] : '');
@@ -217,7 +217,7 @@ export class ArticleParamsComponent implements OnInit {
         row.push(i < designs.length ? designs[i] : '');
         row.push(i < couleurPhotos.length ? couleurPhotos[i] : '');
         row.push(i < traitements.length ? traitements[i] : '');
-        
+
         // Only add row if it has at least one non-empty value
         if (row.some(cell => cell !== '')) {
           excelData.push(row);
@@ -232,7 +232,7 @@ export class ArticleParamsComponent implements OnInit {
 
     // Export to file
     XLSX.writeFile(wb, 'article-params.xlsx');
-    this.snackBar.open('Data exported successfully', 'Close', {
+    this.snackBar.open('Données exportées avec succès', 'Fermer', {
       duration: 3000
     });
   }

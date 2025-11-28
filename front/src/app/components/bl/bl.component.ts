@@ -45,7 +45,7 @@ export class BlComponent implements OnInit {
   constructor(
     private blService: BlService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadBlRecords();
@@ -63,7 +63,7 @@ export class BlComponent implements OnInit {
         this.loading = false;
       },
       error: (error: any) => {
-        this.error = 'Failed to load BL records. Please try again later.';
+        this.error = 'Échec du chargement des enregistrements BL. Veuillez réessayer plus tard.';
         this.loading = false;
         console.error('Error loading BL records:', error);
       }
@@ -159,7 +159,7 @@ export class BlComponent implements OnInit {
         },
         error: (error: any) => {
           console.error('Error deleting BL record:', error);
-          alert('Failed to delete BL record. Please try again.');
+          alert('Échec de la suppression de l\'enregistrement BL. Veuillez réessayer.');
         }
       });
     }

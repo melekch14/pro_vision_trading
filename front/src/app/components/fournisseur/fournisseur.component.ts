@@ -77,7 +77,7 @@ export class FournisseurComponent implements OnInit {
   loadFournisseurs(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     this.fournisseurService.getFournisseurs().subscribe({
       next: (data) => {
         this.fournisseurs = data;
@@ -86,7 +86,7 @@ export class FournisseurComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading fournisseurs:', error);
-        this.errorMessage = 'Failed to load suppliers';
+        this.errorMessage = 'Échec du chargement des fournisseurs';
         this.isLoading = false;
       }
     });
@@ -94,7 +94,7 @@ export class FournisseurComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.fournisseurs];
-    
+
     // Apply code filter
     if (this.searchCode.trim()) {
       const query = this.searchCode.toLowerCase().trim();
@@ -102,7 +102,7 @@ export class FournisseurComponent implements OnInit {
         fournisseur.code.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply company name filter
     if (this.searchCompany.trim()) {
       const query = this.searchCompany.toLowerCase().trim();
@@ -110,7 +110,7 @@ export class FournisseurComponent implements OnInit {
         fournisseur.raison_social.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply email filter
     if (this.searchEmail.trim()) {
       const query = this.searchEmail.toLowerCase().trim();
@@ -118,24 +118,24 @@ export class FournisseurComponent implements OnInit {
         fournisseur.email.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply status filter
     if (this.filterStatus) {
-      filtered = filtered.filter(fournisseur => 
+      filtered = filtered.filter(fournisseur =>
         fournisseur.status.toLowerCase() === this.filterStatus.toLowerCase()
       );
     }
-    
+
     // Apply sorting
     this.sortData(filtered);
-    
+
     this.filteredFournisseurs = filtered;
   }
 
   sortData(data: Fournisseur[]): void {
     data.sort((a, b) => {
       let valueA, valueB;
-      
+
       switch (this.sortColumn) {
         case 'raison_social':
           valueA = a.raison_social;
@@ -161,7 +161,7 @@ export class FournisseurComponent implements OnInit {
           valueA = a.code;
           valueB = b.code;
       }
-      
+
       if (valueA < valueB) {
         return this.sortDirection === 'asc' ? -1 : 1;
       }
@@ -217,11 +217,11 @@ export class FournisseurComponent implements OnInit {
 
   exportToPDF(): void {
     const doc = new jsPDF();
-    
+
     // Add title
     doc.setFontSize(16);
     doc.text('Suppliers Report', 14, 15);
-    
+
     // Add date
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
@@ -260,7 +260,7 @@ export class FournisseurComponent implements OnInit {
   onSubmit(): void {
     if (this.fournisseurForm.valid) {
       const fournisseurData = this.fournisseurForm.value;
-      
+
       if (this.isEditing && this.selectedFournisseur) {
         this.fournisseurService.updateFournisseur(this.selectedFournisseur.code, fournisseurData)
           .subscribe({
@@ -271,7 +271,7 @@ export class FournisseurComponent implements OnInit {
             },
             error: (error) => {
               console.error('Error updating fournisseur:', error);
-              this.errorMessage = 'Failed to update supplier';
+              this.errorMessage = 'Échec de la mise à jour du fournisseur';
             }
           });
       } else {
@@ -284,7 +284,7 @@ export class FournisseurComponent implements OnInit {
             },
             error: (error) => {
               console.error('Error creating fournisseur:', error);
-              this.errorMessage = 'Failed to create supplier';
+              this.errorMessage = 'Échec de la création du fournisseur';
             }
           });
       }
@@ -302,7 +302,7 @@ export class FournisseurComponent implements OnInit {
     if (confirm('Are you sure you want to delete this supplier?')) {
       this.isLoading = true;
       this.errorMessage = '';
-      
+
       this.fournisseurService.deleteFournisseur(code)
         .subscribe({
           next: () => {
@@ -311,7 +311,7 @@ export class FournisseurComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error deleting fournisseur:', error);
-            this.errorMessage = 'Failed to delete supplier';
+            this.errorMessage = 'Échec de la suppression du fournisseur';
             this.isLoading = false;
           }
         });
@@ -338,7 +338,7 @@ export class FournisseurComponent implements OnInit {
 
     const validExtensions = ['.xlsx', '.xls'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    
+
     if (!validExtensions.includes(fileExtension)) {
       this.importError = 'Veuillez sélectionner un fichier Excel valide (.xlsx ou .xls)';
       this.importSuccess = null;

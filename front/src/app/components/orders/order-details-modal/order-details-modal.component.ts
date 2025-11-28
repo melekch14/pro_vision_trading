@@ -59,7 +59,7 @@ export class OrderDetailsModalComponent implements OnInit {
   activeTab: 'details' | 'management' = 'details';
   selectedStatus: string;
   tempStatus: string;
-  statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  statuses: string[] = ['En attente', 'En traitement', 'Expédié', 'Livré', 'Annulé'];
   isUpdating: boolean = false;
   orderDetails: Order | null = null;
   showCard: boolean = false;
@@ -333,14 +333,14 @@ export class OrderDetailsModalComponent implements OnInit {
             // Decrement stock for produit (OD - Right Eye)
             if (this.order.produit) {
               this.stockService.decrementStock(this.order.produit).subscribe({
-                next: () => {},
+                next: () => { },
                 error: (err) => { console.error('Error decrementing stock for produit:', err); }
               });
             }
             // Decrement stock for produit2 (OG - Left Eye)
             if (this.order.produit2) {
               this.stockService.decrementStock(this.order.produit2).subscribe({
-                next: () => {},
+                next: () => { },
                 error: (err) => { console.error('Error decrementing stock for produit2:', err); }
               });
             }
@@ -457,14 +457,14 @@ export class OrderDetailsModalComponent implements OnInit {
             // Decrement stock for produit (OD - Right Eye)
             if (this.order.produit) {
               this.stockService.decrementStock(this.order.produit).subscribe({
-                next: () => {},
+                next: () => { },
                 error: (err) => { console.error('Error decrementing stock for produit:', err); }
               });
             }
             // Decrement stock for produit2 (OG - Left Eye)
             if (this.order.produit2) {
               this.stockService.decrementStock(this.order.produit2).subscribe({
-                next: () => {},
+                next: () => { },
                 error: (err) => { console.error('Error decrementing stock for produit2:', err); }
               });
             }
@@ -645,7 +645,7 @@ export class OrderDetailsModalComponent implements OnInit {
 
     // Wait for content to load then print
     printWindow.document.close();
-    printWindow.onload = function() {
+    printWindow.onload = function () {
       printWindow.print();
       printWindow.close();
     };

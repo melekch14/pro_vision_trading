@@ -40,7 +40,7 @@ export class ArticleManagerComponent implements OnInit {
   filterForm: FormGroup;
   articles: Article[] = [];
   filteredArticles: Article[] = [];
-  
+
   // Options from services
   foyerOptions: any[] = [];
   indiceOptions: any[] = [];
@@ -50,7 +50,7 @@ export class ArticleManagerComponent implements OnInit {
   fournisseurOptions: any[] = [];
   typeArticleOptions: any[] = [];
   subfamilyOptions: ArticleSubfamily[] = [];
-  
+
   // Tab state
   activeTab: 'browse' | 'add' | 'stock' | 'import-export' = 'browse';
   editingArticle: Article | null = null;
@@ -64,15 +64,15 @@ export class ArticleManagerComponent implements OnInit {
   importError: string | null = null;
 
   // Stock management
-  sphereValues: number[] = Array.from({length: 33}, (_, i) => -4 + (i * 0.25));
-  cylindreValues: number[] = Array.from({length: 9}, (_, i) => -2 + (i * 0.25));
+  sphereValues: number[] = Array.from({ length: 33 }, (_, i) => -4 + (i * 0.25));
+  cylindreValues: number[] = Array.from({ length: 9 }, (_, i) => -2 + (i * 0.25));
   dialogStockEntries: DialogStockEntry[] = [];
 
   // Stock panel properties
   stockEntries: StockEntryWithArticle[] = [];
   filteredStockEntries: StockEntryWithArticle[] = [];
   displayedColumns: string[] = ['code', 'libelle', 'qte', 'sphere', 'cylindre', 'addition'];
-  
+
   stockFilters = {
     code: '',
     libelle: '',
@@ -153,7 +153,7 @@ export class ArticleManagerComponent implements OnInit {
     this.articleForm.get('prix_achat')?.valueChanges.subscribe(prixAchat => {
       if (prixAchat) {
         const tva = 18; // Fixed TVA at 18%
-        const prixVente = prixAchat * (1 + tva/100);
+        const prixVente = prixAchat * (1 + tva / 100);
         this.articleForm.patchValue({
           prix_vente: prixVente.toFixed(2)
         }, { emitEvent: false });
@@ -178,7 +178,7 @@ export class ArticleManagerComponent implements OnInit {
     this.loadOptions();
     this.loadStockEntries();
     this.loadAllData();
-    
+
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
     });
@@ -212,7 +212,7 @@ export class ArticleManagerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading articles:', error);
-        this.errorMessage = 'Failed to load articles';
+        this.errorMessage = 'Échec du chargement des articles';
         this.isLoading = false;
       }
     });
@@ -282,15 +282,15 @@ export class ArticleManagerComponent implements OnInit {
   }
 
   formatStockCode(entry: StockEntryWithArticle): string {
-    const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') : 
-               (entry.addition !== null ? entry.addition.toString().padStart(4, '0') : '0000');
+    const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') :
+      (entry.addition !== null ? entry.addition.toString().padStart(4, '0') : '0000');
     const sph = entry.sphere.toString().padStart(4, '0');
     return `${entry.subfamily_code} - (${cyl}) - ${sph}`;
   }
 
   formatStockLibelle(entry: StockEntryWithArticle): string {
-    const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') : 
-               (entry.addition !== null ? entry.addition.toString().padStart(4, '0') : '0000');
+    const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') :
+      (entry.addition !== null ? entry.addition.toString().padStart(4, '0') : '0000');
     const sph = entry.sphere.toString().padStart(4, '0');
     return `${entry.article_libelle} (${cyl}) - ${sph}`;
   }
@@ -307,7 +307,7 @@ export class ArticleManagerComponent implements OnInit {
       if (this.editingArticle) {
         this.articleService.updateArticle(this.editingArticle.id!, articleData).subscribe({
           next: () => {
-            this.snackBar.open('Article updated successfully', 'Close', { duration: 3000 });
+            this.snackBar.open('Article mis à jour avec succès', 'Fermer', { duration: 3000 });
             this.loadArticles();
             this.setTab('browse');
             // Refresh stock table after updating article
@@ -321,7 +321,7 @@ export class ArticleManagerComponent implements OnInit {
       } else {
         this.articleService.createArticle(articleData).subscribe({
           next: () => {
-            this.snackBar.open('Article created successfully', 'Close', { duration: 3000 });
+            this.snackBar.open('Article créé avec succès', 'Fermer', { duration: 3000 });
             this.loadArticles();
             this.setTab('browse');
             // Refresh stock table after creating article
@@ -351,7 +351,7 @@ export class ArticleManagerComponent implements OnInit {
     if (confirm('Are you sure you want to delete this article?')) {
       this.articleService.deleteArticle(id).subscribe({
         next: () => {
-          this.snackBar.open('Article deleted successfully', 'Close', { duration: 3000 });
+          this.snackBar.open('Article supprimé avec succès', 'Fermer', { duration: 3000 });
           this.loadArticles();
           // Refresh stock table after deleting article
           this.loadStockEntries();
@@ -382,7 +382,7 @@ export class ArticleManagerComponent implements OnInit {
 
   applyFilters(): void {
     const filters = this.filterForm.value;
-    
+
     this.filteredArticles = this.articles.filter(article => {
       return (
         (!filters.code || article.code.toLowerCase().includes(filters.code.toLowerCase())) &&
@@ -423,7 +423,7 @@ export class ArticleManagerComponent implements OnInit {
               cylindre: entry.cylindre,
               quantite: entry.quantite
             });
-            
+
             const updatePromise = this.stockService.updateStock(entry.id!, entry)
               .toPromise()
               .then(response => {
@@ -439,7 +439,7 @@ export class ArticleManagerComponent implements OnInit {
                 });
                 throw error;
               });
-            
+
             promises.push(updatePromise);
           });
         } else {
@@ -456,7 +456,7 @@ export class ArticleManagerComponent implements OnInit {
               cylindre: entry.cylindre,
               quantite: entry.quantite
             });
-            
+
             const insertPromise = this.stockService.createStock(entry)
               .toPromise()
               .then(response => {
@@ -472,7 +472,7 @@ export class ArticleManagerComponent implements OnInit {
                 });
                 throw error;
               });
-            
+
             promises.push(insertPromise);
           });
         } else {
@@ -485,7 +485,7 @@ export class ArticleManagerComponent implements OnInit {
           result.deletions.forEach((entry: ApiStockEntry) => {
             if (entry.id) {
               console.log('Deleting entry with id:', entry.id);
-              
+
               const deletePromise = this.stockService.deleteStock(entry.id)
                 .toPromise()
                 .then(response => {
@@ -501,7 +501,7 @@ export class ArticleManagerComponent implements OnInit {
                   });
                   throw error;
                 });
-              
+
               promises.push(deletePromise);
             }
           });
@@ -517,7 +517,7 @@ export class ArticleManagerComponent implements OnInit {
         Promise.all(promises)
           .then(() => {
             console.log('All operations completed successfully');
-            this.snackBar.open('Stock updated successfully', 'Close', { duration: 3000 });
+            this.snackBar.open('Stock mis à jour avec succès', 'Fermer', { duration: 3000 });
             this.loadStockEntries();
           })
           .catch(error => {
@@ -554,7 +554,7 @@ export class ArticleManagerComponent implements OnInit {
               cylindre: entry.cylindre,
               prix_supplement: entry.prix_supplement
             });
-            
+
             const updatePromise = this.supplementaryPriceService.updateSupplementaryPrice(entry.id!, entry)
               .toPromise()
               .then(response => {
@@ -570,7 +570,7 @@ export class ArticleManagerComponent implements OnInit {
                 });
                 throw error;
               });
-            
+
             promises.push(updatePromise);
           });
         } else {
@@ -587,7 +587,7 @@ export class ArticleManagerComponent implements OnInit {
               cylindre: entry.cylindre,
               prix_supplement: entry.prix_supplement
             });
-            
+
             const insertPromise = this.supplementaryPriceService.createSupplementaryPrice(entry)
               .toPromise()
               .then(response => {
@@ -603,7 +603,7 @@ export class ArticleManagerComponent implements OnInit {
                 });
                 throw error;
               });
-            
+
             promises.push(insertPromise);
           });
         } else {
@@ -616,7 +616,7 @@ export class ArticleManagerComponent implements OnInit {
           result.deletions.forEach((entry: ApiSupplementaryPrice) => {
             if (entry.id) {
               console.log('Deleting supplementary price with id:', entry.id);
-              
+
               const deletePromise = this.supplementaryPriceService.deleteSupplementaryPrice(entry.id)
                 .toPromise()
                 .then(response => {
@@ -632,7 +632,7 @@ export class ArticleManagerComponent implements OnInit {
                   });
                   throw error;
                 });
-              
+
               promises.push(deletePromise);
             }
           });
@@ -648,7 +648,7 @@ export class ArticleManagerComponent implements OnInit {
         Promise.all(promises)
           .then(() => {
             console.log('All supplementary price operations completed successfully');
-            this.snackBar.open('Supplementary prices updated successfully', 'Close', { duration: 3000 });
+            this.snackBar.open('Prix supplémentaires mis à jour avec succès', 'Fermer', { duration: 3000 });
           })
           .catch(error => {
             console.error('Error updating supplementary prices:', error);
@@ -676,13 +676,13 @@ export class ArticleManagerComponent implements OnInit {
 
   applyStockFilters(): void {
     this.filteredStockEntries = this.stockEntries.filter(entry => {
-      const matchesCode = !this.stockFilters.code || 
+      const matchesCode = !this.stockFilters.code ||
         this.formatStockCode(entry).toLowerCase().includes(this.stockFilters.code.toLowerCase());
-      const matchesLibelle = !this.stockFilters.libelle || 
+      const matchesLibelle = !this.stockFilters.libelle ||
         this.formatStockLibelle(entry).toLowerCase().includes(this.stockFilters.libelle.toLowerCase());
-      const matchesQuantity = !this.stockFilters.quantity || 
+      const matchesQuantity = !this.stockFilters.quantity ||
         entry.quantite.toString().includes(this.stockFilters.quantity);
-      const matchesSphere = !this.stockFilters.sphere || 
+      const matchesSphere = !this.stockFilters.sphere ||
         entry.sphere.toString().includes(this.stockFilters.sphere);
 
       // Only filter addition if type_stock is 'addition'
@@ -762,11 +762,11 @@ export class ArticleManagerComponent implements OnInit {
     const csvContent = csvRows.join('\n');
 
     // Create and download file with proper UTF-8 encoding
-    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([headers, ...data.map(row => 
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([headers, ...data.map(row =>
       headers.map(header => row[header])
     )]);
     const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
-    
+
     // Convert to CSV with proper encoding
     const csv = XLSX.utils.sheet_to_csv(worksheet, { FS: ',' });
     const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8' });
@@ -809,11 +809,11 @@ export class ArticleManagerComponent implements OnInit {
     const csvContent = csvRows.join('\n');
 
     // Create and download file with proper UTF-8 encoding
-    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([headers, ...data.map(row => 
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([headers, ...data.map(row =>
       headers.map(header => row[header])
     )]);
     const workbook: XLSX.WorkBook = { Sheets: { 'Stock': worksheet }, SheetNames: ['Stock'] };
-    
+
     // Convert to CSV with proper encoding
     const csv = XLSX.utils.sheet_to_csv(worksheet, { FS: ',' });
     const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8' });
@@ -827,9 +827,9 @@ export class ArticleManagerComponent implements OnInit {
 
   exportArticlesToPDF(): void {
     const doc = new jsPDF();
-    
+
     doc.text('Articles List', 14, 15);
-    
+
     const data = this.filteredArticles.map(article => [
       article.code || '',
       article.libelle || '',
@@ -856,9 +856,9 @@ export class ArticleManagerComponent implements OnInit {
 
   exportStockToPDF(): void {
     const doc = new jsPDF();
-    
+
     doc.text('Stock List', 14, 15);
-    
+
     const data = this.filteredStockEntries.map(entry => [
       this.formatStockCode(entry),
       this.formatStockLibelle(entry),
@@ -894,7 +894,7 @@ export class ArticleManagerComponent implements OnInit {
       const bValue = b[column];
 
       if (aValue === bValue) return 0;
-      
+
       const comparison = aValue < bValue ? -1 : 1;
       return this.sortDirection === 'asc' ? comparison : -comparison;
     });
@@ -908,7 +908,7 @@ export class ArticleManagerComponent implements OnInit {
   resetFilters(): void {
     this.filterForm.reset();
     this.filteredArticles = [...this.articles];
-    
+
     // Reapply sorting if active
     if (this.sortColumn) {
       this.onSort(this.sortColumn);
@@ -965,7 +965,7 @@ export class ArticleManagerComponent implements OnInit {
 
     const validExtensions = ['.xlsx', '.xls'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    
+
     if (!validExtensions.includes(fileExtension)) {
       this.importError = 'Veuillez sélectionner un fichier Excel valide (.xlsx ou .xls)';
       this.importSuccess = null;
@@ -1034,7 +1034,7 @@ export class ArticleManagerComponent implements OnInit {
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
     const workbook: XLSX.WorkBook = { Sheets: { 'Articles': worksheet }, SheetNames: ['Articles'] };
-    
+
     XLSX.writeFile(workbook, 'articles_all_data.xlsx');
   }
 }

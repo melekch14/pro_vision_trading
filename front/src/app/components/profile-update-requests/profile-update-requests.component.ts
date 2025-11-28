@@ -15,7 +15,7 @@ export class ProfileUpdateRequestsComponent implements OnInit {
   selectedRequest: ProfileUpdateRequest | null = null;
   adminNotes = '';
 
-  constructor(private profileUpdateRequestService: ProfileUpdateRequestService) {}
+  constructor(private profileUpdateRequestService: ProfileUpdateRequestService) { }
 
   ngOnInit() {
     this.loadRequests();
@@ -25,7 +25,7 @@ export class ProfileUpdateRequestsComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    const observable = this.selectedStatus === 'all' 
+    const observable = this.selectedStatus === 'all'
       ? this.profileUpdateRequestService.getAllProfileUpdateRequests()
       : this.profileUpdateRequestService.getProfileUpdateRequestsByStatus(this.selectedStatus);
 
@@ -35,7 +35,7 @@ export class ProfileUpdateRequestsComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load profile update requests.';
+        this.error = 'Échec du chargement des demandes de mise à jour du profil.';
         this.loading = false;
       }
     });
@@ -54,19 +54,19 @@ export class ProfileUpdateRequestsComponent implements OnInit {
     if (!this.selectedRequest) return;
 
     this.profileUpdateRequestService.approveProfileUpdateRequest(
-      this.selectedRequest.id, 
+      this.selectedRequest.id,
       this.adminNotes
     ).subscribe({
       next: () => {
-        alert('Profile update request approved successfully!');
+        alert('Demande de mise à jour du profil approuvée avec succès !');
         this.selectedRequest = null;
         this.adminNotes = '';
         this.loadRequests();
       },
       error: (err) => {
         console.error('Error approving request:', err);
-        const errorMessage = err.message || 'Failed to approve request';
-        alert('Failed to approve request: ' + errorMessage);
+        const errorMessage = err.message || 'Échec de l\'approbation de la demande';
+        alert('Échec de l\'approbation de la demande : ' + errorMessage);
       }
     });
   }
@@ -75,19 +75,19 @@ export class ProfileUpdateRequestsComponent implements OnInit {
     if (!this.selectedRequest) return;
 
     this.profileUpdateRequestService.rejectProfileUpdateRequest(
-      this.selectedRequest.id, 
+      this.selectedRequest.id,
       this.adminNotes
     ).subscribe({
       next: () => {
-        alert('Profile update request rejected successfully!');
+        alert('Demande de mise à jour du profil rejetée avec succès !');
         this.selectedRequest = null;
         this.adminNotes = '';
         this.loadRequests();
       },
       error: (err) => {
         console.error('Error rejecting request:', err);
-        const errorMessage = err.message || 'Failed to reject request';
-        alert('Failed to reject request: ' + errorMessage);
+        const errorMessage = err.message || 'Échec du rejet de la demande';
+        alert('Échec du rejet de la demande : ' + errorMessage);
       }
     });
   }
@@ -137,13 +137,13 @@ export class ProfileUpdateRequestsComponent implements OnInit {
     if (!request.requested_data || !request.requested_data.current_data || !request.requested_data.requested_data) {
       return [];
     }
-    
+
     const currentData = request.requested_data.current_data;
     const requestedData = request.requested_data.requested_data;
-    
+
     // Filter out password-related fields and other system fields
     const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass', 'id', 'created_at', 'updated_at'];
-    
+
     // Helper function to normalize values for comparison
     const normalizeValue = (value: any): string => {
       if (value === null || value === undefined) {
@@ -152,17 +152,17 @@ export class ProfileUpdateRequestsComponent implements OnInit {
       // Convert to string and trim whitespace
       return String(value).trim();
     };
-    
+
     return Object.keys(requestedData).filter(key => {
       // Skip password fields and system fields
       if (passwordFields.some(pwdField => key.toLowerCase().includes(pwdField))) {
         return false;
       }
-      
+
       // Normalize both values for proper comparison
       const currentValue = normalizeValue(currentData[key]);
       const requestedValue = normalizeValue(requestedData[key]);
-      
+
       // Only return fields where values actually changed
       return currentValue !== requestedValue;
     });

@@ -31,15 +31,15 @@ export class ClientOrdersComponent implements OnInit {
   filteredOrders: Order[] = [];
   loading: boolean = true;
   error: string | null = null;
-  
+
   // Filter states
-  statusFilter: string = 'All';
+  statusFilter: string = 'Tous';
   dateFilter: string = '';
   searchQuery: string = '';
-  
+
   // Status options
-  statuses: string[] = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
-  
+  statuses: string[] = ['Tous', 'En attente', 'En traitement', 'Expédié', 'Livré', 'Annulé'];
+
   // Table columns
   displayedColumns: string[] = [
     'id',
@@ -55,7 +55,7 @@ export class ClientOrdersComponent implements OnInit {
     private orderService: OrderService,
     private authService: AuthService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadOrders();
@@ -64,7 +64,7 @@ export class ClientOrdersComponent implements OnInit {
   loadOrders(): void {
     this.loading = true;
     this.error = null;
-    
+
     const clientId = this.authService.getClientId();
     if (!clientId) {
       this.error = 'Client ID not found. Please log in again.';
@@ -79,7 +79,7 @@ export class ClientOrdersComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Failed to load orders. Please try again later.';
+        this.error = 'Échec du chargement des commandes. Veuillez réessayer plus tard.';
         this.loading = false;
         console.error('Error loading orders:', error);
       }
@@ -96,22 +96,22 @@ export class ClientOrdersComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.orders];
-    
+
     // Apply status filter
     if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         order.status.toLowerCase() === this.statusFilter.toLowerCase()
       );
     }
-    
+
     // Apply date filter
     if (this.dateFilter) {
       const filterDate = new Date(this.dateFilter);
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         new Date(order.order_datetime).toDateString() === filterDate.toDateString()
       );
     }
-    
+
     // Apply search query
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
@@ -121,7 +121,7 @@ export class ClientOrdersComponent implements OnInit {
         order.traitement.toLowerCase().includes(query)
       );
     }
-    
+
     this.filteredOrders = filtered;
   }
 

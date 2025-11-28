@@ -29,7 +29,7 @@ export class CustomerFormComponent implements OnInit, OnChanges {
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -82,7 +82,7 @@ export class CustomerFormComponent implements OnInit, OnChanges {
       },
       error: (error) => {
         console.error('Error loading customer:', error);
-        this.errorMessage = 'Failed to load customer data';
+        this.errorMessage = 'Échec du chargement des données du client';
         this.isLoading = false;
       }
     });
@@ -107,7 +107,7 @@ export class CustomerFormComponent implements OnInit, OnChanges {
       },
       error: (error) => {
         console.error('Error saving customer:', error);
-        this.errorMessage = error.error?.message || 'Failed to save customer data';
+        this.errorMessage = error.error?.message || 'Échec de l\'enregistrement des données du client';
         this.isLoading = false;
       }
     });
@@ -120,9 +120,9 @@ export class CustomerFormComponent implements OnInit, OnChanges {
   // Check if password can be set for this customer
   canSetPassword(): boolean {
     if (!this.customer) return false;
-    
-    return this.customer.status === 'active' && 
-           this.customer.imported_from_excel === 1 && 
-           this.customer.password_updated === 0;
+
+    return this.customer.status === 'active' &&
+      this.customer.imported_from_excel === 1 &&
+      this.customer.password_updated === 0;
   }
 }

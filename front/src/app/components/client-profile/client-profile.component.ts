@@ -26,7 +26,7 @@ export class ClientProfileComponent implements OnInit {
     private customerService: CustomerService,
     private authService: AuthService,
     private profileUpdateRequestService: ProfileUpdateRequestService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.fetchUser();
@@ -48,7 +48,7 @@ export class ClientProfileComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load client data.';
+        this.error = 'Échec du chargement des données du client.';
         this.loading = false;
       }
     });
@@ -84,11 +84,11 @@ export class ClientProfileComponent implements OnInit {
       next: (response) => {
         this.editMode = false;
         this.fetchPendingRequests();
-        alert('Profile update request submitted successfully! Waiting for admin approval.');
+        alert('Demande de mise à jour du profil soumise avec succès ! En attente d\'approbation de l\'admin.');
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to submit profile update request.';
+        this.error = 'Échec de la soumission de la demande de mise à jour du profil.';
         this.loading = false;
       }
     });
@@ -107,7 +107,7 @@ export class ClientProfileComponent implements OnInit {
         alert('A password reset link has been sent to ' + this.user!.email);
       },
       error: () => {
-        alert('Failed to send password reset email.');
+        alert('Échec de l\'envoi de l\'email de réinitialisation du mot de passe.');
       }
     });
   }
@@ -116,13 +116,13 @@ export class ClientProfileComponent implements OnInit {
     if (!this.resetToken || !this.newPassword) return;
     this.authService.resetPassword(this.resetToken, this.newPassword).subscribe({
       next: () => {
-        alert('Password has been reset successfully!');
+        alert('Le mot de passe a été réinitialisé avec succès !');
         this.passwordResetRequested = false;
         this.resetToken = '';
         this.newPassword = '';
       },
       error: (err) => {
-        alert('Failed to reset password: ' + (err.error?.error || 'Unknown error'));
+        alert('Échec de la réinitialisation du mot de passe : ' + (err.error?.error || 'Erreur inconnue'));
       }
     });
   }
@@ -131,10 +131,10 @@ export class ClientProfileComponent implements OnInit {
     if (!requestedData || !requestedData.requested_data) {
       return [];
     }
-    
+
     // Filter out password-related fields
     const passwordFields = ['password', 'mot_de_passe', 'pwd', 'pass', 'password_reset_token', 'password_reset_expires'];
-    
+
     return Object.keys(requestedData.requested_data || {}).filter(key => {
       // Skip password fields
       return !passwordFields.some(pwdField => key.toLowerCase().includes(pwdField));

@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  constructor(private statisticsService: StatisticsService) {}
+  constructor(private statisticsService: StatisticsService) { }
 
   ngOnInit(): void {
     this.statisticsService.getDashboardStatistics().subscribe({
@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load dashboard statistics.';
+        this.error = 'Échec du chargement des statistiques du tableau de bord.';
         this.loading = false;
       }
     });

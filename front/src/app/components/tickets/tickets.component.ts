@@ -34,7 +34,7 @@ export class TicketsComponent implements OnInit {
   private diameterCache: { [key: string]: Observable<string> } = {};
   private articleNameCache: { [key: string]: Observable<string> } = {};
 
-  constructor(private orderService: OrderService, private stockService: StockService, private articleService: ArticleService) {}
+  constructor(private orderService: OrderService, private stockService: StockService, private articleService: ArticleService) { }
 
   ngOnInit() {
     this.loadOrders();
@@ -44,7 +44,17 @@ export class TicketsComponent implements OnInit {
   loadOrders() {
     this.orderService.getAllOrders().subscribe({
       next: (orders) => {
+        console.log('All orders loaded:', orders);
         this.orders = orders.filter((order: Order) => order.status?.toLowerCase() === 'processing');
+        console.log('Processing orders:', this.orders);
+
+        // Initialize placedEyes for loaded orders
+        this.orders.forEach(o => {
+          if (!this.placedEyes[o.order_id]) {
+            this.placedEyes[o.order_id] = { right: false, left: false };
+          }
+        });
+
         this.printedOrders = orders.filter((order: Order) => {
           const status = order.status?.toLowerCase();
           return status === 'shipped' || status === 'delivered';
@@ -55,6 +65,13 @@ export class TicketsComponent implements OnInit {
       }
     });
   }
+
+  isEyePlaced(order: Order | null, eye: 'right' | 'left'): boolean {
+    if (!order) return false;
+    const placement = this.placedEyes[order.order_id];
+    return placement ? placement[eye] : false;
+  }
+
 
   initializeGrid() {
     // Create 24 grid cells (3x8 grid)
@@ -111,7 +128,7 @@ export class TicketsComponent implements OnInit {
         this.draggedFromList = false;
         return;
       }
-      
+
       // Check if this order is already placed in the grid
       if (this.isOrderAlreadyPlaced(this.draggedOrder)) {
         console.warn('Order is already placed in the grid');
@@ -120,10 +137,10 @@ export class TicketsComponent implements OnInit {
         this.draggedFromList = false;
         return;
       }
-      
+
       // Check if order has only one eye (OD or OG)
       const availableEye = this.getAvailableEye(this.draggedOrder);
-      
+
       if (availableEye) {
         // Automatically place the order with the available eye
         this.placeOrderInCell(cell, this.draggedOrder, availableEye);
@@ -141,7 +158,7 @@ export class TicketsComponent implements OnInit {
 
   confirmEye(eye: 'right' | 'left') {
     if (!this.pendingDropCell || !this.pendingDropOrder) return;
-    
+
     // Check if this order is already placed in the grid
     if (this.isOrderAlreadyPlaced(this.pendingDropOrder)) {
       console.warn('Order is already placed in the grid');
@@ -150,7 +167,7 @@ export class TicketsComponent implements OnInit {
       this.pendingDropOrder = null;
       return;
     }
-    
+
     // Place the ticket in the cell
     this.pendingDropCell.ticket = {
       order: this.pendingDropOrder,
@@ -185,13 +202,13 @@ export class TicketsComponent implements OnInit {
   private getAvailableEye(order: Order): 'right' | 'left' | null {
     const hasOD = this.hasEyeData(order, 'right');
     const hasOG = this.hasEyeData(order, 'left');
-    
+
     if (hasOD && !hasOG) {
       return 'right'; // Only OD available
     } else if (hasOG && !hasOD) {
       return 'left'; // Only OG available
     }
-    
+
     return null; // Both eyes available or neither available
   }
 
@@ -217,14 +234,14 @@ export class TicketsComponent implements OnInit {
       order: order,
       eye
     };
-    
+
     // Mark the eye as placed
     const orderId = order.order_id;
     if (!this.placedEyes[orderId]) {
       this.placedEyes[orderId] = { right: false, left: false };
     }
     this.placedEyes[orderId][eye] = true;
-    
+
     // Remove from list if both eyes are placed
     if (this.placedEyes[orderId].right && this.placedEyes[orderId].left) {
       this.orders = this.orders.filter(o => o.order_id !== orderId);
@@ -237,16 +254,16 @@ export class TicketsComponent implements OnInit {
   private isOrderAlreadyPlaced(order: Order): boolean {
     const orderId = order.order_id;
     const placedEyesForOrder = this.placedEyes[orderId];
-    
+
     // If no eyes are placed yet, the order is not placed
     if (!placedEyesForOrder) {
       return false;
     }
-    
+
     // Check if both eyes are already placed
     const hasOD = this.hasEyeData(order, 'right');
     const hasOG = this.hasEyeData(order, 'left');
-    
+
     if (hasOD && hasOG) {
       // Both eyes exist, check if both are placed
       return placedEyesForOrder.right && placedEyesForOrder.left;
@@ -257,7 +274,7 @@ export class TicketsComponent implements OnInit {
       // Only OG exists, check if it's placed
       return placedEyesForOrder.left;
     }
-    
+
     // No eye data available
     return false;
   }

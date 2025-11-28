@@ -37,12 +37,12 @@ export class ResetPasswordComponent {
     console.log(this.token);
     this.authService.resetPassword(this.token, this.newPassword).subscribe({
       next: () => {
-        this.message = 'Password has been reset successfully! You can now log in.';
+        this.message = 'Le mot de passe a été réinitialisé avec succès ! Vous pouvez maintenant vous connecter.';
         this.loading = false;
         setTimeout(() => this.router.navigate(['/login']), 2000);
       },
       error: (err) => {
-        this.error = err.error?.error || 'Failed to reset password.';
+        this.error = err.error?.error || 'Échec de la réinitialisation du mot de passe.';
         this.loading = false;
       }
     });

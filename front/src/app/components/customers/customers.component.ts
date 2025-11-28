@@ -31,21 +31,21 @@ export class CustomersComponent implements OnInit {
   pendingCount: number = 0;
   showForm: boolean = false;
   editingCustomer: Customer | null = null;
-  
+
   constructor(
     private customerService: CustomerService,
     private router: Router,
     private dialog: MatDialog
-  ) {}
-  
+  ) { }
+
   ngOnInit(): void {
     this.loadCustomers();
   }
-  
+
   loadCustomers(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     this.customerService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers = data;
@@ -55,26 +55,26 @@ export class CustomersComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading customers:', error);
-        this.errorMessage = 'Failed to load customers';
+        this.errorMessage = 'Échec du chargement des clients';
         this.isLoading = false;
       }
     });
   }
-  
+
   updatePendingCount(): void {
     this.pendingCount = this.customers.filter(c => c.status === 'pending').length;
   }
-  
+
   applyFilters(): void {
     let filtered = [...this.customers];
-    
+
     if (this.showPendingOnly) {
       filtered = filtered.filter(customer => customer.status === 'pending');
     } else {
       filtered = filtered.filter(customer => customer.status === 'active');
     }
     this.updatePendingCount();
-    
+
     // Apply code filter
     if (this.searchCode.trim()) {
       const query = this.searchCode.toLowerCase().trim();
@@ -82,7 +82,7 @@ export class CustomersComponent implements OnInit {
         customer.codee.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply company name filter
     if (this.searchCompany.trim()) {
       const query = this.searchCompany.toLowerCase().trim();
@@ -90,7 +90,7 @@ export class CustomersComponent implements OnInit {
         customer.raison_social.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply email filter
     if (this.searchEmail.trim()) {
       const query = this.searchEmail.toLowerCase().trim();
@@ -98,7 +98,7 @@ export class CustomersComponent implements OnInit {
         customer.email.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply responsable filter
     if (this.searchResponsable.trim()) {
       const query = this.searchResponsable.toLowerCase().trim();
@@ -106,17 +106,17 @@ export class CustomersComponent implements OnInit {
         customer.responsable.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply sorting
     this.sortCustomers(filtered);
-    
+
     this.filteredCustomers = filtered;
   }
-  
+
   sortCustomers(customers: Customer[]): void {
     customers.sort((a, b) => {
       let valueA, valueB;
-      
+
       switch (this.sortColumn) {
         case 'raison_social':
           valueA = a.raison_social;
@@ -138,7 +138,7 @@ export class CustomersComponent implements OnInit {
           valueA = a.id;
           valueB = b.id;
       }
-      
+
       if (valueA < valueB) {
         return this.sortDirection === 'asc' ? -1 : 1;
       }
@@ -148,7 +148,7 @@ export class CustomersComponent implements OnInit {
       return 0;
     });
   }
-  
+
   setSortBy(field: string): void {
     if (this.sortColumn === field) {
       // Toggle direction if already sorting by this field
@@ -159,14 +159,14 @@ export class CustomersComponent implements OnInit {
     }
     this.applyFilters();
   }
-  
+
   getSortIcon(field: string): string {
     if (this.sortColumn !== field) {
       return 'unfold_more';
     }
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
   }
-  
+
   resetFilters(): void {
     this.searchCode = '';
     this.searchCompany = '';
@@ -197,11 +197,11 @@ export class CustomersComponent implements OnInit {
 
   exportToPDF(): void {
     const doc = new jsPDF();
-    
+
     // Add title
     doc.setFontSize(16);
     doc.text('Customers Report', 14, 15);
-    
+
     // Add date
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
@@ -250,7 +250,7 @@ export class CustomersComponent implements OnInit {
       }
     });
   }
-  
+
   editCustomer(customer: Customer): void {
     this.editingCustomer = { ...customer };
     this.showForm = true;
@@ -271,7 +271,7 @@ export class CustomersComponent implements OnInit {
     if (confirm('Are you sure you want to delete this customer?')) {
       this.isLoading = true;
       this.errorMessage = '';
-      
+
       this.customerService.deleteCustomer(id).subscribe({
         next: () => {
           this.customers = this.customers.filter(c => c.id !== id);
@@ -280,7 +280,7 @@ export class CustomersComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting customer:', error);
-          this.errorMessage = 'Failed to delete customer';
+          this.errorMessage = 'Échec de la suppression du client';
           this.isLoading = false;
         }
       });
@@ -299,7 +299,7 @@ export class CustomersComponent implements OnInit {
         this.applyFilters();
       },
       error: (error) => {
-        alert('Failed to approve customer: ' + (error.error?.message || error.message));
+        alert('Échec de l\'approbation du client : ' + (error.error?.message || error.message));
       }
     });
   }
@@ -311,7 +311,7 @@ export class CustomersComponent implements OnInit {
         this.applyFilters();
       },
       error: (error) => {
-        alert('Failed to reject customer: ' + (error.error?.message || error.message));
+        alert('Échec du rejet du client : ' + (error.error?.message || error.message));
       }
     });
   }
@@ -337,9 +337,9 @@ export class CustomersComponent implements OnInit {
 
   // Check if password can be viewed for a customer
   canViewPassword(customer: Customer): boolean {
-    return customer.status === 'active' && 
-           customer.imported_from_excel === 1 && 
-           customer.password_updated === 0;
+    return customer.status === 'active' &&
+      customer.imported_from_excel === 1 &&
+      customer.password_updated === 0;
   }
 
   // View customer password
@@ -363,16 +363,16 @@ export class CustomersComponent implements OnInit {
   // Reset customer password
   resetCustomerPassword(customer: Customer): void {
     const newPassword = prompt(`Reset password for ${customer.raison_social}:\n\nEnter new password:`, '');
-    
+
     if (newPassword && newPassword.length >= 6) {
       this.customerService.resetCustomerPassword(customer.id, newPassword).subscribe({
         next: (response) => {
           if (response.success) {
-            alert(`Password reset successfully for ${customer.raison_social}!\n\nNew password: ${response.data.clientInfo.newPassword}\n\nPlease share this password with the client.`);
+            alert(`Mot de passe réinitialisé avec succès pour ${customer.raison_social} !\n\nNouveau mot de passe : ${response.data.clientInfo.newPassword}\n\nVeuillez partager ce mot de passe avec le client.`);
             // Refresh the customer list to update the UI
             this.loadCustomers();
           } else {
-            alert('Failed to reset password: ' + response.message);
+            alert('Échec de la réinitialisation du mot de passe : ' + response.message);
           }
         },
         error: (error) => {

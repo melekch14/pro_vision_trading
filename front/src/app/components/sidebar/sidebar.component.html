@@ -1,4 +1,14 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.collapsed]="isCollapsed" [class.mobile-open]="isMobileOpen">
+  <!-- Mobile Toggle Button -->
+  <button class="mobile-toggle" (click)="toggleMobile()" *ngIf="isMobileView">
+    <span class="material-icons">{{ isMobileOpen ? 'close' : 'menu' }}</span>
+  </button>
+  
+  <!-- Desktop Toggle Button -->
+  <button class="desktop-toggle" (click)="toggleCollapse()" *ngIf="!isMobileView">
+    <span class="material-icons">{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</span>
+  </button>
+  
   <div class="sidebar-header">
     <div class="logo">
       <img src="assets/logo.png" alt="Pro Vision Trading" class="logo-image">
@@ -9,7 +19,7 @@
     <ul class="nav-list list-unstyled">
       <ng-container *ngFor="let item of menuItems">
         <li *ngIf="hasAccess(item.id)" class="nav-item">
-          <a [routerLink]="item.route" routerLinkActive="active" class="nav-link">
+          <a [routerLink]="item.route" routerLinkActive="active" class="nav-link" (click)="onNavClick()">
             <span class="nav-icon material-icons">{{item.icon}}</span>
             <span class="nav-title">{{item.name}}</span>
           </a>
@@ -21,7 +31,8 @@
   <div class="sidebar-footer">
     <div class="user-profile">
       <div class="avatar">
-        <span class="initials">{{getInitials()}}</span>
+        <img *ngIf="getUserAvatar()" [src]="getUserAvatar()" alt="Avatar" class="avatar-img">
+        <span *ngIf="!getUserAvatar()" class="initials">{{getInitials()}}</span>
       </div>
       <div class="user-info">
         <p class="user-name">{{getUserName()}}</p>
@@ -33,3 +44,6 @@
     </div>
   </div>
 </aside>
+
+<!-- Mobile Overlay -->
+<div class="sidebar-overlay" *ngIf="isMobileOpen" (click)="closeMobile()"></div>

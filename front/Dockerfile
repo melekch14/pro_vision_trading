@@ -24,7 +24,7 @@ COPY --from=builder /app/dist/optician/browser /usr/share/nginx/html
 # Create a custom nginx configuration for Angular routing
 RUN echo 'server { \
     listen 80; \
-    server_name 57.131.29.135; \
+    server_name backend; \
     root /usr/share/nginx/html; \
     index index.html; \
     \

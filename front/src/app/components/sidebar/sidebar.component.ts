@@ -80,7 +80,7 @@ export class SidebarComponent implements OnInit {
     },
     {
       id: 'opticiens',
-      name: 'Equipes',
+      name: 'Equipe',
       icon: 'person',
       route: '/app/opticiens'
     },

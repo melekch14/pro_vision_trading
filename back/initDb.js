@@ -290,8 +290,8 @@ const tableStatements = [
     PRIMARY KEY (id),
     KEY user_id (user_id),
     KEY created_at (created_at),
-    KEY action (action)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`
+    KEY action (action(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`
 ];
 
 async function initDb() {

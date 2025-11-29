@@ -49,8 +49,8 @@ export class SidebarComponent implements OnInit {
       route: '/app/orders'
     },
     {
-      id: 'blssss',
-      name: 'Bon de Livraison',
+      id: 'bl',
+      name: 'Bon de Livraisonssssssssssssssssssss',
       icon: 'receipt_long',
       route: '/app/bl'
     },

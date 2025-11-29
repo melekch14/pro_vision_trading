@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { SidebarService } from '../../services/sidebar.service';
 import { MenuItem } from '../../shared/models/menu-item.model';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-client-sidebar',
@@ -9,12 +12,12 @@ import { MenuItem } from '../../shared/models/menu-item.model';
   styleUrls: ['./client-sidebar.component.css'],
   standalone: false
 })
-export class ClientSidebarComponent implements OnInit {
+export class ClientSidebarComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [
     {
       id: 2,
       title: 'Créer une commande',
-      icon: 'add_shopping_cart',
+      icon: 'visibility',
       route: '/client/create-order'
     },
     {
@@ -32,14 +35,54 @@ export class ClientSidebarComponent implements OnInit {
   ];
 
   userData: any = null;
+  isOpen = false;
+  isMobile = false;
+  private subscriptions = new Subscription();
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private sidebarService: SidebarService
   ) {}
 
   ngOnInit() {
     this.userData = this.authService.getUserData();
+    this.checkMobile();
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener('resize', this.handleResize);
+    
+    // Subscribe to sidebar state
+    const sidebarSub = this.sidebarService.isOpen$.subscribe(isOpen => {
+      this.isOpen = isOpen;
+    });
+    this.subscriptions.add(sidebarSub);
+
+    // Close sidebar on navigation (only on mobile)
+    const navSub = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.isMobile) {
+          this.sidebarService.close();
+        }
+      });
+    this.subscriptions.add(navSub);
+  }
+
+  private handleResize = () => {
+    this.checkMobile();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('resize', this.handleResize);
+    this.subscriptions.unsubscribe();
+  }
+
+  closeSidebar() {
+    this.sidebarService.close();
   }
 
   getInitials(): string {

@@ -1,8 +1,9 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-client-create-order',
@@ -10,7 +11,8 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./client-create-order.component.css'],
   standalone: false
 })
-export class ClientCreateOrderComponent implements OnDestroy {
+export class ClientCreateOrderComponent implements OnInit, OnDestroy {
+  isMobile = false;
   order = {
     od: { sphere: '', cylinder: '', axe: '', addition: '' },
     og: { sphere: '', cylinder: '', axe: '', addition: '' },
@@ -83,10 +85,15 @@ export class ClientCreateOrderComponent implements OnDestroy {
   constructor(
     private orderService: OrderService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private sidebarService: SidebarService
   ) {}
 
   ngOnInit() {
+    this.checkMobile();
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener('resize', this.handleResize);
+    
     this.filteredProducts = [];
     this.filteredProducts2 = [];
     this.updateStepEnabling();
@@ -98,6 +105,18 @@ export class ClientCreateOrderComponent implements OnDestroy {
       od: { ...this.order.od },
       og: { ...this.order.og }
     };
+  }
+
+  private handleResize = () => {
+    this.checkMobile();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  toggleSidebar() {
+    this.sidebarService.toggle();
   }
 
   validateAxeAndAddition() {
@@ -768,6 +787,7 @@ export class ClientCreateOrderComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    window.removeEventListener('resize', this.handleResize);
     if (this.validationTimeout) {
       clearTimeout(this.validationTimeout);
     }

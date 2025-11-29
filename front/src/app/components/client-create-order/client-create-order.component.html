@@ -1,6 +1,15 @@
 <div class="create-order-container">
-  <h1 class="title">Passer votre commande</h1>
-  <p class="subtitle">Passez commande en quelques clics</p>
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="title">Passer votre commande</h1>
+        <p class="subtitle">Passez commande en quelques clics</p>
+      </div>
+      <button class="mobile-menu-button" (click)="toggleSidebar()" *ngIf="isMobile">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+  </div>
 
   <!-- Step 1: Valeurs Corrections -->
   <div class="step-card step-1">
@@ -17,7 +26,9 @@
         <span>Addition</span>
         <span>Copier</span>
       </div>
-      <div class="corrections-row od-row">
+      
+      <!-- Desktop Layout -->
+      <div class="corrections-row od-row desktop-row">
         <span class="eye-label od">OD</span>
         <input type="text" placeholder="-" [(ngModel)]="order.od.sphere" (blur)="validateSphere('od'); checkCorrectionsForStep3()" (input)="checkCorrectionsForStep3()">
         <span *ngIf="errors.od.sphere" class="error-msg">Sphère doit être entre -6.00 et +6.00</span>
@@ -29,7 +40,7 @@
         <span *ngIf="errors.od.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOG()">→</button>
       </div>
-      <div class="corrections-row arrows-row">
+      <div class="corrections-row arrows-row desktop-row">
         <span></span>
         <button class="arrow-btn" (click)="copyFieldToOG('sphere')">↓</button>
         <button class="arrow-btn" (click)="copyFieldToOG('cylinder')">↓</button>
@@ -37,7 +48,7 @@
         <button class="arrow-btn" (click)="copyFieldToOG('addition')">↓</button>
         <span></span>
       </div>
-      <div class="corrections-row og-row">
+      <div class="corrections-row og-row desktop-row">
         <span class="eye-label og">OG</span>
         <input type="text" placeholder="-" [(ngModel)]="order.og.sphere" (blur)="validateSphere('og'); checkIfValuesAreDifferent(); checkCorrectionsForStep3()" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
         <span *ngIf="errors.og.sphere" class="error-msg">Sphère doit être entre -6.00 et +6.00</span>
@@ -48,6 +59,81 @@
         <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
         <span *ngIf="errors.og.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOD()">←</button>
+      </div>
+      
+      <!-- Mobile Layout -->
+      <div class="mobile-corrections">
+        <!-- OD Card -->
+        <div class="eye-card od-card">
+          <div class="eye-card-header">
+            <button class="eye-label od">OD</button>
+            <button class="arrow-btn mobile-arrow-btn" (click)="copyFieldToOG('sphere')">
+              <span class="material-icons">keyboard_arrow_down</span>
+            </button>
+          </div>
+          <div class="eye-card-fields">
+            <div class="field-row">
+              <div class="field-group">
+                <label>Sphère *</label>
+                <input type="text" placeholder="-" [(ngModel)]="order.od.sphere" (blur)="validateSphere('od'); checkCorrectionsForStep3()" (input)="checkCorrectionsForStep3()">
+                <span *ngIf="errors.od.sphere" class="error-msg">Sphère doit être entre -6.00 et +6.00</span>
+              </div>
+              <div class="field-group">
+                <label>Cylindre *</label>
+                <input type="text" placeholder="-" [(ngModel)]="order.od.cylinder" (blur)="validateCylinder('od'); checkCorrectionsForStep3()" (input)="checkCorrectionsForStep3()">
+                <span *ngIf="errors.od.cylinder" class="error-msg">Cylindre doit être entre -6.00 et -0.25</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Axe</label>
+                <input type="number" placeholder="°" [(ngModel)]="order.od.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
+                <span *ngIf="errors.od.axe" class="error-msg">Axe doit être entre 0° et 180°</span>
+              </div>
+              <div class="field-group">
+                <label>Addition</label>
+                <input type="number" placeholder="+" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
+                <span *ngIf="errors.od.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- OG Card -->
+        <div class="eye-card og-card">
+          <div class="eye-card-header">
+            <button class="eye-label og">OG</button>
+            <button class="arrow-btn mobile-arrow-btn" (click)="copyFieldToOG('sphere')">
+              <span class="material-icons">keyboard_arrow_up</span>
+            </button>
+          </div>
+          <div class="eye-card-fields">
+            <div class="field-row">
+              <div class="field-group">
+                <label>Sphère *</label>
+                <input type="text" placeholder="-" [(ngModel)]="order.og.sphere" (blur)="validateSphere('og'); checkIfValuesAreDifferent(); checkCorrectionsForStep3()" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+                <span *ngIf="errors.og.sphere" class="error-msg">Sphère doit être entre -6.00 et +6.00</span>
+              </div>
+              <div class="field-group">
+                <label>Cylindre *</label>
+                <input type="text" placeholder="-" [(ngModel)]="order.og.cylinder" (blur)="validateCylinder('og'); checkIfValuesAreDifferent(); checkCorrectionsForStep3()" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+                <span *ngIf="errors.og.cylinder" class="error-msg">Cylindre doit être entre -6.00 et -0.25</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Axe</label>
+                <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+                <span *ngIf="errors.og.axe" class="error-msg">Axe doit être entre 0° et 180°</span>
+              </div>
+              <div class="field-group">
+                <label>Addition</label>
+                <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+                <span *ngIf="errors.og.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

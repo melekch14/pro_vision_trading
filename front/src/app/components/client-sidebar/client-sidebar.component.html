@@ -1,14 +1,24 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.open]="isOpen">
   <div class="sidebar-header">
     <div class="logo">
-      <img src="assets/logo.png" alt="Pro Vision Trading" class="logo-image">
+      <div class="logo-circles">
+        <span class="circle circle-p">P</span>
+        <span class="circle circle-v">V</span>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">PRO VISION</span>
+        <span class="logo-sub">TRADING</span>
+      </div>
     </div>
+    <button class="close-button" (click)="closeSidebar()" *ngIf="isOpen && isMobile">
+      <span class="material-icons">close</span>
+    </button>
   </div>
   
   <nav class="sidebar-nav">
     <ul class="nav-list list-unstyled">
       <li *ngFor="let item of menuItems" class="nav-item">
-        <a [routerLink]="item.route" routerLinkActive="active" class="nav-link">
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-link" (click)="closeSidebar()">
           <span class="nav-icon material-icons">{{item.icon}}</span>
           <span class="nav-title">{{item.title}}</span>
         </a>
@@ -26,8 +36,9 @@
         <p class="user-role">{{getUserRole()}}</p>
       </div>
       <button class="logout-button" (click)="logout()" mat-icon-button>
-        <span class="material-icons">logout</span>
+        <span class="material-icons">arrow_forward</span>
       </button>
     </div>
   </div>
-</aside> 
+</aside>
+<div class="sidebar-overlay" [class.active]="isOpen" (click)="closeSidebar()"></div> 

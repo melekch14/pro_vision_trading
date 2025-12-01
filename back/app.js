@@ -18,8 +18,6 @@ const profileUpdateRequestRoutes = require('./routes/profileUpdateRequestRoutes'
 const blRoutes = require('./routes/blRoutes');
 const activityHistoryRoutes = require('./routes/activityHistoryRoutes');
 const activityLogger = require('./middleware/activityLogger');
-const https = require('https');
-const fs = require('fs');
 
 // Debug middleware to log all requests
 app.use((req, res, next) => {
@@ -69,13 +67,8 @@ const PORT = process.env.PORT || 3080;
 
 // Initialize DB then start server
 initDb().then(() => {
-    const httpsOptions = {
-    key: fs.readFileSync('/certs/selfsigned.key'),
-    cert: fs.readFileSync('/certs/selfsigned.crt')
-};
-
-https.createServer(httpsOptions, app).listen(3443, () => {
-    console.log('HTTPS Server running on port 3443');
+    app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
 }).catch((err) => {
     console.error('Failed to initialize database:', err);

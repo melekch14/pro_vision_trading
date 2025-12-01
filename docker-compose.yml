@@ -8,6 +8,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - mysql_data:/var/lib/mysql
+    # ❌ REMOVE port exposure to the internet
+    # ports:
+    #   - "3306:3306"
     networks:
       - internal
 
@@ -16,6 +19,7 @@ services:
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: root
+    # ❗ Bind phpMyAdmin to localhost ONLY (not to the whole world)
     ports:
       - "127.0.0.1:8080:80"
     networks:
@@ -30,7 +34,7 @@ services:
     env_file:
       - ./back/.env
     ports:
-      - "3080:3080"
+      - "3080:3080"  # public API (ok)
     depends_on:
       - mysql
     networks:
@@ -38,17 +42,20 @@ services:
       - public
 
   frontend:
-    image: nginx:latest
+    build:
+      context: ./front
     restart: always
     ports:
-      - "4200:80"
+      - "4200:80"  # public site (ok)
+    depends_on:
+      - backend
     networks:
       - public
 
 networks:
   internal:
-    internal: true
-  public: {}
+    internal: true  # 🔒 hidden network (mysql + phpMyAdmin + backend)
+  public: {}         # 🌍 public network (frontend + backend)
 
 volumes:
   mysql_data:

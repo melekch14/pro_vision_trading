@@ -120,6 +120,23 @@
 }
 
 @media (max-width: 768px) {
+  .modal-container {
+    max-width: 100%;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+    max-height: 75vh;
+  }
+
   .lens-specs {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -127,5 +144,13 @@
 
   .info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .modal-footer {
+    padding: 1rem;
+  }
+
+  .close-btn {
+    width: 100%;
   }
 } 

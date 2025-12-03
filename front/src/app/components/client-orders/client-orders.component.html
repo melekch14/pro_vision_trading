@@ -1,9 +1,12 @@
 <div class="orders-container">
   <!-- Header Section -->
   <div class="header">
+    <button class="hamburger-menu" (click)="toggleSidebar()" *ngIf="isMobile">
+      <span class="material-icons">menu</span>
+    </button>
     <div class="title-section">
       <h1>Mes Commandes</h1>
-      <p class="subtitle">Suivez et gérez vos commandes</p>
+      <p class="subtitle" *ngIf="!isMobile">Suivez et gérez vos commandes</p>
     </div>
   </div>
 
@@ -25,6 +28,7 @@
     <!-- Filters Section -->
     <div class="filters-section">
       <div class="search-box">
+        <span class="material-icons search-icon">search</span>
         <input
           type="text"
           [(ngModel)]="searchQuery"
@@ -34,27 +38,40 @@
       </div>
 
       <div class="filter-controls">
-        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
-          <option *ngFor="let status of statuses" [value]="status">
-            {{ status }}
-          </option>
-        </select>
+        <div class="date-picker-wrapper">
+          <span class="material-icons calendar-icon">calendar_today</span>
+          <input
+            type="date"
+            [(ngModel)]="dateFilter"
+            (change)="applyFilters()"
+            placeholder="mm/dd/yyyy"
+          >
+        </div>
 
-        <input
-          type="date"
-          [(ngModel)]="dateFilter"
-          (change)="applyFilters()"
-        >
+        <div class="select-wrapper">
+          <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+            <option *ngFor="let status of statuses" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+          <span class="material-icons dropdown-icon">arrow_drop_down</span>
+        </div>
 
         <button class="reset-button" (click)="resetFilters()">
-          Réinitialiser les filtres
+          <span class="material-icons">refresh</span>
+          <span class="reset-text">Réinitialiser les filtres</span>
         </button>
       </div>
     </div>
 
-    <!-- Orders Table -->
-    <div class="table-container">
-      <table mat-table [dataSource]="filteredOrders" class="orders-table">
+    <!-- Results Count -->
+    <div class="results-count" *ngIf="!loading && !error">
+      <p>{{ filteredOrders.length }} commande{{ filteredOrders.length > 1 ? 's' : '' }} trouvée{{ filteredOrders.length > 1 ? 's' : '' }}</p>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="table-container" *ngIf="!isMobile">
+      <table mat-table [dataSource]="paginatedOrders" class="orders-table">
         <!-- Order ID Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>ID Commande</th>
@@ -124,8 +141,63 @@
       </table>
     </div>
 
+    <!-- Mobile/Tablet Card View -->
+    <div class="cards-container" *ngIf="isMobile">
+      <div class="order-card" *ngFor="let order of paginatedOrders">
+        <div class="card-header">
+          <div class="order-number">#{{order.id}}</div>
+          <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+            {{ getDisplayStatus(order.status) }}
+          </span>
+        </div>
+        <div class="card-total">
+          {{ calculateTotalPrice(order) }} CFA
+        </div>
+        <div class="card-info">
+          <div class="info-row">
+            <span class="material-icons">event</span>
+            <span>{{order.order_datetime | date:'medium'}}</span>
+          </div>
+          <div class="info-row">
+            <span class="material-icons">person</span>
+            <span>{{order.first_name}} {{order.last_name}}</span>
+          </div>
+          <div class="info-row">
+            <span class="material-icons">local_shipping</span>
+            <span>{{order.shipping_type}} • {{order.delivery_time}}</span>
+          </div>
+        </div>
+        <div class="card-price-breakdown" *ngIf="hasSecondPrice(order)">
+          <span class="price-item">OD: {{ order.price }} CFA</span>
+          <span class="price-item">OG: {{ order.price2 }} CFA</span>
+        </div>
+        <button class="view-details-button-mobile" (click)="openOrderDetails(order)">
+          Voir les détails
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="!loading && !error && filteredOrders.length > 0">
+      <button 
+        class="pagination-button" 
+        (click)="previousPage()" 
+        [disabled]="currentPage === 1">
+        <span class="material-icons">chevron_left</span>
+      </button>
+      <div class="pagination-info">
+        <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      </div>
+      <button 
+        class="pagination-button" 
+        (click)="nextPage()" 
+        [disabled]="currentPage === totalPages">
+        <span class="material-icons">chevron_right</span>
+      </button>
+    </div>
+
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="filteredOrders.length === 0">
+    <div class="empty-state" *ngIf="filteredOrders.length === 0 && !loading && !error">
       <div class="empty-icon">📦</div>
       <p>Aucune commande trouvée correspondant à vos filtres</p>
       <button class="reset-button" (click)="resetFilters()">

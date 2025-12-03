@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderDetailsModalComponent } from './order-details-modal/order-details-modal.component';
+import { SidebarService } from '../../services/sidebar.service';
 
 interface Order {
   id: number;
@@ -26,11 +27,13 @@ interface Order {
   styleUrls: ['./client-orders.component.css'],
   standalone: false
 })
-export class ClientOrdersComponent implements OnInit {
+export class ClientOrdersComponent implements OnInit, OnDestroy {
   orders: Order[] = [];
   filteredOrders: Order[] = [];
+  paginatedOrders: Order[] = [];
   loading: boolean = true;
   error: string | null = null;
+  isMobile: boolean = false;
   
   // Filter states
   statusFilter: string = 'All';
@@ -39,6 +42,11 @@ export class ClientOrdersComponent implements OnInit {
   
   // Status options
   statuses: string[] = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  
+  // Pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
+  totalPages: number = 1;
   
   // Table columns
   displayedColumns: string[] = [
@@ -54,11 +62,30 @@ export class ClientOrdersComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public sidebarService: SidebarService
   ) {}
 
   ngOnInit(): void {
+    this.checkMobile();
     this.loadOrders();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkMobile();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  toggleSidebar() {
+    this.sidebarService.toggle();
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup if needed
   }
 
   loadOrders(): void {
@@ -75,7 +102,7 @@ export class ClientOrdersComponent implements OnInit {
     this.orderService.getClientOrders(clientId.toString()).subscribe({
       next: (response) => {
         this.orders = response;
-        this.filteredOrders = [...this.orders];
+        this.applyFilters();
         this.loading = false;
       },
       error: (error) => {
@@ -87,9 +114,11 @@ export class ClientOrdersComponent implements OnInit {
   }
 
   openOrderDetails(order: Order): void {
+    const dialogWidth = this.isMobile ? '95vw' : '800px';
     this.dialog.open(OrderDetailsModalComponent, {
       data: order,
-      width: '800px',
+      width: dialogWidth,
+      maxWidth: '95vw',
       maxHeight: '90vh'
     });
   }
@@ -118,11 +147,13 @@ export class ClientOrdersComponent implements OnInit {
       filtered = filtered.filter(order =>
         order.id.toString().includes(query) ||
         `${order.first_name} ${order.last_name}`.toLowerCase().includes(query) ||
-        order.traitement.toLowerCase().includes(query)
+        (order.traitement && order.traitement.toLowerCase().includes(query))
       );
     }
     
     this.filteredOrders = filtered;
+    this.currentPage = 1; // Reset to first page when filters change
+    this.updatePagination();
   }
 
   resetFilters(): void {
@@ -130,6 +161,36 @@ export class ClientOrdersComponent implements OnInit {
     this.dateFilter = '';
     this.searchQuery = '';
     this.filteredOrders = [...this.orders];
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedOrders = this.filteredOrders.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
   }
 
   getStatusClass(status: string): string {

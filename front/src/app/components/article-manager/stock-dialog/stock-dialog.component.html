@@ -50,7 +50,7 @@
       <table>
         <thead>
           <tr>
-            <th class="corner-header">Sph / Cyl</th>
+            <th class="corner-header">Cyl / Sph</th>
             <th *ngFor="let sphere of filteredSphereValues" class="sphere-header" [class.negative]="sphere < 0" [class.zero]="sphere === 0" [class.positive]="sphere > 0">
               {{formatValue(sphere)}}
             </th>
@@ -64,8 +64,7 @@
             <td *ngFor="let sphere of filteredSphereValues"
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
-                [class.non-zero]="hasNonZeroValue(sphere, cylindre)"
-                [class.has-value]="getQuantity(sphere, cylindre) > 0">
+                [class.has-value]="hasNonZeroValue(sphere, cylindre)">
               <input type="number"
                      min="0"
                      [ngModel]="getQuantity(sphere, cylindre)"

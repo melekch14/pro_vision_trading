@@ -243,20 +243,20 @@
             background-color: #dcfce7;
           }
 
-          &.non-zero {
+          &.non-zero:not(.has-value) {
             background-color: #fff3e0;
           }
 
           &.has-value {
-            background-color: #dcfce7;
+            background-color: #dcfce7 !important;
 
             .quantity-input {
-              background-color: #dcfce7;
+              background-color: #dcfce7 !important;
               color: #16a34a;
               font-weight: 600;
 
               &:focus {
-                background-color: #dcfce7;
+                background-color: #dcfce7 !important;
               }
             }
           }

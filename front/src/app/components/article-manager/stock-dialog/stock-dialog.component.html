@@ -64,7 +64,8 @@
             <td *ngFor="let sphere of filteredSphereValues"
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
-                [class.non-zero]="hasNonZeroValue(sphere, cylindre)">
+                [class.non-zero]="hasNonZeroValue(sphere, cylindre)"
+                [class.has-value]="getQuantity(sphere, cylindre) > 0">
               <input type="number"
                      min="0"
                      [ngModel]="getQuantity(sphere, cylindre)"
@@ -74,14 +75,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="stock-filter-toggle">
-      <label class="toggle-label">
-        <span class="toggle-text">= 0</span>
-        <input type="checkbox" [(ngModel)]="showOnlyNonZero" class="toggle-input">
-        <span class="toggle-slider"></span>
-        <span class="toggle-text">> 0</span>
-      </label>
     </div>
   </div>
 

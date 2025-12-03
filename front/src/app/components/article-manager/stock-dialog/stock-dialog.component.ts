@@ -28,7 +28,6 @@ export class StockDialogComponent implements OnInit {
   existingStock: ApiStockEntry[] = [];
   filterSphere: number | null = null;
   filterCylindre: number | null = null;
-  showOnlyNonZero: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<StockDialogComponent>,

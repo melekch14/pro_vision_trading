@@ -119,7 +119,10 @@ export class ClientOrdersComponent implements OnInit, OnDestroy {
       data: order,
       width: dialogWidth,
       maxWidth: '95vw',
-      maxHeight: '90vh'
+      maxHeight: '90vh',
+      panelClass: 'order-details-dialog',
+      disableClose: false,
+      autoFocus: false
     });
   }
 

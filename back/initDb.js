@@ -12,19 +12,19 @@ const tableStatements = [
     code varchar(100) NOT NULL,
     name varchar(255) NOT NULL,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS couleur_photo (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     description text,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS design (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     description text,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS fournisseur (
     code varchar(100) NOT NULL,
     raison_social varchar(255) NOT NULL,
@@ -47,19 +47,19 @@ const tableStatements = [
     ninea varchar(100) DEFAULT NULL,
     code_douane varchar(100) DEFAULT NULL,
     PRIMARY KEY (code)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS foyer (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     description text,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS indice (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     description text,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS opticien (
     id int NOT NULL AUTO_INCREMENT,
     codee varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -72,19 +72,19 @@ const tableStatements = [
     password_reset_expires varchar(255) NULL,
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS traitement (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     description text,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS typeArticle (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     description text,
     PRIMARY KEY (id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS client (
     id int NOT NULL AUTO_INCREMENT,
     codee varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -108,7 +108,7 @@ const tableStatements = [
     imported_from_excel boolean DEFAULT FALSE,
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
 
   // New table for profile update requests
   `CREATE TABLE IF NOT EXISTS profile_update_requests (
@@ -125,7 +125,7 @@ const tableStatements = [
     KEY client_id (client_id),
     KEY status (status),
     KEY reviewed_by (reviewed_by)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   
   // Tables with foreign keys (dependencies)
   `CREATE TABLE IF NOT EXISTS article_families (
@@ -135,7 +135,7 @@ const tableStatements = [
     group_id int NOT NULL,
     PRIMARY KEY (id),
     KEY group_id (group_id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS article_subfamilies (
     id int NOT NULL AUTO_INCREMENT,
     code varchar(100) NOT NULL,
@@ -143,7 +143,7 @@ const tableStatements = [
     family_id int NOT NULL,
     PRIMARY KEY (id),
     KEY family_id (family_id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS opticien_permissions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     opticien_id INT NOT NULL,
@@ -152,7 +152,7 @@ const tableStatements = [
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_opticien_component (opticien_id, component_id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS article (
     id int NOT NULL AUTO_INCREMENT,
     code varchar(100) NOT NULL,
@@ -188,7 +188,7 @@ const tableStatements = [
     KEY fournisseur_id (fournisseur_id),
     KEY typeArticle_id (typeArticle_id),
     KEY article_subfamily_id (article_subfamily_id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS stock (
     id int NOT NULL AUTO_INCREMENT,
     article_id int NOT NULL,
@@ -198,7 +198,7 @@ const tableStatements = [
     quantite int NOT NULL DEFAULT '0',
     PRIMARY KEY (id),
     KEY article_id (article_id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS supplementary_prices (
     id int NOT NULL AUTO_INCREMENT,
     stock_id int NOT NULL,
@@ -209,7 +209,7 @@ const tableStatements = [
     PRIMARY KEY (id),
     KEY stock_id (stock_id),
     FOREIGN KEY (stock_id) REFERENCES stock(id) ON DELETE CASCADE
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS orders (
     id int NOT NULL AUTO_INCREMENT,
     client_id int NOT NULL,
@@ -246,7 +246,7 @@ const tableStatements = [
     KEY client_id (client_id),
     KEY produit (produit),
     KEY fk_fournisseur (fournisseur_code)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS bl (
     id int NOT NULL AUTO_INCREMENT,
     numero varchar(50) NOT NULL,
@@ -267,7 +267,7 @@ const tableStatements = [
     KEY code_tier (code_tier),
     KEY date (date),
     KEY user_create (user_create)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS bl_orders (
     id int NOT NULL AUTO_INCREMENT,
     bl_id int NOT NULL,
@@ -277,7 +277,7 @@ const tableStatements = [
     UNIQUE KEY unique_bl_order (bl_id, order_id),
     KEY bl_id (bl_id),
     KEY order_id (order_id)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
   `CREATE TABLE IF NOT EXISTS activity_history (
     id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,

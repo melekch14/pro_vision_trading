@@ -28,6 +28,7 @@ export class StockDialogComponent implements OnInit {
   existingStock: ApiStockEntry[] = [];
   filterSphere: number | null = null;
   filterCylindre: number | null = null;
+  showOnlyNonZero: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<StockDialogComponent>,
@@ -236,5 +237,11 @@ export class StockDialogComponent implements OnInit {
       return this.cylindreValues.filter(c => Math.abs(c - this.filterCylindre!) < 0.001);
     }
     return this.cylindreValues;
+  }
+
+  formatValue(value: number): string {
+    if (value === 0) return '0';
+    if (value > 0) return `+${value.toFixed(2)}`;
+    return value.toFixed(2);
   }
 }

@@ -1,35 +1,67 @@
 <div class="stock-dialog">
-  <h2 mat-dialog-title>Gestion du stock - {{data.article.libelle}}</h2>
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+          <path d="M2 17L12 22L22 17V12L12 17L2 12V17Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2>Gestion du stock</h2>
+        <p class="product-name">{{data.article.libelle}}</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onCancel()" type="button">
+      <span class="close-icon">×</span>
+    </button>
+  </div>
 
-  <mat-dialog-content>
-    <div class="filter-row" style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px; justify-content: center;">
-      <label>Filtrer Sphère :
-        <select [(ngModel)]="filterSphere">
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z" fill="currentColor"/>
+      </svg>
+      <span>Filtres</span>
+    </div>
+    <div class="filter-controls">
+      <label class="filter-item">
+        <span>Sphère :</span>
+        <select [(ngModel)]="filterSphere" class="filter-select">
           <option [ngValue]="null">Toutes</option>
           <option *ngFor="let s of sphereValues" [ngValue]="s">{{s}}</option>
         </select>
       </label>
-      <label>Filtrer Cylindre :
-        <select [(ngModel)]="filterCylindre">
+      <label class="filter-item">
+        <span>Cylindre :</span>
+        <select [(ngModel)]="filterCylindre" class="filter-select">
           <option [ngValue]="null">Tous</option>
           <option *ngFor="let c of cylindreValues" [ngValue]="c">{{c}}</option>
         </select>
       </label>
     </div>
+  </div>
+
+  <!-- Stock Grid -->
+  <div class="stock-grid-container">
     <div class="stock-grid">
       <table>
         <thead>
           <tr>
-            <th></th>
-            <th *ngFor="let cylindre of filteredCylindreValues" class="cylindre-header">
-              {{cylindre}}
+            <th class="corner-header">Sph / Cyl</th>
+            <th *ngFor="let sphere of filteredSphereValues" class="sphere-header" [class.negative]="sphere < 0" [class.zero]="sphere === 0" [class.positive]="sphere > 0">
+              {{formatValue(sphere)}}
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let sphere of filteredSphereValues">
-            <td class="sphere-header">{{sphere}}</td>
-            <td *ngFor="let cylindre of filteredCylindreValues"
+          <tr *ngFor="let cylindre of filteredCylindreValues">
+            <td class="cylindre-header" [class.negative]="cylindre < 0" [class.zero]="cylindre === 0" [class.positive]="cylindre > 0">
+              {{formatValue(cylindre)}}
+            </td>
+            <td *ngFor="let sphere of filteredSphereValues"
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
                 [class.non-zero]="hasNonZeroValue(sphere, cylindre)">
@@ -43,10 +75,24 @@
         </tbody>
       </table>
     </div>
-  </mat-dialog-content>
+    <div class="stock-filter-toggle">
+      <label class="toggle-label">
+        <span class="toggle-text">= 0</span>
+        <input type="checkbox" [(ngModel)]="showOnlyNonZero" class="toggle-input">
+        <span class="toggle-slider"></span>
+        <span class="toggle-text">> 0</span>
+      </label>
+    </div>
+  </div>
 
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Annuler</button>
-    <button mat-raised-button color="primary" (click)="onSave()">Enregistrer</button>
-  </mat-dialog-actions>
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <div class="footer-info">
+      <span>{{filteredCylindreValues.length}} lignes x {{filteredSphereValues.length}} colonnes</span>
+    </div>
+    <div class="footer-actions">
+      <button class="btn-cancel" (click)="onCancel()">Annuler</button>
+      <button class="btn-save" (click)="onSave()">Enregistrer</button>
+    </div>
+  </div>
 </div>

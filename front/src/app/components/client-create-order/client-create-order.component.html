@@ -1,13 +1,12 @@
 <div class="create-order-container">
-  <div class="page-header">
-    <div class="header-content">
-      <div>
-        <h1 class="title">Passer votre commande</h1>
-        <p class="subtitle">Passez commande en quelques clics</p>
-      </div>
-      <button class="mobile-menu-button" (click)="toggleSidebar()" *ngIf="isMobile">
-        <span class="material-icons">menu</span>
-      </button>
+  <!-- Header Section -->
+  <div class="header">
+    <button class="hamburger-menu" (click)="toggleSidebar()" *ngIf="isMobile">
+      <span class="material-icons">menu</span>
+    </button>
+    <div class="title-section">
+      <h1 class="title">Passer votre commande</h1>
+      <p class="subtitle">Passez commande en quelques clics</p>
     </div>
   </div>
 

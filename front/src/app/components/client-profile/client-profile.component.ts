@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Customer } from '../../shared/models/customer.model';
 import { CustomerService } from '../../services/customer.service';
 import { AuthService } from '../../services/auth.service';
 import { ProfileUpdateRequestService } from '../../services/profile-update-request.service';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-client-profile',
@@ -10,7 +11,7 @@ import { ProfileUpdateRequestService } from '../../services/profile-update-reque
   styleUrls: ['./client-profile.component.css'],
   standalone: false
 })
-export class ClientProfileComponent implements OnInit {
+export class ClientProfileComponent implements OnInit, OnDestroy {
   user: Customer | null = null;
   editMode = false;
   editedUser: Partial<Customer> = {};
@@ -21,16 +22,36 @@ export class ClientProfileComponent implements OnInit {
   newPassword = '';
   showPassword = false;
   pendingRequests: any[] = [];
+  isMobile: boolean = false;
 
   constructor(
     private customerService: CustomerService,
     private authService: AuthService,
-    private profileUpdateRequestService: ProfileUpdateRequestService
+    private profileUpdateRequestService: ProfileUpdateRequestService,
+    public sidebarService: SidebarService
   ) {}
 
   ngOnInit() {
+    this.checkMobile();
     this.fetchUser();
     this.fetchPendingRequests();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkMobile();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  toggleSidebar() {
+    this.sidebarService.toggle();
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup if needed
   }
 
   fetchUser() {

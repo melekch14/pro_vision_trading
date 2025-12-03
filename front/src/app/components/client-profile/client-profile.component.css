@@ -5,11 +5,63 @@ body, :host {
 
 .modern-profile {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   width: 100%;
   min-height: 100vh;
   background: transparent;
   gap: 0;
+}
+
+/* Header Styles */
+.header {
+  width: 100%;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0;
+}
+
+.hamburger-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2c3e50;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  margin-top: 0.25rem;
+}
+
+.hamburger-menu:hover {
+  background-color: #e0e0e0;
+}
+
+.hamburger-menu .material-icons {
+  font-size: 24px;
+}
+
+.title-section {
+  flex: 1;
+}
+
+.title-section h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 /* Left Sidebar */
@@ -406,6 +458,10 @@ body, :host {
 
 /* Responsive Design */
 @media (max-width: 900px) {
+  .profile-content-wrapper {
+    flex-direction: column;
+  }
+  
   .modern-profile {
     flex-direction: column;
   }
@@ -427,6 +483,20 @@ body, :host {
   .form-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .title-section h1 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .hamburger-menu {
+    display: none;
   }
 }
 
@@ -477,5 +547,13 @@ body, :host {
   .modern-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .title-section h1 {
+    font-size: 1.5rem;
   }
 }

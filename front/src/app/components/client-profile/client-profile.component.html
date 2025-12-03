@@ -1,6 +1,17 @@
 <!-- Modernized and Translated Profile Component -->
 <div class="profile-wrapper modern-profile">
-  <div class="profile-left modern-profile-left">
+  <!-- Header Section -->
+  <div class="header">
+    <button class="hamburger-menu" (click)="toggleSidebar()" *ngIf="isMobile">
+      <span class="material-icons">menu</span>
+    </button>
+    <div class="title-section">
+      <h1>Mon Profil</h1>
+    </div>
+  </div>
+  
+  <div class="profile-content-wrapper">
+    <div class="profile-left modern-profile-left">
     <div class="profile-avatar modern-avatar">
       <mat-icon class="avatar-icon">tablet</mat-icon>
     </div>
@@ -139,5 +150,6 @@
       <h4 class="section-title">Réinitialisez votre mot de passe</h4>
       <p class="reset-description">Vérifiez votre email pour un lien de réinitialisation. Cliquez sur le lien dans l'email pour réinitialiser votre mot de passe.</p>
     </div>
+  </div>
   </div>
 </div>

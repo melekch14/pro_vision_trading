@@ -5,6 +5,34 @@
   overflow: hidden;
   background-color: var(--background-color);
   color: var(--text-color);
+  position: relative;
+}
+
+.hamburger-menu {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1002;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.hamburger-menu:hover {
+  background-color: var(--hover-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hamburger-menu .material-icons {
+  font-size: 24px;
+  color: var(--text-color);
 }
 
 .main-content {
@@ -13,4 +41,22 @@
   background-color: var(--background-color);
   overflow-y: auto;
   transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px 12px;
+    padding-top: 64px;
+  }
+
+  .hamburger-menu {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .hamburger-menu {
+    display: none;
+  }
 }

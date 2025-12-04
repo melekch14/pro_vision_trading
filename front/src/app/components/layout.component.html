@@ -1,4 +1,7 @@
 <div class="layout-container">
+  <button class="hamburger-menu" (click)="toggleSidebar()" *ngIf="isMobile && !isSidebarOpen">
+    <span class="material-icons">menu</span>
+  </button>
   <app-sidebar></app-sidebar>
   <main class="main-content">
     <router-outlet></router-outlet>

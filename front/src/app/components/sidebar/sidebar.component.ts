@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { PermissionService } from '../../services/permission.service';
+import { SidebarService } from '../../services/sidebar.service';
+import { Subscription } from 'rxjs';
 
 interface MenuItem {
   id: string;
@@ -16,7 +18,11 @@ interface MenuItem {
   styleUrls: ['./sidebar.component.css'],
   standalone: false
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
+  isOpen = false;
+  isMobile = false;
+  private subscriptions = new Subscription();
+
   menuItems: MenuItem[] = [
     {
       id: 'dashboard',
@@ -103,12 +109,45 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private sidebarService: SidebarService
   ) {}
 
   ngOnInit(): void {
     this.userData = this.authService.getUserData();
     this.permissionService.loadUserPermissions().subscribe();
+    
+    this.checkMobile();
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener('resize', this.handleResize);
+    
+    this.subscriptions.add(
+      this.sidebarService.isOpen$.subscribe(isOpen => {
+        this.isOpen = isOpen;
+      })
+    );
+  }
+
+  private handleResize = () => {
+    this.checkMobile();
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.handleResize);
+    this.subscriptions.unsubscribe();
+  }
+
+  checkMobile(): void {
+    this.isMobile = window.innerWidth <= 768;
+    if (!this.isMobile) {
+      this.sidebarService.open();
+    }
+  }
+
+  closeSidebar(): void {
+    if (this.isMobile) {
+      this.sidebarService.close();
+    }
   }
 
   getInitials(): string {
@@ -143,6 +182,9 @@ export class SidebarComponent implements OnInit {
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+    if (this.isMobile) {
+      this.closeSidebar();
+    }
   }
 
   logout(): void {

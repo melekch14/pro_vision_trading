@@ -1,62 +1,82 @@
 <div class="supplementary-price-dialog">
-  <h2 mat-dialog-title>Gestion des prix suppléments - {{data.article.libelle}}</h2>
-
-  <mat-dialog-content>
-    <div class="controls-row">
-      <div class="filter-row">
-        <label>Filtrer Sphère :
-          <select [(ngModel)]="filterSphere">
-            <option [ngValue]="null">Toutes</option>
-            <option *ngFor="let s of sphereValues" [ngValue]="s">{{s}}</option>
-          </select>
-        </label>
-        <label>Filtrer Cylindre :
-          <select [(ngModel)]="filterCylindre">
-            <option [ngValue]="null">Tous</option>
-            <option *ngFor="let c of cylindreValues" [ngValue]="c">{{c}}</option>
-          </select>
-        </label>
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.8 10.9C9.53 10.31 8.8 9.7 8.8 8.75C8.8 7.66 9.81 6.9 11.5 6.9C13.28 6.9 13.94 7.75 14 9H16.21C16.14 7.28 15.09 5.7 13 5.19V3H10V5.16C8.06 5.58 6.5 6.84 6.5 8.77C6.5 10.73 8.08 11.9 10.9 12.5C13.28 13.03 13.8 13.78 13.8 14.85C13.8 15.95 12.99 16.8 11.2 16.8C9.15 16.8 8.35 15.85 8.2 14.5H6C6.15 16.5 7.5 17.95 10 18.34V21H13V18.35C14.95 17.98 16.5 16.85 16.5 14.85C16.5 12.5 14.5 11.3 11.8 10.9Z" fill="currentColor"/>
+        </svg>
       </div>
-      
-      <div class="bulk-actions">
-        <div class="selection-status" *ngIf="isSelecting">
-          <span class="material-icons">drag_indicator</span>
-          Mode sélection active - Glissez pour sélectionner
-        </div>
-        <div class="bulk-input">
-          <label>Prix en lot :</label>
-          <input type="number" 
-                 min="0" 
-                 step="0.01" 
-                 [(ngModel)]="bulkPrice" 
-                 placeholder="0.00"
-                 class="price-input">
-          <button mat-raised-button 
-                  color="primary" 
-                  (click)="applyBulkPrice()"
-                  [disabled]="selectedCells.size === 0 || bulkPrice <= 0">
-            Appliquer ({{selectedCells.size}})
-          </button>
-        </div>
-        <button mat-button (click)="clearSelection()">Effacer sélection</button>
+      <div class="header-text">
+        <h2>Gestion des prix suppléments</h2>
+        <p class="product-name">{{data.article.libelle}}</p>
       </div>
     </div>
+    <button class="close-btn" (click)="onCancel()" type="button">
+      <span class="close-icon">×</span>
+    </button>
+  </div>
 
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z" fill="currentColor"/>
+      </svg>
+      <span>Filtres</span>
+    </div>
+    <div class="filter-controls">
+      <label class="filter-item">
+        <span>Sphère :</span>
+        <select [(ngModel)]="filterSphere" class="filter-select">
+          <option [ngValue]="null">Toutes</option>
+          <option *ngFor="let s of sphereValues" [ngValue]="s">{{s}}</option>
+        </select>
+      </label>
+      <label class="filter-item">
+        <span>Cylindre :</span>
+        <select [(ngModel)]="filterCylindre" class="filter-select">
+          <option [ngValue]="null">Tous</option>
+          <option *ngFor="let c of cylindreValues" [ngValue]="c">{{c}}</option>
+        </select>
+      </label>
+    </div>
+    <div class="bulk-actions">
+      <div class="bulk-input">
+        <label>Prix en lot :</label>
+        <input type="number" 
+               min="0" 
+               step="0.01" 
+               [(ngModel)]="bulkPrice" 
+               placeholder="0.00"
+               class="price-input">
+        <button class="btn-apply" 
+                (click)="applyBulkPrice()"
+                [disabled]="selectedCells.size === 0 || bulkPrice <= 0">
+          Appliquer ({{selectedCells.size}})
+        </button>
+      </div>
+      <button class="btn-clear" (click)="clearSelection()">Effacer sélection</button>
+    </div>
+  </div>
 
-
+  <!-- Price Grid -->
+  <div class="price-grid-container">
     <div class="price-grid">
       <table (dragstart)="$event.preventDefault()">
         <thead>
           <tr>
-            <th></th>
-            <th *ngFor="let cylindre of filteredCylindreValues" class="cylindre-header">
-              {{cylindre}}
+            <th class="corner-header">Sph/Cyl</th>
+            <th *ngFor="let cylindre of filteredCylindreValues" class="cylindre-header" [class.negative]="cylindre < 0" [class.zero]="cylindre === 0" [class.positive]="cylindre > 0">
+              {{formatValue(cylindre)}}
             </th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let sphere of filteredSphereValues">
-            <td class="sphere-header">{{sphere}}</td>
+            <td class="sphere-header" [class.negative]="sphere < 0" [class.zero]="sphere === 0" [class.positive]="sphere > 0">
+              {{formatValue(sphere)}}
+            </td>
             <td *ngFor="let cylindre of filteredCylindreValues"
                 class="price-cell"
                 [class.has-stock]="hasStock(sphere, cylindre)"
@@ -84,10 +104,16 @@
         </tbody>
       </table>
     </div>
-  </mat-dialog-content>
+  </div>
 
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Annuler</button>
-    <button mat-raised-button color="primary" (click)="onSave()">Enregistrer</button>
-  </mat-dialog-actions>
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <div class="footer-info">
+      <span>{{filteredSphereValues.length}} lignes x {{filteredCylindreValues.length}} colonnes</span>
+    </div>
+    <div class="footer-actions">
+      <button class="btn-cancel" (click)="onCancel()">Annuler</button>
+      <button class="btn-save" (click)="onSave()">Enregistrer</button>
+    </div>
+  </div>
 </div> 

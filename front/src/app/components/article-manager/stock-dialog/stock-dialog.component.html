@@ -50,18 +50,18 @@
       <table>
         <thead>
           <tr>
-            <th class="corner-header">Cyl / Sph</th>
-            <th *ngFor="let sphere of filteredSphereValues" class="sphere-header" [class.negative]="sphere < 0" [class.zero]="sphere === 0" [class.positive]="sphere > 0">
-              {{formatValue(sphere)}}
+            <th class="corner-header">Sph / Cyl</th>
+            <th *ngFor="let cylindre of filteredCylindreValues" class="cylindre-header" [class.negative]="cylindre < 0" [class.zero]="cylindre === 0" [class.positive]="cylindre > 0">
+              {{formatValue(cylindre)}}
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let cylindre of filteredCylindreValues">
-            <td class="cylindre-header" [class.negative]="cylindre < 0" [class.zero]="cylindre === 0" [class.positive]="cylindre > 0">
-              {{formatValue(cylindre)}}
+          <tr *ngFor="let sphere of filteredSphereValues">
+            <td class="sphere-header" [class.negative]="sphere < 0" [class.zero]="sphere === 0" [class.positive]="sphere > 0">
+              {{formatValue(sphere)}}
             </td>
-            <td *ngFor="let sphere of filteredSphereValues"
+            <td *ngFor="let cylindre of filteredCylindreValues"
                 class="quantity-cell"
                 [class.has-stock]="hasExistingStock(sphere, cylindre)"
                 [class.has-value]="hasNonZeroValue(sphere, cylindre)">
@@ -80,7 +80,7 @@
   <!-- Footer -->
   <div class="dialog-footer">
     <div class="footer-info">
-      <span>{{filteredCylindreValues.length}} lignes x {{filteredSphereValues.length}} colonnes</span>
+      <span>{{filteredSphereValues.length}} lignes x {{filteredCylindreValues.length}} colonnes</span>
     </div>
     <div class="footer-actions">
       <button class="btn-cancel" (click)="onCancel()">Annuler</button>

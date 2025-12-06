@@ -529,11 +529,10 @@ export class ArticleManagerComponent implements OnInit {
 
   openSupplementaryPriceDialog(article: Article): void {
     const dialogRef = this.dialog.open(SupplementaryPriceDialogComponent, {
-      width: '100vw',
-      maxWidth: '100vw',
-      height: '100vh',
-      maxHeight: '100vh',
-      panelClass: 'full-screen-modal',
+      width: 'auto',
+      minWidth: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
       data: { article }
     });
 

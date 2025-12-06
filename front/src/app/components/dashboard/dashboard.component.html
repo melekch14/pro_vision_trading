@@ -32,7 +32,8 @@
       <span class="card-icon material-icons">check_circle</span>
       <div class="card-title">Taux d'achèvement</div>
       <div class="card-value">
-        {{ ((statistics.totalOrders - statistics.pendingOrders) / (statistics.totalOrders || 1) * 100) | number:'1.0-0' }}%
+        {{ ((statistics.totalOrders - statistics.pendingOrders) / (statistics.totalOrders || 1) * 100) | number:'1.0-0'
+        }}%
       </div>
       <div class="card-desc">Commandes terminées</div>
     </div>
@@ -41,23 +42,13 @@
   <div class="dashboard-charts">
     <div class="chart-box">
       <h2>Commandes par statut</h2>
-      <p-chart
-        type="pie"
-        [data]="ordersByStatusChartData"
-        [options]="ordersByStatusChartOptions"
-        style="width: 100%; min-height: 300px;"
-        *ngIf="ordersByStatusChartData"
-      ></p-chart>
+      <p-chart type="pie" [data]="ordersByStatusChartData" [options]="ordersByStatusChartOptions"
+        *ngIf="ordersByStatusChartData"></p-chart>
     </div>
     <div class="chart-box">
       <h2>Répartition des statuts</h2>
-      <p-chart
-        type="bar"
-        [data]="statusDistributionChartData"
-        [options]="statusDistributionChartOptions"
-        style="width: 100%; min-height: 300px;"
-        *ngIf="statusDistributionChartData"
-      ></p-chart>
+      <p-chart type="bar" [data]="statusDistributionChartData" [options]="statusDistributionChartOptions"
+        *ngIf="statusDistributionChartData"></p-chart>
     </div>
   </div>
 
@@ -84,7 +75,8 @@
             <b>{{ order.client_name }}</b>
           </td>
           <td>{{ order.client_tel || '-' }}</td>
-          <td>{{ order.products_display || order.article_libelle || '-' }}<br><span class="product-type">{{ order.product_type || '' }}</span></td>
+          <td>{{ order.products_display || order.article_libelle || '-' }}<br><span class="product-type">{{
+              order.product_type || '' }}</span></td>
           <td><b>${{ order.total_price | number:'1.2-2' }}</b></td>
           <td>
             <span [ngClass]="{
@@ -96,8 +88,10 @@
             }">{{ order.status }}</span>
           </td>
           <td>
-            <span [ngClass]="{ 'payment-unpaid': order.payment_status === 'unpaid', 'payment-paid': order.payment_status === 'paid' }">
-              {{ order.payment_status === 'paid' ? 'Payé' : (order.payment_status === 'unpaid' ? 'Non payé' : (order.payment_status || '-')) }}
+            <span
+              [ngClass]="{ 'payment-unpaid': order.payment_status === 'unpaid', 'payment-paid': order.payment_status === 'paid' }">
+              {{ order.payment_status === 'paid' ? 'Payé' : (order.payment_status === 'unpaid' ? 'Non payé' :
+              (order.payment_status || '-')) }}
             </span>
           </td>
           <td>

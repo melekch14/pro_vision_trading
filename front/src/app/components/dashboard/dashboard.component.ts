@@ -16,6 +16,8 @@ export class DashboardComponent implements OnInit {
   ordersByStatusChartData: ChartData<'pie'> | null = null;
   ordersByStatusChartOptions: ChartOptions<'pie'> = {
     responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1.5,
     plugins: {
       legend: { position: 'bottom' },
       title: { display: false }
@@ -25,6 +27,8 @@ export class DashboardComponent implements OnInit {
   statusDistributionChartData: ChartData<'bar'> | null = null;
   statusDistributionChartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1.5,
     plugins: {
       legend: { display: false },
       title: { display: false }
@@ -35,7 +39,7 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  constructor(private statisticsService: StatisticsService) {}
+  constructor(private statisticsService: StatisticsService) { }
 
   ngOnInit(): void {
     this.statisticsService.getDashboardStatistics().subscribe({

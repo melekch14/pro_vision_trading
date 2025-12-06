@@ -53,13 +53,18 @@
 
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="filterForm.get('code')?.value" (ngModelChange)="filterForm.get('code')?.setValue($event); applyFilters()" placeholder="Rechercher par code...">
+            <input type="text" class="filter-input" [ngModel]="filterForm.get('code')?.value"
+              (ngModelChange)="filterForm.get('code')?.setValue($event); applyFilters()"
+              placeholder="Rechercher par code...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="filterForm.get('libelle')?.value" (ngModelChange)="filterForm.get('libelle')?.setValue($event); applyFilters()" placeholder="Rechercher par libellé...">
+            <input type="text" class="filter-input" [ngModel]="filterForm.get('libelle')?.value"
+              (ngModelChange)="filterForm.get('libelle')?.setValue($event); applyFilters()"
+              placeholder="Rechercher par libellé...">
           </div>
           <div class="filter-group">
-            <select class="filter-input" [ngModel]="filterForm.get('fournisseur')?.value" (ngModelChange)="filterForm.get('fournisseur')?.setValue($event); applyFilters()">
+            <select class="filter-input" [ngModel]="filterForm.get('fournisseur')?.value"
+              (ngModelChange)="filterForm.get('fournisseur')?.setValue($event); applyFilters()">
               <option value="">Tous les fournisseurs</option>
               <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
             </select>
@@ -70,71 +75,75 @@
           </button>
         </div>
 
-        <table class="stock-table">
-          <thead>
-            <tr>
-              <th (click)="onSort('code')" class="sortable">
-                Code
-                <span class="material-icons">{{ getSortIcon('code') }}</span>
-              </th>
-              <th (click)="onSort('libelle')" class="sortable">
-                Libellé
-                <span class="material-icons">{{ getSortIcon('libelle') }}</span>
-              </th>
-              <th (click)="onSort('diametre')" class="sortable">
-                Diamètre
-                <span class="material-icons">{{ getSortIcon('diametre') }}</span>
-              </th>
-              <th (click)="onSort('foyer_name')" class="sortable">
-                Foyer
-                <span class="material-icons">{{ getSortIcon('foyer_name') }}</span>
-              </th>
-              <th (click)="onSort('indice_name')" class="sortable">
-                Indice
-                <span class="material-icons">{{ getSortIcon('indice_name') }}</span>
-              </th>
-              <th (click)="onSort('design_name')" class="sortable">
-                Design
-                <span class="material-icons">{{ getSortIcon('design_name') }}</span>
-              </th>
-              <th (click)="onSort('prix_achat')" class="sortable">
-                Prix Achat
-                <span class="material-icons">{{ getSortIcon('prix_achat') }}</span>
-              </th>
-              <th (click)="onSort('prix_vente')" class="sortable">
-                Prix Vente
-                <span class="material-icons">{{ getSortIcon('prix_vente') }}</span>
-              </th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let article of filteredArticles">
-              <td>{{article.code}}</td>
-              <td>{{article.libelle}}</td>
-              <td>{{article.diametre}}</td>
-              <td>{{article.foyer_name}}</td>
-              <td>{{article.indice_name}}</td>
-              <td>{{article.design_name}}</td>
-              <td>{{article.prix_achat}}</td>
-              <td>{{article.prix_vente}}</td>
-              <td class="actions-cell">
-                <button class="edit-btn" (click)="editArticle(article)">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="delete-btn" (click)="deleteArticle(article.id!)">
-                  <span class="material-icons">delete</span>
-                </button>
-                <button *ngIf="article.origineArticle === 'stock'" class="stock-btn" (click)="openStockDialog(article)">
-                  <span class="material-icons">inventory_2</span>
-                </button>
-                <button *ngIf="article.origineArticle === 'stock'" class="price-btn" (click)="openSupplementaryPriceDialog(article)">
-                  <span class="material-icons">euro_symbol</span>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="stock-table">
+            <thead>
+              <tr>
+                <th (click)="onSort('code')" class="sortable">
+                  Code
+                  <span class="material-icons">{{ getSortIcon('code') }}</span>
+                </th>
+                <th (click)="onSort('libelle')" class="sortable">
+                  Libellé
+                  <span class="material-icons">{{ getSortIcon('libelle') }}</span>
+                </th>
+                <th (click)="onSort('diametre')" class="sortable">
+                  Diamètre
+                  <span class="material-icons">{{ getSortIcon('diametre') }}</span>
+                </th>
+                <th (click)="onSort('foyer_name')" class="sortable">
+                  Foyer
+                  <span class="material-icons">{{ getSortIcon('foyer_name') }}</span>
+                </th>
+                <th (click)="onSort('indice_name')" class="sortable">
+                  Indice
+                  <span class="material-icons">{{ getSortIcon('indice_name') }}</span>
+                </th>
+                <th (click)="onSort('design_name')" class="sortable">
+                  Design
+                  <span class="material-icons">{{ getSortIcon('design_name') }}</span>
+                </th>
+                <th (click)="onSort('prix_achat')" class="sortable">
+                  Prix Achat
+                  <span class="material-icons">{{ getSortIcon('prix_achat') }}</span>
+                </th>
+                <th (click)="onSort('prix_vente')" class="sortable">
+                  Prix Vente
+                  <span class="material-icons">{{ getSortIcon('prix_vente') }}</span>
+                </th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let article of filteredArticles">
+                <td>{{article.code}}</td>
+                <td>{{article.libelle}}</td>
+                <td>{{article.diametre}}</td>
+                <td>{{article.foyer_name}}</td>
+                <td>{{article.indice_name}}</td>
+                <td>{{article.design_name}}</td>
+                <td>{{article.prix_achat}}</td>
+                <td>{{article.prix_vente}}</td>
+                <td class="actions-cell">
+                  <button class="edit-btn" (click)="editArticle(article)">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="delete-btn" (click)="deleteArticle(article.id!)">
+                    <span class="material-icons">delete</span>
+                  </button>
+                  <button *ngIf="article.origineArticle === 'stock'" class="stock-btn"
+                    (click)="openStockDialog(article)">
+                    <span class="material-icons">inventory_2</span>
+                  </button>
+                  <button *ngIf="article.origineArticle === 'stock'" class="price-btn"
+                    (click)="openSupplementaryPriceDialog(article)">
+                    <span class="material-icons">euro_symbol</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- No Results Message -->
         <div *ngIf="filteredArticles.length === 0" class="no-results">
@@ -294,7 +303,8 @@
                     <label for="fournisseur">Fournisseur</label>
                     <select id="fournisseur" formControlName="fournisseur_id" class="form-control">
                       <option value="">Sélectionner un fournisseur</option>
-                      <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
+                      <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}
+                      </option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -360,27 +370,37 @@
         <!-- Zero Quantity Alert -->
         <div *ngIf="hasZeroQuantityStocks" class="zero-quantity-alert">
           <mat-icon>warning</mat-icon>
-          <span>⚠️ Alerte : {{ zeroQuantityStocksCount }} article(s) en stock ont une quantité nulle. Veuillez réapprovisionner ces articles.</span>
+          <span>⚠️ Alerte : {{ zeroQuantityStocksCount }} article(s) en stock ont une quantité nulle. Veuillez
+            réapprovisionner ces articles.</span>
         </div>
 
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.code" (ngModelChange)="stockFilters.code = $event; applyStockFilters()" placeholder="Filtrer par code...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.code"
+              (ngModelChange)="stockFilters.code = $event; applyStockFilters()" placeholder="Filtrer par code...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.libelle" (ngModelChange)="stockFilters.libelle = $event; applyStockFilters()" placeholder="Filtrer par libellé...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.libelle"
+              (ngModelChange)="stockFilters.libelle = $event; applyStockFilters()" placeholder="Filtrer par libellé...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.quantity" (ngModelChange)="stockFilters.quantity = $event; applyStockFilters()" placeholder="Filtrer par quantité...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.quantity"
+              (ngModelChange)="stockFilters.quantity = $event; applyStockFilters()"
+              placeholder="Filtrer par quantité...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.sphere" (ngModelChange)="stockFilters.sphere = $event; applyStockFilters()" placeholder="Filtrer par sphère...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.sphere"
+              (ngModelChange)="stockFilters.sphere = $event; applyStockFilters()" placeholder="Filtrer par sphère...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.cylindre" (ngModelChange)="stockFilters.cylindre = $event; applyStockFilters()" placeholder="Filtrer par cylindre...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.cylindre"
+              (ngModelChange)="stockFilters.cylindre = $event; applyStockFilters()"
+              placeholder="Filtrer par cylindre...">
           </div>
           <div class="filter-group">
-            <input type="text" class="filter-input" [ngModel]="stockFilters.addition" (ngModelChange)="stockFilters.addition = $event; applyStockFilters()" placeholder="Filtrer par addition...">
+            <input type="text" class="filter-input" [ngModel]="stockFilters.addition"
+              (ngModelChange)="stockFilters.addition = $event; applyStockFilters()"
+              placeholder="Filtrer par addition...">
           </div>
           <button class="clear-filters-btn" (click)="clearStockFilters()">
             <span class="material-icons">clear</span>
@@ -388,28 +408,30 @@
           </button>
         </div>
 
-        <table class="stock-table">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Libellé</th>
-              <th>Qté</th>
-              <th>Sphère</th>
-              <th>Cylindre</th>
-              <th>Addition</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let entry of filteredStockEntries">
-              <td>{{ formatStockCode(entry) }}</td>
-              <td>{{ formatStockLibelle(entry) }}</td>
-              <td>{{ entry.quantite }}</td>
-              <td>{{ entry.sphere }}</td>
-              <td>{{ entry.cylindre }}</td>
-              <td>{{ entry.addition }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="stock-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Qté</th>
+                <th>Sphère</th>
+                <th>Cylindre</th>
+                <th>Addition</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let entry of filteredStockEntries">
+                <td>{{ formatStockCode(entry) }}</td>
+                <td>{{ formatStockLibelle(entry) }}</td>
+                <td>{{ entry.quantite }}</td>
+                <td>{{ entry.sphere }}</td>
+                <td>{{ entry.cylindre }}</td>
+                <td>{{ entry.addition }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </ng-container>
 
@@ -444,7 +466,8 @@
         <!-- All Data Table -->
         <div class="stock-filters">
           <div class="filter-group">
-            <input type="text" class="filter-input" [(ngModel)]="allDataFilter" (ngModelChange)="applyAllDataFilters()" placeholder="Rechercher...">
+            <input type="text" class="filter-input" [(ngModel)]="allDataFilter" (ngModelChange)="applyAllDataFilters()"
+              placeholder="Rechercher...">
           </div>
         </div>
 

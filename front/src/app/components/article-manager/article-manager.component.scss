@@ -384,6 +384,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   overflow: hidden;
+  min-width: 800px;
 
   th,
   td {
@@ -458,6 +459,10 @@
     &:hover {
       background: #9ca3af;
     }
+  }
+
+  .stock-table {
+    margin-bottom: 0;
   }
 }
 
@@ -595,17 +600,42 @@
 }
 
 // Responsive Design
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
 
+  .stock-table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 1024px) {
   .container {
     padding: 16px 20px;
   }
 
   .tabs {
     padding: 0 16px;
+  }
+
+  .main-title {
+    font-size: 22px;
+  }
+
+  .stock-header {
+    h2 {
+      font-size: 16px;
+    }
+  }
+
+  .export-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+
+    .material-icons {
+      font-size: 16px;
+    }
   }
 }
 
@@ -617,10 +647,14 @@
   .tabs {
     flex-wrap: wrap;
     padding: 0 12px;
+    gap: 4px;
   }
 
   .tab-btn {
-    padding: 12px 16px;
+    padding: 10px 14px;
+    font-size: 13px;
+    flex: 1;
+    min-width: 120px;
   }
 
   .form-actions {
@@ -635,27 +669,191 @@
     padding: 12px 16px;
   }
 
+  .main-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .stock-panel {
+    padding: 16px;
+  }
+
   .stock-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
 
+    h2 {
+      font-size: 16px;
+    }
+
     .stock-actions {
       width: 100%;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 8px;
+
+      .export-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   }
 
   .stock-filters {
     flex-direction: column;
+    gap: 10px;
 
     .filter-group {
       width: 100%;
+      min-width: auto;
     }
 
     .clear-filters-btn {
       width: 100%;
       justify-content: center;
     }
+  }
+
+  .stock-table {
+    min-width: 600px;
+    font-size: 13px;
+
+    th,
+    td {
+      padding: 10px 12px;
+    }
+
+    th {
+      font-size: 12px;
+    }
+
+    td {
+      font-size: 13px;
+    }
+  }
+
+  .actions-cell {
+    flex-wrap: wrap;
+    gap: 6px;
+
+    button {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 8px;
+
+      .material-icons {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .article-form-card,
+  .card {
+    padding: 16px;
+  }
+
+  .form-section {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px 12px;
+  }
+
+  .tabs {
+    padding: 0 8px;
+    flex-direction: column;
+  }
+
+  .tab-btn {
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    min-width: auto;
+  }
+
+  .main-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .stock-panel {
+    padding: 12px;
+  }
+
+  .stock-header {
+    padding-bottom: 12px;
+
+    h2 {
+      font-size: 15px;
+    }
+  }
+
+  .export-btn {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .stock-table {
+    min-width: 500px;
+    font-size: 12px;
+
+    th,
+    td {
+      padding: 8px 10px;
+    }
+
+    th {
+      font-size: 11px;
+    }
+
+    td {
+      font-size: 12px;
+    }
+  }
+
+  .filter-input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .clear-filters-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .article-form-card,
+  .card {
+    padding: 12px;
+  }
+
+  .form-section {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+  }
+
+  .form-group {
+    label {
+      font-size: 12px;
+    }
+
+    .form-control {
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }

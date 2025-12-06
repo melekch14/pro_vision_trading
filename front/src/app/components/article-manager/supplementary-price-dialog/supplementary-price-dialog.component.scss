@@ -494,38 +494,82 @@
 // Dialog container override
 ::ng-deep .mat-dialog-container {
   max-width: 95vw !important;
-  width: auto !important;
-  min-width: 800px !important;
+  width: 900px !important;
   padding: 0 !important;
   border-radius: 12px !important;
   box-sizing: border-box;
   overflow: hidden !important;
 }
 
+// Responsive modal sizing
+@media (max-width: 1024px) {
+  ::ng-deep .mat-dialog-container {
+    width: 90vw !important;
+    min-width: auto !important;
+  }
+
+  .supplementary-price-dialog {
+    .price-grid-container {
+      height: 400px;
+      padding: 12px 20px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .mat-dialog-container {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    min-width: auto !important;
+    border-radius: 8px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  ::ng-deep .mat-dialog-container {
+    width: 98vw !important;
+    max-width: 98vw !important;
+    min-width: auto !important;
+    margin: 8px !important;
+    border-radius: 6px !important;
+  }
+}
+
 // Responsive styles
 @media (max-width: 768px) {
   .supplementary-price-dialog {
+    max-height: 95vh;
+
     .dialog-header {
-      padding: 16px;
+      padding: 14px 16px;
+      flex-wrap: wrap;
 
       .header-left {
+        flex: 1;
+        min-width: 0;
+
         .header-icon {
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
 
           svg {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
           }
         }
 
         .header-text {
+          min-width: 0;
+
           h2 {
-            font-size: 18px;
+            font-size: 17px;
           }
 
           .product-name {
-            font-size: 12px;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
       }
@@ -534,19 +578,26 @@
     .filter-bar {
       padding: 12px 16px;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
       gap: 12px;
 
+      .filter-label {
+        font-size: 13px;
+      }
+
       .filter-controls {
-        gap: 16px;
+        flex-direction: column;
+        gap: 10px;
         width: 100%;
 
         .filter-item {
+          width: 100%;
           font-size: 13px;
 
           .filter-select {
-            padding: 5px 28px 5px 10px;
-            font-size: 13px;
+            width: 100%;
+            padding: 8px 32px 8px 12px;
+            font-size: 14px;
           }
         }
       }
@@ -555,16 +606,21 @@
         margin-left: 0;
         width: 100%;
         flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+        gap: 10px;
 
         .bulk-input {
           width: 100%;
-          justify-content: space-between;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
 
           .price-input {
-            flex: 1;
-            max-width: 120px;
+            width: 100%;
+            max-width: none;
+          }
+
+          .btn-apply {
+            width: 100%;
           }
         }
 
@@ -575,31 +631,27 @@
     }
 
     .price-grid-container {
-      .price-grid {
-        padding: 12px 16px;
+      height: 350px;
+      padding: 12px 16px;
 
+      .price-grid {
         table {
           font-size: 11px;
 
           th,
           td {
-            padding: 3px 4px;
+            padding: 4px 6px;
           }
 
-          .corner-header,
-          .sphere-header {
-            min-width: 60px;
-          }
-
-          .cylindre-header {
-            min-width: 40px;
+          th {
+            font-size: 11px;
           }
 
           .price-cell {
             .price-content .price-input {
-              min-width: 40px;
-              height: 28px;
-              font-size: 11px;
+              min-width: 45px;
+              height: 30px;
+              font-size: 12px;
             }
           }
         }
@@ -609,17 +661,23 @@
     .dialog-footer {
       padding: 12px 16px;
       flex-direction: column;
-      gap: 12px;
-      align-items: flex-start;
+      gap: 10px;
+      align-items: stretch;
+
+      .footer-info {
+        font-size: 13px;
+        text-align: center;
+      }
 
       .footer-actions {
         width: 100%;
-        justify-content: flex-end;
+        gap: 10px;
 
         .btn-cancel,
         .btn-save {
-          padding: 8px 20px;
-          font-size: 13px;
+          flex: 1;
+          padding: 10px 16px;
+          font-size: 14px;
         }
       }
     }
@@ -627,39 +685,125 @@
 }
 
 @media (max-width: 480px) {
+  ::ng-deep .mat-dialog-container {
+    width: 98vw !important;
+    max-width: 98vw !important;
+    min-width: auto !important;
+    max-height: 98vh !important;
+    margin: 4px !important;
+    border-radius: 4px !important;
+  }
+
   .supplementary-price-dialog {
+    max-height: 95vh;
+
     .dialog-header {
+      padding: 12px;
+
       .header-left {
         gap: 8px;
 
+        .header-icon {
+          width: 32px;
+          height: 32px;
+        }
+
         .header-text {
           h2 {
-            font-size: 16px;
+            font-size: 15px;
+          }
+
+          .product-name {
+            font-size: 12px;
+          }
+        }
+      }
+
+      .close-btn {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+      }
+    }
+
+    .filter-bar {
+      padding: 10px 12px;
+
+      .filter-label {
+        font-size: 12px;
+      }
+
+      .filter-controls {
+        .filter-item {
+          font-size: 12px;
+
+          .filter-select {
+            padding: 8px 28px 8px 10px;
+            font-size: 13px;
+          }
+        }
+      }
+
+      .bulk-actions {
+        .bulk-input {
+          label {
+            font-size: 12px;
+          }
+
+          .price-input {
+            font-size: 13px;
+          }
+
+          .btn-apply {
+            font-size: 12px;
+            padding: 8px 12px;
+          }
+        }
+
+        .btn-clear {
+          font-size: 12px;
+          padding: 8px 12px;
+        }
+      }
+    }
+
+    .price-grid-container {
+      height: 300px;
+      padding: 10px 12px;
+
+      .price-grid {
+        table {
+          font-size: 10px;
+
+          th,
+          td {
+            padding: 3px 4px;
+          }
+
+          .price-cell {
+            .price-content .price-input {
+              min-width: 40px;
+              height: 26px;
+              font-size: 11px;
+            }
           }
         }
       }
     }
 
-    .filter-bar {
-      .filter-controls {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+    .dialog-footer {
+      padding: 10px 12px;
+
+      .footer-info {
+        font-size: 12px;
       }
-    }
 
-    .price-grid-container {
-      .price-grid {
-        table {
-          font-size: 10px;
+      .footer-actions {
 
-          .price-cell {
-            .price-content .price-input {
-              min-width: 35px;
-              height: 24px;
-              font-size: 10px;
-            }
-          }
+        .btn-cancel,
+        .btn-save {
+          padding: 10px 14px;
+          font-size: 13px;
         }
       }
     }

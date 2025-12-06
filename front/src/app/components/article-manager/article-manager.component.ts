@@ -399,9 +399,6 @@ export class ArticleManagerComponent implements OnInit {
 
   openStockDialog(article: Article): void {
     const dialogRef = this.dialog.open(StockDialogComponent, {
-      width: 'auto',
-      minWidth: '800px',
-      maxWidth: '95vw',
       maxHeight: '90vh',
       data: { article }
     });
@@ -529,9 +526,6 @@ export class ArticleManagerComponent implements OnInit {
 
   openSupplementaryPriceDialog(article: Article): void {
     const dialogRef = this.dialog.open(SupplementaryPriceDialogComponent, {
-      width: 'auto',
-      minWidth: '800px',
-      maxWidth: '95vw',
       maxHeight: '90vh',
       data: { article }
     });

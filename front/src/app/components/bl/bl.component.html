@@ -17,7 +17,7 @@
   <div class="statistics-container" *ngIf="statistics">
     <div class="stat-card">
       <div class="stat-icon">
-        <i class="material-icons">receipt</i>
+        <i class="material-icons">description</i>
       </div>
       <div class="stat-content">
         <div class="stat-value">{{ statistics.totalRecords }}</div>
@@ -35,7 +35,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-icon">
-        <i class="material-icons">pending</i>
+        <i class="material-icons">schedule</i>
       </div>
       <div class="stat-content">
         <div class="stat-value">{{ formatCurrency(statistics.totalRemaining) }}</div>
@@ -45,19 +45,26 @@
   </div>
 
   <div class="filters-container">
-    <div class="filter-group">
-      <div class="filter-item search-container">
-        <input type="text" placeholder="Rechercher par numéro, client, code tier..." [(ngModel)]="searchQuery" (input)="applyFilters()">
-        <i class="material-icons">search</i>
-      </div>
-      <div class="filter-item">
+    <div class="search-section">
+      <i class="material-icons">search</i>
+      <input type="text" placeholder="Rechercher par numéro, client, code tier..." [(ngModel)]="searchQuery"
+        (input)="applyFilters()">
+    </div>
+
+    <div class="filters-actions">
+      <div class="filter-group">
         <label>Date</label>
-        <input type="date" [(ngModel)]="dateFilter" (change)="applyFilters()">
+        <input type="date" [(ngModel)]="dateFilter" (change)="applyFilters()" class="filter-input">
       </div>
-      <div class="filter-item">
+
+      <div class="filter-group">
         <label>Utilisateur</label>
-        <input type="text" placeholder="Filtrer par utilisateur" [(ngModel)]="userFilter" (input)="applyFilters()">
+        <select [(ngModel)]="userFilter" (change)="applyFilters()" class="filter-input">
+          <option value="">Filtrer par utilisateur</option>
+          <option *ngFor="let user of uniqueUsers" [value]="user">{{ user }}</option>
+        </select>
       </div>
+
       <button class="reset-button" (click)="resetFilters()">
         <i class="material-icons">refresh</i>
         Réinitialiser
@@ -94,7 +101,7 @@
       <!-- Total TTC Column -->
       <ng-container matColumnDef="total_ttc">
         <th mat-header-cell *matHeaderCellDef>Total TTC</th>
-        <td mat-cell *matCellDef="let record" class="amount">{{ formatCurrency(record.total_ttc) }}</td>
+        <td mat-cell *matCellDef="let record" class="amount total-ttc">{{ formatCurrency(record.total_ttc) }}</td>
       </ng-container>
 
       <!-- Mode Paie Column -->
@@ -112,7 +119,7 @@
       <!-- Reste Column -->
       <ng-container matColumnDef="reste">
         <th mat-header-cell *matHeaderCellDef>Reste</th>
-        <td mat-cell *matCellDef="let record" class="amount">{{ formatCurrency(record.reste) }}</td>
+        <td mat-cell *matCellDef="let record" class="amount reste">{{ formatCurrency(record.reste) }}</td>
       </ng-container>
 
       <!-- Actions Column -->
@@ -137,13 +144,8 @@
       </tr>
     </table>
 
-    <mat-paginator
-      [length]="filteredBlRecords.length"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="pageSizeOptions"
-      [pageIndex]="pageIndex"
-      (page)="onPageChange($event)"
-      aria-label="Select page">
+    <mat-paginator [length]="filteredBlRecords.length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="pageIndex" (page)="onPageChange($event)" aria-label="Select page">
     </mat-paginator>
   </div>
 
@@ -155,4 +157,3 @@
     {{ error }}
   </div>
 </div>
-

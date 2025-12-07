@@ -45,12 +45,14 @@ export class BlComponent implements OnInit {
   constructor(
     private blService: BlService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadBlRecords();
     this.loadStatistics();
   }
+
+  uniqueUsers: string[] = [];
 
   loadBlRecords(): void {
     this.loading = true;
@@ -60,6 +62,8 @@ export class BlComponent implements OnInit {
       next: (response: Bl[]) => {
         this.blRecords = response;
         this.filteredBlRecords = [...this.blRecords];
+        // Extract unique users for filter
+        this.uniqueUsers = [...new Set(this.blRecords.map(r => r.user_create).filter(u => !!u))].sort();
         this.loading = false;
       },
       error: (error: any) => {

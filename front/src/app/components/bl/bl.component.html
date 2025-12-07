@@ -125,13 +125,15 @@
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let record" class="actions">
-          <button class="action-btn view" (click)="openBlDetails(record)" title="Voir les détails">
-            <i class="material-icons">visibility</i>
-          </button>
-          <button class="action-btn delete" (click)="deleteBl(record)" title="Supprimer">
-            <i class="material-icons">delete</i>
-          </button>
+        <td mat-cell *matCellDef="let record" class="actions-cell">
+          <div class="actions-wrapper">
+            <button class="action-btn view" (click)="openBlDetails(record)" title="Voir les détails">
+              <i class="material-icons">visibility</i>
+            </button>
+            <button class="action-btn delete" (click)="deleteBl(record)" title="Supprimer">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
         </td>
       </ng-container>
 

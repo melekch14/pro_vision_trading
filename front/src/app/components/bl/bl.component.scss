@@ -306,36 +306,41 @@ td.mat-cell {
   }
 }
 
-// Action Buttons in Table
-.actions {
+// Action Buttons Wrapper
+.actions-wrapper {
   display: flex;
-  gap: 8px;
+  gap: 4px;
 
   button {
     width: 32px;
     height: 32px;
-    border-radius: 6px;
+    border-radius: 4px;
     border: none;
-    background-color: #f5f7fa;
-    color: $text-light;
+    background: none !important; // Force no background
+    padding: 0; // Fix alignment
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: transform 0.2s;
 
     i {
-      font-size: 18px;
+      font-size: 20px;
     }
 
+    // Specific styles for View button
+    &.view {
+      color: $primary-teal;
+    }
+
+    // Specific styles for Delete button
+    &.delete {
+      color: $danger-color;
+    }
+
+    // Only scale on hover
     &:hover {
-      background-color: $primary-teal;
-      color: white;
-      transform: scale(1.05);
-    }
-
-    &.delete:hover {
-      background-color: $danger-color;
+      transform: scale(1.15);
     }
   }
 }

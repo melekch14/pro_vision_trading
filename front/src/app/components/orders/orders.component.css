@@ -201,14 +201,7 @@ table.mat-table {
   border-spacing: 0;
 }
 
-table.mat-table tr {
-  border: none !important;
-}
 
-table.mat-table td,
-table.mat-table th {
-  border: none !important;
-}
 
 /* Row styles */
 .mat-header-row,
@@ -217,7 +210,7 @@ table.mat-table th {
 .mat-mdc-header-row,
 tr.mat-row,
 tr.mat-header-row {
-  border-bottom: none !important;
+  border-bottom: 1px solid #f3f4f6 !important;
 }
 
 .mat-header-row,
@@ -234,7 +227,10 @@ td.mat-cell,
 th.mat-header-cell {
   padding: 14px 16px;
   color: #23272e;
-  border: none !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
   background: #fff;
   height: auto;
   min-height: 56px;

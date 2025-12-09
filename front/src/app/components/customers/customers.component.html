@@ -11,109 +11,104 @@
 
 <!-- Main Content -->
 <div class="customers-container">
+
+  <div class="stock-header">
+    <h2>Gestion des clients</h2>
+  </div>
+
   <div class="stock-panel">
-    <div class="stock-header">
-      <h2>Gestion des clients</h2>
-      <div class="stock-actions">
-        <button class="export-btn" (click)="openImportModal()">
+
+    <!-- Actions Bar -->
+    <div class="actions-bar">
+      <div class="left-actions">
+        <button class="action-btn" (click)="openImportModal()">
           <span class="material-icons">upload</span>
           Importer Excel
         </button>
-        <button class="export-btn" (click)="exportToCSV()">
-          <span class="material-icons">file_download</span>
+        <button class="action-btn" (click)="exportToCSV()">
+          <span class="material-icons">download</span>
           Exporter CSV
         </button>
-        <button class="export-btn" (click)="exportToPDF()">
+        <button class="action-btn" (click)="exportToPDF()">
           <span class="material-icons">picture_as_pdf</span>
           Exporter PDF
         </button>
-        <button class="export-btn" (click)="togglePendingRequests()">
+      </div>
+      <div class="right-actions">
+        <button class="text-btn" (click)="togglePendingRequests()">
           <span class="material-icons">hourglass_empty</span>
           {{ showPendingOnly ? 'Voir tous les clients' : 'Voir les demandes en attente' }}
         </button>
       </div>
     </div>
 
-    <!-- Edit Form (like fournisseur) -->
-    <div *ngIf="showForm" class="form-container mb-4">
-      <h3>Modifier le client</h3>
-      <app-customer-form
-        [customer]="editingCustomer"
-        [readonly]="false"
-        (cancelForm)="closeForm()"
-        (updated)="closeForm()"
-      ></app-customer-form>
-    </div>
-
-    <div *ngIf="pendingCount > 0" class="alert alert-warning" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px; background: #fffbe6; color: #b45309; border: 1px solid #fde68a; border-radius: 6px; padding: 12px 16px;">
-      <span class="material-icons">hourglass_empty</span>
+    <!-- Pending Alert -->
+    <div *ngIf="pendingCount > 0" class="pending-alert">
+      <span class="material-icons">warning</span>
       <span>There are <b>{{ pendingCount }}</b> client(s) pending approval.</span>
     </div>
 
-    <div class="stock-filters" *ngIf="!showForm">
-      <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Rechercher par code...">
-      </div>
-      <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()" placeholder="Rechercher par raison sociale...">
-      </div>
-      <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Rechercher par email...">
-      </div>
-      <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchResponsable" (input)="applyFilters()" placeholder="Rechercher par responsable...">
-      </div>
-      <button class="clear-filters-btn" (click)="resetFilters()">
-        <span class="material-icons">clear</span>
-        Réinitialiser les filtres
-      </button>
+    <!-- Edit Form -->
+    <div *ngIf="showForm" class="form-container mb-4">
+      <h3>Modifier le client</h3>
+      <app-customer-form [customer]="editingCustomer" [readonly]="false" (cancelForm)="closeForm()"
+        (updated)="closeForm()"></app-customer-form>
     </div>
 
+    <!-- Filters -->
+    <div class="stock-filters" *ngIf="!showForm">
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()"
+          placeholder="Rechercher par code...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()"
+          placeholder="Rechercher par raison sociale...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()"
+          placeholder="Rechercher par email...">
+      </div>
+      <div class="filter-group">
+        <input type="text" class="filter-input" [(ngModel)]="searchResponsable" (input)="applyFilters()"
+          placeholder="Rechercher par responsable.">
+      </div>
+    </div>
+
+    <!-- Table -->
     <div class="table-responsive">
       <table class="stock-table">
         <thead>
           <tr>
-            <th (click)="setSortBy('id')" class="sortable">
-              ID
-              <span class="material-icons">{{ getSortIcon('id') }}</span>
-            </th>
-            <th (click)="setSortBy('codee')" class="sortable">
-              Code
-              <span class="material-icons">{{ getSortIcon('codee') }}</span>
-            </th>
-            <th (click)="setSortBy('raison_social')" class="sortable">
-              Raison Sociale
-              <span class="material-icons">{{ getSortIcon('raison_social') }}</span>
-            </th>
-            <th (click)="setSortBy('email')" class="sortable">
-              Email
-              <span class="material-icons">{{ getSortIcon('email') }}</span>
-            </th>
-            <th (click)="setSortBy('responsable')" class="sortable">
-              Responsable
-              <span class="material-icons">{{ getSortIcon('responsable') }}</span>
-            </th>
+            <th (click)="setSortBy('id')" class="sortable">ID <span class="material-icons sort-icon">{{
+                getSortIcon('id') }}</span></th>
+            <th (click)="setSortBy('codee')" class="sortable">Code <span class="material-icons sort-icon">{{
+                getSortIcon('codee') }}</span></th>
+            <th (click)="setSortBy('raison_social')" class="sortable">Raison Sociale <span
+                class="material-icons sort-icon">{{ getSortIcon('raison_social') }}</span></th>
+            <th (click)="setSortBy('email')" class="sortable">Email <span class="material-icons sort-icon">{{
+                getSortIcon('email') }}</span></th>
+            <th (click)="setSortBy('responsable')" class="sortable">Responsable <span
+                class="material-icons sort-icon">{{ getSortIcon('responsable') }}</span></th>
             <th>Tel</th>
             <th>Fax</th>
             <th>Ville</th>
-            <th (click)="setSortBy('status')" class="sortable">
-              Statut
-              <span class="material-icons">{{ getSortIcon('status') }}</span>
-            </th>
+            <th (click)="setSortBy('status')" class="sortable">Statut <span class="material-icons sort-icon">{{
+                getSortIcon('status') }}</span></th>
             <th>Adresse</th>
             <th>Risque</th>
             <th>RCCM</th>
             <th>NINEA</th>
             <th>Code Douane</th>
-            <th>Actions</th>
+            <th class="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let customer of filteredCustomers">
             <td>{{ customer.id }}</td>
             <td>{{ customer.codee }}</td>
-            <td>{{ customer.raison_social }}</td>
-            <td>{{ customer.email }}</td>
+            <td class="font-medium">{{ customer.raison_social }}</td>
+            <td class="text-muted">{{ customer.email }}</td>
             <td>{{ customer.responsable }}</td>
             <td>{{ customer.tel }}</td>
             <td>{{ customer.fax || '-' }}</td>
@@ -123,42 +118,42 @@
                 {{ customer.status | titlecase }}
               </span>
             </td>
-            <td>{{ customer.adresse }}</td>
+            <td class="truncate-cell" title="{{ customer.adresse }}">{{ customer.adresse }}</td>
             <td>{{ customer.risque || '-' }}</td>
             <td>{{ customer.rccm }}</td>
             <td>{{ customer.ninea }}</td>
             <td>{{ customer.code_douane }}</td>
             <td class="actions-cell">
-              <ng-container *ngIf="customer.status === 'pending'; else normalActions">
-                <button class="view-btn" (click)="openCustomerDetailsDialog(customer)">
-                  <span class="material-icons">visibility</span>
-                  Voir données
-                </button>
-              </ng-container>
-              <ng-template #normalActions>
-                <button class="edit-btn" (click)="editCustomer(customer)">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="delete-btn" (click)="deleteCustomer(customer.id)">
-                  <span class="material-icons">delete</span>
-                </button>
-                <!-- View Password Button - only show for imported, active clients who haven't updated password -->
-                <button 
-                  *ngIf="canViewPassword(customer)" 
-                  class="password-btn" 
-                  (click)="viewCustomerPassword(customer)"
-                  title="View Password">
-                  <span class="material-icons">lock</span>
-                </button>
-                <!-- Reset Password Button - only show for imported, active clients who haven't updated password -->
-                <button 
-                  *ngIf="canViewPassword(customer)" 
-                  class="reset-password-btn" 
-                  (click)="resetCustomerPassword(customer)"
-                  title="Reset Password">
-                  <span class="material-icons">refresh</span>
-                </button>
-              </ng-template>
+              <div class="action-buttons-group">
+                <!-- Pending Actions -->
+                <ng-container *ngIf="customer.status === 'pending'">
+                  <button class="icon-btn view-btn" (click)="openCustomerDetailsDialog(customer)" title="Voir détails">
+                    <span class="material-icons">visibility</span>
+                  </button>
+                </ng-container>
+
+                <!-- Normal Actions -->
+                <ng-container *ngIf="customer.status !== 'pending'">
+                  <button class="icon-btn edit-btn" (click)="editCustomer(customer)" title="Modifier">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="icon-btn delete-btn" (click)="deleteCustomer(customer.id)" title="Supprimer">
+                    <span class="material-icons">delete</span>
+                  </button>
+
+                  <!-- Password Actions -->
+                  <ng-container *ngIf="canViewPassword(customer)">
+                    <button class="icon-btn password-btn" (click)="viewCustomerPassword(customer)"
+                      title="Voir mot de passe">
+                      <span class="material-icons">visibility</span>
+                    </button>
+                    <button class="icon-btn refresh-btn" (click)="resetCustomerPassword(customer)"
+                      title="Réinitialiser mot de passe">
+                      <span class="material-icons">lock_reset</span>
+                    </button>
+                  </ng-container>
+                </ng-container>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -167,8 +162,11 @@
 
     <!-- No Results Message -->
     <div *ngIf="filteredCustomers.length === 0" class="no-results">
-      <mat-icon>search_off</mat-icon>
-      <p>Aucun client trouvé correspondant à vos critères de recherche</p>
+      <div class="empty-state">
+        <span class="material-icons illustration">search_off</span>
+        <p>Aucun client trouvé</p>
+        <button class="text-btn" (click)="resetFilters()">Réinitialiser les filtres</button>
+      </div>
     </div>
   </div>
 </div>

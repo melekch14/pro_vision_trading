@@ -10,168 +10,183 @@
 </div>
 
 <!-- Import Success/Error Messages -->
-<div *ngIf="importSuccess" class="success-message" style="background-color: #4caf50; color: white; padding: 12px; margin: 10px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+<div *ngIf="importSuccess" class="success-message">
   <mat-icon>check_circle</mat-icon>
   {{ importSuccess }}
 </div>
-<div *ngIf="importError" class="error-message" style="background-color: #f44336; color: white; padding: 12px; margin: 10px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+<div *ngIf="importError" class="import-error-message">
   <mat-icon>error</mat-icon>
   {{ importError }}
 </div>
 
 <!-- Main Content -->
 <div class="customers-container">
+
+  <div class="stock-header">
+    <h2>Gestion des fournisseurs</h2>
+  </div>
+
   <div class="stock-panel">
-    <div class="stock-header">
-      <h2>Gestion des fournisseurs</h2>
-      <div class="stock-actions">
+
+    <!-- Actions Bar -->
+    <div class="actions-bar">
+      <div class="left-actions">
         <input type="file" #fileInput accept=".xlsx,.xls" (change)="onFileSelected($event)" style="display: none;">
-        <button class="export-btn" (click)="triggerFileInput()">
-          <span class="material-icons">file_upload</span>
+        <button class="action-btn" (click)="triggerFileInput()">
+          <span class="material-icons">upload</span>
           Importer Excel
         </button>
-        <button class="export-btn" (click)="downloadTemplate()">
+        <button class="action-btn" (click)="downloadTemplate()">
           <span class="material-icons">download</span>
           Télécharger le modèle
         </button>
-        <button class="export-btn" (click)="exportToCSV()">
-          <span class="material-icons">file_download</span>
+        <button class="action-btn" (click)="exportToCSV()">
+          <span class="material-icons">download</span>
           Exporter CSV
         </button>
-        <button class="export-btn" (click)="exportToPDF()">
+        <button class="action-btn" (click)="exportToPDF()">
           <span class="material-icons">picture_as_pdf</span>
           Exporter PDF
         </button>
-        <button class="export-btn" (click)="toggleForm()">
+      </div>
+      <div class="right-actions">
+        <button class="add-btn" (click)="toggleForm()">
           <span class="material-icons">{{ showForm ? 'close' : 'add' }}</span>
           {{ showForm ? 'Fermer le formulaire' : 'Ajouter un nouveau fournisseur' }}
         </button>
       </div>
     </div>
 
-    <!-- Add/Edit Form -->
-    <div *ngIf="showForm" class="form-container">
+    <!-- Edit Form -->
+    <div *ngIf="showForm" class="form-container mb-4">
       <h3>{{ isEditing ? 'Modifier le fournisseur' : 'Ajouter un nouveau fournisseur' }}</h3>
-      <form [formGroup]="fournisseurForm" (ngSubmit)="onSubmit()" class="mb-4">
-        <div class="row">
-          <div class="col-md-4 mb-3">
+      <form [formGroup]="fournisseurForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group-col">
             <label for="code">Code</label>
-            <input type="text" class="form-control" id="code" formControlName="code" [readonly]="isEditing">
+            <input type="text" class="form-input" id="code" formControlName="code" [readonly]="isEditing">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="raison_social">Raison Sociale</label>
-            <input type="text" class="form-control" id="raison_social" formControlName="raison_social">
+            <input type="text" class="form-input" id="raison_social" formControlName="raison_social">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="adresse">Adresse</label>
-            <input type="text" class="form-control" id="adresse" formControlName="adresse">
+            <input type="text" class="form-input" id="adresse" formControlName="adresse">
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-4 mb-3">
+        <div class="form-row">
+          <div class="form-group-col">
             <label for="mat_vin">Mat. VIN</label>
-            <input type="text" class="form-control" id="mat_vin" formControlName="mat_vin">
+            <input type="text" class="form-input" id="mat_vin" formControlName="mat_vin">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="tel">Téléphone</label>
-            <input type="text" class="form-control" id="tel" formControlName="tel">
+            <input type="text" class="form-input" id="tel" formControlName="tel">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="fax">Fax</label>
-            <input type="text" class="form-control" id="fax" formControlName="fax">
+            <input type="text" class="form-input" id="fax" formControlName="fax">
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-4 mb-3">
+        <div class="form-row">
+          <div class="form-group-col">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" formControlName="email">
+            <input type="email" class="form-input" id="email" formControlName="email">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="responsable">Responsable</label>
-            <input type="text" class="form-control" id="responsable" formControlName="responsable">
+            <input type="text" class="form-input" id="responsable" formControlName="responsable">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="id_fiscale">ID Fiscal</label>
-            <input type="text" class="form-control" id="id_fiscale" formControlName="id_fiscale">
+            <input type="text" class="form-input" id="id_fiscale" formControlName="id_fiscale">
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-4 mb-3">
+        <div class="form-row">
+          <div class="form-group-col">
             <label for="banque">Banque</label>
-            <input type="text" class="form-control" id="banque" formControlName="banque">
+            <input type="text" class="form-input" id="banque" formControlName="banque">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="agence">Agence</label>
-            <input type="text" class="form-control" id="agence" formControlName="agence">
+            <input type="text" class="form-input" id="agence" formControlName="agence">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="rib">RIB</label>
-            <input type="text" class="form-control" id="rib" formControlName="rib">
+            <input type="text" class="form-input" id="rib" formControlName="rib">
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-4 mb-3">
+        <div class="form-row">
+          <div class="form-group-col">
             <label for="categorie_prix_vente">Catégorie de prix</label>
-            <input type="text" class="form-control" id="categorie_prix_vente" formControlName="categorie_prix_vente">
+            <input type="text" class="form-input" id="categorie_prix_vente" formControlName="categorie_prix_vente">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="status">Statut</label>
-            <input type="text" class="form-control" id="status" formControlName="status">
+            <input type="text" class="form-input" id="status" formControlName="status">
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="activite_economique">Activité économique</label>
-            <input type="text" class="form-control" id="activite_economique" formControlName="activite_economique">
+            <input type="text" class="form-input" id="activite_economique" formControlName="activite_economique">
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
+        <div class="form-row">
+          <div class="form-group-col">
             <label for="remise">Remise</label>
-            <input type="number" class="form-control" id="remise" formControlName="remise">
+            <input type="number" class="form-input" id="remise" formControlName="remise">
           </div>
-          <div class="col-md-6 mb-3">
+          <div class="form-group-col">
             <label for="taux_retenue">Taux de retenue</label>
-            <input type="number" class="form-control" id="taux_retenue" formControlName="taux_retenue">
+            <input type="number" class="form-input" id="taux_retenue" formControlName="taux_retenue">
           </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-4 mb-3">
+          <div class="form-group-col">
             <label for="rccm">RCCM</label>
-            <input type="text" class="form-control" id="rccm" formControlName="rccm">
-          </div>
-          <div class="col-md-4 mb-3">
-            <label for="ninea">NINEA</label>
-            <input type="text" class="form-control" id="ninea" formControlName="ninea">
-          </div>
-          <div class="col-md-4 mb-3">
-            <label for="code_douane">Code Douane</label>
-            <input type="text" class="form-control" id="code_douane" formControlName="code_douane">
+            <input type="text" class="form-input" id="rccm" formControlName="rccm">
           </div>
         </div>
 
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary mr-2" [disabled]="!fournisseurForm.valid">
-            {{ isEditing ? 'Mettre à jour' : 'Ajouter' }} Fournisseur
+        <div class="form-row">
+          <div class="form-group-col">
+            <label for="ninea">NINEA</label>
+            <input type="text" class="form-input" id="ninea" formControlName="ninea">
+          </div>
+          <div class="form-group-col">
+            <label for="code_douane">Code Douane</label>
+            <input type="text" class="form-input" id="code_douane" formControlName="code_douane">
+          </div>
+          <div class="form-group-col">
+            <!-- Empty for alignment -->
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" [disabled]="!fournisseurForm.valid">
+            {{ isEditing ? 'Mettre à jour' : 'Ajouter' }}
           </button>
-          <button type="button" class="btn btn-secondary" (click)="resetForm()">Annuler</button>
+          <button type="button" class="btn-secondary" (click)="resetForm()">Annuler</button>
         </div>
       </form>
     </div>
 
-    <div class="stock-filters">
+    <!-- Filters -->
+    <div class="stock-filters" *ngIf="!showForm">
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()" placeholder="Rechercher par code...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCode" (input)="applyFilters()"
+          placeholder="Rechercher par code...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()" placeholder="Rechercher par raison sociale...">
+        <input type="text" class="filter-input" [(ngModel)]="searchCompany" (input)="applyFilters()"
+          placeholder="Rechercher par raison sociale...">
       </div>
       <div class="filter-group">
-        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()" placeholder="Rechercher par email...">
+        <input type="text" class="filter-input" [(ngModel)]="searchEmail" (input)="applyFilters()"
+          placeholder="Rechercher par email...">
       </div>
       <div class="filter-group">
         <select class="filter-input" [(ngModel)]="filterStatus" (change)="applyFilters()">
@@ -179,60 +194,68 @@
           <option *ngFor="let status of getUniqueStatuses()" [value]="status">{{ status | titlecase }}</option>
         </select>
       </div>
-      <button class="clear-filters-btn" (click)="resetFilters()">
+      <button class="text-btn" (click)="resetFilters()">
         <span class="material-icons">clear</span>
         Réinitialiser les filtres
       </button>
     </div>
 
-    <table class="stock-table">
-      <thead>
-        <tr>
-          <th>Code</th>
-          <th>Raison Sociale</th>
-          <th>Adresse</th>
-          <th>Téléphone</th>
-          <th>Email</th>
-          <th>Responsable</th>
-          <th>RCCM</th>
-          <th>NINEA</th>
-          <th>Code Douane</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let fournisseur of filteredFournisseurs">
-          <td>{{ fournisseur.code }}</td>
-          <td>{{ fournisseur.raison_social }}</td>
-          <td>{{ fournisseur.adresse }}</td>
-          <td>{{ fournisseur.tel }}</td>
-          <td>{{ fournisseur.email }}</td>
-          <td>{{ fournisseur.responsable }}</td>
-          <td>{{ fournisseur.rccm }}</td>
-          <td>{{ fournisseur.ninea }}</td>
-          <td>{{ fournisseur.code_douane }}</td>
-          <td>
-            <span class="status-badge" [ngClass]="'status-' + fournisseur.status">
-              {{ fournisseur.status | titlecase }}
-            </span>
-          </td>
-          <td class="actions-cell">
-            <button class="edit-btn" (click)="editFournisseur(fournisseur)">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="delete-btn" (click)="deleteFournisseur(fournisseur.code)">
-              <span class="material-icons">delete</span>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="stock-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Raison Sociale</th>
+            <th>Adresse</th>
+            <th>Téléphone</th>
+            <th>Email</th>
+            <th>Responsable</th>
+            <th>RCCM</th>
+            <th>NINEA</th>
+            <th>Code Douane</th>
+            <th>Statut</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fournisseur of filteredFournisseurs">
+            <td>{{ fournisseur.code }}</td>
+            <td class="font-medium">{{ fournisseur.raison_social }}</td>
+            <td>{{ fournisseur.adresse }}</td>
+            <td>{{ fournisseur.tel }}</td>
+            <td class="text-muted">{{ fournisseur.email }}</td>
+            <td>{{ fournisseur.responsable }}</td>
+            <td>{{ fournisseur.rccm }}</td>
+            <td>{{ fournisseur.ninea }}</td>
+            <td>{{ fournisseur.code_douane }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="'status-' + fournisseur.status">
+                {{ fournisseur.status | titlecase }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons-group">
+                <button class="icon-btn edit-btn" (click)="editFournisseur(fournisseur)" title="Modifier">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button class="icon-btn delete-btn" (click)="deleteFournisseur(fournisseur.code)" title="Supprimer">
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <!-- No Results Message -->
-  <div *ngIf="filteredFournisseurs.length === 0" class="no-results">
-    <mat-icon>search_off</mat-icon>
-    <p>Aucun fournisseur trouvé correspondant à vos critères de recherche</p>
+    <!-- No Results Message -->
+    <div *ngIf="filteredFournisseurs.length === 0" class="no-results">
+      <div class="empty-state">
+        <span class="material-icons illustration">search_off</span>
+        <p>Aucun fournisseur trouvé</p>
+        <button class="text-btn" (click)="resetFilters()">Réinitialiser les filtres</button>
+      </div>
+    </div>
   </div>
 </div>

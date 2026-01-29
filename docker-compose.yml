@@ -1,16 +1,16 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: op          # ✅ auto-created database
-      MYSQL_USER: app_user            # ✅ non-root user
+      MYSQL_DATABASE: op
+      MYSQL_USER: app_user
       MYSQL_PASSWORD: app_password
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"                 # MySQL exposed to the world (VPS IP)
     networks:
       - internal
     healthcheck:
@@ -26,7 +26,7 @@ services:
       PMA_USER: root
       PMA_PASSWORD: root
     ports:
-      - "127.0.0.1:8080:80"           # 🔒 localhost only
+      - "8080:80"                   # 🌍 now publicly accessible on VPS_IP:8080
     networks:
       - internal
     depends_on:
@@ -40,7 +40,7 @@ services:
     env_file:
       - ./back/.env
     ports:
-      - "3080:3080"                   # 🌍 public API
+      - "3080:3080"                 # 🌍 public API
     depends_on:
       mysql:
         condition: service_healthy
@@ -53,7 +53,7 @@ services:
       context: ./front
     restart: always
     ports:
-      - "4200:80"                     # 🌍 public frontend
+      - "4200:80"                   # 🌍 public frontend
     depends_on:
       - backend
     networks:
@@ -61,8 +61,8 @@ services:
 
 networks:
   internal:
-    internal: true                    # 🔒 hidden (mysql, phpMyAdmin, backend)
-  public: {}                           # 🌍 exposed (frontend, backend)
+    internal: true                  # 🔒 hidden (mysql, phpMyAdmin, backend)
+  public: {}                         # 🌍 exposed (frontend, backend)
 
 volumes:
   mysql_data:

@@ -3,6 +3,9 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 
 const dbName = process.env.DB_NAME;
+const dbPassword = process.env.DB_PASS ?? process.env.DB_PASSWORD;
+const adminUser = process.env.DB_ADMIN_USER ?? process.env.DB_USER;
+const adminPassword = process.env.DB_ADMIN_PASS ?? dbPassword;
 
 // List of table creation SQLs (from your dump, without INSERTs)
 const tableStatements = [
@@ -295,30 +298,51 @@ const tableStatements = [
 ];
 
 async function initDb() {
-  // Connect to MySQL without specifying database
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS
-  });
+  const host = process.env.DB_HOST;
+  const user = process.env.DB_USER;
 
-  // Check if database exists
-  const [rows] = await connection.query('SHOW DATABASES LIKE ?', [dbName]);
-  if (rows.length === 0) {
-    await connection.query(`CREATE DATABASE ?? DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci`, [dbName]);
-    console.log(`Database '${dbName}' created.`);
-  } else {
-    console.log(`Database '${dbName}' already exists.`);
+  if (!host || !user || !dbName) {
+    throw new Error("Missing required env vars: DB_HOST, DB_USER, DB_NAME");
   }
-  await connection.end();
+  if (!dbPassword) {
+    throw new Error("Missing DB password. Provide DB_PASS or DB_PASSWORD in backend .env");
+  }
 
-  // Connect to the database
-  const db = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: dbName
-  });
+  // Try connecting directly to the target DB using app credentials.
+  // If the DB doesn't exist yet, use admin creds to create it, then retry.
+  let db;
+  try {
+    db = await mysql.createConnection({
+      host,
+      user,
+      password: dbPassword,
+      database: dbName,
+    });
+  } catch (err) {
+    // ER_BAD_DB_ERROR = Unknown database
+    if (err && err.code === "ER_BAD_DB_ERROR") {
+      const adminConn = await mysql.createConnection({
+        host,
+        user: adminUser,
+        password: adminPassword,
+      });
+      await adminConn.query(
+        `CREATE DATABASE IF NOT EXISTS ?? DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci`,
+        [dbName]
+      );
+      await adminConn.end();
+      console.log(`Database '${dbName}' checked/created (admin).`);
+
+      db = await mysql.createConnection({
+        host,
+        user,
+        password: dbPassword,
+        database: dbName,
+      });
+    } else {
+      throw err;
+    }
+  }
 
   // Create all tables
   for (const stmt of tableStatements) {

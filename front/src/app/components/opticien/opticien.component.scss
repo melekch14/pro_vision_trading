@@ -8,6 +8,38 @@ $dark-border: #404040;
 $dark-hover: #404040;
 $dark-shadow: rgba(0, 0, 0, 0.3);
 
+/* Page layout */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #f5f7fa;
+  color: var(--text-color);
+  padding: 1.5rem;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .container {
   padding: 20px;
   background-color: var(--background-color);
@@ -74,6 +106,214 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
     vertical-align: middle;
     margin-left: 4px;
     color: var(--text-secondary);
+  }
+}
+
+/* Permissions side panel & overlay */
+.permissions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.permissions-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.permissions-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background: var(--surface-color, #ffffff);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.permissions-panel.active {
+  right: 0;
+}
+
+.panel-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-color, #ffffff);
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-color, #333);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: var(--text-color, #666);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--primary-color, #2196F3);
+  }
+}
+
+.panel-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  background: var(--background-color, #f5f5f5);
+}
+
+.panel-footer {
+  padding: 20px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--surface-color, #ffffff);
+}
+
+.permissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.permission-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: var(--surface-color, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.permission-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.component-name {
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+/* Switch styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+
+  &::before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+}
+
+.switch input:checked + .slider {
+  background-color: var(--primary-color, #2196F3);
+}
+
+.switch input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color, #2196F3);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(26px);
+}
+
+/* Buttons used in the permissions panel */
+.primary-button {
+  background-color: var(--primary-color, #2196F3);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--primary-dark-color, #1976D2);
+  }
+}
+
+.secondary-button {
+  background-color: var(--surface-color, #ffffff);
+  color: var(--text-color, #333);
+  border: 1px solid var(--border-color, #e0e0e0);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--background-color, #f5f5f5);
+  }
+}
+
+.permissions-btn {
+  background: none;
+  border: none;
+  color: var(--text-color, #666);
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+
+  &:hover {
+    color: var(--primary-color, #2196F3);
   }
 }
 
@@ -314,6 +554,12 @@ $dark-shadow: rgba(0, 0, 0, 0.3);
   font-size: 0.875rem;
 }
 
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .stock-table th,
 .stock-table td {
   padding: 12px;
@@ -504,6 +750,14 @@ label {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .stock-panel {
+    padding: 16px;
+  }
+
   .stock-filters {
     flex-direction: column;
     align-items: stretch;
@@ -530,5 +784,58 @@ label {
 
   .export-btn {
     justify-content: center;
+  }
+
+  .actions-cell {
+    flex-wrap: wrap;
+  }
+
+  /* Mobile friendly table */
+  .table-wrapper {
+    overflow-x: visible;
+  }
+
+  .stock-table {
+    display: block;
+    width: 100%;
+  }
+
+  .stock-table thead {
+    display: none;
+  }
+
+  .stock-table tbody,
+  .stock-table tr,
+  .stock-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .stock-table tr {
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-background);
+    padding: 8px 10px;
+  }
+
+  .stock-table td {
+    border-bottom: none;
+    padding: 6px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stock-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: 8px;
+    color: var(--text-color);
+  }
+
+  .stock-table td:last-child {
+    justify-content: flex-start;
+    gap: 6px;
   }
 } 

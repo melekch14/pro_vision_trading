@@ -1,6 +1,6 @@
 <div class="page-container">
-  <div class="page-header">
-    <h1>Gestion des Administrateurs</h1>
+  <div class="header-row">
+    <h1 class="page-title">Gestion des Administrateurs</h1>
   </div>
 
   <div class="content-container">
@@ -109,57 +109,59 @@
           </button>
         </div>
 
-        <table class="stock-table">
-          <thead>
-            <tr>
-              <th class="sortable" (click)="sortData('codee')">
-                Code
-                <span class="material-icons">{{ getSortIcon('codee') }}</span>
-              </th>
-              <th class="sortable" (click)="sortData('nom')">
-                Nom
-                <span class="material-icons">{{ getSortIcon('nom') }}</span>
-              </th>
-              <th class="sortable" (click)="sortData('prenom')">
-                Prénom
-                <span class="material-icons">{{ getSortIcon('prenom') }}</span>
-              </th>
-              <th class="sortable" (click)="sortData('email')">
-                Email
-                <span class="material-icons">{{ getSortIcon('email') }}</span>
-              </th>
-              <th class="sortable" (click)="sortData('role')">
-                Rôle
-                <span class="material-icons">{{ getSortIcon('role') }}</span>
-              </th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let opticien of filteredOpticiens">
-              <td>{{ opticien.codee }}</td>
-              <td>{{ opticien.nom }}</td>
-              <td>{{ opticien.prenom }}</td>
-              <td>{{ opticien.email }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="'role-' + opticien.role">
-                  {{ opticien.role | titlecase }}
-                </span>
-              </td>
-              <td class="actions-cell">
-                <button class="edit-btn" (click)="editOpticien(opticien)">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="delete-btn" (click)="deleteOpticien(opticien.id!)">
-                  <span class="material-icons">delete</span>
-                </button>
-                <button class="permissions-btn" (click)="openPermissionsPanel(opticien)" *ngIf="opticien.role === 'assistant'">
-                  <span class="material-icons">security</span>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="stock-table">
+            <thead>
+              <tr>
+                <th class="sortable" (click)="sortData('codee')">
+                  Code
+                  <span class="material-icons">{{ getSortIcon('codee') }}</span>
+                </th>
+                <th class="sortable" (click)="sortData('nom')">
+                  Nom
+                  <span class="material-icons">{{ getSortIcon('nom') }}</span>
+                </th>
+                <th class="sortable" (click)="sortData('prenom')">
+                  Prénom
+                  <span class="material-icons">{{ getSortIcon('prenom') }}</span>
+                </th>
+                <th class="sortable" (click)="sortData('email')">
+                  Email
+                  <span class="material-icons">{{ getSortIcon('email') }}</span>
+                </th>
+                <th class="sortable" (click)="sortData('role')">
+                  Rôle
+                  <span class="material-icons">{{ getSortIcon('role') }}</span>
+                </th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let opticien of filteredOpticiens">
+                <td data-label="Code">{{ opticien.codee }}</td>
+                <td data-label="Nom">{{ opticien.nom }}</td>
+                <td data-label="Prénom">{{ opticien.prenom }}</td>
+                <td data-label="Email">{{ opticien.email }}</td>
+                <td data-label="Rôle">
+                  <span class="status-badge" [ngClass]="'role-' + opticien.role">
+                    {{ opticien.role | titlecase }}
+                  </span>
+                </td>
+                <td class="actions-cell" data-label="Actions">
+                  <button class="edit-btn" (click)="editOpticien(opticien)">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="delete-btn" (click)="deleteOpticien(opticien.id!)">
+                    <span class="material-icons">delete</span>
+                  </button>
+                  <button class="permissions-btn" (click)="openPermissionsPanel(opticien)" *ngIf="opticien.role === 'assistant'">
+                    <span class="material-icons">security</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- No Results Message -->
@@ -188,9 +190,11 @@
         </div>
         <div class="permission-toggle">
           <label class="switch">
-            <input type="checkbox"
-                   [checked]="component.hasAccess"
-                   (change)="toggleComponentAccess(component)">
+            <input
+              type="checkbox"
+              [checked]="component.hasAccess"
+              (change)="toggleComponentAccess(component)"
+            >
             <span class="slider round"></span>
           </label>
         </div>
@@ -204,220 +208,5 @@
   </div>
 </div>
 
-<!-- Add overlay div before the permissions panel -->
+<!-- Overlay behind the permissions panel -->
 <div class="permissions-overlay" [class.active]="showPermissionsPanel" (click)="closePermissionsPanel()"></div>
-
-<style>
-/* Add overlay container */
-.permissions-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.permissions-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.permissions-panel {
-  position: fixed;
-  top: 0;
-  right: -400px;
-  width: 400px;
-  height: 100vh;
-  background: var(--surface-color, #ffffff);
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: right 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.permissions-panel.active {
-  right: 0;
-}
-
-.panel-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--surface-color, #ffffff);
-}
-
-.panel-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: var(--text-color, #333);
-}
-
-.close-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  color: var(--text-color, #666);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.close-button:hover {
-  color: var(--primary-color, #2196F3);
-}
-
-.panel-body {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-  background: var(--background-color, #f5f5f5);
-}
-
-.panel-footer {
-  padding: 20px;
-  border-top: 1px solid var(--border-color, #e0e0e0);
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  background: var(--surface-color, #ffffff);
-}
-
-.permissions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.permission-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background: var(--surface-color, #ffffff);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.permission-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.component-name {
-  font-weight: 500;
-  color: var(--text-color, #333);
-}
-
-/* Switch styles */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: var(--primary-color, #2196F3);
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--primary-color, #2196F3);
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-/* Button styles */
-.primary-button {
-  background-color: var(--primary-color, #2196F3);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.primary-button:hover {
-  background-color: var(--primary-dark-color, #1976D2);
-}
-
-.secondary-button {
-  background-color: var(--surface-color, #ffffff);
-  color: var(--text-color, #333);
-  border: 1px solid var(--border-color, #e0e0e0);
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.secondary-button:hover {
-  background-color: var(--background-color, #f5f5f5);
-}
-
-.permissions-btn {
-  background: none;
-  border: none;
-  color: var(--text-color, #666);
-  cursor: pointer;
-  padding: 5px;
-  margin-left: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.3s;
-}
-
-.permissions-btn:hover {
-  color: var(--primary-color, #2196F3);
-}
-
-/* Remove the old overlay style */
-.permissions-panel.active::before {
-  display: none;
-}
-</style>

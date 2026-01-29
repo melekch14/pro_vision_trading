@@ -1,8 +1,7 @@
-<div class="activity-history-container">
-  <!-- Header -->
-  <div class="activity-header">
+<div class="page-container">
+  <div class="header-row">
     <div class="header-left">
-      <h1>Activity History</h1>
+      <h1 class="page-title">Historique des activités</h1>
       <p class="subtitle">Monitor and track all user activities across the application</p>
     </div>
     <div class="header-actions">
@@ -16,6 +15,8 @@
       </button>
     </div>
   </div>
+
+  <div class="content-container">
 
   <!-- Statistics Cards -->
   <div class="stats-grid" *ngIf="statistics">
@@ -112,57 +113,59 @@
     {{ error }}
   </div>
 
-  <!-- Activity Table -->
-  <div class="activity-table-container" *ngIf="!loading && !error">
-    <table class="activity-table">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Action</th>
-          <th>Target</th>
-          <th>Time</th>
-          <th>IP Address</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let activity of activities">
-          <td>
-            <div class="user-cell">
-              <div 
-                class="user-avatar" 
-                [style.background-color]="getUserAvatarColor(activity.user_name)"
-              >
-                {{ getInitials(activity.user_name) }}
-              </div>
-              <span class="user-name">{{ activity.user_name }}</span>
-            </div>
-          </td>
-          <td>
-            <span 
-              class="action-badge" 
-              [class]="'action-' + getActionColor(activity.action)"
-            >
-              <span class="material-icons action-icon">{{ getActionIcon(activity.action) }}</span>
-              {{ activity.action }}
-            </span>
-          </td>
-          <td>
-            <span class="target-text">{{ activity.target || '-' }}</span>
-          </td>
-          <td>
-            <span class="time-text">{{ formatTime(activity.created_at) }}</span>
-          </td>
-          <td>
-            <span class="ip-text">{{ activity.ip_address || '-' }}</span>
-          </td>
-        </tr>
-        <tr *ngIf="activities.length === 0">
-          <td colspan="5" class="no-data">
-            No activities found
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Activity Table -->
+    <div class="activity-table-container" *ngIf="!loading && !error">
+      <div class="table-wrapper">
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Action</th>
+              <th>Target</th>
+              <th>Time</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let activity of activities">
+              <td data-label="User">
+                <div class="user-cell">
+                  <div 
+                    class="user-avatar" 
+                    [style.background-color]="getUserAvatarColor(activity.user_name)"
+                  >
+                    {{ getInitials(activity.user_name) }}
+                  </div>
+                  <span class="user-name">{{ activity.user_name }}</span>
+                </div>
+              </td>
+              <td data-label="Action">
+                <span 
+                  class="action-badge" 
+                  [class]="'action-' + getActionColor(activity.action)"
+                >
+                  <span class="material-icons action-icon">{{ getActionIcon(activity.action) }}</span>
+                  {{ activity.action }}
+                </span>
+              </td>
+              <td data-label="Target">
+                <span class="target-text">{{ activity.target || '-' }}</span>
+              </td>
+              <td data-label="Time">
+                <span class="time-text">{{ formatTime(activity.created_at) }}</span>
+              </td>
+              <td data-label="IP Address">
+                <span class="ip-text">{{ activity.ip_address || '-' }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="activities.length === 0">
+              <td colspan="5" class="no-data">
+                No activities found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
     <!-- Pagination -->
     <div class="pagination" *ngIf="totalPages > 1">
@@ -185,9 +188,10 @@
       </button>
     </div>
 
-    <!-- Results Count -->
-    <div class="results-count">
-      Showing {{ activities.length }} of {{ totalItems }} activities
+      <!-- Results Count -->
+      <div class="results-count">
+        Showing {{ activities.length }} of {{ totalItems }} activities
+      </div>
     </div>
   </div>
 </div>

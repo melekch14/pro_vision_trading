@@ -57,8 +57,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    command: >
-      sh -c "./wait-for-it.sh mysql:3306 --timeout=60 --strict -- node server.js"
 
   frontend:
     build:

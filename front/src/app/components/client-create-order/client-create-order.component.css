@@ -7,6 +7,14 @@
   min-height: 100vh;
 }
 
+/* Admin Mode Styling */
+.create-order-container.admin-mode {
+  padding: 24px;
+  background-color: #f8fafc;
+  max-width: 100%;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 /* Header Styles */
 .header {
   margin-bottom: 2rem;
@@ -54,21 +62,65 @@
   font-size: 1rem;
 }
 
+/* Admin Mode Header Styling */
+.create-order-container.admin-mode .header {
+  margin-bottom: 24px;
+}
+
+.create-order-container.admin-mode .title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.create-order-container.admin-mode .subtitle {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.create-order-container.admin-mode .hamburger-menu {
+  color: #1e293b;
+}
+
+.create-order-container.admin-mode .hamburger-menu:hover {
+  background-color: #f1f5f9;
+}
+
 @media (max-width: 768px) {
   .create-order-container {
     padding: 16px 12px;
+  }
+
+  .create-order-container.admin-mode {
+    padding: 16px;
   }
   
   .header {
     margin-bottom: 1.5rem;
   }
+
+  .create-order-container.admin-mode .header {
+    margin-bottom: 20px;
+  }
   
   .title {
     font-size: 1.6rem;
   }
+
+  .create-order-container.admin-mode .title {
+    font-size: 1.25rem;
+  }
   
   .subtitle {
     font-size: 0.9rem;
+  }
+
+  .create-order-container.admin-mode .subtitle {
+    font-size: 0.8125rem;
   }
 }
 

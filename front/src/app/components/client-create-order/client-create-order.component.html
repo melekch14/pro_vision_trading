@@ -1,12 +1,12 @@
-<div class="create-order-container">
+<div class="create-order-container" [class.admin-mode]="selectedClientId !== null">
   <!-- Header Section -->
   <div class="header">
     <button class="hamburger-menu" (click)="toggleSidebar()" *ngIf="isMobile">
       <span class="material-icons">menu</span>
     </button>
     <div class="title-section">
-      <h1 class="title">Passer votre commande</h1>
-      <p class="subtitle">Passez commande en quelques clics</p>
+      <h1 class="title">{{ selectedClientId ? 'Créer une commande' : 'Passer votre commande' }}</h1>
+      <p class="subtitle">{{ selectedClientId ? 'Créez une commande pour le client sélectionné' : 'Passez commande en quelques clics' }}</p>
     </div>
   </div>
 

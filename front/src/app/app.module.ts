@@ -58,6 +58,7 @@ import { BlImportModalComponent } from './components/bl/bl-import-modal/bl-impor
 import { BlDetailsModalComponent } from './components/bl/bl-details-modal/bl-details-modal.component';
 import { CustomerImportModalComponent } from './components/customers/customer-import-modal/customer-import-modal.component';
 import { ActivityHistoryComponent } from './components/activity-history/activity-history.component';
+import { AdminClientOrdersComponent } from './components/admin-client-orders/admin-client-orders.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +94,8 @@ import { ActivityHistoryComponent } from './components/activity-history/activity
     BlImportModalComponent,
     BlDetailsModalComponent,
     CustomerImportModalComponent,
-    ActivityHistoryComponent
+    ActivityHistoryComponent,
+    AdminClientOrdersComponent
   ],
   imports: [
     BrowserModule,

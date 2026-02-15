@@ -55,6 +55,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: '/app/orders'
     },
     {
+      id: 'admin-client-orders',
+      name: 'Commandes Clients',
+      icon: 'shopping_bag',
+      route: '/app/admin-client-orders'
+    },
+    {
       id: 'bl',
       name: 'Bon de Livraison',
       icon: 'receipt_long',

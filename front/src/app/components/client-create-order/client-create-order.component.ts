@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { SidebarService } from '../../services/sidebar.service';
@@ -82,9 +82,12 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
   private validationTimeout: any;
   private previousCorrections: any = null; // Track previous correction values
 
+  selectedClientId: number | null = null;
+
   constructor(
     private orderService: OrderService,
     private router: Router,
+    private route: ActivatedRoute,
     private authService: AuthService,
     private sidebarService: SidebarService
   ) {}
@@ -93,6 +96,13 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
     this.checkMobile();
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize);
+    
+    // Check for clientId in query params (for admin creating orders)
+    this.route.queryParams.subscribe(params => {
+      if (params['clientId']) {
+        this.selectedClientId = parseInt(params['clientId'], 10);
+      }
+    });
     
     this.filteredProducts = [];
     this.filteredProducts2 = [];
@@ -714,7 +724,7 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
         selectedArticle: this.selectedArticle,
         selectedArticle2: this.selectedArticle2,
         needsSecondProduct: this.isODFilled() && this.isOGFilled() && this.needsSecondProduct,
-        client_id: this.authService.getClientId()
+        client_id: this.selectedClientId || this.authService.getClientId()
       };
 
       // Handle fabrication/stock logic
@@ -758,7 +768,12 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
       }
 
       alert('Commande soumise avec succès!');
-      this.router.navigate(['/orders']);
+      // Navigate back to admin-client-orders if created from admin, otherwise to client orders
+      if (this.selectedClientId) {
+        this.router.navigate(['/app/admin-client-orders']);
+      } else {
+        this.router.navigate(['/client/orders']);
+      }
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('Une erreur est survenue lors de la soumission de la commande.');

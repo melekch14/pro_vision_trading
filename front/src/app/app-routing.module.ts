@@ -28,6 +28,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { BlComponent } from './components/bl/bl.component';
 import { ActivityHistoryComponent } from './components/activity-history/activity-history.component';
+import { AdminClientOrdersComponent } from './components/admin-client-orders/admin-client-orders.component';
 
 const routes: Routes = [
   {
@@ -72,7 +73,9 @@ const routes: Routes = [
       { path: 'bl', component: BlComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile-update-requests', component: ProfileUpdateRequestsComponent },
-      { path: 'activity-history', component: ActivityHistoryComponent }
+      { path: 'activity-history', component: ActivityHistoryComponent },
+      { path: 'admin-client-orders', component: AdminClientOrdersComponent },
+      { path: 'create-order', component: ClientCreateOrderComponent }
     ]
   },
   {

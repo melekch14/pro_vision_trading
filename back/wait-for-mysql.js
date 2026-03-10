@@ -2,6 +2,7 @@ const mysql = require("mysql2/promise");
 
 const waitForMysql = async () => {
   const dbPassword = process.env.DB_PASS ?? process.env.DB_PASSWORD;
+
   const config = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -10,7 +11,7 @@ const waitForMysql = async () => {
   };
 
   let attempts = 0;
-  const maxAttempts = 10;
+  const maxAttempts = 60;
 
   while (attempts < maxAttempts) {
     try {

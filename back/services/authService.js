@@ -126,7 +126,7 @@ const sendPasswordByEmail = async (email) => {
             pass: "bxoiuulfoyfsrcrl"
         }
     });
-    const resetUrl = `http://213.32.16.132:4200/reset-password?token=${token}`;
+    const resetUrl = `http://135.125.202.253:4200/reset-password?token=${token}`;
 
     const mailOptions = {
         from: '"Pro Vision Trading" <provisiontrading38@gmail.com>',
@@ -201,7 +201,7 @@ const requestPasswordReset = async (email) => {
             pass: "bxoiuulfoyfsrcrl"
         }
     });
-    const resetUrl = `http://213.32.16.132:4200/reset-password?token=${token}`;
+    const resetUrl = `http://135.125.202.253:4200/reset-password?token=${token}`;
 
     const mailOptions = {
         from: '"Pro Vision Trading" <provisiontrading38@gmail.com>',

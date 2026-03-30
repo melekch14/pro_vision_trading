@@ -2,9 +2,11 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const dbPassword = process.env.DB_PASS ?? process.env.DB_PASSWORD;
+const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined;
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
+    port: dbPort,
     user: process.env.DB_USER,
     password: dbPassword,
     database: process.env.DB_NAME,

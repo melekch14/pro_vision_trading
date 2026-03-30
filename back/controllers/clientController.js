@@ -35,6 +35,12 @@ const createClient = async (req, res) => {
     } catch (error) {
         if (error.message === 'Unable to generate unique client code after maximum attempts') {
             res.status(500).json({ message: 'Unable to generate unique client code. Please try again.' });
+        } else if (
+            error.message === 'Email is reserved for the administrator account' ||
+            error.message === 'Email already exists for an opticien' ||
+            error.message === 'Email already exists'
+        ) {
+            res.status(400).json({ message: error.message });
         } else {
             res.status(500).json({ message: error.message });
         }
@@ -52,6 +58,12 @@ const updateClient = async (req, res) => {
     } catch (error) {
         if (error.message === 'Client code already exists') {
             res.status(400).json({ message: 'Client code already exists. Please choose a different code.' });
+        } else if (
+            error.message === 'Email is reserved for the administrator account' ||
+            error.message === 'Email already exists for an opticien' ||
+            error.message === 'Email already exists'
+        ) {
+            res.status(400).json({ message: error.message });
         } else {
             res.status(500).json({ message: error.message });
         }

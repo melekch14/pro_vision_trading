@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const clientService = require('./clientService');
 
+const normalizeEmail = (email) => (email || '').trim().toLowerCase();
+
 const findUserByEmail = async (email) => {
     const [clients] = await db.query('SELECT * FROM client WHERE email = ?', [email]);
     if (clients.length > 0) {
@@ -21,6 +23,16 @@ const findUserByEmail = async (email) => {
 
 const registerUser = async (user, table) => {
     if (table === 'opticien') {
+        const incomingEmail = normalizeEmail(user.email);
+        if (incomingEmail) {
+            const [clients] = await db.query(
+                'SELECT id FROM client WHERE LOWER(email) = LOWER(?) LIMIT 1',
+                [incomingEmail]
+            );
+            if (clients.length > 0) {
+                throw new Error('Email already exists for a client');
+            }
+        }
         const hashedPassword = await bcrypt.hash(user.password, 10);
         await db.query(
             `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,

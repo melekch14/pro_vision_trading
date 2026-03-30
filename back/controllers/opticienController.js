@@ -29,6 +29,9 @@ const createOpticien = async (req, res) => {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ message: 'Email already exists' });
         }
+        if (error.message === 'Email already exists for a client') {
+            return res.status(400).json({ message: error.message });
+        }
         res.status(500).json({ message: error.message });
     }
 };
@@ -43,6 +46,9 @@ const updateOpticien = async (req, res) => {
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ message: 'Email already exists' });
+        }
+        if (error.message === 'Email already exists for a client') {
+            return res.status(400).json({ message: error.message });
         }
         res.status(500).json({ message: error.message });
     }

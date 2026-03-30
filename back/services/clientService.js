@@ -5,6 +5,10 @@ const path = require('path');
 const fs = require('fs');
 const xlsx = require('xlsx');
 
+const RESERVED_ADMIN_EMAIL = 'admin@admin.com';
+
+const normalizeEmail = (email) => (email || '').trim().toLowerCase();
+
 // Configure multer for file upload
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -82,6 +86,20 @@ const getClientById = async (id) => {
 // Create new client
 const createClient = async (clientData) => {
     const hashedPassword = await bcrypt.hash(clientData.password, 10);
+
+    const incomingEmail = normalizeEmail(clientData.email);
+    if (incomingEmail === RESERVED_ADMIN_EMAIL) {
+        throw new Error('Email is reserved for the administrator account');
+    }
+    if (incomingEmail) {
+        const [opticiens] = await db.query(
+            'SELECT id FROM opticien WHERE LOWER(email) = LOWER(?) LIMIT 1',
+            [incomingEmail]
+        );
+        if (opticiens.length > 0) {
+            throw new Error('Email already exists for an opticien');
+        }
+    }
     
     // Generate unique client code if not provided
     let clientCode = clientData.codee;
@@ -146,6 +164,16 @@ const updateClient = async (id, clientData) => {
         const incomingEmail = clientData.email.trim().toLowerCase();
         const currentEmail = (currentClient.email || '').trim().toLowerCase();
         if (incomingEmail !== currentEmail) {
+            if (incomingEmail === RESERVED_ADMIN_EMAIL) {
+                throw new Error('Email is reserved for the administrator account');
+            }
+            const [opticiens] = await db.query(
+                'SELECT id FROM opticien WHERE LOWER(email) = LOWER(?) LIMIT 1',
+                [incomingEmail]
+            );
+            if (opticiens.length > 0) {
+                throw new Error('Email already exists for an opticien');
+            }
             // Check if the new email already exists for another client
             const [existingClients] = await db.query('SELECT id FROM client WHERE email = ? AND id != ?', [clientData.email, id]);
             if (existingClients.length > 0) {

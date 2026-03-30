@@ -3,7 +3,11 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 
 const dbName = process.env.DB_NAME;
-const dbPassword = process.env.DB_PASS ?? process.env.DB_PASSWORD;
+const hasDbPass =
+  Object.prototype.hasOwnProperty.call(process.env, "DB_PASS") ||
+  Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD");
+const dbPassword = process.env.DB_PASS ?? process.env.DB_PASSWORD ?? "";
+const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined;
 const adminUser = process.env.DB_ADMIN_USER ?? process.env.DB_USER;
 const adminPassword = process.env.DB_ADMIN_PASS ?? dbPassword;
 
@@ -304,7 +308,7 @@ async function initDb() {
   if (!host || !user || !dbName) {
     throw new Error("Missing required env vars: DB_HOST, DB_USER, DB_NAME");
   }
-  if (!dbPassword) {
+  if (!hasDbPass) {
     throw new Error("Missing DB password. Provide DB_PASS or DB_PASSWORD in backend .env");
   }
 
@@ -314,6 +318,7 @@ async function initDb() {
   try {
     db = await mysql.createConnection({
       host,
+      port: dbPort,
       user,
       password: dbPassword,
       database: dbName,
@@ -323,6 +328,7 @@ async function initDb() {
     if (err && err.code === "ER_BAD_DB_ERROR") {
       const adminConn = await mysql.createConnection({
         host,
+        port: dbPort,
         user: adminUser,
         password: adminPassword,
       });
@@ -335,6 +341,7 @@ async function initDb() {
 
       db = await mysql.createConnection({
         host,
+        port: dbPort,
         user,
         password: dbPassword,
         database: dbName,

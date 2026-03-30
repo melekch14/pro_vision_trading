@@ -1,6 +1,8 @@
 const db = require('../models/db');
 const bcrypt = require('bcryptjs');
 
+const normalizeEmail = (email) => (email || '').trim().toLowerCase();
+
 const getAllOpticiens = async () => {
     const [opticiens] = await db.query('SELECT id, codee, nom, prenom, email, role FROM opticien');
     return opticiens;
@@ -12,6 +14,16 @@ const getOpticienById = async (id) => {
 };
 
 const createOpticien = async (opticien) => {
+    const incomingEmail = normalizeEmail(opticien.email);
+    if (incomingEmail) {
+        const [clients] = await db.query(
+            'SELECT id FROM client WHERE LOWER(email) = LOWER(?) LIMIT 1',
+            [incomingEmail]
+        );
+        if (clients.length > 0) {
+            throw new Error('Email already exists for a client');
+        }
+    }
     const hashedPassword = await bcrypt.hash(opticien.password, 10);
     const [result] = await db.query(
         `INSERT INTO opticien (codee, nom, prenom, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -52,6 +64,18 @@ const updateOpticien = async (id, opticien) => {
     // Get current opticien to check if role is changing to 'assistant'
     const currentOpticien = await getOpticienById(id);
     
+    const incomingEmail = normalizeEmail(opticien.email);
+    const currentEmail = normalizeEmail(currentOpticien ? currentOpticien.email : '');
+    if (incomingEmail && incomingEmail !== currentEmail) {
+        const [clients] = await db.query(
+            'SELECT id FROM client WHERE LOWER(email) = LOWER(?) LIMIT 1',
+            [incomingEmail]
+        );
+        if (clients.length > 0) {
+            throw new Error('Email already exists for a client');
+        }
+    }
+
     let query = 'UPDATE opticien SET codee = ?, nom = ?, prenom = ?, email = ?, role = ?';
     let params = [opticien.codee, opticien.nom, opticien.prenom, opticien.email, opticien.role];
 

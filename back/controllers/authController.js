@@ -28,6 +28,13 @@ exports.register = async (req, res) => {
     } catch (err) {
         if (err.message === 'Unable to generate unique client code after maximum attempts') {
             res.status(500).json({ error: 'Unable to generate unique client code. Please try again.' });
+        } else if (
+            err.message === 'Email is reserved for the administrator account' ||
+            err.message === 'Email already exists for an opticien' ||
+            err.message === 'Email already exists for a client' ||
+            err.message === 'Email already exists'
+        ) {
+            res.status(400).json({ error: err.message });
         } else {
             res.status(500).json({ error: err.message });
         }

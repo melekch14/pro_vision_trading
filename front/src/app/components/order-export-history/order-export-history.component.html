@@ -1,0 +1,37 @@
+<div class="export-history-page">
+  <div class="page-header">
+    <h1>Historique d’export des commandes</h1>
+    <button class="clear-btn" (click)="clearHistory()" [disabled]="!history.length">
+      Vider l’historique
+    </button>
+  </div>
+
+  <div class="table-wrapper" *ngIf="history.length; else emptyState">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Utilisateur</th>
+          <th>Format</th>
+          <th>Fichier</th>
+          <th>Total commandes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of history">
+          <td>{{ item.exportedAt }}</td>
+          <td>{{ item.exportedBy }}</td>
+          <td>{{ item.format }}</td>
+          <td>{{ item.filename }}</td>
+          <td>{{ item.totalOrders }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      Aucun export enregistré pour le moment.
+    </div>
+  </ng-template>
+</div>

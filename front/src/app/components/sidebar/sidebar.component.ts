@@ -103,6 +103,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: '/app/activity-history'
     },
     {
+      id: 'order-export-history',
+      name: 'Historique export commandes',
+      icon: 'download',
+      route: '/app/order-export-history'
+    },
+    {
       id: 'settings',
       name: 'Paramètres',
       icon: 'settings_applications',

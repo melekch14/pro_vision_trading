@@ -7,6 +7,7 @@ import { DeliveryNoteModalComponent } from './delivery-note-modal/delivery-note-
 import { PrintCardsModalComponent } from './print-cards-modal/print-cards-modal.component';
 import { PageEvent } from '@angular/material/paginator';
 import { PriceFormatService } from '../../shared/services/price-format.service';
+import { OrderExportHistoryService } from '../../services/order-export-history.service';
 
 interface Order {
   id: number;
@@ -71,7 +72,8 @@ export class OrdersComponent implements OnInit {
     private orderService: OrderService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private priceFormat: PriceFormatService
+    private priceFormat: PriceFormatService,
+    private orderExportHistory: OrderExportHistoryService
   ) {}
 
   ngOnInit(): void {
@@ -173,25 +175,116 @@ export class OrdersComponent implements OnInit {
   }
 
   exportOrders(): void {
-    const headers = 'Order ID,Customer,Date,Status,Total Amount,Shipping Type,Delivery Time\n';
-    const rows = this.filteredOrders.map(order => {
-      const date = new Date(order.order_datetime).toISOString().split('T')[0];
+    const data = this.orders;
+    const headers = [
+      'Order ID',
+      'Order Date',
+      'Status',
+      'Client',
+      'Client ID',
+      'First Name',
+      'Last Name',
+      'Phone',
+      'Email',
+      'Type Commande',
+      'Origine Article',
+      'Type Correction',
+      'OD Sphere',
+      'OD Cylinder',
+      'OD Axe',
+      'OD Addition',
+      'OG Sphere',
+      'OG Cylinder',
+      'OG Axe',
+      'OG Addition',
+      'Produit ID',
+      'Produit2 ID',
+      'Fabrication1 ID',
+      'Fabrication2 ID',
+      'Article Libelle',
+      'Article2 Libelle',
+      'Stock Article ID',
+      'Stock2 Article ID',
+      'Price OD',
+      'Price OG',
+      'Total Price',
+      'Shipping Type',
+      'Delivery Time'
+    ];
+
+    const escapeCsv = (value: any): string => {
+      const str = value === null || value === undefined ? '' : String(value);
+      if (str.includes('"') || str.includes(',') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const rows = data.map(order => {
+      const date = order.order_datetime ? new Date(order.order_datetime).toISOString().split('T')[0] : '';
       const totalPrice = this.priceFormat.format(this.getTotalPrice(order));
-      return `${order.id},"${order.first_name} ${order.last_name}",${date},${order.status},${totalPrice},${order.shipping_type},${order.delivery_time}`;
+      const price1 = this.priceFormat.format(order.price);
+      const price2 = this.priceFormat.format(order.price2 || 0);
+      return [
+        order.id ?? '',
+        date,
+        order.status ?? '',
+        order.raison_social ?? '',
+        order['client_id'] ?? '',
+        order.first_name ?? '',
+        order.last_name ?? '',
+        order.phone ?? '',
+        order.email ?? '',
+        order['typeCommande'] ?? '',
+        order['origineArticle'] ?? '',
+        order['typeCorrection'] ?? '',
+        order['od_sphere'] ?? '',
+        order['od_cylinder'] ?? '',
+        order['od_axe'] ?? '',
+        order['od_addition'] ?? '',
+        order['og_sphere'] ?? '',
+        order['og_cylinder'] ?? '',
+        order['og_axe'] ?? '',
+        order['og_addition'] ?? '',
+        order.produit ?? '',
+        order['produit2'] ?? '',
+        order['fabrication1'] ?? '',
+        order['fabrication2'] ?? '',
+        order['article_libelle'] ?? '',
+        order['article2_libelle'] ?? '',
+        order['stock_article_id'] ?? '',
+        order['stock2_article_id'] ?? '',
+        price1,
+        price2,
+        totalPrice,
+        order.shipping_type ?? '',
+        order.delivery_time ?? ''
+      ].map(escapeCsv).join(',');
     }).join('\n');
 
-    const csvContent = headers + rows;
+    const csvContent = `${headers.join(',')}\n${rows}`;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
 
+    const filename = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
 
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
+    const userData = this.authService.getUserData();
+    const exportedBy = userData ? `${userData.prenom || ''} ${userData.nom || ''}`.trim() : 'Unknown';
+    this.orderExportHistory.addEntry({
+      exportedAt: new Date().toLocaleString('fr-FR'),
+      exportedBy: exportedBy || 'Unknown',
+      format: 'CSV',
+      filename,
+      totalOrders: data.length
+    });
   }
 
   toggleOrderSelection(order: Order): void {

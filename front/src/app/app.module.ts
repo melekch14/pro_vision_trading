@@ -60,6 +60,7 @@ import { CustomerImportModalComponent } from './components/customers/customer-im
 import { ActivityHistoryComponent } from './components/activity-history/activity-history.component';
 import { AdminClientOrdersComponent } from './components/admin-client-orders/admin-client-orders.component';
 import { PriceFormatPipe } from './shared/pipes/price-format.pipe';
+import { OrderExportHistoryComponent } from './components/order-export-history/order-export-history.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +97,8 @@ import { PriceFormatPipe } from './shared/pipes/price-format.pipe';
     BlDetailsModalComponent,
     CustomerImportModalComponent,
     ActivityHistoryComponent,
-    AdminClientOrdersComponent
+    AdminClientOrdersComponent,
+    OrderExportHistoryComponent
   ],
   imports: [
     BrowserModule,

@@ -200,8 +200,8 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
       this.errors[eye].addition = true;
       return;
     }
-    // Addition (ADD): Min : +0.50 Max : +3.50
-    this.errors[eye].addition = numValue < 0.50 || numValue > 3.50;
+    // Addition (ADD): Min : 0 Max : 10
+    this.errors[eye].addition = numValue < 0 || numValue > 10;
   }
 
   isNegative(value: any): boolean {

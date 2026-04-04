@@ -35,8 +35,8 @@
         <span *ngIf="errors.od.cylinder" class="error-msg">Cylindre doit être entre -6.00 et -0.25</span>
         <input type="number" placeholder="°" [(ngModel)]="order.od.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
         <span *ngIf="errors.od.axe" class="error-msg">Axe doit être entre 0° et 180°</span>
-        <input type="number" placeholder="+" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
-        <span *ngIf="errors.od.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
+        <input type="number" placeholder="+" min="0" max="10" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
+        <span *ngIf="errors.od.addition" class="error-msg">Addition doit être entre 0 et 10</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOG()">→</button>
       </div>
       <div class="corrections-row arrows-row desktop-row">
@@ -55,8 +55,8 @@
         <span *ngIf="errors.og.cylinder" class="error-msg">Cylindre doit être entre -6.00 et -0.25</span>
         <input type="number" placeholder="°" [(ngModel)]="order.og.axe" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
         <span *ngIf="errors.og.axe" class="error-msg">Axe doit être entre 0° et 180°</span>
-        <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
-        <span *ngIf="errors.og.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
+        <input type="number" placeholder="+" min="0" max="10" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+        <span *ngIf="errors.og.addition" class="error-msg">Addition doit être entre 0 et 10</span>
         <button class="copy-btn right-arrow-btn" (click)="copyToOD()">←</button>
       </div>
       
@@ -91,8 +91,8 @@
               </div>
               <div class="field-group">
                 <label>Addition</label>
-                <input type="number" placeholder="+" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
-                <span *ngIf="errors.od.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
+                <input type="number" placeholder="+" min="0" max="10" [(ngModel)]="order.od.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkCorrectionsForStep3()">
+                <span *ngIf="errors.od.addition" class="error-msg">Addition doit être entre 0 et 10</span>
               </div>
             </div>
           </div>
@@ -127,8 +127,8 @@
               </div>
               <div class="field-group">
                 <label>Addition</label>
-                <input type="number" placeholder="+" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
-                <span *ngIf="errors.og.addition" class="error-msg">Addition doit être entre +0.50 et +3.50</span>
+                <input type="number" placeholder="+" min="0" max="10" [(ngModel)]="order.og.addition" (blur)="validateAxeAndAddition()" (keydown)="blockNegative($event)" (input)="checkIfValuesAreDifferent(); checkCorrectionsForStep3()">
+                <span *ngIf="errors.og.addition" class="error-msg">Addition doit être entre 0 et 10</span>
               </div>
             </div>
           </div>
@@ -308,3 +308,4 @@
     <button class="submit-btn" (click)="submitOrder()" [disabled]="errors.formInvalid">Soumettre la Commande</button>
   </div>
 </div>
+

@@ -681,28 +681,48 @@
   font-size: 0.95rem;
 }
 
-.type-correction-select select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1.5px solid #d1d5db;
+/* Shared radio options (Type de correction + Origine article) */
+.radio-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.radio-option {
+  background: #f8fafc;
+  border: 1.5px solid #e0e7ef;
   border-radius: 8px;
-  background: #ffffff;
-  font-size: 1rem;
-  color: #1f2937;
-  transition: all 0.2s;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
+  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+  min-width: 120px;
 }
 
-.type-correction-select select:focus {
-  outline: none;
+.radio-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #2953f3;
+}
+
+.radio-option:has(input[type="radio"]:checked) {
   border-color: #2953f3;
-  box-shadow: 0 0 0 3px rgba(41, 83, 243, 0.1);
+  background: #eff6ff;
+  box-shadow: 0 0 0 3px rgba(41, 83, 243, 0.12);
 }
 
-.type-correction-select select:disabled {
-  background: #f3f4f6;
-  cursor: not-allowed;
+.radio-option:has(input[type="radio"]:disabled) {
   opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.radio-option span {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
 }
 
 /* Origine article */
@@ -716,30 +736,6 @@
   font-weight: 500;
   color: #4b5563;
   font-size: 0.95rem;
-}
-
-.origine-article-select select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1.5px solid #d1d5db;
-  border-radius: 8px;
-  background: #ffffff;
-  font-size: 1rem;
-  color: #1f2937;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.origine-article-select select:focus {
-  outline: none;
-  border-color: #2953f3;
-  box-shadow: 0 0 0 3px rgba(41, 83, 243, 0.1);
-}
-
-.origine-article-select select:disabled {
-  background: #f3f4f6;
-  cursor: not-allowed;
-  opacity: 0.6;
 }
 
 /* Responsive Design - Enhanced for all screen sizes */
@@ -823,6 +819,15 @@
   .supplements-options {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .radio-options {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .radio-option {
+    width: 100%;
   }
   
   .supplement-option {

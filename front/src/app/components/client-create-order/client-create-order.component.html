@@ -180,11 +180,13 @@
       <span class="step-title">Type de correction</span>
     </div>
     <div class="type-correction-select">
-      <label>SÃ©lectionner un type de correction</label>
-      <select [(ngModel)]="order.typeCorrection" (change)="onTypeCorrectionChange()" [disabled]="errors.step4Disabled">
-        <option value="">Choisir un type de correction...</option>
-        <option *ngFor="let type of typeCorrections" [value]="type.value">{{ type.label }}</option>
-      </select>
+      <label>Sélectionner un type de correction</label>
+      <div class="radio-options">
+        <label *ngFor="let type of typeCorrections" class="radio-option">
+          <input type="radio" name="typeCorrection" [value]="type.value" [(ngModel)]="order.typeCorrection" (change)="onTypeCorrectionChange()" [disabled]="errors.step4Disabled">
+          <span>{{ type.label }}</span>
+        </label>
+      </div>
     </div>
   </div>
 
@@ -195,11 +197,13 @@
       <span class="step-title">Origine article</span>
     </div>
     <div class="origine-article-select">
-      <label>SÃ©lectionner une origine</label>
-      <select [(ngModel)]="order.origineArticle" (change)="onOrigineArticleChange(); updatePrice()" [disabled]="errors.step5Disabled">
-        <option value="">Choisir une origine...</option>
-        <option *ngFor="let origine of origineArticles" [value]="origine.value">{{ origine.label }}</option>
-      </select>
+      <label>Sélectionner une origine</label>
+      <div class="radio-options">
+        <label *ngFor="let origine of origineArticles" class="radio-option">
+          <input type="radio" name="origineArticle" [value]="origine.value" [(ngModel)]="order.origineArticle" (change)="onOrigineArticleChange(); updatePrice()" [disabled]="errors.step5Disabled">
+          <span>{{ origine.label }}</span>
+        </label>
+      </div>
     </div>
   </div>
 
@@ -308,5 +312,6 @@
     <button class="submit-btn" (click)="submitOrder()" [disabled]="errors.formInvalid">Soumettre la Commande</button>
   </div>
 </div>
+
 
 

@@ -100,7 +100,7 @@
       <!-- Price Column -->
       <ng-container matColumnDef="price">
         <th mat-header-cell *matHeaderCellDef>Prix total</th>
-        <td mat-cell *matCellDef="let order" class="amount">{{ getTotalPrice(order) }}</td>
+        <td mat-cell *matCellDef="let order" class="amount">{{ getTotalPrice(order) | priceFormat }}</td>
       </ng-container>
 
       <!-- Shipping Type Column -->

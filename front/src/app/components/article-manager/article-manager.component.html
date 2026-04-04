@@ -130,8 +130,8 @@
                 <td>{{article.foyer_name}}</td>
                 <td>{{article.indice_name}}</td>
                 <td>{{article.design_name}}</td>
-                <td>{{article.prix_achat}}</td>
-                <td>{{article.prix_vente}}</td>
+                <td>{{ article.prix_achat | priceFormat }}</td>
+                <td>{{ article.prix_vente | priceFormat }}</td>
                 <td class="actions-cell">
                   <button class="edit-btn" (click)="editArticle(article)">
                     <span class="material-icons">edit</span>
@@ -525,10 +525,10 @@
                 <td>{{ article.type_stock || '' }}</td>
                 <td>{{ article.couleur_photo_name || '' }}</td>
                 <td>{{ article.traitement_name || '' }}</td>
-                <td>{{ article.prix_achat || '' }}</td>
-                <td>{{ (article.prix_achat * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
-                <td>{{ article.prix_vente || '' }}</td>
-                <td>{{ (article.prix_vente * (1 + (article.tva || 0) / 100)) | number:'1.2-2' }}</td>
+                <td>{{ article.prix_achat | priceFormat }}</td>
+                <td>{{ (article.prix_achat * (1 + (article.tva || 0) / 100)) | priceFormat }}</td>
+                <td>{{ article.prix_vente | priceFormat }}</td>
+                <td>{{ (article.prix_vente * (1 + (article.tva || 0) / 100)) | priceFormat }}</td>
               </tr>
             </tbody>
           </table>
@@ -543,3 +543,4 @@
     </ng-container>
   </div>
 </div>
+

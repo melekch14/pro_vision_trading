@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { OrderService } from '../../../services/order.service';
 import { StockService } from '../../../services/stock.service';
 import { ArticleService } from '../../../services/article.service';
+import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 
 interface Order {
   id: number;
@@ -50,7 +51,7 @@ interface Order {
   templateUrl: './order-details-modal.component.html',
   styleUrls: ['./order-details-modal.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule]
+  imports: [CommonModule, FormsModule, MatIconModule, PriceFormatPipe]
 })
 export class OrderDetailsModalComponent implements OnInit {
   fournisseurs: any[] = []; // Will store the list of fournisseurs

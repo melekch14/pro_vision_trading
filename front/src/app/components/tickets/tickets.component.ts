@@ -6,13 +6,14 @@ import { Observable, of } from 'rxjs';
 import { map, shareReplay, catchError, switchMap } from 'rxjs/operators';
 import { StockService } from '../../services/stock.service';
 import { ArticleService } from '../../services/article.service';
+import { PriceFormatPipe } from '../../shared/pipes/price-format.pipe';
 
 @Component({
   selector: 'app-tickets',
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, PriceFormatPipe]
 })
 export class TicketsComponent implements OnInit {
   orders: Order[] = [];

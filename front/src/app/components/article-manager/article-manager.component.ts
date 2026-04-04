@@ -19,6 +19,7 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UserOptions } from 'jspdf-autotable';
+import { PriceFormatService } from '../../shared/services/price-format.service';
 
 interface DialogStockEntry {
   sphere: number;
@@ -107,7 +108,8 @@ export class ArticleManagerComponent implements OnInit {
     private stockService: StockService,
     private supplementaryPriceService: SupplementaryPriceService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private priceFormat: PriceFormatService
   ) {
     this.articleForm = this.fb.group({
       article_subfamily_id: [''],
@@ -155,7 +157,7 @@ export class ArticleManagerComponent implements OnInit {
         const tva = 18; // Fixed TVA at 18%
         const prixVente = prixAchat * (1 + tva / 100);
         this.articleForm.patchValue({
-          prix_vente: prixVente.toFixed(2)
+          prix_vente: prixVente.toFixed(3)
         }, { emitEvent: false });
       }
     });
@@ -727,8 +729,8 @@ export class ArticleManagerComponent implements OnInit {
       Foyer: string | undefined;
       Indice: string | undefined;
       Design: string | undefined;
-      'Prix Achat': number;
-      'Prix Vente': number;
+      'Prix Achat': string;
+      'Prix Vente': string;
       'Origine Article': string;
     }
 
@@ -739,8 +741,8 @@ export class ArticleManagerComponent implements OnInit {
       Foyer: article.foyer_name,
       Indice: article.indice_name,
       Design: article.design_name,
-      'Prix Achat': article.prix_achat,
-      'Prix Vente': article.prix_vente,
+      'Prix Achat': this.priceFormat.format(article.prix_achat),
+      'Prix Vente': this.priceFormat.format(article.prix_vente),
       'Origine Article': article.origineArticle
     }));
 
@@ -831,8 +833,8 @@ export class ArticleManagerComponent implements OnInit {
       article.foyer_name || '',
       article.indice_name || '',
       article.design_name || '',
-      article.prix_achat || 0,
-      article.prix_vente || 0,
+      this.priceFormat.format(article.prix_achat),
+      this.priceFormat.format(article.prix_vente),
       article.origineArticle || 'stock'
     ]);
 
@@ -1020,10 +1022,10 @@ export class ArticleManagerComponent implements OnInit {
       'Traitement': article.traitement_name || '',
       'Fournisseur': article.fournisseur_name || '',
       'Code a barre': article.code_a_barre || '',
-      'Prix d\'achat ht': article.prix_achat || '',
-      'Prix d\'achat ttc': article.prix_achat ? (article.prix_achat * (1 + (article.tva || 0) / 100)).toFixed(2) : '',
-      'Prix de vente ht': article.prix_vente || '',
-      'Prix de vente ttc': article.prix_vente ? (article.prix_vente * (1 + (article.tva || 0) / 100)).toFixed(2) : ''
+      'Prix d\'achat ht': this.priceFormat.format(article.prix_achat),
+      'Prix d\'achat ttc': this.priceFormat.format(article.prix_achat ? (article.prix_achat * (1 + (article.tva || 0) / 100)) : ''),
+      'Prix de vente ht': this.priceFormat.format(article.prix_vente),
+      'Prix de vente ttc': this.priceFormat.format(article.prix_vente ? (article.prix_vente * (1 + (article.tva || 0) / 100)) : '')
     }));
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);

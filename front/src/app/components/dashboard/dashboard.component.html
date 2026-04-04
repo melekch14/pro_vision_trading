@@ -13,7 +13,7 @@
     <div class="card revenue">
       <span class="card-icon material-icons">attach_money</span>
       <div class="card-title">Revenu total</div>
-      <div class="card-value">{{ statistics.totalRevenue | number:'1.2-2' }} CFA</div>
+      <div class="card-value">{{ statistics.totalRevenue | priceFormat }}</div>
       <div class="card-desc">Revenu généré</div>
     </div>
     <div class="card orders">
@@ -77,7 +77,7 @@
           <td>{{ order.client_tel || '-' }}</td>
           <td>{{ order.products_display || order.article_libelle || '-' }}<br><span class="product-type">{{
               order.product_type || '' }}</span></td>
-          <td><b>${{ order.total_price | number:'1.2-2' }}</b></td>
+          <td><b>{{ order.total_price | priceFormat }}</b></td>
           <td>
             <span [ngClass]="{
               'status-processing': order.status === 'processing',
@@ -104,3 +104,4 @@
     </table>
   </div>
 </div>
+

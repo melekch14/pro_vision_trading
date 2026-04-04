@@ -6,6 +6,7 @@ import { OrderDetailsModalComponent } from './order-details-modal/order-details-
 import { DeliveryNoteModalComponent } from './delivery-note-modal/delivery-note-modal.component';
 import { PrintCardsModalComponent } from './print-cards-modal/print-cards-modal.component';
 import { PageEvent } from '@angular/material/paginator';
+import { PriceFormatService } from '../../shared/services/price-format.service';
 
 interface Order {
   id: number;
@@ -69,7 +70,8 @@ export class OrdersComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private priceFormat: PriceFormatService
   ) {}
 
   ngOnInit(): void {
@@ -162,19 +164,19 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  getTotalPrice(order: Order): string {
+  getTotalPrice(order: Order): number {
     const basePrice = parseFloat(order.price) || 0;
     const price2 = parseFloat(order.price2 || '0') || 0;
     const shippingCost = order.shipping_type === 'express' ? 3000 : 0;
     const total = basePrice + price2 + shippingCost;
-    return total.toFixed(2) + ' CFA';
+    return total;
   }
 
   exportOrders(): void {
     const headers = 'Order ID,Customer,Date,Status,Total Amount,Shipping Type,Delivery Time\n';
     const rows = this.filteredOrders.map(order => {
       const date = new Date(order.order_datetime).toISOString().split('T')[0];
-      const totalPrice = this.getTotalPrice(order);
+      const totalPrice = this.priceFormat.format(this.getTotalPrice(order));
       return `${order.id},"${order.first_name} ${order.last_name}",${date},${order.status},${totalPrice},${order.shipping_type},${order.delivery_time}`;
     }).join('\n');
 

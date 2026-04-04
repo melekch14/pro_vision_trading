@@ -284,15 +284,15 @@
       <div class="resume-row" [class.five-items]="needsSecondProduct">
         <div>
           <span class="resume-label">Prix OD</span>
-          <span class="resume-value">{{ price | number:'1.2-2' }} CFA</span>
+          <span class="resume-value">{{ price | priceFormat }}</span>
         </div>
         <div *ngIf="needsSecondProduct">
           <span class="resume-label">Prix OG</span>
-          <span class="resume-value">{{ price2 | number:'1.2-2' }} CFA</span>
+          <span class="resume-value">{{ price2 | priceFormat }}</span>
         </div>
         <div>
           <span class="resume-label">Prix Total</span>
-          <span class="resume-value">{{ totalPrice | number:'1.2-2' }} CFA</span>
+          <span class="resume-value">{{ totalPrice | priceFormat }}</span>
         </div>
         <div>
           <span class="resume-label">Type de Livraison</span>
@@ -312,6 +312,8 @@
     <button class="submit-btn" (click)="submitOrder()" [disabled]="errors.formInvalid">Soumettre la Commande</button>
   </div>
 </div>
+
+
 
 
 

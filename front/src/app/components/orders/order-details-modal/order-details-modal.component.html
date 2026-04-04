@@ -56,13 +56,13 @@
                 </div>
                 <div class="info-item">
                   <label>Prix :</label>
-                  <span>{{ getTotalPrice() | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  <span>{{ getTotalPrice() | priceFormat }}</span>
                 </div>
                 <div class="info-item" *ngIf="order.price2">
                   <label>Détail du prix :</label>
                   <div class="price-breakdown">
-                    <span>OD : {{ order.price | currency:'EUR':'symbol':'1.2-2' }}</span>
-                    <span>OG : {{ order.price2 | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    <span>OD : {{ order.price | priceFormat }}</span>
+                    <span>OG : {{ order.price2 | priceFormat }}</span>
                   </div>
                 </div>
                 <div class="info-item">
@@ -387,3 +387,4 @@
     <button class="close-btn" (click)="close()">Close</button>
   </div>
 </div>
+

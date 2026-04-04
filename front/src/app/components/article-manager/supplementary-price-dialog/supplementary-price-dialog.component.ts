@@ -7,6 +7,7 @@ import { Article } from '../../../services/article.service';
 import { StockService, StockEntry as ApiStockEntry } from '../../../services/stock.service';
 import { SupplementaryPriceService, SupplementaryPrice as ApiSupplementaryPrice, StockWithSupplementaryPrice } from '../../../services/supplementary-price.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PriceFormatService } from '../../../shared/services/price-format.service';
 
 interface DialogSupplementaryPrice {
   sphere: number;
@@ -42,7 +43,8 @@ export class SupplementaryPriceDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { article: Article },
     private stockService: StockService,
     private supplementaryPriceService: SupplementaryPriceService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private priceFormat: PriceFormatService
   ) {}
 
   ngOnInit(): void {
@@ -313,7 +315,8 @@ export class SupplementaryPriceDialogComponent implements OnInit {
       }
     });
 
-    this.snackBar.open(`Applied price ${this.bulkPrice} to ${appliedCount} selected cells`, 'Close', { duration: 2000 });
+    const formattedPrice = this.priceFormat.format(this.bulkPrice);
+    this.snackBar.open(`Applied price ${formattedPrice} to ${appliedCount} selected cells`, 'Close', { duration: 2000 });
   }
 
   clearSelection(): void {

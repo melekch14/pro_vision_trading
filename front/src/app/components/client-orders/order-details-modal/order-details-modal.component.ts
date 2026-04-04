@@ -4,6 +4,7 @@ import { DatePipe, CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderService } from '../../../services/order.service';
 import { environment } from '../../../../environments/environment';
+import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 
 interface OrderDetails {
   id: number;
@@ -43,7 +44,7 @@ interface OrderDetails {
   styleUrls: ['./order-details-modal.component.css'],
   providers: [DatePipe],
   standalone: true,
-  imports: [CommonModule, MatIconModule]
+  imports: [CommonModule, MatIconModule, PriceFormatPipe]
 })
 export class OrderDetailsModalComponent implements OnInit {
   productLibelle: string = '';
@@ -224,12 +225,12 @@ export class OrderDetailsModalComponent implements OnInit {
     }
   }
 
-  calculateTotalPrice(): string {
+  calculateTotalPrice(): number {
     const price1 = parseFloat(this.data.price) || 0;
     const price2 = parseFloat(this.data.price2 || '0') || 0;
     const shippingCost = this.data.shipping_type === 'express' ? 3000 : 0;
     const total = price1 + price2 + shippingCost;
-    return total.toFixed(2);
+    return total;
   }
 
   hasSecondPrice(): boolean {

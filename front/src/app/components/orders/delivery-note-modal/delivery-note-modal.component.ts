@@ -8,6 +8,7 @@ import { BlService } from '../../../services/bl.service';
 import { AuthService } from '../../../services/auth.service';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 
 interface Order {
   id: number;
@@ -46,7 +47,7 @@ interface Page {
   templateUrl: './delivery-note-modal.component.html',
   styleUrls: ['./delivery-note-modal.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, PriceFormatPipe]
 })
 export class DeliveryNoteModalComponent implements OnInit {
   currentDate: string;

@@ -42,19 +42,19 @@
         </div>
         <div class="info-item" *ngIf="!hasSecondPrice()">
           <span class="label">Montant total :</span>
-          <span class="value">{{ data.price }} CFA</span>
+          <span class="value">{{ data.price | priceFormat }}</span>
         </div>
         <div class="info-item" *ngIf="hasSecondPrice()">
           <span class="label">Prix (OD) :</span>
-          <span class="value">{{ data.price }} CFA</span>
+          <span class="value">{{ data.price | priceFormat }}</span>
         </div>
         <div class="info-item" *ngIf="hasSecondPrice()">
           <span class="label">Prix (OG) :</span>
-          <span class="value">{{ data.price2 }} CFA</span>
+          <span class="value">{{ data.price2 | priceFormat }}</span>
         </div>
         <div class="info-item" *ngIf="hasSecondPrice()">
           <span class="label">Montant total :</span>
-          <span class="value total-price">{{ calculateTotalPrice() }} CFA</span>
+          <span class="value total-price">{{ calculateTotalPrice() | priceFormat }}</span>
         </div>
       </div>
     </div>

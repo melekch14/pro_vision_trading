@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Bl } from '../../../models/bl.model';
 import { BlService } from '../../../services/bl.service';
+import { PriceFormatService } from '../../../shared/services/price-format.service';
 
 @Component({
   selector: 'app-bl-details-modal',
@@ -19,7 +20,8 @@ export class BlDetailsModalComponent {
   constructor(
     public dialogRef: MatDialogRef<BlDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Bl,
-    private blService: BlService
+    private blService: BlService,
+    private priceFormat: PriceFormatService
   ) {
     this.blRecord = data;
     this.editedRecord = { ...data };
@@ -74,7 +76,7 @@ export class BlDetailsModalComponent {
   }
 
   formatCurrency(amount: number): string {
-    return amount ? amount.toLocaleString('fr-FR') + ' CFA' : '0 CFA';
+    return this.priceFormat.format(amount);
   }
 
   formatDate(date: string): string {

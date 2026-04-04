@@ -59,6 +59,7 @@ import { BlDetailsModalComponent } from './components/bl/bl-details-modal/bl-det
 import { CustomerImportModalComponent } from './components/customers/customer-import-modal/customer-import-modal.component';
 import { ActivityHistoryComponent } from './components/activity-history/activity-history.component';
 import { AdminClientOrdersComponent } from './components/admin-client-orders/admin-client-orders.component';
+import { PriceFormatPipe } from './shared/pipes/price-format.pipe';
 
 @NgModule({
   declarations: [
@@ -120,6 +121,7 @@ import { AdminClientOrdersComponent } from './components/admin-client-orders/adm
     MatSortModule,
     MatPaginatorModule,
     TicketsComponent,
+    PriceFormatPipe,
     ChartModule
   ],
   providers: [

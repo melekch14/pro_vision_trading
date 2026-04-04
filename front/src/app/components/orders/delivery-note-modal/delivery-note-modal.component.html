@@ -79,7 +79,7 @@
                 </td>
                 <td>{{ formatValue(order.typeCommande) }}</td>
                 <td>{{ formatValue(order.typeCorrection) }}</td>
-                <td>{{ sumPrices(order.price, order.price2) | number:'1.2-2' }} CFA</td>
+                <td>{{ sumPrices(order.price, order.price2) | priceFormat }}</td>
               </tr>
               <!-- If articles are different, show two lines -->
               <tr *ngIf="!order.article_libelle2 || order.article_libelle !== order.article_libelle2">
@@ -91,7 +91,7 @@
                 </td>
                 <td>{{ formatValue(order.typeCommande) }}</td>
                 <td>{{ formatValue(order.typeCorrection) }}</td>
-                <td>{{ order.price | number:'1.2-2' }} CFA</td>
+                <td>{{ order.price | priceFormat }}</td>
               </tr>
               <tr *ngIf="order.article_libelle2 && order.article_libelle !== order.article_libelle2" class="second-product-row">
                 <td></td>
@@ -102,13 +102,13 @@
                 </td>
                 <td></td>
                 <td></td>
-                <td>{{ (order.price2 || 0) | number:'1.2-2' }} CFA</td>
+                <td>{{ (order.price2 || 0) | priceFormat }}</td>
               </tr>
             </ng-container>
             <!-- Total row - only on last page -->
             <tr class="total-row" *ngIf="page.isLastPage">
               <td colspan="5" class="text-right"><strong>Total</strong></td>
-              <td><strong>{{ totalAmount | number:'1.2-2' }} CFA</strong></td>
+              <td><strong>{{ totalAmount | priceFormat }}</strong></td>
             </tr>
           </tbody>
         </table>
@@ -124,7 +124,7 @@
       <p>Current View: <strong>{{ isPrintView ? 'Print View' : 'Screen View' }}</strong></p>
       <p>Total Pages: {{ pages.length }}</p>
       <p>Total Orders: {{ data.orders.length }}</p>
-      <p>Total Amount: {{ totalAmount | number:'1.2-2' }} CFA</p>
+      <p>Total Amount: {{ totalAmount | priceFormat }}</p>
       <div *ngFor="let page of pages; let i = index">
         <p>Page {{ i + 1 }}: {{ page.orders.length }} orders, Last Page: {{ page.isLastPage }}</p>
       </div>
@@ -188,7 +188,7 @@
               </td>
               <td>{{ formatValue(order.typeCommande) }}</td>
               <td>{{ formatValue(order.typeCorrection) }}</td>
-              <td>{{ sumPrices(order.price, order.price2) | number:'1.2-2' }} CFA</td>
+              <td>{{ sumPrices(order.price, order.price2) | priceFormat }}</td>
             </tr>
             <!-- If articles are different, show two lines -->
             <tr *ngIf="!order.article_libelle2 || order.article_libelle !== order.article_libelle2">
@@ -200,7 +200,7 @@
               </td>
               <td>{{ formatValue(order.typeCommande) }}</td>
               <td>{{ formatValue(order.typeCorrection) }}</td>
-              <td>{{ order.price | number:'1.2-2' }} CFA</td>
+              <td>{{ order.price | priceFormat }}</td>
             </tr>
             <tr *ngIf="order.article_libelle2 && order.article_libelle !== order.article_libelle2" class="second-product-row">
               <td></td>
@@ -211,12 +211,12 @@
               </td>
               <td></td>
               <td></td>
-              <td>{{ (order.price2 || 0) | number:'1.2-2' }} CFA</td>
+              <td>{{ (order.price2 || 0) | priceFormat }}</td>
             </tr>
           </ng-container>
           <tr class="total-row">
             <td colspan="5" class="text-right"><strong>Total</strong></td>
-            <td><strong>{{ totalAmount | number:'1.2-2' }} CFA</strong></td>
+            <td><strong>{{ totalAmount | priceFormat }}</strong></td>
           </tr>
         </tbody>
       </table>
@@ -236,3 +236,5 @@
     </div>
   </div>
 </div>
+
+

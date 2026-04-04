@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { BlImportModalComponent } from './bl-import-modal/bl-import-modal.component';
 import { BlDetailsModalComponent } from './bl-details-modal/bl-details-modal.component';
+import { PriceFormatService } from '../../shared/services/price-format.service';
 
 @Component({
   selector: 'app-bl',
@@ -44,7 +45,8 @@ export class BlComponent implements OnInit {
 
   constructor(
     private blService: BlService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private priceFormat: PriceFormatService
   ) { }
 
   ngOnInit(): void {
@@ -191,7 +193,7 @@ export class BlComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return amount ? amount.toLocaleString('fr-FR') + ' CFA' : '0 CFA';
+    return this.priceFormat.format(amount);
   }
 
   formatDate(date: string): string {

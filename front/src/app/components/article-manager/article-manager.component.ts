@@ -293,14 +293,14 @@ export class ArticleManagerComponent implements OnInit {
     const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') :
       (entry.addition !== null ? entry.addition.toString().padStart(4, '0') : '0000');
     const sph = entry.sphere.toString().padStart(4, '0');
-    return `${entry.subfamily_code} - (${cyl}) - ${sph}`;
+    return `${entry.subfamily_code} / (${cyl}) / ${sph}`;
   }
 
   formatStockLibelle(entry: StockEntryWithArticle): string {
     const cyl = entry.cylindre !== null ? entry.cylindre.toString().padStart(4, '0') :
       (entry.addition !== null ? entry.addition.toString().padStart(4, '0') : '0000');
     const sph = entry.sphere.toString().padStart(4, '0');
-    return `${entry.article_libelle} (${cyl}) - ${sph}`;
+    return `${entry.article_libelle} (${cyl}) / ${sph}`;
   }
 
   getArticleTotalQuantity(article: Article): number | null {

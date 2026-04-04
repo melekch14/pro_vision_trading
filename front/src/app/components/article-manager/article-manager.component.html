@@ -111,6 +111,7 @@
                   Design
                   <span class="material-icons">{{ getSortIcon('design_name') }}</span>
                 </th>
+                <th>Quantité</th>
                 <th (click)="onSort('prix_achat')" class="sortable">
                   Prix Achat
                   <span class="material-icons">{{ getSortIcon('prix_achat') }}</span>
@@ -130,6 +131,7 @@
                 <td>{{article.foyer_name}}</td>
                 <td>{{article.indice_name}}</td>
                 <td>{{article.design_name}}</td>
+                <td>{{ getArticleTotalQuantity(article) !== null ? getArticleTotalQuantity(article) : '-' }}</td>
                 <td>{{ article.prix_achat | priceFormat }}</td>
                 <td>{{ article.prix_vente | priceFormat }}</td>
                 <td class="actions-cell">

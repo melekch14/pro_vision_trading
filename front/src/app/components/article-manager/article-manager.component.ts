@@ -73,6 +73,7 @@ export class ArticleManagerComponent implements OnInit {
   stockEntries: StockEntryWithArticle[] = [];
   filteredStockEntries: StockEntryWithArticle[] = [];
   displayedColumns: string[] = ['code', 'libelle', 'qte', 'sphere', 'cylindre', 'addition'];
+  stockQuantityByArticleId: Record<number, number> = {};
 
   stockFilters = {
     code: '',
@@ -275,6 +276,10 @@ export class ArticleManagerComponent implements OnInit {
     this.stockService.getAllStockWithArticles().subscribe({
       next: (data: StockEntryWithArticle[]) => {
         this.stockEntries = data;
+        this.stockQuantityByArticleId = this.stockEntries.reduce((acc, entry) => {
+          acc[entry.article_id] = (acc[entry.article_id] || 0) + (entry.quantite || 0);
+          return acc;
+        }, {} as Record<number, number>);
         this.applyStockFilters();
       },
       error: (error) => {
@@ -297,6 +302,24 @@ export class ArticleManagerComponent implements OnInit {
     const sph = entry.sphere.toString().padStart(4, '0');
     return `${entry.article_libelle} (${cyl}) - ${sph}`;
   }
+
+  getArticleTotalQuantity(article: Article): number | null {
+    if (article.origineArticle !== 'stock') {
+      return null;
+    }
+    if (article.id !== undefined && article.id !== null) {
+      const key = Number(article.id);
+      return this.stockQuantityByArticleId[key] || 0;
+    }
+    if (article.code) {
+      const totalByCode = this.stockEntries
+        .filter(entry => entry.article_code === article.code)
+        .reduce((sum, entry) => sum + (entry.quantite || 0), 0);
+      return totalByCode;
+    }
+    return 0;
+  }
+
 
   onSubmit(): void {
     if (this.articleForm.valid) {

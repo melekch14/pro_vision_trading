@@ -166,7 +166,8 @@ export class ArticleManagerComponent implements OnInit {
     this.filterForm = this.fb.group({
       code: [''],
       libelle: [''],
-      fournisseur: ['']
+      fournisseur: [''],
+      origineArticle: ['']
     });
 
     // Initialize stock entries
@@ -387,7 +388,8 @@ export class ArticleManagerComponent implements OnInit {
       return (
         (!filters.code || article.code.toLowerCase().includes(filters.code.toLowerCase())) &&
         (!filters.libelle || article.libelle.toLowerCase().includes(filters.libelle.toLowerCase())) &&
-        (!filters.fournisseur || article.fournisseur_id === filters.fournisseur)
+        (!filters.fournisseur || article.fournisseur_id === filters.fournisseur) &&
+        (!filters.origineArticle || article.origineArticle === filters.origineArticle)
       );
     });
 

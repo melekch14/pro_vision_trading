@@ -69,6 +69,14 @@
               <option *ngFor="let option of fournisseurOptions" [value]="option.code">{{option.responsable}}</option>
             </select>
           </div>
+          <div class="filter-group">
+            <select class="filter-input" [ngModel]="filterForm.get('origineArticle')?.value"
+              (ngModelChange)="filterForm.get('origineArticle')?.setValue($event); applyFilters()">
+              <option value="">Toutes les origines</option>
+              <option value="stock">Stock</option>
+              <option value="fabrication">Fabrication</option>
+            </select>
+          </div>
           <button class="clear-filters-btn" (click)="resetFilters()">
             <span class="material-icons">clear</span>
             Réinitialiser les filtres

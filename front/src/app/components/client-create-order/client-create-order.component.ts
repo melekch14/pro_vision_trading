@@ -240,6 +240,11 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
 
   validateEmail(): boolean {
     const email = this.order.email || '';
+    if (email.trim() === '') {
+      this.errors.email = false;
+      this.updateFormValidity();
+      return true;
+    }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     this.errors.email = !emailPattern.test(email);
     this.updateFormValidity();
@@ -259,7 +264,13 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
   }
 
   validatePhoneSenegal(): boolean {
-    const phone = this.order.phone.replace(/\D/g, '');
+    const rawPhone = this.order.phone || '';
+    if (rawPhone.trim() === '') {
+      this.errors.phone = false;
+      this.updateFormValidity();
+      return true;
+    }
+    const phone = rawPhone.replace(/\D/g, '');
     const senegalPattern = /^(7[05678]\d{7})$/;
     this.errors.phone = !senegalPattern.test(phone);
     this.updateFormValidity();
@@ -665,16 +676,6 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
       alert('Veuillez remplir le prénom.');
       return;
     }
-    
-    if (!this.order.phone || this.order.phone.trim() === '') {
-      alert('Veuillez remplir le numéro de téléphone.');
-      return;
-    }
-    
-    if (!this.order.email || this.order.email.trim() === '') {
-      alert('Veuillez remplir l\'adresse email.');
-      return;
-    }
 
     // --- PRODUCT SELECTION VALIDATION ---
     // At least one eye must be filled
@@ -917,3 +918,10 @@ export class ClientCreateOrderComponent implements OnInit, OnDestroy {
     this.selectedFile = null;
   }
 } 
+
+
+
+
+
+
+

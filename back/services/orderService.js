@@ -105,6 +105,12 @@ const deleteOrder = async (id) => {
 
 
 class OrderService {
+  normalizeOptionalString(value) {
+    if (value === null || value === undefined) return null;
+    const trimmed = String(value).trim();
+    return trimmed === '' ? null : trimmed;
+  }
+
   async createOrder(orderData) {
     try {
       const {
@@ -112,6 +118,9 @@ class OrderService {
         typeCommande, origineArticle, produit, produit2, fabrication1, fabrication2, price, price2, totalPrice, typeCorrection,
         shippingType, deliveryTime, needsSecondProduct
       } = orderData;
+
+      const normalizedPhone = this.normalizeOptionalString(phone);
+      const normalizedEmail = this.normalizeOptionalString(email);
       
       // Determine which fields to use based on origineArticle
       let _produit = null, _produit2 = null, _fabrication1 = null, _fabrication2 = null;
@@ -134,7 +143,7 @@ class OrderService {
         [
           client_id, od.sphere, od.cylinder, od.axe, od.addition,
           og.sphere, og.cylinder, og.axe, og.addition,
-          lastName, firstName, phone, email,
+          lastName, firstName, normalizedPhone, normalizedEmail,
           typeCommande, origineArticle, _produit, _produit2, _fabrication1, _fabrication2, price, price2 || 0, totalPrice || price, typeCorrection,
           shippingType, deliveryTime
         ]

@@ -148,9 +148,9 @@
       <span *ngIf="errors.lastName" class="error-msg">Le nom de famille est requis</span>
       <input type="text" placeholder="Prénom *" [(ngModel)]="order.firstName" (blur)="validateFirstName()" (input)="validateFirstName()" required>
       <span *ngIf="errors.firstName" class="error-msg">Le prénom est requis</span>
-      <input type="text" placeholder="+221 77 123 45 67 *" [(ngModel)]="order.phone" (blur)="validatePhoneSenegal()" (input)="validateInputField('phone')" required>
+      <input type="text" placeholder="+221 77 123 45 67" [(ngModel)]="order.phone" (blur)="validatePhoneSenegal()" (input)="validateInputField('phone')">
       <span *ngIf="errors.phone" class="error-msg">Format Sénégal : 77XXXXXXX, 78XXXXXXX, etc. (9 chiffres, commence par 7)</span>
-      <input type="email" placeholder="exemple@email.com *" [(ngModel)]="order.email" (blur)="validateEmail()" (input)="validateInputField('email')" required>
+      <input type="email" placeholder="exemple@email.com" [(ngModel)]="order.email" (blur)="validateEmail()" (input)="validateInputField('email')">
       <span *ngIf="errors.email" class="error-msg">Email invalide</span>
     </div>
   </div>
@@ -308,4 +308,5 @@
     <button class="submit-btn" (click)="submitOrder()" [disabled]="errors.formInvalid">Soumettre la Commande</button>
   </div>
 </div>
+
 
